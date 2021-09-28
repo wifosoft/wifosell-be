@@ -7,11 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 public enum EAppExceptionCode {
-    //SHOP
+    //User
     USER_NOT_FOUND(100001),
     USER_NOT_IN_RELEVANT_SHOP(100002),
+    USERNAME_HAS_BEEN_TAKEN(100003),
+    EMAIL_HAS_BEEN_TAKEN(100004),
+
+
+    //permission
     PERMISSION_DENIED(400001),
 
+    //shop
     SHOP_NOT_FOUND(200001),
     SHOP_MANAGED_BY_THIS_USER(200002);
 

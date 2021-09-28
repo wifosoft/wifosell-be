@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GeneralController {
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('GLOBAL_ACCESS')")
     @RequestMapping("/g")
-    public ResponseEntity<GApiResponse> index()  {
+    public ResponseEntity<GApiResponse> index() {
         return ResponseEntity.ok(new GApiResponse(Boolean.TRUE, "Global API here!!! Zeus is coming Add shop"));
     }
 

@@ -97,8 +97,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addUser(User user) {
         List<UserPermission> permissions = new ArrayList<>();
-        permissions.add(UserPermission.GLOBAL_ACCESS);
-        permissions.add(UserPermission.ADMIN_ACCESS);
+//        permissions.add(UserPermission.GLOBAL_ACCESS);
+//        permissions.add(UserPermission.ADMIN_ACCESS);
         user.setUserPermission(permissions);
         return userRepository.save(user);
     }

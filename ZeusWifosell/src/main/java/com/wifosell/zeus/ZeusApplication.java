@@ -85,7 +85,7 @@ public class ZeusApplication implements CommandLineRunner {
         roleRepository.deleteAllInBatch();
         List<Role> roles = new ArrayList<Role>();
         roles.add(new Role(RoleName.ROLE_ADMIN));
-        roles.add(new Role(RoleName.ROLE_USER));
+        roles.add(new Role(RoleName.ROLE_GENERAL_MANAGER));
         roleRepository.saveAll(roles);
 
         String password = encoder().encode("admin123");
@@ -95,7 +95,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("admin@wifosoft.com")
                 .firstName("Duc Minh")
                 .lastName("Tran")
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .phone("0982259245")
                 .build();
         User admin_user_1 = User.builder()
@@ -105,7 +105,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .firstName("Duc Minh")
                 .lastName("Tran")
                 .phone("0982222222")
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
 
@@ -117,7 +117,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .lastName("Tran")
                 .phone("0982259246")
                 .parent(admin_user)
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
         User manager2 = User.builder()
@@ -128,7 +128,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .lastName("Tran")
                 .phone("0982259247")
                 .parent(admin_user)
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
 
@@ -144,14 +144,25 @@ public class ZeusApplication implements CommandLineRunner {
                 userRole.add(roleRepository.findByName(RoleName.ROLE_ADMIN)
                         .orElseThrow(() -> new AppException("User role not set")));
             }
-            userRole.add(roleRepository.findByName(RoleName.ROLE_USER)
+            userRole.add(roleRepository.findByName(RoleName.ROLE_GENERAL_MANAGER)
                     .orElseThrow(() -> new AppException("User role not set")));
             e.setRoles(userRole);
         });
         userRepository.saveAll(users);
 
-        Shop shop1 = Shop.builder().name("Cua hang 1").shortName("CH1").address("Dong hung").phone("123123").businessLine("My pham").generalManager(admin_user).build();
-        Shop shop2 = Shop.builder().name("Cua hang 2").shortName("CH2").address("Dong hung").phone("123123").businessLine("My pham").generalManager(admin_user).build();
+        Shop shop1 = Shop.builder().name("Cửa hàng 1")
+                .shortName("CH1")
+                .address("Đông Hưng Thái Bình")
+                .phone("123123")
+                .businessLine("Mỹ phẩm")
+                .generalManager(admin_user).build();
+        Shop shop2 = Shop.builder()
+                .name("Cửa hàng 2")
+                .shortName("CH2")
+                .address("Quận 5, Hồ Chí Minh")
+                .phone("123123")
+                .businessLine("Mỹ phẩm")
+                .generalManager(admin_user).build();
 
         List<Shop> shops = new ArrayList<>();
         shops.add(shop1);

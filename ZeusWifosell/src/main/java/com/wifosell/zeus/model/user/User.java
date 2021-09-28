@@ -19,6 +19,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,21 +81,20 @@ public class User extends DateAudit {
     private List<Role> roles;
 
 
-
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     //@JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "user_manage_shop" ,
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName =  "id"),
-            inverseJoinColumns = @JoinColumn(name ="shop_id", referencedColumnName = "id")
+            name = "user_manage_shop",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "shop_id", referencedColumnName = "id")
     )
     private List<Shop> shops;
 
 
-    @Type( type = "json" )
-    @Column( columnDefinition = "json" )
+    @Type(type = "json")
+    @Column(columnDefinition = "json")
     @Enumerated(EnumType.STRING)
     private List<UserPermission> userPermission;
 
@@ -102,13 +102,12 @@ public class User extends DateAudit {
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "parent_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional=true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private User parent;
 
 
-
     @JsonIgnore
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER,  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> childrenUsers;
 
 
@@ -138,16 +137,17 @@ public class User extends DateAudit {
         return this.userPermission == null ? new ArrayList<>() : new ArrayList<UserPermission>(this.userPermission);
     }
 
-    public void setUserPermission(List<UserPermission> userPermissions){
-        if(userPermissions == null){
+    public void setUserPermission(List<UserPermission> userPermissions) {
+        if (userPermissions == null) {
             this.userPermission = new ArrayList<>();
-        }
-        else{
+        } else {
             this.userPermission = Collections.unmodifiableList(userPermissions);
         }
     }
-    public boolean isRoot(){
-        return this.parent  == null;
+
+    //tài khoản root = true, General_manager
+    public boolean isRoot() {
+        return this.parent == null;
     }
 
 }

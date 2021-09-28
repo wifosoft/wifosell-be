@@ -55,7 +55,7 @@ public class UserRole {
     void testSaveRole(){
         Role role_admin = new Role(RoleName.ROLE_ADMIN);
         roleRepository.save(role_admin);
-        Role role_user = new Role(RoleName.ROLE_USER);
+        Role role_user = new Role(RoleName.ROLE_GENERAL_MANAGER);
         roleRepository.save(role_user);
         Long count_role = roleRepository.count();
         assertEquals(2L, count_role);

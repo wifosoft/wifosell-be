@@ -1,11 +1,13 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.constant.DefaultUserPermission;
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.LoginRequest;
 import com.wifosell.zeus.payload.request.RegisterRequest;
@@ -63,13 +65,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<GApiResponse<User>> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUsername()))) {
-            throw new ZeusGlobalException(HttpStatus.BAD_REQUEST, "Username is already taken");
+    public ResponseEntity<GApiResponse<User>> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUserName()))) {
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USERNAME_HAS_BEEN_TAKEN, "Username has been taken"));
         }
 
         if (Boolean.TRUE.equals(userRepository.existsByEmail(registerRequest.getEmail()))) {
-            throw new ZeusGlobalException(HttpStatus.BAD_REQUEST, "Email is already taken");
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.EMAIL_HAS_BEEN_TAKEN, "Email has been taken"));
         }
 
 
@@ -77,7 +79,7 @@ public class AuthController {
 
         String lastName = registerRequest.getLastName().toLowerCase();
 
-        String username = registerRequest.getUsername().toLowerCase();
+        String username = registerRequest.getUserName().toLowerCase();
 
         String email = registerRequest.getEmail().toLowerCase();
 
@@ -87,20 +89,19 @@ public class AuthController {
 
         List<Role> roles = new ArrayList<>();
         if (username.equals("admin")) {
-            roles.add(roleRepository.findByName(RoleName.ROLE_USER)
-                    .orElseThrow(() -> new AppException(USER_ROLE_NOT_SET)));
             roles.add(roleRepository.findByName(RoleName.ROLE_ADMIN)
                     .orElseThrow(() -> new AppException(USER_ROLE_NOT_SET)));
+            roles.add(roleRepository.findByName(RoleName.ROLE_GENERAL_MANAGER)
+                    .orElseThrow(() -> new AppException(USER_ROLE_NOT_SET)));
         } else {
-            roles.add(roleRepository.findByName(RoleName.ROLE_USER)
+            roles.add(roleRepository.findByName(RoleName.ROLE_GENERAL_MANAGER)
                     .orElseThrow(() -> new AppException(USER_ROLE_NOT_SET)));
         }
         user.setRoles(roles);
-        user.setUserPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER));
+        user.setUserPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER));
         User result = userRepository.save(user);
 
         return ResponseEntity.ok(new GApiResponse<User>(Boolean.TRUE, "User registered successfully", result));
-
 
     }
 
