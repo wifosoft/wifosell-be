@@ -10,11 +10,11 @@ import javax.validation.constraints.Size;
 @Data
 public class RegisterRequest {
     @NotBlank
-    @Size(min = 2, max = 40)
+    @Size(max = 40)
     private String firstName;
 
     @NotBlank
-    @Size(min = 2, max = 40)
+    @Size(max = 40)
     private String lastName;
 
     @NotBlank
