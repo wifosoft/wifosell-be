@@ -1,32 +1,29 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ResourceNotFoundException;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.response.AvailableResourceResponse;
-import com.wifosell.zeus.payload.response.GetMeInfoResponse;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
-import javax.swing.text.StyledEditorKit;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
@@ -37,35 +34,38 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ShopRepository shopRepository;
+    @Autowired
+    private SecurityCheck securityCheck;
 
 
-    /**
-     * Return the information object of user who request to the server
-     *
-     * @param currentUser Current User from Authentication
-     * @return The information of current use
-     */
+//    @PreAuthorize("@securityCheck.check(authentication, #id)")
     @Override
-    public GetMeInfoResponse getMeInfo(UserPrincipal currentUser) {
-        return GetMeInfoResponse.builder()
-                .firstName(currentUser.getFirstName())
-                .lastName(currentUser.getLastName())
-                .userName(currentUser.getUsername())
-                .phone(currentUser.getPhone())
-                .email(currentUser.getEmail())
-                .authorities(currentUser.getHumanAuthorities())
-                .parent(currentUser.getParent())
-                .build();
+    public User getUserInfo(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () ->  new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_FOUND))
+        );
+        return user;
     }
+
 
     @Override
     public boolean hasAccessToShop(UserPrincipal currentUser, Long userId) {
         return false;
     }
 
+    /**
+     * Check current user have permission with userId
+     * @param currentUser
+     * @param userId
+     * @return
+     */
     @Override
-    public boolean hasAccessToUser(UserPrincipal currentUser, Long shopId) {
-        return false;
+    public boolean hasAccessToUser(UserPrincipal currentUser, Long userId)  {
+
+        List<User> childs =  userRepository.findById(currentUser.getId()).orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_FOUND))
+        ).getChildrenUsers();
+        return childs.stream().anyMatch(x -> x.getId().equals(userId));
     }
 
     @Override

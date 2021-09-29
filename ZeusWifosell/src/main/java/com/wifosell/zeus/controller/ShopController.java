@@ -6,8 +6,6 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
-import com.wifosell.zeus.payload.response.GetMeInfoResponse;
-import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ShopService;
@@ -15,7 +13,6 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,7 +51,7 @@ public class ShopController {
             @ApiImplicitParam(name = "Authorization", value = "Authorization token",
                     required = true, dataType = "string", paramType = "header")})
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Lấy thông tin thành công", response = GetMeInfoResponse.class),
+            @ApiResponse(code = 200, message = "Lấy thông tin thành công", response = User.class),
             @ApiResponse(code = 404, message = "Schema not found"),
             @ApiResponse(code = 400, message = "Missing or invalid request body"),
             @ApiResponse(code = 500, message = "Internal error")

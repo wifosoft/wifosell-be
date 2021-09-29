@@ -42,6 +42,7 @@ public class UserPrincipal implements UserDetails {
 
     private User parent;
 
+    
 
     public UserPrincipal( Long id, String firstName, String lastName, String username, String email, String password, String phone,
                          Collection<? extends GrantedAuthority> authorities, User parent) {

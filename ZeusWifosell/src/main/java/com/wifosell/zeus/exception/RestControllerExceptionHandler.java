@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -99,15 +100,24 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseBody
+    public ResponseEntity<GApiResponse> resolveArgMismatch(MethodArgumentTypeMismatchException exception) {
+        return ResponseEntity.ok(
+                GApiResponse.fail(exception.getMessage())
+        );
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity<GApiResponse>  processValidationError(MethodArgumentNotValidException exception) {
+    public ResponseEntity<GApiResponse> processValidationError(MethodArgumentNotValidException exception) {
         BindingResult result = exception.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
 
         ValidationErrorDTO dto = new ValidationErrorDTO();
 
-        for (FieldError fieldError: fieldErrors) {
+        for (FieldError fieldError : fieldErrors) {
 //            dto.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
             String localizedErrorMessage = resolveLocalizedErrorMessage(fieldError);
             dto.addFieldError(fieldError.getField(), localizedErrorMessage);
@@ -119,7 +129,7 @@ public class RestControllerExceptionHandler {
     }
 
     private String resolveLocalizedErrorMessage(FieldError fieldError) {
-        Locale currentLocale =  LocaleContextHolder.getLocale();
+        Locale currentLocale = LocaleContextHolder.getLocale();
         String localizedErrorMessage = messageSource.getMessage(fieldError, currentLocale);
 
         //If the message was not found, return the most accurate field error code instead.

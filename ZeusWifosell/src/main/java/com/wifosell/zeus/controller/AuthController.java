@@ -54,14 +54,13 @@ public class AuthController {
     private RoleRepository roleRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
+    public ResponseEntity<GApiResponse<LoginResponse>>authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtTokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new LoginResponse(jwt));
+        return ResponseEntity.ok(GApiResponse.success(new LoginResponse(jwt)));
     }
 
     @PostMapping("/register")

@@ -1,18 +1,10 @@
 package com.wifosell.zeus.payload.response;
 
-import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.user.User;
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
-import java.util.List;
 
-@Data
-@Builder
-public class GetMeInfoResponse {
-
+public class UserResponse {
     private String firstName;
     private String lastName;
     private String userName;
@@ -24,5 +16,4 @@ public class GetMeInfoResponse {
     private Collection<String> authorities;
 
     private String email;
-
 }
