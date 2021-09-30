@@ -95,6 +95,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("admin@wifosoft.com")
                 .firstName("Duc Minh")
                 .lastName("Tran")
+                .address("Vị trí quản lý admin")
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .phone("0982259245")
                 .build();
@@ -104,6 +105,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("admin1@wifosoft.com")
                 .firstName("Duc Minh")
                 .lastName("Tran")
+                .address("Vị trí quản lý admin")
                 .phone("0982222222")
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
@@ -115,6 +117,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("manager1@wifosoft.com")
                 .firstName("Nguyễn Văn")
                 .lastName("An 1")
+                .address("Vị trí quản lý 1")
                 .phone("0982259246")
                 .parent(admin_user)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
@@ -126,6 +129,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("manager2@wifosoft.com")
                 .firstName("Nguyễn Văn")
                 .lastName("Thứ 2")
+                .address("Vị trí quản lý 2")
                 .phone("0982259247")
                 .parent(admin_user)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))

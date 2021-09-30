@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 
@@ -29,4 +30,12 @@ public class RegisterRequest {
     @NotBlank
     @Size(min = 4, max = 20)
     private String password;
+
+    @NotBlank
+    @Size(max = 20)
+    private String phone;
+
+    @NotBlank
+    @Size(max = 255)
+    private String address;
 }

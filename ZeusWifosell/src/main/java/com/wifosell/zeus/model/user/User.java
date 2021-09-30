@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.audit.DateAudit;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.Role;
@@ -34,7 +35,7 @@ import java.util.List;
         @UniqueConstraint(columnNames = {"email"})})
 @TypeDef(name = "json", typeClass = JsonStringType.class)
 @Builder
-public class User extends DateAudit {
+public class User extends BasicEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,14 +65,19 @@ public class User extends DateAudit {
     private String password;
 
     @NotBlank
-    @NaturalId
+    //@NaturalId
     @Size(max = 40)
     @Column(name = "email", unique = true)
     @Email
     private String email;
 
+    @NotBlank
+    @Size(max = 255)
+    private String address;
+
 
     @Column(name = "phone")
+    @Size(max=20)
     private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)
