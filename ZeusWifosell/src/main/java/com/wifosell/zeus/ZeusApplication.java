@@ -48,8 +48,7 @@ public class ZeusApplication implements CommandLineRunner {
     @PersistenceContext
     EntityManager entityManager;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+
 
     public static void main(String[] args) {
         SpringApplication.run(ZeusApplication.class, args);
@@ -89,7 +88,7 @@ public class ZeusApplication implements CommandLineRunner {
     public void seedUserAndRoleData() {
         userRepository.deleteAllInBatch();
         roleRepository.deleteAllInBatch();
-        List<Role> roles = new ArrayList<Role>();
+        List<Role> roles = new ArrayList<>();
         roles.add(new Role(RoleName.ROLE_ADMIN));
         roles.add(new Role(RoleName.ROLE_GENERAL_MANAGER));
         roles.add(new Role(RoleName.ROLE_SALE_STAFF));
@@ -166,7 +165,6 @@ public class ZeusApplication implements CommandLineRunner {
             userRoleRelation.setRole(roleRepository.getRoleByName(RoleName.ROLE_ADMIN));
             entityManager.persist(userRoleRelation);
         });
-        //userRepository.saveAll(users);
 
         Shop shop1 = Shop.builder().name("Cửa hàng 1")
                 .shortName("CH1")
