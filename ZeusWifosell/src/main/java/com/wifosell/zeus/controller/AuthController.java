@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -84,7 +85,9 @@ public class AuthController {
 
         String password = passwordEncoder.encode(registerRequest.getPassword());
 
+        String address = registerRequest.getAddress();
         User user = new User(firstName, lastName, username, email, password);
+        user.setAddress(address);
 
         List<Role> roles = new ArrayList<>();
         if (username.equals("admin")) {
@@ -96,7 +99,7 @@ public class AuthController {
             roles.add(roleRepository.findByName(RoleName.ROLE_GENERAL_MANAGER)
                     .orElseThrow(() -> new AppException(USER_ROLE_NOT_SET)));
         }
-        user.setRoles(roles);
+        //user.setRoles(roles);
         user.setUserPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER));
         User result = userRepository.save(user);
 

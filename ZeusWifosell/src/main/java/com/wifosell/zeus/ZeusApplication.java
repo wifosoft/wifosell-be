@@ -4,6 +4,7 @@ import com.wifosell.zeus.constant.DefaultUserPermission;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.RoleRepository;
@@ -26,6 +27,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ import java.util.TimeZone;
 @EnableSwagger2
 @SpringBootApplication
 @EntityScan(basePackageClasses = {ZeusApplication.class, Jsr310Converters.class})
+@Transactional
 public class ZeusApplication implements CommandLineRunner {
     @Autowired
     UserRepository userRepository;
@@ -41,6 +45,8 @@ public class ZeusApplication implements CommandLineRunner {
     RoleRepository roleRepository;
     @Autowired
     ShopRepository shopRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
 //    @Autowired
 //    private PasswordEncoder passwordEncoder;
@@ -86,6 +92,9 @@ public class ZeusApplication implements CommandLineRunner {
         List<Role> roles = new ArrayList<Role>();
         roles.add(new Role(RoleName.ROLE_ADMIN));
         roles.add(new Role(RoleName.ROLE_GENERAL_MANAGER));
+        roles.add(new Role(RoleName.ROLE_SALE_STAFF));
+        roles.add(new Role(RoleName.ROLE_ACCOUNTANT_STAFF));
+        roles.add(new Role(RoleName.ROLE_WAREHOUSE_STAFF));
         roleRepository.saveAll(roles);
 
         String password = encoder().encode("admin123");
@@ -150,9 +159,14 @@ public class ZeusApplication implements CommandLineRunner {
             }
             userRole.add(roleRepository.findByName(RoleName.ROLE_GENERAL_MANAGER)
                     .orElseThrow(() -> new AppException("User role not set")));
-            e.setRoles(userRole);
+
+            entityManager.persist(e);
+            UserRoleRelation userRoleRelation = new UserRoleRelation();
+            userRoleRelation.setUser(e);
+            userRoleRelation.setRole(roleRepository.getRoleByName(RoleName.ROLE_ADMIN));
+            entityManager.persist(userRoleRelation);
         });
-        userRepository.saveAll(users);
+        //userRepository.saveAll(users);
 
         Shop shop1 = Shop.builder().name("Cửa hàng 1")
                 .shortName("CH1")

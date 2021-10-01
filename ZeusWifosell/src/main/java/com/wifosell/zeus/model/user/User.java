@@ -9,6 +9,7 @@ import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.audit.DateAudit;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.Role;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
@@ -24,6 +25,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @ApiIgnore
 @EqualsAndHashCode(callSuper = true)
@@ -36,7 +38,6 @@ import java.util.List;
 @TypeDef(name = "json", typeClass = JsonStringType.class)
 @Builder
 public class User extends BasicEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -80,24 +81,28 @@ public class User extends BasicEntity {
     @Size(max=20)
     private String phone;
 
+    /*
+    v1_join table
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
+    */
+    @OneToMany(mappedBy = "user")
+    Set<UserRoleRelation> userRoleRelation;
 
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     //@JsonBackReference
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany (fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_manage_shop",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "shop_id", referencedColumnName = "id")
     )
     private List<Shop> shops;
-
 
     @Type(type = "json")
     @Column(columnDefinition = "json")
@@ -111,11 +116,9 @@ public class User extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private User parent;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> childrenUsers;
-
 
     public User(String firstName, String lastName, String username, String email, String password) {
         this.firstName = firstName;
@@ -125,18 +128,18 @@ public class User extends BasicEntity {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
-
-        return roles == null ? null : new ArrayList<>(roles);
-    }
-
-    public void setRoles(List<Role> roles) {
-        if (roles == null) {
-            this.roles = null;
-        } else {
-            this.roles = Collections.unmodifiableList(roles);
-        }
-    }
+//    public List<Role> getRoles() {
+//
+//        return roles == null ? null : new ArrayList<>(roles);
+//    }
+//
+//    public void setRoles(List<Role> roles) {
+//        if (roles == null) {
+//            this.roles = null;
+//        } else {
+//            this.roles = Collections.unmodifiableList(roles);
+//        }
+//    }
 
     public List<UserPermission> getUserPermission() {
 
