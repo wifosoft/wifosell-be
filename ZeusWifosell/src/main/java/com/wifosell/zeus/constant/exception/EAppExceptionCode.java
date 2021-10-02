@@ -20,7 +20,7 @@ public enum EAppExceptionCode {
 
     //permission
     PERMISSION_DENIED(400001),
-
+    PERMISSION_NOT_FOUND(400002),
     //Role
     ROLE_NOT_FOUND(500001),
     //shop

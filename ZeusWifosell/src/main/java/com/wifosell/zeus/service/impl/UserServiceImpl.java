@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -126,10 +127,9 @@ public class UserServiceImpl implements UserService {
             if (!roles.contains(role.getName().name())) {
                 //if role isn't existed, remove it from the db
                 userRoleRelationRepository.delete(roleRelation);
-             }
+            }
             roles.remove(role.getName().name());
         }
-
         List<Role> listRole = new ArrayList<>();
         for (String r : roles) {
             RoleName roleName = RoleName.valueOf(r);
@@ -138,14 +138,25 @@ public class UserServiceImpl implements UserService {
             newRoleRelation.setUser(user);
             userRoleRelationRepository.save(newRoleRelation);
         }
-
-
         return user;
     }
 
     @Override
-    public User changePermission(Long userId, List<String> permission) {
-        return null;
+    public User changePermission(Long userId, List<String> permissions) {
+        User user = userRepository.getUserById(userId);
+        List<UserPermission> lsUserPermission = new ArrayList<>();
+        for (String permission : permissions) {
+            try {
+                UserPermission userPermission = UserPermission.valueOf(permission);
+                lsUserPermission.add(userPermission);
+            } catch (IllegalArgumentException | NullPointerException e) {
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_NOT_FOUND));
+            }
+        }
+        lsUserPermission   = Collections.unmodifiableList(lsUserPermission);
+        user.setUserPermission(lsUserPermission);
+        userRepository.save(user);
+        return user;
     }
 
     @Override

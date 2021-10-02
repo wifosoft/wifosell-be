@@ -203,8 +203,8 @@ public class UserController {
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/changePermissionAccount")
     public ResponseEntity<GApiResponse> changePermissionAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody ChangeRoleRequest changeRoleRequest) {
-        
-        return  new ResponseEntity<>(GApiResponse.success("OK"), HttpStatus.OK);
+        User user = userService.changePermission(userId, changeRoleRequest.getListRoleString());
+        return new ResponseEntity<>(GApiResponse.success(user), HttpStatus.OK);
     }
 
 
