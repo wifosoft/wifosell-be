@@ -15,6 +15,6 @@ public class DefaultUserPermission {
         if (role.equals(RoleName.ROLE_GENERAL_MANAGER)) {
             return Arrays.asList(UserPermission.values());
         }
-        return null;
+        return new ArrayList<>();
     }
 }

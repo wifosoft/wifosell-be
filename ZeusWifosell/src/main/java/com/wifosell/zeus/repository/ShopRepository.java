@@ -4,9 +4,11 @@ import com.wifosell.zeus.model.shop.Shop;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ShopRepository extends JpaRepository<Shop, Long> {
     @Query("SELECT COUNT(u.id) FROM User u INNER JOIN u.shops s WHERE s.id = (:shop_id) AND u.id = (:user_id)")
     Long existsShopByUser(@Param("user_id") Long userId,

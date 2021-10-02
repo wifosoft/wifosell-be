@@ -22,19 +22,21 @@ import com.wifosell.zeus.repository.UserRoleRelationRepository;
 import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
+import com.wifosell.zeus.utils.transaction.TransactionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
 
+@Transactional
 @Service("userService")
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -44,6 +46,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+
+
     @Autowired
     private UserRoleRelationRepository userRoleRelationRepository;
 
@@ -71,8 +75,16 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(updateUserRequest.getEmail()).ifPresent(user::setEmail);
         Optional.ofNullable(updateUserRequest.getAddress()).ifPresent(user::setAddress);
         Optional.ofNullable(updateUserRequest.getPhone()).ifPresent(user::setPhone);
-
         userRepository.save(user);
+
+
+//        if(user.getId() == 2){
+//            throw new AppException("Exception");
+//        }
+//        user.setAddress("Cap nhat");
+//        //userRepository.save(user);
+//        userRepository.save(user);
+
         return user;
     }
 
@@ -153,14 +165,17 @@ public class UserServiceImpl implements UserService {
                 throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_NOT_FOUND));
             }
         }
-        lsUserPermission   = Collections.unmodifiableList(lsUserPermission);
+        lsUserPermission = Collections.unmodifiableList(lsUserPermission);
         user.setUserPermission(lsUserPermission);
         userRepository.save(user);
         return user;
     }
 
+    @Transactional
+    @Modifying
     @Override
     public User addChildAccount(Long parentId, RegisterRequest registerRequest) {
+
         User parent = userRepository.getUserById(parentId);
         if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUserName()))) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USERNAME_HAS_BEEN_TAKEN, "Username has been taken"));
@@ -182,8 +197,22 @@ public class UserServiceImpl implements UserService {
         User user = new User(firstName, lastName, username, email, password);
         user.setAddress(address);
         user.setParent(parent);
+        parent.setFirstName("CAp nhat thang paretn roi ne");
+        userRepository.save(parent);
         userRepository.save(user);
+        //entityManager.persist(user);
+        if (user.getUsername().equals("shop1")) {
+            throw new AppException("Exception");
+        }
+        user.setAddress("Cap nhat");
+        //userRepository.save(user);
+        userRepository.save(user);
+        //entityManager.persist(user);
+
+        // entityManager.getTransaction().commit();
+
         return user;
+
     }
 
 

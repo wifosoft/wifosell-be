@@ -25,8 +25,7 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 public class UserRole {
     static Logger log = Logger.getLogger(UserRole.class.getName());
 
-    @Autowired
-    private DataSource dataSource;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired

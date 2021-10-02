@@ -11,6 +11,7 @@ import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
+import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +29,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -47,7 +49,6 @@ public class ZeusApplication implements CommandLineRunner {
     ShopRepository shopRepository;
     @PersistenceContext
     EntityManager entityManager;
-
 
 
     public static void main(String[] args) {
@@ -152,17 +153,18 @@ public class ZeusApplication implements CommandLineRunner {
 
         users.forEach(e -> {
             List<Role> userRole = new ArrayList<>();
-            if (e.getUsername().equals("admin")) {
-                userRole.add(roleRepository.findByName(RoleName.ROLE_ADMIN)
-                        .orElseThrow(() -> new AppException("User role not set")));
-            }
-            userRole.add(roleRepository.findByName(RoleName.ROLE_GENERAL_MANAGER)
-                    .orElseThrow(() -> new AppException("User role not set")));
+
 
             entityManager.persist(e);
             UserRoleRelation userRoleRelation = new UserRoleRelation();
             userRoleRelation.setUser(e);
             userRoleRelation.setRole(roleRepository.getRoleByName(RoleName.ROLE_ADMIN));
+            if (e.getUsername().equals("admin")) {
+                UserRoleRelation userRoleRelationAdmin = new UserRoleRelation();
+                userRoleRelationAdmin.setUser(e);
+                userRoleRelationAdmin.setRole(roleRepository.getRoleByName(RoleName.ROLE_GENERAL_MANAGER));
+                entityManager.persist(userRoleRelationAdmin);
+            }
             entityManager.persist(userRoleRelation);
         });
 
@@ -185,7 +187,7 @@ public class ZeusApplication implements CommandLineRunner {
         shops.add(shop2);
         shopRepository.saveAll(shops);
 
-        admin_user  = userRepository.findById(admin_user.getId()).orElseThrow();
+        admin_user = userRepository.findById(admin_user.getId()).orElseThrow();
         admin_user.setShops(shops);
 
         userRepository.save(admin_user);
