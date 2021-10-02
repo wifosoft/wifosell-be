@@ -1,9 +1,6 @@
 package com.wifosell.zeus.model.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.audit.DateAudit;
@@ -30,13 +27,16 @@ import java.util.Set;
 @ApiIgnore
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"}),
-        @UniqueConstraint(columnNames = {"email"})})
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"username"}),
+        @UniqueConstraint(columnNames = {"email"})
+})
 @TypeDef(name = "json", typeClass = JsonStringType.class)
 @Builder
+@Getter
+@Setter
 public class User extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,6 +90,7 @@ public class User extends BasicEntity {
     private List<Role> roles;
     */
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     Set<UserRoleRelation> userRoleRelation;
 
 

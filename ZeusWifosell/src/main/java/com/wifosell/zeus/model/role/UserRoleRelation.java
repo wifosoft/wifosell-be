@@ -1,5 +1,8 @@
 package com.wifosell.zeus.model.role;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wifosell.zeus.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +18,17 @@ import java.time.LocalDateTime;
 public class UserRoleRelation {
     @Id
     @Column(name = "id")
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "role_id")
     private Role role;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 

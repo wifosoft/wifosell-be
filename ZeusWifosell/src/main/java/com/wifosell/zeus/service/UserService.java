@@ -24,6 +24,7 @@ public interface UserService {
     User activeUser(Long userId);
 
     User changeRole(Long userId, List<String> roles);
+    User changePermission(Long userId, List<String> permission);
 
     User addChildAccount(Long parentId, RegisterRequest registerRequest);
 

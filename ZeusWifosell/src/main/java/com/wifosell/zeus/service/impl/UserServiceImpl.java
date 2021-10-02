@@ -6,6 +6,7 @@ import com.wifosell.zeus.exception.ResourceNotFoundException;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
@@ -17,6 +18,7 @@ import com.wifosell.zeus.payload.response.AvailableResourceResponse;
 import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.UserRoleRelationRepository;
 import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
@@ -30,10 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -44,6 +43,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private UserRoleRelationRepository userRoleRelationRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserService {
         if (!newPassword.equals(verifyPassword)) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_VERIFIED_PASSWORD_INCORRECT));
         }
-        
+
         String hashPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
         user.setPassword(hashPassword);
         userRepository.save(user);
@@ -114,30 +116,36 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Transactional
-    @Modifying
     @Override
     public User changeRole(Long userId, List<String> roles) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException("Chao ban"));
-//        List <Role> listRole =new ArrayList<>();
-//        for (String str : roles
-//        ) {
-//            RoleName roleName = RoleName.valueOf(str);
-//            listRole.add(roleRepository.getRoleByName(roleName));
-//
-//        }
-//        List <Role> safeRole = Collections.unmodifiableList(listRole);
-//
-//        user.setRoles(safeRole);
-////        List<Role> ls = user.getRoles();
-////        ls.add(
-////                roleRepository.findByName(RoleName.ROLE_ADMIN).orElseThrow(() -> new AppException("User role not set")));
-//
 
+        Set<UserRoleRelation> currentUserRoleRelation = user.getUserRoleRelation();
+        for (UserRoleRelation roleRelation : currentUserRoleRelation) {
+            Role role = roleRelation.getRole();
+            if (!roles.contains(role.getName().name())) {
+                //if role isn't existed, remove it from the db
+                userRoleRelationRepository.delete(roleRelation);
+             }
+            roles.remove(role.getName().name());
+        }
 
-        userRepository.save(user);
+        List<Role> listRole = new ArrayList<>();
+        for (String r : roles) {
+            RoleName roleName = RoleName.valueOf(r);
+            UserRoleRelation newRoleRelation = new UserRoleRelation();
+            newRoleRelation.setRole(roleRepository.getRoleByName(roleName));
+            newRoleRelation.setUser(user);
+            userRoleRelationRepository.save(newRoleRelation);
+        }
+
 
         return user;
+    }
+
+    @Override
+    public User changePermission(Long userId, List<String> permission) {
+        return null;
     }
 
     @Override

@@ -193,14 +193,22 @@ public class UserController {
         return new ResponseEntity<>(child_accounts, HttpStatus.OK);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorizeAccessToUser
     @PostMapping("/{id}/changeRoleAccount")
     public ResponseEntity<GApiResponse> changeRoleAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody ChangeRoleRequest changeRoleRequest) {
         User user = userService.changeRole(userId, changeRoleRequest.getListRoleString());
-
         return new ResponseEntity<>(GApiResponse.success(user), HttpStatus.OK);
     }
 
+    @PreAuthorizeAccessToUser
+    @PostMapping("/{id}/changePermissionAccount")
+    public ResponseEntity<GApiResponse> changePermissionAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody ChangeRoleRequest changeRoleRequest) {
+        
+        return  new ResponseEntity<>(GApiResponse.success("OK"), HttpStatus.OK);
+    }
+
+
+    //TODO Refractor and move to shop entrypoint
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/getShopManage")
     public ResponseEntity<GApiResponse<List<Shop>>> getShopManage(@CurrentUser UserPrincipal userPrincipal) {
