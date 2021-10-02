@@ -22,13 +22,13 @@ import com.wifosell.zeus.repository.UserRoleRelationRepository;
 import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
-import com.wifosell.zeus.utils.transaction.TransactionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.EntityManager;
@@ -39,6 +39,9 @@ import java.util.*;
 @Transactional
 @Service("userService")
 public class UserServiceImpl implements UserService {
+    @Autowired
+    private TransactionTemplate template;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -175,7 +178,8 @@ public class UserServiceImpl implements UserService {
     @Modifying
     @Override
     public User addChildAccount(Long parentId, RegisterRequest registerRequest) {
-
+        //entityManager.persist(user);
+        // entityManager.getTransaction().commit();
         User parent = userRepository.getUserById(parentId);
         if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUserName()))) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USERNAME_HAS_BEEN_TAKEN, "Username has been taken"));
@@ -194,25 +198,20 @@ public class UserServiceImpl implements UserService {
         String password = passwordEncoder.encode(registerRequest.getPassword());
 
         String address = registerRequest.getAddress();
-        User user = new User(firstName, lastName, username, email, password);
-        user.setAddress(address);
-        user.setParent(parent);
+        User user1 = new User(firstName, lastName, username, email, password);
+        user1.setAddress(address);
+        user1.setParent(parent);
         parent.setFirstName("CAp nhat thang paretn roi ne");
         userRepository.save(parent);
-        userRepository.save(user);
+        userRepository.save(user1);
         //entityManager.persist(user);
-        if (user.getUsername().equals("shop1")) {
+        if (user1.getUsername().equals("shop1")) {
             throw new AppException("Exception");
         }
-        user.setAddress("Cap nhat");
+        user1.setAddress("Cap nhat");
         //userRepository.save(user);
-        userRepository.save(user);
-        //entityManager.persist(user);
-
-        // entityManager.getTransaction().commit();
-
-        return user;
-
+        userRepository.save(user1);
+        return user1;
     }
 
 
