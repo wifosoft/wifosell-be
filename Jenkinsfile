@@ -3,19 +3,36 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        echo 'Starting Build Step'
+        echo 'Initiating maven build'
+        sh 'cd ./ZeusWifosell'
         sh 'mvn clean install -Dlicense.skip=true'
+        echo 'Maven build complete'
       }
     }
 
-    stage('Print build number') {
-      steps {
-        echo 'This is build the number ${BUILD_ID}'
+    stage('Testing') {
+      parallel {
+        stage('SonarQube Test') {
+          steps {
+            echo 'Initiating SonarQube test'
+            sh 'echo "Testing by sonar"'
+            echo 'SonarQube test Complete'
+          }
+        }
+
+        stage('Print Build Number') {
+          steps {
+            sleep 3
+            echo "This is build number ${BUILD_ID}"
+          }
+        }
+
       }
     }
 
-    stage('JFrog') {
+    stage('JFrog Push') {
       steps {
+        echo 'Starting JFrog push'
         script {
           def server = Artifactory.server "artifactory"
           def buildInfo = Artifactory.newBuildInfo()
@@ -28,15 +45,28 @@ pipeline {
           server.publishBuildInfo buildInfo
         }
 
+        echo 'JFrog push complete'
       }
     }
 
-    stage('Deploy Prompt') {
+    stage('Deploy prompt') {
       steps {
         input 'Deploy to Production?'
-        echo 'Deploymnet Completed'
       }
     }
 
+    stage('Deploy') {
+      steps {
+        echo 'Initiating Deployment'
+        echo 'Deployment Complete'
+      }
+    }
+
+  }
+  tools {
+    maven 'Maven 3.6.3'
+  }
+  environment {
+    TESTER = 'placeholder'
   }
 }
