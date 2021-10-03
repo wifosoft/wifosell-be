@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
         User user1 = new User(firstName, lastName, username, email, password);
         user1.setAddress(address);
         user1.setParent(parent);
-        parent.setFirstName("CAp nhat thang paretn roi ne");
+        parent.setFirstName("Cập nhật tên parent");
         userRepository.save(parent);
         userRepository.save(user1);
         //entityManager.persist(user);

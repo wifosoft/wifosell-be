@@ -189,7 +189,6 @@ public class ZeusApplication implements CommandLineRunner {
 
         admin_user = userRepository.findById(admin_user.getId()).orElseThrow();
         admin_user.setShops(shops);
-
         userRepository.save(admin_user);
     }
 
