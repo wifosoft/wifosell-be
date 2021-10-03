@@ -3,6 +3,7 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ResourceNotFoundException;
+import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
@@ -24,6 +25,7 @@ import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.util.*;
 
-@Transactional
+@Transactional(rollbackFor = ZeusGlobalException.class)
 @Service("userService")
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -174,7 +176,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Transactional
     @Modifying
     @Override
     public User addChildAccount(Long parentId, RegisterRequest registerRequest) {
@@ -206,7 +207,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user1);
         //entityManager.persist(user);
         if (user1.getUsername().equals("shop1")) {
-            throw new AppException("Exception");
+            throw new ZeusGlobalException(HttpStatus.OK, "Hello OK");
+            //throw new AppException("Exception");
         }
         user1.setAddress("Cap nhat");
         //userRepository.save(user);
