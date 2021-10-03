@@ -4,7 +4,6 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Initiating maven build'
-        sh 'cd ./ZeusWifosell'
         sh 'mvn clean install -Dlicense.skip=true'
         echo 'Maven build complete'
       }
@@ -46,6 +45,7 @@ pipeline {
         }
 
         echo 'JFrog push complete'
+        dir(path: './ZeusWifosell')
       }
     }
 
