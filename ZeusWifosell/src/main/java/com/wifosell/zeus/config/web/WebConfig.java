@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("cors.allowedOrigins")
@@ -22,4 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .maxAge(MAX_AGE_SECS);
     }
+
+
+
+
 }

@@ -4,12 +4,14 @@ import com.wifosell.zeus.constant.DefaultUserPermission;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
+import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -26,6 +28,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +39,7 @@ import java.util.TimeZone;
 @EnableSwagger2
 @SpringBootApplication
 @EntityScan(basePackageClasses = {ZeusApplication.class, Jsr310Converters.class})
+@Transactional
 public class ZeusApplication implements CommandLineRunner {
     @Autowired
     UserRepository userRepository;
@@ -41,9 +47,9 @@ public class ZeusApplication implements CommandLineRunner {
     RoleRepository roleRepository;
     @Autowired
     ShopRepository shopRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
 
     public static void main(String[] args) {
         SpringApplication.run(ZeusApplication.class, args);
@@ -83,9 +89,12 @@ public class ZeusApplication implements CommandLineRunner {
     public void seedUserAndRoleData() {
         userRepository.deleteAllInBatch();
         roleRepository.deleteAllInBatch();
-        List<Role> roles = new ArrayList<Role>();
+        List<Role> roles = new ArrayList<>();
         roles.add(new Role(RoleName.ROLE_ADMIN));
-        roles.add(new Role(RoleName.ROLE_USER));
+        roles.add(new Role(RoleName.ROLE_GENERAL_MANAGER));
+        roles.add(new Role(RoleName.ROLE_SALE_STAFF));
+        roles.add(new Role(RoleName.ROLE_ACCOUNTANT_STAFF));
+        roles.add(new Role(RoleName.ROLE_WAREHOUSE_STAFF));
         roleRepository.saveAll(roles);
 
         String password = encoder().encode("admin123");
@@ -95,7 +104,8 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("admin@wifosoft.com")
                 .firstName("Duc Minh")
                 .lastName("Tran")
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .address("Vị trí quản lý admin")
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .phone("0982259245")
                 .build();
         User admin_user_1 = User.builder()
@@ -104,8 +114,9 @@ public class ZeusApplication implements CommandLineRunner {
                 .email("admin1@wifosoft.com")
                 .firstName("Duc Minh")
                 .lastName("Tran")
+                .address("Vị trí quản lý admin")
                 .phone("0982222222")
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
 
@@ -113,22 +124,24 @@ public class ZeusApplication implements CommandLineRunner {
                 .username("manager1")
                 .password(password)
                 .email("manager1@wifosoft.com")
-                .firstName("Quan ly 1")
-                .lastName("Tran")
+                .firstName("Nguyễn Văn")
+                .lastName("An 1")
+                .address("Vị trí quản lý 1")
                 .phone("0982259246")
                 .parent(admin_user)
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
         User manager2 = User.builder()
                 .username("manager2")
                 .password(password)
                 .email("manager2@wifosoft.com")
-                .firstName("Quan ly 2")
-                .lastName("Tran")
+                .firstName("Nguyễn Văn")
+                .lastName("Thứ 2")
+                .address("Vị trí quản lý 2")
                 .phone("0982259247")
                 .parent(admin_user)
-                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_USER))
+                .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
 
@@ -140,27 +153,42 @@ public class ZeusApplication implements CommandLineRunner {
 
         users.forEach(e -> {
             List<Role> userRole = new ArrayList<>();
-            if (e.getUsername().equals("admin")) {
-                userRole.add(roleRepository.findByName(RoleName.ROLE_ADMIN)
-                        .orElseThrow(() -> new AppException("User role not set")));
-            }
-            userRole.add(roleRepository.findByName(RoleName.ROLE_USER)
-                    .orElseThrow(() -> new AppException("User role not set")));
-            e.setRoles(userRole);
-        });
-        userRepository.saveAll(users);
 
-        Shop shop1 = Shop.builder().name("Cua hang 1").shortName("CH1").address("Dong hung").phone("123123").businessLine("My pham").generalManager(admin_user).build();
-        Shop shop2 = Shop.builder().name("Cua hang 2").shortName("CH2").address("Dong hung").phone("123123").businessLine("My pham").generalManager(admin_user).build();
+
+            entityManager.persist(e);
+            UserRoleRelation userRoleRelation = new UserRoleRelation();
+            userRoleRelation.setUser(e);
+            userRoleRelation.setRole(roleRepository.getRoleByName(RoleName.ROLE_ADMIN));
+            if (e.getUsername().equals("admin")) {
+                UserRoleRelation userRoleRelationAdmin = new UserRoleRelation();
+                userRoleRelationAdmin.setUser(e);
+                userRoleRelationAdmin.setRole(roleRepository.getRoleByName(RoleName.ROLE_GENERAL_MANAGER));
+                entityManager.persist(userRoleRelationAdmin);
+            }
+            entityManager.persist(userRoleRelation);
+        });
+
+        Shop shop1 = Shop.builder().name("Cửa hàng 1")
+                .shortName("CH1")
+                .address("Đông Hưng Thái Bình")
+                .phone("123123")
+                .businessLine("Mỹ phẩm")
+                .generalManager(admin_user).build();
+        Shop shop2 = Shop.builder()
+                .name("Cửa hàng 2")
+                .shortName("CH2")
+                .address("Quận 5, Hồ Chí Minh")
+                .phone("123123")
+                .businessLine("Mỹ phẩm")
+                .generalManager(admin_user).build();
 
         List<Shop> shops = new ArrayList<>();
         shops.add(shop1);
         shops.add(shop2);
         shopRepository.saveAll(shops);
 
-        admin_user  = userRepository.findById(admin_user.getId()).orElseThrow();
+        admin_user = userRepository.findById(admin_user.getId()).orElseThrow();
         admin_user.setShops(shops);
-
         userRepository.save(admin_user);
     }
 

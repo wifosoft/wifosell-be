@@ -12,6 +12,7 @@ public class AppException extends RuntimeException {
 
     public AppException(String message) {
         super(message);
+        this.errorBody  = GApiErrorBody.makeErrorBody(EAppExceptionCode.UNEXPECTED_ERROR, message);
     }
     public AppException(GApiErrorBody errorBody) {
         super(errorBody.getErrorMessage());

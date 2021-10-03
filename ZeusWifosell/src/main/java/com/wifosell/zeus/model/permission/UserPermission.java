@@ -1,8 +1,7 @@
 package com.wifosell.zeus.model.permission;
+
 public enum UserPermission {
+    USER_PROFILE,
     GLOBAL_ACCESS,
-    MOD_ACCESS,
-    ADMIN_ACCESS,
-    NO_ACCESS,
-    USER_PROFILE
+    DENIED_ACCESS
 }

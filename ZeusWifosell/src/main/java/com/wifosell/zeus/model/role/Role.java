@@ -1,12 +1,12 @@
 package com.wifosell.zeus.model.role;
 
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Data
@@ -16,6 +16,11 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    Set<UserRoleRelation> userRoleRelation;
+
 
     @Enumerated(EnumType.STRING)
     @NaturalId

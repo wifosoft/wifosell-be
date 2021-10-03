@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 public class DefaultUserPermission {
     public static List<UserPermission> getDefaultPermissionFromRole(RoleName role) {
-        if (role.equals(RoleName.ROLE_USER)) {
+        if (role.equals(RoleName.ROLE_GENERAL_MANAGER)) {
             return Arrays.asList(UserPermission.values());
         }
-        return null;
+        return new ArrayList<>();
     }
 }
