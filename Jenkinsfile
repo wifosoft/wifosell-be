@@ -42,6 +42,7 @@ echo \'------- finish restart zeus service\'
 sudo systemctl status zeus
 echo \'------- finish restart zeus service\'
 '''
+        archiveArtifacts(artifacts: 'zeus.jar', onlyIfSuccessful: true)
       }
     }
 
