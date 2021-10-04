@@ -17,7 +17,7 @@ public class GeneralController {
     
     @RequestMapping("/g/version")
     public ResponseEntity<GApiResponse> version() {
-        return ResponseEntity.ok(GApiResponse.success("Version 1.0.0"));
+        return ResponseEntity.ok(GApiResponse.success("Version 1.0.0 - test deploy"));
     }
     
 }

@@ -20,7 +20,8 @@ public class Role {
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     Set<UserRoleRelation> userRoleRelation;
-
+    
+    
 
     @Enumerated(EnumType.STRING)
     @NaturalId
