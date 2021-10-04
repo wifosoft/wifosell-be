@@ -120,7 +120,7 @@ echo \'------- finish restart zeus service\'
 sudo systemctl status zeus
 echo \'------- finish restart zeus service\'
 '''
-        scripts{
+        script {
           currentBuild.description = "Success Build! Access to API for using"
           updateGithubCommitStatus(currentBuild)
         }
