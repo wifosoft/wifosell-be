@@ -73,9 +73,11 @@ pipeline {
   
   
   stages {
-    stage('Build') {
+    stage('Build') {  
       when { anyOf { branch 'feature/*'; branch 'main'; branch 'develop' } }
-
+      options {
+        lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
+      }
       steps {
         notifyGitHub('PENDING')
         echo 'Initiating maven build'
