@@ -14,6 +14,11 @@ public class GeneralController {
     public ResponseEntity<GApiResponse> index() {
         return ResponseEntity.ok(new GApiResponse(Boolean.TRUE, "Global API here!!! Zeus is coming Add shop"));
     }
-
+    
+    @RequestMapping("/g/version")
+    public ResponseEntity<GApiResponse> version() {
+        return ResponseEntity.ok(GApiResponse.success("Version 1.0.0"));
+    }
+    
 }
 
