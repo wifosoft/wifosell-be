@@ -74,7 +74,7 @@ pipeline {
   
   stages {
     stage('Build') {  
-      when { anyOf { branch 'feature/*'; branch 'main'; branch 'develop', branch 'PR-*' } }
+      when { anyOf { branch 'feature/*'; branch 'main'; branch 'develop'; branch 'PR-*' } }
       options {
         lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
       }
