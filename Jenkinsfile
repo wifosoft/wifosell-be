@@ -1,7 +1,7 @@
 
 def notifyGitHub(status) {
     def NODE_NAME = "wifosell-be"
-    if(NOTIFY_GITHUB == "true") {
+    if(env.NOTIFY_GITHUB == "true") {
         context = "JenkinsCI/${NODE_NAME}"
         run_type = 'Build'
 
@@ -89,7 +89,7 @@ echo \'------- finish restart zeus service\'
       }
     }
   }
-  
+
   post {
     always {
       notifyGitHub("${currentBuild.result}")
