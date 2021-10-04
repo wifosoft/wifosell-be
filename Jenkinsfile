@@ -106,6 +106,7 @@ pipeline {
     }
 
     stage('Deploy') {
+      
       steps {
         notifyGitHub('PENDING')
         echo 'Initiating Deployment'
@@ -119,7 +120,10 @@ echo \'------- finish restart zeus service\'
 sudo systemctl status zeus
 echo \'------- finish restart zeus service\'
 '''
-        currentBuild.description = "Success Build! Access to API for using"
+        scripts{
+          currentBuild.description = "Success Build! Access to API for using"
+          updateGithubCommitStatus(currentBuild)
+        }
         notifyGitHub('SUCCESS')
       }
     }
