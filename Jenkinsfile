@@ -97,7 +97,7 @@ pipeline {
         stage('Print Build Number') {
           steps {
             notifyGitHub('PENDING')
-            sleep 1
+            sleep 3
             echo "This is build number ${BUILD_ID}"
           }
         }
@@ -122,18 +122,18 @@ echo \'------- finish restart zeus service\'
 '''
         script {
           currentBuild.description = "Success Build! Access to API for using"
-          updateGithubCommitStatus(currentBuild)
+        //  updateGithubCommitStatus(currentBuild)
         }
-        //notifyGitHub('SUCCESS')
+        notifyGitHub('SUCCESS')
       }
     }
   }
 
-  // post {
-  //   always {
-  //     notifyGitHub("${currentBuild.result}")
-  //   }
-  // }
+  post {
+    always {
+      notifyGitHub("${currentBuild.result}")
+    }
+  }
 
   tools {
     maven 'Maven 3.6.3'
