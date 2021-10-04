@@ -38,6 +38,10 @@ public class ShopController {
         return ResponseEntity.ok(GApiResponse.success("Update Shop Info by id: " + id.toString()));
     }
 
+    @GetMapping("/{id}/delete")
+    public ResponseEntity<GApiResponse> deleteShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id){
+        return ResponseEntity.ok(GApiResponse.success("Delete shop by id " + id.toString()));
+    }
     /*
      *  Lấy danh sách shop có quyền quản lý
      */
