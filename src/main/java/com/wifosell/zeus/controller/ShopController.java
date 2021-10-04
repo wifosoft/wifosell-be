@@ -27,6 +27,17 @@ public class ShopController {
     @Autowired
     ShopService shopService;
 
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GApiResponse> getShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id){
+        return ResponseEntity.ok(GApiResponse.success("Shop Info" + id.toString()));
+    }
+    
+    @GetMapping("/{id}/update")
+    public ResponseEntity<GApiResponse> updateShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id){
+        return ResponseEntity.ok(GApiResponse.success("Update Shop Info by id: " + id.toString()));
+    }
+
     /*
      *  Lấy danh sách shop có quyền quản lý
      */
