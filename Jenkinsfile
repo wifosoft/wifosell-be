@@ -71,78 +71,66 @@ pipeline {
     TESTER = 'placeholder'
   }
   
-  if(env.BRANCH_NAME == "develop" || env.BRANCH_NAME == "main"){
-    stages {
-    
-        stage('Build') {
-          steps {
-            notifyGitHub('PENDING')
+  
+  stages {
+    stage('Build') {
+      when { anyOf { branch 'feature/*'; branch 'main'; branch 'develop' } }
 
-            echo 'Initiating maven build'
-            sh 'mvn clean install -Dlicense.skip=true'
-            echo 'Maven build complete'
-          }
-        }
-
-        stage('Testing') {
-          parallel {
-            stage('SonarQube Test') {
-              steps {
-                notifyGitHub('PENDING')
-
-                echo 'Initiating SonarQube test'
-                sh 'echo "Testing by sonar"'
-                echo 'SonarQube test Complete'
-              }
-            }
-
-            stage('Print Build Number') {
-              steps {
-                notifyGitHub('PENDING')
-                sleep 3
-                echo "This is build number ${BUILD_ID}"
-              }
-            }
-
-          }
-        }
-
-        stage('Deploy') {
-          
-          steps {
-            notifyGitHub('PENDING')
-            echo 'Initiating Deployment'
-            echo 'Deployment Complete'
-            sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
-    cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
-    echo \'------- finish copy jar -------------------------------------\'
-    echo \'------- restart zeus service------------------\'
-    sudo systemctl restart zeus
-    echo \'------- finish restart zeus service\'
-    sudo systemctl status zeus
-    echo \'------- finish restart zeus service\'
-    '''
-
-            script {
-              currentBuild.description = "Success Build! Access to API for using"
-            //  updateGithubCommitStatus(currentBuild)
-            }
-            notifyGitHub('SUCCESS')
-          }
-        }
-        
-
-    
-    }
-  }
-    else{
-      stage('Build') {
-        steps {
-          notifyGitHub('SUCCESS')
-          echo 'Not build'
-        }
+      steps {
+        notifyGitHub('PENDING')
+        echo 'Initiating maven build'
+        sh 'mvn clean install -Dlicense.skip=true'
+        echo 'Maven build complete'
       }
     }
+
+    stage('Testing') {
+      parallel {
+        stage('SonarQube Test') {
+          steps {
+            notifyGitHub('PENDING')
+
+            echo 'Initiating SonarQube test'
+            sh 'echo "Testing by sonar"'
+            echo 'SonarQube test Complete'
+          }
+        }
+
+        stage('Print Build Number') {
+          steps {
+            notifyGitHub('PENDING')
+            sleep 3
+            echo "This is build number ${BUILD_ID}"
+          }
+        }
+
+      }
+    }
+
+    stage('Deploy') {
+      when { anyOf { branch 'main'; }}
+
+      steps {
+        notifyGitHub('PENDING')
+        echo 'Initiating Deployment'
+        echo 'Deployment Complete'
+        sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
+cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
+echo \'------- finish copy jar -------------------------------------\'
+echo \'------- restart zeus service------------------\'
+sudo systemctl restart zeus
+echo \'------- finish restart zeus service\'
+sudo systemctl status zeus
+echo \'------- finish restart zeus service\'
+'''
+        script {
+          currentBuild.description = "Success Build! Access to API for using"
+        //  updateGithubCommitStatus(currentBuild)
+        }
+        notifyGitHub('SUCCESS')
+      }
+    }
+  }
 
   post {
     always {
