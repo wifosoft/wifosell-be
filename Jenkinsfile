@@ -5,8 +5,8 @@ def notifyGitHub(status) {
         context = "JenkinsCI/${NODE_NAME}"
         run_type = 'Build'
 
-        if(STAGE_NAME == 'test-continuous') {
-            context = context + "/test-continuous"
+        if(STAGE_NAME == 'Testing') {
+            context = context + "/Testing"
             run_type = 'Continuous test'
         }
 
@@ -44,6 +44,8 @@ pipeline {
   stages {
     stage('Build') {
       steps {
+        notifyGitHub('PENDING')
+
         echo 'Initiating maven build'
         sh 'mvn clean install -Dlicense.skip=true'
         echo 'Maven build complete'
@@ -54,6 +56,8 @@ pipeline {
       parallel {
         stage('SonarQube Test') {
           steps {
+            notifyGitHub('PENDING')
+
             echo 'Initiating SonarQube test'
             sh 'echo "Testing by sonar"'
             echo 'SonarQube test Complete'
@@ -62,7 +66,8 @@ pipeline {
 
         stage('Print Build Number') {
           steps {
-            sleep 3
+            notifyGitHub('PENDING')
+            sleep 1
             echo "This is build number ${BUILD_ID}"
           }
         }
@@ -72,6 +77,7 @@ pipeline {
 
     stage('Deploy') {
       steps {
+        notifyGitHub('PENDING')
         echo 'Initiating Deployment'
         echo 'Deployment Complete'
         sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
@@ -83,6 +89,7 @@ echo \'------- finish restart zeus service\'
 sudo systemctl status zeus
 echo \'------- finish restart zeus service\'
 '''
+        notifyGitHub('SUCCESS')
       }
     }
   }
