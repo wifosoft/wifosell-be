@@ -63,6 +63,7 @@ def notifyGitHub(status) {
     }
 }
 
+
 pipeline {
   agent any
   environment {
@@ -73,9 +74,10 @@ pipeline {
   
   stages {
     stage('Build') {
+      when { anyOf { branch 'feature/*'; branch 'main'; branch 'develop' } }
+
       steps {
         notifyGitHub('PENDING')
-
         echo 'Initiating maven build'
         sh 'mvn clean install -Dlicense.skip=true'
         echo 'Maven build complete'
@@ -106,7 +108,8 @@ pipeline {
     }
 
     stage('Deploy') {
-      
+      when { anyOf { branch 'main'; }}
+
       steps {
         notifyGitHub('PENDING')
         echo 'Initiating Deployment'
