@@ -36,11 +36,8 @@ def notifyGitHub(status) {
 pipeline {
   agent any
   environment {
-    AGENT_OS_NAME = getOSName()
-    JOB_TYPE = getJobType()
     NOTIFY_GITHUB = "true"
     TESTER = 'placeholder'
-
   }
   
   
