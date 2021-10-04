@@ -23,7 +23,7 @@ def updateGithubCommitStatus(build) {
       results: [
         [$class: 'BetterThanOrEqualBuildResult', result: 'SUCCESS', state: 'SUCCESS', message: build.description],
         [$class: 'BetterThanOrEqualBuildResult', result: 'FAILURE', state: 'FAILURE', message: build.description],
-        [$class: 'AnyBuildResult', state: 'FAILURE', message: 'Loophole']
+        [$class: 'AnyBuildResult', state: 'FAILURE', message: 'Build OK!!!']
       ]
     ]
   ])
@@ -124,16 +124,16 @@ echo \'------- finish restart zeus service\'
           currentBuild.description = "Success Build! Access to API for using"
           updateGithubCommitStatus(currentBuild)
         }
-        notifyGitHub('SUCCESS')
+        //notifyGitHub('SUCCESS')
       }
     }
   }
 
-  post {
-    always {
-      notifyGitHub("${currentBuild.result}")
-    }
-  }
+  // post {
+  //   always {
+  //     notifyGitHub("${currentBuild.result}")
+  //   }
+  // }
 
   tools {
     maven 'Maven 3.6.3'
