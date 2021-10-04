@@ -11,7 +11,7 @@ public class UserResponse {
     private String createdAt;
     private String updatedAt;
     private String phone;
-
+    private String avatar;
     private User parent;
     private Collection<String> authorities;
 

@@ -72,6 +72,10 @@ public class User extends BasicEntity {
     @Email
     private String email;
 
+    @Size(max= 255)
+    @Column(name = "avatar")
+    private String avatar;
+
     @NotBlank
     @Size(max = 255)
     private String address;
