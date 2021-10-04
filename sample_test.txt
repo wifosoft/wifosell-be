@@ -1,4 +1,0 @@
-Test PR jenkin
-Test change
-Nothing
-ISSUE_KEY #<transition-name> <Your commit comment text>
