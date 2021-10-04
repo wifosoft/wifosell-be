@@ -88,15 +88,8 @@ echo \'------- finish restart zeus service\'
 '''
       }
     }
-
-    post {
-      always {
-        notifyGitHub("${currentBuild.result}")
-      }
-    }
-
   }
-
+  
   post {
     always {
       notifyGitHub("${currentBuild.result}")
