@@ -22,7 +22,7 @@ class ZeusApplicationTests {
         String someString = "Just a testSubtract";
         assumingThat(
                 someString.equals("Just a testSubtract"),
-                () -> assertEquals(2 - 2, 1)
+                () -> assertEquals(2 - 2, 0)
         );
     }
 
