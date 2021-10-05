@@ -27,12 +27,10 @@ import com.wifosell.zeus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -223,7 +221,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean hasAccessToShop(UserPrincipal currentUser, Long shopId) {
-        List<Shop> lsShopCanAccess = shopService.getManagedShop(currentUser.getId());
+        List<Shop> lsShopCanAccess = shopService.getCreatedShop(currentUser.getId());
         return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
     }
 
@@ -253,7 +251,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Shop> getListShopManage(UserPrincipal userPrincipal) {
         User currentUser = userRepository.getUser(userPrincipal);
-        return currentUser.getShops();
+        return currentUser.getManagedShops();
     }
 
     @Override

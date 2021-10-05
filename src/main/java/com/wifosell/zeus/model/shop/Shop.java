@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wifosell.zeus.model.audit.DateAudit;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 import org.hibernate.annotations.TypeDef;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @ApiIgnore
 @Entity
@@ -55,17 +57,27 @@ public class Shop extends DateAudit {
     private String businessLine;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    //@JsonManagedReference
+    Set<UserShopRelation> userShopRelation;
+
+
+    @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id" ,referencedColumnName = "id" )
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
+
+
+    /*
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 //    @JsonManagedReference
-    @ManyToMany(mappedBy =  "shops")
-    List<User>  staffOfShop;
-
+    @ManyToMany(mappedBy = "shops")
+    List<User> staffOfShop;
+*/
 
 
 }

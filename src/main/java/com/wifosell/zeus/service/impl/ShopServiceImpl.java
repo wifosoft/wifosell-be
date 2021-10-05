@@ -2,18 +2,22 @@ package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.UserShopRelationRepository;
 import com.wifosell.zeus.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -28,7 +32,8 @@ public class ShopServiceImpl implements ShopService {
     @Autowired
     UserRepository userRepository;
 
-
+    @Autowired
+    UserShopRelationRepository userShopRelationRepository;
     @PersistenceContext
     private EntityManager em;
 
@@ -36,9 +41,9 @@ public class ShopServiceImpl implements ShopService {
 
 
     @Override
-    public List<Shop> getManagedShop(Long userId) {
+    public List<Shop> getCreatedShop(Long userId) {
         User currentUser = userRepository.getById(userId);
-        return currentUser.getShops();
+        return currentUser.getManagedShops();
     }
 
     /*
@@ -49,11 +54,11 @@ public class ShopServiceImpl implements ShopService {
         User currentUser = userRepository.getById(userId);
         if (currentUser.isRoot()) {
             //nếu user là tài khoản root thì lấy luôn
-            return currentUser.getShops();
+            return currentUser.getManagedShops();
         } else {
             //Ngược lại lấy tài khoản parent
             User parentUser = userRepository.getUserByName(currentUser.getParent().getUsername());
-            return parentUser.getShops();
+            return parentUser.getManagedShops();
         }
     }
 
@@ -72,6 +77,7 @@ public class ShopServiceImpl implements ShopService {
         return false;
     }
 
+    @Transactional
     @Override
     public void givePermissionManageShop(Long userId, Long shopId) {
         User userNeedToAdd = userRepository.findById(userId).
@@ -84,16 +90,15 @@ public class ShopServiceImpl implements ShopService {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_IN_RELEVANT_SHOP));
         }
 
-        List<Shop> currentShopOfUser = userNeedToAdd.getShops();
+        boolean existed = userShopRelationRepository.existsUserShopRelationsByUserIsAndShopIs(userId, shopId);
 
-
-        boolean existed = shopRepository.existsUserMangageShop(userId, shopId);
         if (existed) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SHOP_MANAGED_BY_THIS_USER));
         }
-        currentShopOfUser.add( shopNeedToAssign );
-        userNeedToAdd.setShops(currentShopOfUser);
-        userRepository.save(userNeedToAdd);
+        UserShopRelation userShopRelation = new UserShopRelation();
+        userShopRelation.setUser(userNeedToAdd);
+        userShopRelation.setShop(shopNeedToAssign);
+        userShopRelationRepository.save(userShopRelation);
     }
 
     /**

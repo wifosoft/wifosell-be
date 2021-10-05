@@ -1,7 +1,6 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.annotation.PreAuthorizeAccessToShop;
-import com.wifosell.zeus.annotation.PreAuthorizeAccessToUser;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.shop.Shop;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -89,9 +87,9 @@ public class ShopController {
     /*
      *  Lấy danh sách shop có quyền quản lý
      */
-    @GetMapping("/getManagedShop")
+    @GetMapping("/getCreatedShop")
     public ResponseEntity<GApiResponse> getManagedShop(@CurrentUser UserPrincipal userPrincipal) {
-        List<Shop> shops = shopService.getManagedShop(userPrincipal.getId());
+        List<Shop> shops = shopService.getCreatedShop(userPrincipal.getId());
         return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
     }
 

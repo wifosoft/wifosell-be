@@ -5,10 +5,12 @@ import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.UserShopRelationRepository;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,8 @@ public class ZeusApplication implements CommandLineRunner {
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    UserShopRelationRepository userShopRelationRepository;
     @Autowired
     ShopRepository shopRepository;
     @PersistenceContext
@@ -184,8 +188,16 @@ public class ZeusApplication implements CommandLineRunner {
         shopRepository.saveAll(shops);
 
         adminUser = userRepository.findById(adminUser.getId()).orElseThrow();
-        adminUser.setShops(shops);
         userRepository.save(adminUser);
+
+        UserShopRelation userShopRelation1 = new UserShopRelation();
+        userShopRelation1.setShop(shop1);
+        userShopRelation1.setUser(adminUser);
+        UserShopRelation userShopRelation2 = new UserShopRelation();
+        userShopRelation2.setShop(shop2);
+        userShopRelation2.setUser(adminUser);
+        userShopRelationRepository.save(userShopRelation1);
+        userShopRelationRepository.save(userShopRelation2);
     }
 
 

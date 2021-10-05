@@ -8,6 +8,7 @@ import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApiIgnore
 @EqualsAndHashCode(callSuper = true)
@@ -56,7 +58,7 @@ public class User extends BasicEntity {
 
     @NotBlank
     @Column(name = "username", unique = true)
-    @Size(min=3,  max = 15)
+    @Size(min = 3, max = 15)
     private String username;
 
     @NotBlank
@@ -72,7 +74,7 @@ public class User extends BasicEntity {
     @Email
     private String email;
 
-    @Size(max= 255)
+    @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
 
@@ -82,7 +84,7 @@ public class User extends BasicEntity {
 
 
     @Column(name = "phone")
-    @Size(max=20)
+    @Size(max = 20)
     private String phone;
 
     /*
@@ -99,6 +101,21 @@ public class User extends BasicEntity {
 
 
     @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    Set<UserShopRelation> userShopRelation;
+
+    public List<Shop> getManagedShops() {
+        if (userShopRelation == null) {
+            return new ArrayList<>();
+        }
+        return this.userShopRelation.stream().map(UserShopRelation::getShop).collect(Collectors.toList());
+    }
+
+
+/*
+
+    @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     //@JsonBackReference
     @ManyToMany (fetch = FetchType.LAZY)
@@ -108,6 +125,7 @@ public class User extends BasicEntity {
             inverseJoinColumns = @JoinColumn(name = "shop_id", referencedColumnName = "id")
     )
     private List<Shop> shops;
+*/
 
     @Type(type = "json")
     @Column(columnDefinition = "json")

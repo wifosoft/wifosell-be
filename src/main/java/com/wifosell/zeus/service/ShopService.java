@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface ShopService {
-    List<Shop> getManagedShop(Long userId);
+    List<Shop> getCreatedShop(Long userId);
     List<Shop> getRelevantShop(Long userId);
 
     void givePermissionManageShop(Long userId,  Long shopId);
