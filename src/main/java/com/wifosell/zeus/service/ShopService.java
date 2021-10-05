@@ -13,4 +13,6 @@ public interface ShopService {
 
     void givePermissionManageShop(Long userId,  Long shopId);
 
+    //API start
+    Shop getShopInfo(Long shopId);
 }

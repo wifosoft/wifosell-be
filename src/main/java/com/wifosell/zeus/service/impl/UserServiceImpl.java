@@ -22,6 +22,7 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.UserRoleRelationRepository;
 import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
+import com.wifosell.zeus.service.ShopService;
 import com.wifosell.zeus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -51,6 +52,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ShopService shopService;
 
 
     @Autowired
@@ -218,8 +222,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public boolean hasAccessToShop(UserPrincipal currentUser, Long userId) {
-        return false;
+    public boolean hasAccessToShop(UserPrincipal currentUser, Long shopId) {
+        List<Shop> lsShopCanAccess = shopService.getManagedShop(currentUser.getId());
+        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
     }
 
     /**
@@ -231,7 +236,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean hasAccessToUser(UserPrincipal currentUser, Long userId) {
-
         List<User> childs = userRepository.findById(currentUser.getId()).orElseThrow(
                 () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_FOUND))
         ).getChildrenUsers();

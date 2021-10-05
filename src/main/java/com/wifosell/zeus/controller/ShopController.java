@@ -1,5 +1,7 @@
 package com.wifosell.zeus.controller;
 
+import com.wifosell.zeus.annotation.PreAuthorizeAccessToShop;
+import com.wifosell.zeus.annotation.PreAuthorizeAccessToUser;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.shop.Shop;
@@ -13,10 +15,8 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
@@ -27,37 +27,54 @@ public class ShopController {
     @Autowired
     ShopService shopService;
 
+    //Begin API
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GApiResponse> getShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id){
-        return ResponseEntity.ok(GApiResponse.success("Shop Info" + id.toString()));
+    /**
+     * Lấy thông tin toàn bộ cửa hàng trong chuỗi
+     *
+     * @param userPrincipal
+     * @return
+     */
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/getRelevantShop")
+    public ResponseEntity<GApiResponse<List<Shop>>> getRelevantShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
+        List<Shop> shops = shopService.getRelevantShop(userPrincipal.getId());
+        return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
     }
-    
+
+    //End API
+
+    /**
+     * API xem thông tin cửa hàng
+     *
+     * @param userPrincipal
+     * @param shopId
+     * @return
+     */
+    @PreAuthorizeAccessToShop
+    @GetMapping("/{shopId}")
+    public ResponseEntity<GApiResponse> getShopInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+        Shop shop = shopService.getShopInfo(shopId);
+        return ResponseEntity.ok(GApiResponse.success(shop));
+    }
+
     @GetMapping("/{id}/update")
-    public ResponseEntity<GApiResponse> updateShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id){
+    public ResponseEntity<GApiResponse> updateShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {
         return ResponseEntity.ok(GApiResponse.success("Update Shop Info by id: " + id.toString()));
     }
 
     @GetMapping("/{id}/delete")
-    public ResponseEntity<GApiResponse> deleteShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id){
+    public ResponseEntity<GApiResponse> deleteShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {
         return ResponseEntity.ok(GApiResponse.success("Delete shop by id " + id.toString()));
     }
+
     /*
      *  Lấy danh sách shop có quyền quản lý
      */
     @GetMapping("/getManagedShop")
-    public ResponseEntity<GApiResponse> getManagedShop(@CurrentUser UserPrincipal userPrincipal)
-    {
+    public ResponseEntity<GApiResponse> getManagedShop(@CurrentUser UserPrincipal userPrincipal) {
         List<Shop> shops = shopService.getManagedShop(userPrincipal.getId());
-        return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
-    }
-
-    /*
-        API lấy toàn bộ shop trong chuỗi cửa hàng
-     */
-    @GetMapping("/getRelevantShop")
-    public ResponseEntity<GApiResponse<List<Shop>>> getRelevantShop(@CurrentUser UserPrincipal userPrincipal) {
-        List<Shop> shops = shopService.getRelevantShop(userPrincipal.getId());
         return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
     }
 
@@ -72,12 +89,12 @@ public class ShopController {
             @ApiResponse(code = 500, message = "Internal error")
     })
     /*
-        * Cấp quyền quản lý shop trong chuỗi cho 1 tài khoản con
-        * Chỉ quản lý mới được thêm shop cho 1 tài khoản trong chuỗi
+     * Cấp quyền quản lý shop trong chuỗi cho 1 tài khoản con
+     * Chỉ quản lý mới được thêm shop cho 1 tài khoản trong chuỗi
      */
     @GetMapping("/givePermissionManageShop")
     public ResponseEntity<GApiResponse> givePermissionManageShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestParam("userId") Long userId, @RequestParam("shopId") Long shopId) {
-        if(userPrincipal.getParent()  != null ){
+        if (userPrincipal.getParent() != null) {
             //Không cho phép truy cập nếu không phải là tổng quản lý
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
         }
@@ -85,8 +102,6 @@ public class ShopController {
         shopService.givePermissionManageShop(userId, shopId);
         return new ResponseEntity<>(GApiResponse.success("OK"), HttpStatus.OK);
     }
-
-
 
 
 }

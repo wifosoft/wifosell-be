@@ -1,7 +1,6 @@
 package com.wifosell.zeus;
 
 import com.wifosell.zeus.constant.DefaultUserPermission;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
@@ -11,7 +10,6 @@ import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
-import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +27,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -98,7 +95,7 @@ public class ZeusApplication implements CommandLineRunner {
         roleRepository.saveAll(roles);
 
         String password = encoder().encode("admin123");
-        User admin_user = User.builder()
+        User adminUser = User.builder()
                 .username("admin")
                 .password(password)
                 .email("admin@wifosoft.com")
@@ -108,7 +105,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .phone("0982259245")
                 .build();
-        User admin_user_1 = User.builder()
+        User adminUser1 = User.builder()
                 .username("admin1")
                 .password(password)
                 .email("admin1@wifosoft.com")
@@ -128,7 +125,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .lastName("An 1")
                 .address("Đường Nguyễn Văn Cừ, quận 5, thành phố Hồ Chí Minh")
                 .phone("0982259246")
-                .parent(admin_user)
+                .parent(adminUser)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
@@ -140,19 +137,18 @@ public class ZeusApplication implements CommandLineRunner {
                 .lastName("Thứ 2")
                 .address("Đường Trần Hưng Đạo, Quận Tân Phú, Thành Phố Hồ Chí Min")
                 .phone("0982259247")
-                .parent(admin_user)
+                .parent(adminUser)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
 
-        List<User> users = new ArrayList<User>();
-        users.add(admin_user);
+        List<User> users = new ArrayList<>();
+        users.add(adminUser);
         users.add(manager1);
         users.add(manager2);
-        users.add(admin_user_1);
+        users.add(adminUser1);
 
         users.forEach(e -> {
-            List<Role> userRole = new ArrayList<>();
 
 
             entityManager.persist(e);
@@ -173,23 +169,23 @@ public class ZeusApplication implements CommandLineRunner {
                 .address("Đông Hưng Thái Bình")
                 .phone("123123")
                 .businessLine("Mỹ phẩm")
-                .generalManager(admin_user).build();
+                .generalManager(adminUser).build();
         Shop shop2 = Shop.builder()
                 .name("Cửa hàng 2")
                 .shortName("CH2")
                 .address("Quận 5, Hồ Chí Minh")
                 .phone("123123")
                 .businessLine("Mỹ phẩm")
-                .generalManager(admin_user).build();
+                .generalManager(adminUser).build();
 
         List<Shop> shops = new ArrayList<>();
         shops.add(shop1);
         shops.add(shop2);
         shopRepository.saveAll(shops);
 
-        admin_user = userRepository.findById(admin_user.getId()).orElseThrow();
-        admin_user.setShops(shops);
-        userRepository.save(admin_user);
+        adminUser = userRepository.findById(adminUser.getId()).orElseThrow();
+        adminUser.setShops(shops);
+        userRepository.save(adminUser);
     }
 
 

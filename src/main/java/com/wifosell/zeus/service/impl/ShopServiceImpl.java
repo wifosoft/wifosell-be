@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.logging.Logger;
 
-@Service
+@Service("ShopService")
 public class ShopServiceImpl implements ShopService {
     Logger logger = Logger.getLogger(ShopServiceImpl.class.getName());
 
@@ -29,6 +29,9 @@ public class ShopServiceImpl implements ShopService {
 
     @PersistenceContext
     private EntityManager em;
+
+
+
 
     @Override
     public List<Shop> getManagedShop(Long userId) {
@@ -89,5 +92,15 @@ public class ShopServiceImpl implements ShopService {
         currentShopOfUser.add( shopNeedToAssign );
         userNeedToAdd.setShops(currentShopOfUser);
         userRepository.save(userNeedToAdd);
+    }
+
+    /**
+     * API lấy thông tin cửa hàng
+     * @param shopId
+     * @return
+     */
+    @Override
+    public Shop getShopInfo(Long shopId) {
+        return shopRepository.getShopById(shopId);
     }
 }
