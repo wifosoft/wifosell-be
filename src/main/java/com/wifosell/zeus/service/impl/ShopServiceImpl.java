@@ -5,6 +5,7 @@ import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
+import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.ShopService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service("ShopService")
@@ -102,5 +104,25 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Shop getShopInfo(Long shopId) {
         return shopRepository.getShopById(shopId);
+    }
+
+    /**
+     * API thêm cửa hàng mới
+     * @param shopRequest
+     * @return
+     */
+    @Override
+    public Shop addShop(ShopRequest shopRequest, Long userId) {
+        User parentUser = userRepository.getUserById(userId);
+        Shop shop = new Shop();
+        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        shop.setGeneralManager(parentUser);
+        shop  = shopRepository.save(shop);
+        return shop;
     }
 }

@@ -8,6 +8,7 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ShopService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -43,7 +45,7 @@ public class ShopController {
         return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
     }
 
-    //End API
+
 
     /**
      * API xem thông tin cửa hàng
@@ -58,6 +60,21 @@ public class ShopController {
         Shop shop = shopService.getShopInfo(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
+
+    /**
+     * [WFSLL-63] Thêm cửa hàng mới
+     * @param userPrincipal
+     * @return
+     */
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("")
+    public ResponseEntity<GApiResponse> addShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestBody ShopRequest shopRequest){
+        Shop shop = shopService.addShop(shopRequest, userPrincipal.getId());
+        return ResponseEntity.ok(GApiResponse.success(shop));
+    }
+
+    //End API
+
 
     @GetMapping("/{id}/update")
     public ResponseEntity<GApiResponse> updateShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {
