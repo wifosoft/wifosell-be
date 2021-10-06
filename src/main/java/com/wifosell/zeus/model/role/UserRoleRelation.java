@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wifosell.zeus.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.CodePointLength;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
@@ -44,5 +43,4 @@ public class UserRoleRelation {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-
 }
