@@ -124,6 +124,12 @@ public class ShopController {
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
+    /**
+     * Lấy danh sách nhân viên của 1 cửa hàng
+     * @param userPrincipal
+     * @param shopId
+     * @return
+     */
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/getListStaff")
     public ResponseEntity<GApiResponse> getListStaff(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId) {
