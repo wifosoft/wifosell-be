@@ -105,6 +105,7 @@ function opt_commit() {
         done
         echo -en "${LCYAN}- Commit message: ${RESTORE}"
         read _ipt_commit_message
+
         GITHUB_JIRA_COMMIT="git commit -m \"[${JIRA_TASK_MODULE}] ${JIRA_ID} #${JIRA_TASK_TRANSITION} ${_ipt_commit_message}\""
         #commit
         echo " GIT >>  $GITHUB_JIRA_COMMIT"
