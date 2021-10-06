@@ -82,9 +82,9 @@ function opt_commit() {
         read _ipt_commit_message
 
 
-        GITHUB_JIRA_COMMIT=$(git commit -m "[$JIRA_TASK_MODULE] $JIRA_ID #${_ipt_transition} ${_ipt_commit_message}")
+        GITHUB_JIRA_COMMIT="$(git commit -m "[$JIRA_TASK_MODULE] $JIRA_ID #${_ipt_transition} ${_ipt_commit_message}")"
         #commit
-        echo $GITHUB_JIRA_COMMIT
+        echo "$GITHUB_JIRA_COMMIT"
         JIRA_ID=""
 
       else
