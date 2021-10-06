@@ -7,11 +7,12 @@ import com.wifosell.zeus.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.CodePointLength;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-
+@ApiIgnore
 @Getter
 @Setter
 @Entity

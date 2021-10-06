@@ -7,9 +7,12 @@ import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 
+
+@ApiIgnore
 @Getter
 @Setter
 @Entity

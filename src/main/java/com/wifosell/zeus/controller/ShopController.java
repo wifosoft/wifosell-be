@@ -101,7 +101,7 @@ public class ShopController {
      */
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/deActiveShop")
-    public ResponseEntity<GApiResponse> deActivateShop(@CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+    public ResponseEntity<GApiResponse> deActivateShop( @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.deActiveShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
@@ -115,7 +115,8 @@ public class ShopController {
      */
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/activeShop")
-    public ResponseEntity<GApiResponse> activeShop(@CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+    public ResponseEntity<GApiResponse> activeShop(@ApiIgnore
+                                                       @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.activeShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
@@ -128,7 +129,7 @@ public class ShopController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/getCreatedShop")
-    public ResponseEntity<GApiResponse> getCreatedShop(@CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<GApiResponse> getCreatedShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal) {
         List<Shop> shops = shopService.getCreatedShop(userPrincipal.getId());
         return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
     }
