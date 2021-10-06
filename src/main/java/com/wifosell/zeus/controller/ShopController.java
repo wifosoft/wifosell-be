@@ -94,15 +94,30 @@ public class ShopController {
     }
 
     /**
-     *
+     * Ngừng kinh doanh 1 shop
      * @param userPrincipal
-     * @param id
+     * @param shopId
      * @return
      */
     @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{id}/delete")
-    public ResponseEntity<GApiResponse> deleteShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {
-        return ResponseEntity.ok(GApiResponse.success("Delete shop by id " + id.toString()));
+    @GetMapping("/{shopId}/deActiveShop")
+    public ResponseEntity<GApiResponse> deActivateShop(@CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+        Shop shop = shopService.deActiveShop(shopId);
+        return ResponseEntity.ok(GApiResponse.success(shop));
+    }
+
+
+    /**
+     * Ngừng kinh doanh 1 shop
+     * @param userPrincipal
+     * @param shopId
+     * @return
+     */
+    @PreAuthorizeAccessGeneralManagerToShop
+    @GetMapping("/{shopId}/activeShop")
+    public ResponseEntity<GApiResponse> activeShop(@CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+        Shop shop = shopService.activeShop(shopId);
+        return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
 
@@ -111,6 +126,7 @@ public class ShopController {
     /*
      *  Lấy danh sách shop có quyền quản lý
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/getCreatedShop")
     public ResponseEntity<GApiResponse> getCreatedShop(@CurrentUser UserPrincipal userPrincipal) {
         List<Shop> shops = shopService.getCreatedShop(userPrincipal.getId());

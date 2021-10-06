@@ -45,8 +45,8 @@ public class ShopServiceImpl implements ShopService {
 
 
     /**
-         Lấy toàn bộ shop cha tạo ra
-         */
+     * Lấy toàn bộ shop cha tạo ra
+     */
     @Override
     public List<Shop> getRelevantShop(Long userId) {
         User currentUser = userRepository.getById(userId);
@@ -61,7 +61,8 @@ public class ShopServiceImpl implements ShopService {
     }
 
     /**
-     *  Danh sách shop quản lý bởi userId
+     * Danh sách shop quản lý bởi userId
+     *
      * @param userId
      * @return
      */
@@ -74,6 +75,7 @@ public class ShopServiceImpl implements ShopService {
 
     /**
      * Kiểm cha user có thể assign vào shop
+     *
      * @param userId
      * @param shopId
      * @return
@@ -157,5 +159,19 @@ public class ShopServiceImpl implements ShopService {
         Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
         shop = shopRepository.save(shop);
         return shop;
+    }
+
+    @Override
+    public Shop deActiveShop(Long shopId) {
+        Shop shop = shopRepository.getShopById(shopId);
+        shop.setIsActive(false);
+        return shopRepository.save(shop);
+    }
+
+    @Override
+    public Shop activeShop(Long shopId) {
+        Shop shop = shopRepository.getShopById(shopId);
+        shop.setIsActive(true);
+        return shopRepository.save(shop);
     }
 }

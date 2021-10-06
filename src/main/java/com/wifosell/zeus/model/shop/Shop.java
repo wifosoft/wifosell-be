@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.audit.DateAudit;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.user.User;
@@ -28,7 +29,7 @@ import java.util.Set;
 @Table(
         name = "shops",
         uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
-public class Shop extends DateAudit {
+public class Shop extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

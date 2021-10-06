@@ -187,7 +187,9 @@ function opt_commit() {
     "4" | "4 ")
       git push
       ;;
-
+    "0")
+      break
+      ;;
     *)
       echo -en "- ${LRED}invalid answer, please try again ${RESTORE}"
       echo -e
