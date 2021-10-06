@@ -25,7 +25,9 @@ import java.util.Set;
 @ToString
 @Builder
 @AllArgsConstructor
-@Table(name = "shops")
+@Table(
+        name = "shops",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
 public class Shop extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
