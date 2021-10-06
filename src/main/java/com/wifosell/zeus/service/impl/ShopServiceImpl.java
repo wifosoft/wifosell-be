@@ -43,7 +43,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public List<Shop> getCreatedShop(Long userId) {
         User currentUser = userRepository.getById(userId);
-        return currentUser.getManagedShops();
+        return currentUser.getListCreatedShops();
     }
 
     /*

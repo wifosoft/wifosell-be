@@ -99,12 +99,16 @@ public class User extends BasicEntity {
     @JsonManagedReference
     Set<UserRoleRelation> userRoleRelation;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager", fetch = FetchType.LAZY)
+    List<Shop> listCreatedShops;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    //@JsonManagedReference
     Set<UserShopRelation> userShopRelation;
 
+    @JsonIgnore
     public List<Shop> getManagedShops() {
         if (userShopRelation == null) {
             return new ArrayList<>();

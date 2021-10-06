@@ -88,7 +88,7 @@ public class ShopController {
      *  Lấy danh sách shop có quyền quản lý
      */
     @GetMapping("/getCreatedShop")
-    public ResponseEntity<GApiResponse> getManagedShop(@CurrentUser UserPrincipal userPrincipal) {
+    public ResponseEntity<GApiResponse> getCreatedShop(@CurrentUser UserPrincipal userPrincipal) {
         List<Shop> shops = shopService.getCreatedShop(userPrincipal.getId());
         return new ResponseEntity<>(GApiResponse.success(shops), HttpStatus.OK);
     }
