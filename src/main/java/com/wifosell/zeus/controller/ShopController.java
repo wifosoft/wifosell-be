@@ -44,7 +44,6 @@ public class ShopController {
     }
 
 
-
     /**
      * API xem thông tin cửa hàng
      *
@@ -61,18 +60,21 @@ public class ShopController {
 
     /**
      * [WFSLL-63] Thêm cửa hàng mới
+     *
      * @param userPrincipal
      * @return
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse> addShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestBody ShopRequest shopRequest){
+    public ResponseEntity<GApiResponse> addShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestBody ShopRequest shopRequest) {
+        if (userPrincipal.getParent() != null) {
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SHOP_ADD_PERMISSION_BY_CHILD_USER));
+        }
         Shop shop = shopService.addShop(shopRequest, userPrincipal.getId());
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
     //End API
-
 
     @GetMapping("/{id}/update")
     public ResponseEntity<GApiResponse> updateShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {

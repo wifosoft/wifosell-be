@@ -17,7 +17,6 @@ public enum EAppExceptionCode {
     USER_VERIFIED_PASSWORD_INCORRECT(100006),
 
 
-
     //permission
     PERMISSION_DENIED(400001),
     PERMISSION_NOT_FOUND(400002),
@@ -25,7 +24,8 @@ public enum EAppExceptionCode {
     ROLE_NOT_FOUND(500001),
     //shop
     SHOP_NOT_FOUND(200001),
-    SHOP_MANAGED_BY_THIS_USER(200002);
+    SHOP_MANAGED_BY_THIS_USER(200002),
+    SHOP_ADD_PERMISSION_BY_CHILD_USER(200003);
 
 
     private final int value;
