@@ -11,6 +11,7 @@ import java.util.List;
 public interface ShopService {
     List<Shop> getCreatedShop(Long userId);
     List<Shop> getRelevantShop(Long userId);
+    List<Shop> getCanAccessShop(Long userId);
 
     void givePermissionManageShop(Long userId,  Long shopId);
 
@@ -18,4 +19,6 @@ public interface ShopService {
     Shop getShopInfo(Long shopId);
 
     Shop addShop(ShopRequest shopRequest, Long userId);
+    Shop editShop(Long shopId ,ShopRequest shopRequest);
+
 }

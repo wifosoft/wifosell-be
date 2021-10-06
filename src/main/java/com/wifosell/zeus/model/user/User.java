@@ -109,7 +109,7 @@ public class User extends BasicEntity {
     Set<UserShopRelation> userShopRelation;
 
     @JsonIgnore
-    public List<Shop> getManagedShops() {
+    public List<Shop> getAccessShops() {
         if (userShopRelation == null) {
             return new ArrayList<>();
         }

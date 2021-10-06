@@ -2,7 +2,6 @@ package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
-import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.user.User;
@@ -38,33 +37,46 @@ public class ShopServiceImpl implements ShopService {
     private EntityManager em;
 
 
-
-
     @Override
     public List<Shop> getCreatedShop(Long userId) {
         User currentUser = userRepository.getById(userId);
         return currentUser.getListCreatedShops();
     }
 
-    /*
-         Lấy toàn bộ shop liên quan
+
+    /**
+         Lấy toàn bộ shop cha tạo ra
          */
     @Override
     public List<Shop> getRelevantShop(Long userId) {
         User currentUser = userRepository.getById(userId);
         if (currentUser.isRoot()) {
             //nếu user là tài khoản root thì lấy luôn
-            return currentUser.getManagedShops();
+            return currentUser.getListCreatedShops();
         } else {
             //Ngược lại lấy tài khoản parent
             User parentUser = userRepository.getUserByName(currentUser.getParent().getUsername());
-            return parentUser.getManagedShops();
+            return parentUser.getListCreatedShops();
         }
     }
 
+    /**
+     *  Danh sách shop quản lý bởi userId
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<Shop> getCanAccessShop(Long userId) {
+        User currentUser = userRepository.getById(userId);
+        return currentUser.getAccessShops();
+    }
 
-    /*
-     * Kiêm tra tài khoản có nằm trong cùng hệ thống cửa hàng hay không.
+
+    /**
+     * Kiểm cha user có thể assign vào shop
+     * @param userId
+     * @param shopId
+     * @return
      */
     public boolean checkUserCanAssignToShop(Long userId, Long shopId) {
         List<Shop> shops = this.getRelevantShop(userId);
@@ -76,6 +88,7 @@ public class ShopServiceImpl implements ShopService {
         }
         return false;
     }
+
 
     @Transactional
     @Override
@@ -103,6 +116,7 @@ public class ShopServiceImpl implements ShopService {
 
     /**
      * API lấy thông tin cửa hàng
+     *
      * @param shopId
      * @return
      */
@@ -113,6 +127,7 @@ public class ShopServiceImpl implements ShopService {
 
     /**
      * API thêm cửa hàng mới
+     *
      * @param shopRequest
      * @return
      */
@@ -127,7 +142,20 @@ public class ShopServiceImpl implements ShopService {
         Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
         Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
         shop.setGeneralManager(parentUser);
-        shop  = shopRepository.save(shop);
+        shop = shopRepository.save(shop);
+        return shop;
+    }
+
+    @Override
+    public Shop editShop(Long shopId, ShopRequest shopRequest) {
+        Shop shop = shopRepository.getShopById(shopId);
+        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        shop = shopRepository.save(shop);
         return shop;
     }
 }

@@ -218,10 +218,39 @@ public class UserServiceImpl implements UserService {
         return user1;
     }
 
+    /**
+     * Kiểm tra quyền truy cập : là tài khoản GeneralManager của shopId  (tạo ra shopId)
+     * @param currentUser
+     * @param shopId
+     * @return
+     */
+    @Override
+    public boolean hasAccessGeneralManagerToShop(UserPrincipal currentUser, Long shopId) {
+        List<Shop> lsShopCanAccess = shopService.getCreatedShop(currentUser.getId());
+        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+    }
 
+    /**
+     * Kiểm tra có quyền truy cập vào shop X
+     * @param currentUser
+     * @param shopId
+     * @return
+     */
     @Override
     public boolean hasAccessToShop(UserPrincipal currentUser, Long shopId) {
-        List<Shop> lsShopCanAccess = shopService.getCreatedShop(currentUser.getId());
+        List<Shop> lsShopCanAccess = shopService.getCanAccessShop(currentUser.getId());
+        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+    }
+
+    /**
+     * Kiểm tra có quyền truy cập vào danh sách shop của tài khoản cha
+     * @param currentUser
+     * @param shopId
+     * @return
+     */
+    @Override
+    public boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId) {
+        List<Shop> lsShopCanAccess = shopService.getRelevantShop(currentUser.getId());
         return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
     }
 
@@ -251,7 +280,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Shop> getListShopManage(UserPrincipal userPrincipal) {
         User currentUser = userRepository.getUser(userPrincipal);
-        return currentUser.getManagedShops();
+        return currentUser.getAccessShops();
     }
 
     @Override

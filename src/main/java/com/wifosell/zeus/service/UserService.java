@@ -28,7 +28,9 @@ public interface UserService {
 
     User addChildAccount(Long parentId, RegisterRequest registerRequest);
 
+    boolean hasAccessGeneralManagerToShop(UserPrincipal currentUser, Long shopId);
     boolean hasAccessToShop(UserPrincipal currentUser, Long shopId);
+    boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId);
     boolean hasAccessToUser( UserPrincipal currentUser, Long userId);
 
     GApiResponse<List<User>> getAllChildAccounts(UserPrincipal currentUser);

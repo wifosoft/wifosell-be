@@ -1,5 +1,6 @@
 package com.wifosell.zeus.controller;
 
+import com.wifosell.zeus.annotation.PreAuthorizeAccessGeneralManagerToShop;
 import com.wifosell.zeus.annotation.PreAuthorizeAccessToShop;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
@@ -19,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.PostRemove;
 import java.util.List;
 
 @RestController
@@ -74,17 +76,37 @@ public class ShopController {
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
-    //End API
+    //[WFSLL-61]
 
-    @GetMapping("/{id}/update")
-    public ResponseEntity<GApiResponse> updateShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {
-        return ResponseEntity.ok(GApiResponse.success("Update Shop Info by id: " + id.toString()));
+    /**
+     * [WFSLL-61] Cập nhật thông tin shop
+     * Chỉ tài khoản GM mới access vào route này.
+     * @param userPrincipal
+     * @param shopId
+     * @param shopRequest
+     * @return
+     */
+    @PreAuthorizeAccessGeneralManagerToShop
+    @PostMapping("/{shopId}/update")
+    public ResponseEntity<GApiResponse> editShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestBody ShopRequest shopRequest) {
+        Shop shop = shopService.editShop(shopId, shopRequest);
+        return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
+    /**
+     *
+     * @param userPrincipal
+     * @param id
+     * @return
+     */
+    @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{id}/delete")
     public ResponseEntity<GApiResponse> deleteShopInfo(@CurrentUser UserPrincipal userPrincipal, @RequestParam("id") Long id) {
         return ResponseEntity.ok(GApiResponse.success("Delete shop by id " + id.toString()));
     }
+
+
+    //End API
 
     /*
      *  Lấy danh sách shop có quyền quản lý
