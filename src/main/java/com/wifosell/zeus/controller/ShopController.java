@@ -81,6 +81,7 @@ public class ShopController {
     /**
      * [WFSLL-61] Cập nhật thông tin shop
      * Chỉ tài khoản GM mới access vào route này.
+     *
      * @param userPrincipal
      * @param shopId
      * @param shopRequest
@@ -95,13 +96,14 @@ public class ShopController {
 
     /**
      * Ngừng kinh doanh 1 shop
+     *
      * @param userPrincipal
      * @param shopId
      * @return
      */
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/deActiveShop")
-    public ResponseEntity<GApiResponse> deActivateShop( @ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+    public ResponseEntity<GApiResponse> deActivateShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.deActiveShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
@@ -109,6 +111,7 @@ public class ShopController {
 
     /**
      * Ngừng kinh doanh 1 shop
+     *
      * @param userPrincipal
      * @param shopId
      * @return
@@ -116,11 +119,17 @@ public class ShopController {
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/activeShop")
     public ResponseEntity<GApiResponse> activeShop(@ApiIgnore
-                                                       @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+                                                   @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.activeShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
+    @PreAuthorizeAccessGeneralManagerToShop
+    @GetMapping("/{shopId}/getListStaff")
+    public ResponseEntity<GApiResponse> getListStaff(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId) {
+        List<User> listStaff = shopService.getListStaffOfShop(shopId);
+        return ResponseEntity.ok(GApiResponse.success(listStaff));
+    }
 
     //End API
 

@@ -19,8 +19,10 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
-
+import java.util.stream.Collectors;
+@Transactional
 @Service("ShopService")
 public class ShopServiceImpl implements ShopService {
     Logger logger = Logger.getLogger(ShopServiceImpl.class.getName());
@@ -173,5 +175,19 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.getShopById(shopId);
         shop.setIsActive(true);
         return shopRepository.save(shop);
+    }
+
+    /**
+     * Lấy danh sách nhân viên có quyền truy cập vào có có id: shopId
+     * @param shopId
+     * @return
+     */
+    
+    @Override
+    public List<User> getListStaffOfShop(Long shopId) {
+        Shop shop  = shopRepository.getShopById(shopId);
+        Set<UserShopRelation> userRelation = shop.getUserShopRelation();
+        List<User> users = userRelation.stream().map(e -> e.getUser() ).collect(Collectors.toList());
+        return users;
     }
 }

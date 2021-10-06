@@ -2,6 +2,7 @@ package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.user.User;
@@ -22,7 +23,6 @@ public class UserShopRelation {
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToOne
     @JsonBackReference

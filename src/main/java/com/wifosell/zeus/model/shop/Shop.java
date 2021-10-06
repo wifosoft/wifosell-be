@@ -29,6 +29,7 @@ import java.util.Set;
 @Table(
         name = "shops",
         uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Shop extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,8 +61,8 @@ public class Shop extends BasicEntity {
     private String businessLine;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     //@JsonManagedReference
     Set<UserShopRelation> userShopRelation;
 

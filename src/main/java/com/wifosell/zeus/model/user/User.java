@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @Builder
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -138,7 +139,6 @@ public class User extends BasicEntity {
 
 
     @JsonIgnore
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "parent_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private User parent;
