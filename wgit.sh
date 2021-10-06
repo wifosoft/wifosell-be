@@ -107,6 +107,8 @@ function opt_commit() {
         read _ipt_commit_message
 
         GITHUB_JIRA_COMMIT="git commit -m \"[${JIRA_TASK_MODULE}] ${JIRA_ID} #${JIRA_TASK_TRANSITION} ${_ipt_commit_message}\""
+        GITHUB_JIRA_COMMIT=${GITHUB_JIRA_COMMIT//[^[:ascii:]]/}
+
         #commit
         echo " GIT >>  $GITHUB_JIRA_COMMIT"
         eval $GITHUB_JIRA_COMMIT
