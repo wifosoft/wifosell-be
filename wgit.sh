@@ -25,6 +25,7 @@ WHITE='\033[01;37m'
 
 JIRA_ID=''
 JIRA_TASK_MODULE=''
+JIRA_TASK_TRANSITION=''
 GITHUB_JIRA_COMMIT=''
 function test_colors() {
   echo -e "${GREEN}Hello ${CYAN}THERE${RESTORE} Restored here ${LCYAN}HELLO again ${RED} Red socks aren't sexy ${BLUE} neither are blue ${RESTORE} "
@@ -49,7 +50,7 @@ function opt_commit() {
     echo -en "+ ${GREEN} Git Commit feature ${RESTORE}\n"
     echo -e
     echo -e "\t(1) Commit new task"
-    echo -e "\t(2) Commit transition task"
+    echo -e "\t(2) Push to github"
     echo -e "\t(0) Return"
     echo -n "Please enter your choice:"
 
@@ -59,41 +60,63 @@ function opt_commit() {
     case $choice1 in
     "1" | "1 ")
       clear
-      echo -en "You choose ${LCYAN}[option 1]${RESTORE} to commit new task"
+      echo -en "You choose ${LCYAN}[option 1]${RESTORE} to commit new task: "
       echo -e
       if [ -z "$JIRA_ID" ]; then
         #if JIRA_ID is empty, assign to one
-        echo "JIRA_ID is empty, create new one: "
+        echo -en "${LCYAN}JIRA_ID is empty, create new one: ${RESTORE}"
         read _ipt_jira_id
         JIRA_ID="WFSLL-${_ipt_jira_id}"
         echo -e
         #add all file
         git add .
 
-        echo -e "- Write module: (SHOP/USER/...) for tag [SHOP]"
+        echo -en "${LCYAN}- Write module: (shop, user,...) :${RESTORE}"
         read _ipt_task_module
-        JIRA_TASK_MODULE=_ipt_task_module
+        _ipt_task_module=$(echo $_ipt_task_module | tr 'a-z' 'A-Z')
+        JIRA_TASK_MODULE="${_ipt_task_module}"
 
         #set new_transition
-        echo -e "- Choose transition: (#start-work/#review/#done/#block)"
-        read _ipt_transition
-
-        echo -e "- Commit message: "
+        echo -en "${LCYAN}- Choose transition: (#(1).start-work / #(2). review / #(3). done / #(4). block)${RESTORE} : "
+        while :; do
+          read _ipt_transition
+          case $_ipt_transition in
+          "1" | "1 ")
+            JIRA_TASK_TRANSITION="start-work"
+            break
+            ;;
+          "2")
+            JIRA_TASK_TRANSITION="review"
+            break
+            ;;
+          "3")
+            JIRA_TASK_TRANSITION="done"
+            break
+            ;;
+          "4")
+            JIRA_TASK_TRANSITION="block"
+            break
+            ;;
+          *)
+            echo -en "- ${LRED}invalid answer, please try again ${RESTORE}"
+            echo -e
+            ;;
+          esac
+        done
+        echo -en "${LCYAN}- Commit message: ${RESTORE}"
         read _ipt_commit_message
-
-
-        GITHUB_JIRA_COMMIT="$(git commit -m "[$JIRA_TASK_MODULE] $JIRA_ID #${_ipt_transition} ${_ipt_commit_message}")"
+        GITHUB_JIRA_COMMIT="git commit -m \"[${JIRA_TASK_MODULE}] ${JIRA_ID} #${JIRA_TASK_TRANSITION} ${_ipt_commit_message}\""
         #commit
-        echo "$GITHUB_JIRA_COMMIT"
+        echo " GIT >>  $GITHUB_JIRA_COMMIT"
+        eval $GITHUB_JIRA_COMMIT
         JIRA_ID=""
-
       else
-
         echo "Variable is ok"
       fi
 
       ;;
-    "0" | "0 ")
+    "2" | "2 ")
+      git push
       break
       ;;
 
