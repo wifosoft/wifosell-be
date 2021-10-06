@@ -1,6 +1,7 @@
 #!/bin/bash
 # Author: @snowdence
 # Wifosell Project
+# @2021
 # Set the color variable
 green='\033[0;32m'
 # Clear the color after that
