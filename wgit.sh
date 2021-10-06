@@ -55,18 +55,23 @@ function opt_commit_transition() {
       case $_ipt_transition in
       "1" | "1 ")
         JIRA_TASK_TRANSITION="start-work"
+        break;
         ;;
       "2")
         JIRA_TASK_TRANSITION="review"
+        break;
         ;;
       "3")
         JIRA_TASK_TRANSITION="done"
+        break;
         ;;
       "4")
         JIRA_TASK_TRANSITION="block"
+        break;
         ;;
       "5")
         JIRA_TASK_TRANSITION=""
+        break;
         ;;
       *)
         echo -en "- ${LRED}invalid answer, please try again ${RESTORE}"
