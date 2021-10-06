@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# Author: @snowdence
+# Wifosell Project
 # Set the color variable
 green='\033[0;32m'
 # Clear the color after that
@@ -46,6 +47,9 @@ echo -en "${RESTORE}"
 
 function opt_commit_transition() {
   echo -en "You choose ${LCYAN}[option 2]${RESTORE} to make transition: "
+
+  git add .
+
   if [ -z "$JIRA_ID" ]; then
     echo "No Existed!!!"
   else
@@ -69,7 +73,7 @@ function opt_commit_transition() {
         JIRA_TASK_TRANSITION="block"
         break;
         ;;
-      "5")
+      "0")
         JIRA_TASK_TRANSITION=""
         break;
         ;;
