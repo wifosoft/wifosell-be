@@ -7,6 +7,7 @@ import com.wifosell.zeus.payload.exception.ValidationErrorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,6 +45,18 @@ public class RestControllerExceptionHandler {
         GApiResponse apiResponse = new GApiResponse();
         apiResponse.setSuccess(Boolean.FALSE);
         apiResponse.setMessage(message);
+        return new ResponseEntity<>(apiResponse, status);
+    }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseBody
+    public ResponseEntity<GApiResponse> resolveDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        String message = exception.getMessage();
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        GApiResponse apiResponse = new GApiResponse();
+        apiResponse.setSuccess(Boolean.FALSE);
+        apiResponse.setMessage("Data Integrity ERROR : " +  message);
         return new ResponseEntity<>(apiResponse, status);
     }
 

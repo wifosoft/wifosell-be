@@ -22,16 +22,15 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.UserRoleRelationRepository;
 import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
+import com.wifosell.zeus.service.ShopService;
 import com.wifosell.zeus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,6 +50,9 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ShopService shopService;
 
 
     @Autowired
@@ -216,10 +218,40 @@ public class UserServiceImpl implements UserService {
         return user1;
     }
 
-
+    /**
+     * Kiểm tra quyền truy cập : là tài khoản GeneralManager của shopId  (tạo ra shopId)
+     * @param currentUser
+     * @param shopId
+     * @return
+     */
     @Override
-    public boolean hasAccessToShop(UserPrincipal currentUser, Long userId) {
-        return false;
+    public boolean hasAccessGeneralManagerToShop(UserPrincipal currentUser, Long shopId) {
+        List<Shop> lsShopCanAccess = shopService.getCreatedShop(currentUser.getId());
+        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+    }
+
+    /**
+     * Kiểm tra có quyền truy cập vào shop X
+     * @param currentUser
+     * @param shopId
+     * @return
+     */
+    @Override
+    public boolean hasAccessToShop(UserPrincipal currentUser, Long shopId) {
+        List<Shop> lsShopCanAccess = shopService.getCanAccessShop(currentUser.getId());
+        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+    }
+
+    /**
+     * Kiểm tra có quyền truy cập vào danh sách shop của tài khoản cha
+     * @param currentUser
+     * @param shopId
+     * @return
+     */
+    @Override
+    public boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId) {
+        List<Shop> lsShopCanAccess = shopService.getRelevantShop(currentUser.getId());
+        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
     }
 
     /**
@@ -231,7 +263,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean hasAccessToUser(UserPrincipal currentUser, Long userId) {
-
         List<User> childs = userRepository.findById(currentUser.getId()).orElseThrow(
                 () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_FOUND))
         ).getChildrenUsers();
@@ -249,7 +280,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Shop> getListShopManage(UserPrincipal userPrincipal) {
         User currentUser = userRepository.getUser(userPrincipal);
-        return currentUser.getShops();
+        return currentUser.getAccessShops();
     }
 
     @Override
