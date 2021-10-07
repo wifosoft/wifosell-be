@@ -10,6 +10,8 @@ public interface WarehouseService {
     List<Warehouse> getAllWarehouse();
 
     Warehouse addWarehouse(Long userId, WarehouseRequest warehouseRequest);
+    Warehouse getWarehouse(Long warehouseId);
+    Warehouse updateWarehouse(Long warehouseId, WarehouseRequest warehouseRequest);
 
     //Lấy toàn bộ warehouse trong chuỗi cửa hàng
 

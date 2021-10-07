@@ -6,10 +6,14 @@ import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
+import io.swagger.models.Response;
+import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.lang.annotation.Repeatable;
 
 @RestController
 @RequestMapping("/api/warehouses")
@@ -27,8 +31,21 @@ public class WarehouseController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
     public ResponseEntity<GApiResponse> addWarehouse(@CurrentUser UserPrincipal userPrincipal, @RequestBody WarehouseRequest warehouseRequest) {
-        Warehouse warehouse  = warehouseService.addWarehouse (userPrincipal.getId(), warehouseRequest);
+        Warehouse warehouse = warehouseService.addWarehouse(userPrincipal.getId(), warehouseRequest);
         return ResponseEntity.ok(GApiResponse.success(warehouse));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{warehouseId}")
+    public ResponseEntity<GApiResponse> getWarehouse(@CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "warehouseId") Long warehouseId) {
+
+        return ResponseEntity.ok(GApiResponse.success(warehouseService.getWarehouse(warehouseId)));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{warehouseId}/update")
+    public ResponseEntity<GApiResponse> updateWarehouse(@CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "warehouseId") Long warehouseId, @RequestBody WarehouseRequest warehouseRequest) {
+        return ResponseEntity.ok(GApiResponse.success(warehouseService.updateWarehouse(warehouseId, warehouseRequest)));
     }
 
     //
