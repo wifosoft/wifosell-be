@@ -208,7 +208,27 @@ public class ZeusApplication implements CommandLineRunner {
                 .shortName("KQ1")
                 .description("Kho quần áo quận 1")
                 .generalManager(manager1).build();
+
+        Warehouse warehouse2 = Warehouse.builder()
+                .name("Kho thứ 2")
+                .address("Quận 2 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ2")
+                .description("Kho quần áo quận 2")
+                .generalManager(manager1).build();
+
+        Warehouse warehouse3 = Warehouse.builder()
+                .name("Kho thứ 3")
+                .address("Quận 3 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ3")
+                .description("Kho quần áo quận 3")
+                .generalManager(manager2).build();
+
+
         warehouseRepository.save(warehouse);
+        warehouseRepository.save(warehouse2);
+        warehouseRepository.save(warehouse3);
 
 
     }
