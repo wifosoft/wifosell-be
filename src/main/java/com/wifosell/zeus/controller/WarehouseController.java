@@ -48,6 +48,19 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouseService.updateWarehouse(warehouseId, warehouseRequest)));
     }
 
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{warehouseId}/activate")
+    public ResponseEntity<GApiResponse> activateWarehouse(@CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "warehouseId") Long warehouseId) {
+        return ResponseEntity.ok(GApiResponse.success(warehouseService.activateWarehouse(warehouseId)));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{warehouseId}/deActivate")
+    public ResponseEntity<GApiResponse> deActiveWarehouse(@CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "warehouseId") Long warehouseId) {
+        return ResponseEntity.ok(GApiResponse.success(warehouseService.deActivateWarehouse(warehouseId)));
+    }
+
     //
 
 

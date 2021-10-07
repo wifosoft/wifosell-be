@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User deActiveUser(Long userId) {
+    public User deActivateUser(Long userId) {
         User user = userRepository.getUserById(userId);
         if (user.isActive()) {
             userRepository.delete(user);
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User activeUser(Long userId) {
+    public User activateUser(Long userId) {
         User user = userRepository.getUserById(userId);
         if (!user.isActive()) {
             userRepository.recover(user);

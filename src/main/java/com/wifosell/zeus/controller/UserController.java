@@ -1,8 +1,6 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.annotation.PreAuthorizeAccessToUser;
-import com.wifosell.zeus.model.role.Role;
-import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
@@ -16,18 +14,14 @@ import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
 import io.swagger.annotations.*;
-import org.hibernate.hql.spi.ParameterTranslations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -149,9 +143,9 @@ public class UserController {
      * @return
      */
     @PreAuthorizeAccessToUser
-    @GetMapping("/{id}/deactive")
+    @GetMapping("/{id}/deactivate")
     public ResponseEntity<GApiResponse<User>> deActiveUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
-        User user = userService.deActiveUser(userId);
+        User user = userService.deActivateUser(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
 
@@ -163,9 +157,9 @@ public class UserController {
      * @return
      */
     @PreAuthorizeAccessToUser
-    @GetMapping("/{id}/active")
+    @GetMapping("/{id}/activate")
     public ResponseEntity<GApiResponse<User>> activeUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
-        User user = userService.activeUser(userId);
+        User user = userService.activateUser(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
 

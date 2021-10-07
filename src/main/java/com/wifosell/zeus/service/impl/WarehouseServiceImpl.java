@@ -62,4 +62,19 @@ public class WarehouseServiceImpl implements WarehouseService {
         return warehouse;
     }
 
+    @Override
+    public Warehouse activateWarehouse(Long warehouseId) {
+        Warehouse warehouse = warehouseRepository.getWarehouseById( warehouseId);
+        warehouse.setIsActive(true);
+
+        return warehouseRepository.save(warehouse);
+    }
+
+    @Override
+    public Warehouse deActivateWarehouse(Long warehouseId) {
+        Warehouse warehouse = warehouseRepository.getWarehouseById( warehouseId);
+        warehouse.setIsActive(false);
+        return warehouseRepository.save(warehouse);
+    }
+
 }

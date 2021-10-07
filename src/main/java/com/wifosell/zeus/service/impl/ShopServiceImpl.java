@@ -164,14 +164,14 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public Shop deActiveShop(Long shopId) {
+    public Shop deActivateShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         shop.setIsActive(false);
         return shopRepository.save(shop);
     }
 
     @Override
-    public Shop activeShop(Long shopId) {
+    public Shop activateShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         shop.setIsActive(true);
         return shopRepository.save(shop);
