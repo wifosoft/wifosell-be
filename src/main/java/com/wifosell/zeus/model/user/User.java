@@ -8,6 +8,7 @@ import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
@@ -99,13 +100,21 @@ public class User extends BasicEntity {
     @JsonManagedReference
     Set<UserRoleRelation> userRoleRelation;
 
+    //Danh sách shop tạo bởi GM
     @JsonIgnore
     @OneToMany(mappedBy = "generalManager", fetch = FetchType.LAZY)
     List<Shop> listCreatedShops;
 
+    //Danh sách warehouse tạo bởi GM
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager", fetch = FetchType.LAZY)
+    List<Warehouse> listCreatedWarehouses;
+
+
+    //Quan hệ giữa shop và user. User có quyền quản lý shop X
+    //@JsonManagedReference
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    //@JsonManagedReference
     Set<UserShopRelation> userShopRelation;
 
     @JsonIgnore

@@ -7,10 +7,8 @@ import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.repository.RoleRepository;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
-import com.wifosell.zeus.repository.UserShopRelationRepository;
+import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +42,10 @@ public class ZeusApplication implements CommandLineRunner {
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    WarehouseRepository warehouseRepository;
+
     @Autowired
     UserShopRelationRepository userShopRelationRepository;
     @Autowired
@@ -198,6 +200,17 @@ public class ZeusApplication implements CommandLineRunner {
         userShopRelation2.setUser(adminUser);
         userShopRelationRepository.save(userShopRelation1);
         userShopRelationRepository.save(userShopRelation2);
+
+        Warehouse warehouse = Warehouse.builder()
+                .name("Kho thứ 1")
+                .address("Quận 1 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ1")
+                .description("Kho quần áo quận 1")
+                .generalManager(manager1).build();
+        warehouseRepository.save(warehouse);
+
+
     }
 
 

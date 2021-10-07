@@ -22,6 +22,9 @@ public enum EAppExceptionCode {
     PERMISSION_NOT_FOUND(400002),
     //Role
     ROLE_NOT_FOUND(500001),
+
+    //Warehouse
+    WAREHOUSE_NOT_FOUND(600001),
     //shop
     SHOP_NOT_FOUND(200001),
     SHOP_MANAGED_BY_THIS_USER(200002),
