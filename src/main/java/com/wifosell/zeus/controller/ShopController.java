@@ -59,6 +59,8 @@ public class ShopController {
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
+
+
     /**
      * [WFSLL-63] Thêm cửa hàng mới
      *
@@ -135,6 +137,15 @@ public class ShopController {
         List<User> listStaff = shopService.getListStaffOfShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(listStaff));
     }
+
+
+    @PreAuthorizeAccessGeneralManagerToShop
+    @GetMapping("/{shopId}/linkWarehouse")
+    public ResponseEntity<GApiResponse> linkWarehouseToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestParam(name ="warehouseId") Long warehouseId) {
+        shopService.linkWarehouseToShop(userPrincipal.getId(), warehouseId, shopId);
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
 
     //End API
 
