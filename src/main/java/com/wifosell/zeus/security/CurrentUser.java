@@ -13,5 +13,6 @@ import java.lang.annotation.*;
 @Documented
 @NonNull
 @AuthenticationPrincipal
+@ApiIgnore
 public @interface CurrentUser {
 }

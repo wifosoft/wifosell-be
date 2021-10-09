@@ -1,17 +1,16 @@
 package com.wifosell.zeus;
 
 import com.wifosell.zeus.constant.DefaultUserPermission;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
+import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.repository.RoleRepository;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
-import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +28,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -45,6 +43,13 @@ public class ZeusApplication implements CommandLineRunner {
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    WarehouseShopRelationRepository warehouseShopRelationRepository;
+    @Autowired
+    WarehouseRepository warehouseRepository;
+
+    @Autowired
+    UserShopRelationRepository userShopRelationRepository;
     @Autowired
     ShopRepository shopRepository;
     @PersistenceContext
@@ -98,7 +103,7 @@ public class ZeusApplication implements CommandLineRunner {
         roleRepository.saveAll(roles);
 
         String password = encoder().encode("admin123");
-        User admin_user = User.builder()
+        User adminUser = User.builder()
                 .username("admin")
                 .password(password)
                 .email("admin@wifosoft.com")
@@ -108,7 +113,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .phone("0982259245")
                 .build();
-        User admin_user_1 = User.builder()
+        User adminUser1 = User.builder()
                 .username("admin1")
                 .password(password)
                 .email("admin1@wifosoft.com")
@@ -128,7 +133,7 @@ public class ZeusApplication implements CommandLineRunner {
                 .lastName("An 1")
                 .address("Đường Nguyễn Văn Cừ, quận 5, thành phố Hồ Chí Minh")
                 .phone("0982259246")
-                .parent(admin_user)
+                .parent(adminUser)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
@@ -140,19 +145,18 @@ public class ZeusApplication implements CommandLineRunner {
                 .lastName("Thứ 2")
                 .address("Đường Trần Hưng Đạo, Quận Tân Phú, Thành Phố Hồ Chí Min")
                 .phone("0982259247")
-                .parent(admin_user)
+                .parent(adminUser)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
 
-        List<User> users = new ArrayList<User>();
-        users.add(admin_user);
+        List<User> users = new ArrayList<>();
+        users.add(adminUser);
         users.add(manager1);
         users.add(manager2);
-        users.add(admin_user_1);
+        users.add(adminUser1);
 
         users.forEach(e -> {
-            List<Role> userRole = new ArrayList<>();
 
 
             entityManager.persist(e);
@@ -173,23 +177,79 @@ public class ZeusApplication implements CommandLineRunner {
                 .address("Đông Hưng Thái Bình")
                 .phone("123123")
                 .businessLine("Mỹ phẩm")
-                .generalManager(admin_user).build();
+                .generalManager(manager1).build();
         Shop shop2 = Shop.builder()
                 .name("Cửa hàng 2")
                 .shortName("CH2")
                 .address("Quận 5, Hồ Chí Minh")
                 .phone("123123")
                 .businessLine("Mỹ phẩm")
-                .generalManager(admin_user).build();
+                .generalManager(manager2).build();
 
         List<Shop> shops = new ArrayList<>();
         shops.add(shop1);
         shops.add(shop2);
         shopRepository.saveAll(shops);
 
-        admin_user = userRepository.findById(admin_user.getId()).orElseThrow();
-        admin_user.setShops(shops);
-        userRepository.save(admin_user);
+        adminUser = userRepository.findById(adminUser.getId()).orElseThrow();
+        userRepository.save(adminUser);
+
+        UserShopRelation userShopRelation1 = new UserShopRelation();
+        userShopRelation1.setShop(shop1);
+        userShopRelation1.setUser(manager1);
+        UserShopRelation userShopRelation2 = new UserShopRelation();
+        userShopRelation2.setShop(shop2);
+        userShopRelation2.setUser(manager2);
+        userShopRelationRepository.save(userShopRelation1);
+        userShopRelationRepository.save(userShopRelation2);
+
+        Warehouse warehouse1 = Warehouse.builder()
+                .name("Kho thứ 1")
+                .address("Quận 1 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ1")
+                .description("Kho quần áo quận 1")
+                .generalManager(manager1).build();
+
+        Warehouse warehouse2 = Warehouse.builder()
+                .name("Kho thứ 2")
+                .address("Quận 2 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ2")
+                .description("Kho quần áo quận 2")
+                .generalManager(manager1).build();
+
+        Warehouse warehouse3 = Warehouse.builder()
+                .name("Kho thứ 3")
+                .address("Quận 3 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ3")
+                .description("Kho quần áo quận 3")
+                .generalManager(manager2).build();
+
+
+        warehouseRepository.save(warehouse1);
+        warehouseRepository.save(warehouse2);
+        warehouseRepository.save(warehouse3);
+
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop1).warehouse(warehouse1).build()
+        );
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop1).warehouse(warehouse2).build()
+        );
+
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse1).build()
+        );
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse2).build()
+        );
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse3).build()
+        );
+
+
     }
 
 

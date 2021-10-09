@@ -20,16 +20,18 @@ public interface UserService {
     User updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
     void changePassword(Long userId, ChangePasswordRequest changePasswordRequest, boolean flagOld);
 
-    User deActiveUser(Long userId);
-    User activeUser(Long userId);
+    User deActivateUser(Long userId);
+    User activateUser(Long userId);
 
     User changeRole(Long userId, List<String> roles);
     User changePermission(Long userId, List<String> permission);
 
     User addChildAccount(Long parentId, RegisterRequest registerRequest);
 
-    boolean hasAccessToShop(UserPrincipal currentUser, Long userId);
-    boolean hasAccessToUser( UserPrincipal currentUser, Long shopId);
+    boolean hasAccessGeneralManagerToShop(UserPrincipal currentUser, Long shopId);
+    boolean hasAccessToShop(UserPrincipal currentUser, Long shopId);
+    boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId);
+    boolean hasAccessToUser( UserPrincipal currentUser, Long userId);
 
     GApiResponse<List<User>> getAllChildAccounts(UserPrincipal currentUser);
 

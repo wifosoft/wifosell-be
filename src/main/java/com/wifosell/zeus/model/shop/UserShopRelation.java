@@ -1,21 +1,23 @@
-package com.wifosell.zeus.model.role;
+package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+
 
 @ApiIgnore
 @Getter
 @Setter
 @Entity
-public class UserRoleRelation {
+public class UserShopRelation {
     @Id
     @Column(name = "id")
     @JsonIgnore
@@ -23,18 +25,14 @@ public class UserRoleRelation {
     private Long id;
 
     @ManyToOne
-    @JsonManagedReference
-    @JoinColumn(name = "role_id")
-    private Role role;
-
-    @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "createdAt")
-    LocalDateTime createdAt;
-
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
 
     @Override
     public int hashCode() {

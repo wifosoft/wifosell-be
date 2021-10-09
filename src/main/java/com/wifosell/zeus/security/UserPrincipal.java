@@ -3,6 +3,7 @@ package com.wifosell.zeus.security;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import io.swagger.annotations.ApiModel;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,10 +43,11 @@ public class UserPrincipal implements UserDetails {
 
     private User parent;
 
+    private List<Shop> listAccessShop;
     
 
     public UserPrincipal( Long id, String firstName, String lastName, String username, String email, String password, String phone,
-                         Collection<? extends GrantedAuthority> authorities, User parent) {
+                         Collection<? extends GrantedAuthority> authorities, User parent , List<Shop> listAccessShop) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -74,7 +76,7 @@ public class UserPrincipal implements UserDetails {
         User _parent = user.getParent();
 
         return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
-                user.getEmail(), user.getPassword(), user.getPhone(), allPermission, _parent);
+                user.getEmail(), user.getPassword(), user.getPhone(), allPermission, _parent,  user.getAccessShops());
     }
 
     public User getParent() {

@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 import java.util.Set;
 
+@ApiIgnore
 @Entity
 @Data
 @NoArgsConstructor

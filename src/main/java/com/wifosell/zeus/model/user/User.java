@@ -5,9 +5,10 @@ import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.audit.DateAudit;
 import com.wifosell.zeus.model.permission.UserPermission;
-import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApiIgnore
 @EqualsAndHashCode(callSuper = true)
@@ -37,6 +39,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +59,7 @@ public class User extends BasicEntity {
 
     @NotBlank
     @Column(name = "username", unique = true)
-    @Size(min=3,  max = 15)
+    @Size(min = 3, max = 15)
     private String username;
 
     @NotBlank
@@ -72,7 +75,7 @@ public class User extends BasicEntity {
     @Email
     private String email;
 
-    @Size(max= 255)
+    @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
 
@@ -82,7 +85,7 @@ public class User extends BasicEntity {
 
 
     @Column(name = "phone")
-    @Size(max=20)
+    @Size(max = 20)
     private String phone;
 
     /*
@@ -97,6 +100,33 @@ public class User extends BasicEntity {
     @JsonManagedReference
     Set<UserRoleRelation> userRoleRelation;
 
+    //Danh sách shop tạo bởi GM
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager", fetch = FetchType.LAZY)
+    List<Shop> listCreatedShops;
+
+    //Danh sách warehouse tạo bởi GM
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager", fetch = FetchType.LAZY)
+    List<Warehouse> listCreatedWarehouses;
+
+
+    //Quan hệ giữa shop và user. User có quyền quản lý shop X
+    //@JsonManagedReference
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    Set<UserShopRelation> userShopRelation;
+
+    @JsonIgnore
+    public List<Shop> getAccessShops() {
+        if (userShopRelation == null) {
+            return new ArrayList<>();
+        }
+        return this.userShopRelation.stream().map(UserShopRelation::getShop).collect(Collectors.toList());
+    }
+
+
+/*
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -108,6 +138,7 @@ public class User extends BasicEntity {
             inverseJoinColumns = @JoinColumn(name = "shop_id", referencedColumnName = "id")
     )
     private List<Shop> shops;
+*/
 
     @Type(type = "json")
     @Column(columnDefinition = "json")
@@ -116,7 +147,6 @@ public class User extends BasicEntity {
 
 
     @JsonIgnore
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "parent_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     private User parent;

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.audit.DateAudit;
+import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 import org.hibernate.annotations.TypeDef;
@@ -14,6 +16,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @ApiIgnore
 @Entity
@@ -23,8 +26,11 @@ import java.util.List;
 @ToString
 @Builder
 @AllArgsConstructor
-@Table(name = "shops")
-public class Shop extends DateAudit {
+@Table(
+        name = "shops",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+public class Shop extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -55,17 +61,33 @@ public class Shop extends DateAudit {
     private String businessLine;
 
     @JsonIgnore
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    //@JsonManagedReference
+    Set<UserShopRelation> userShopRelation;
+
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    //@JsonManagedReference
+    Set<WarehouseShopRelation> warehouseShopRelations;
+
+
+    @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id" ,referencedColumnName = "id" )
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
+
+
+    /*
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 //    @JsonManagedReference
-    @ManyToMany(mappedBy =  "shops")
-    List<User>  staffOfShop;
-
+    @ManyToMany(mappedBy = "shops")
+    List<User> staffOfShop;
+*/
 
 
 }
