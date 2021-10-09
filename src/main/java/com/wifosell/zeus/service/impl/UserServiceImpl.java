@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User deActiveUser(Long userId) {
+    public User deActivateUser(Long userId) {
         User user = userRepository.getUserById(userId);
         if (user.isActive()) {
             userRepository.delete(user);
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User activeUser(Long userId) {
+    public User activateUser(Long userId) {
         User user = userRepository.getUserById(userId);
         if (!user.isActive()) {
             userRepository.recover(user);
@@ -204,16 +204,6 @@ public class UserServiceImpl implements UserService {
         User user1 = new User(firstName, lastName, username, email, password);
         user1.setAddress(address);
         user1.setParent(parent);
-        parent.setFirstName("Cập nhật tên parent");
-        userRepository.save(parent);
-        userRepository.save(user1);
-        //entityManager.persist(user);
-        if (user1.getUsername().equals("shop1")) {
-            throw new ZeusGlobalException(HttpStatus.OK, "Hello OK");
-            //throw new AppException("Exception");
-        }
-        user1.setAddress("Cap nhat");
-        //userRepository.save(user);
         userRepository.save(user1);
         return user1;
     }

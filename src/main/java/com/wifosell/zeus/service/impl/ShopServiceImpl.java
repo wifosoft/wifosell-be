@@ -4,12 +4,12 @@ import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
+import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
-import com.wifosell.zeus.repository.UserShopRelationRepository;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 @Transactional
 @Service("ShopService")
 public class ShopServiceImpl implements ShopService {
@@ -31,10 +32,16 @@ public class ShopServiceImpl implements ShopService {
     ShopRepository shopRepository;
 
     @Autowired
+    WarehouseShopRelationRepository warehouseShopRelationRepository;
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
     UserShopRelationRepository userShopRelationRepository;
+
+    @Autowired
+    WarehouseRepository warehouseRepository;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -164,30 +171,67 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public Shop deActiveShop(Long shopId) {
+    public Shop deActivateShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         shop.setIsActive(false);
         return shopRepository.save(shop);
     }
 
     @Override
-    public Shop activeShop(Long shopId) {
+    public Shop activateShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         shop.setIsActive(true);
         return shopRepository.save(shop);
     }
 
+    @Override
+    public void linkWarehouseToShop(Long warehouseId, Long shopId) {
+
+        if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
+            //existed
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
+        }
+
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(
+                        shopRepository.getShopById(shopId)
+                ).warehouse(
+                        warehouseRepository.getWarehouseById(warehouseId)
+                ).build()
+        );
+
+    }
+
+    @Override
+    public void linkWarehouseToShop(Long currentUserId, Long warehouseId, Long shopId) {
+        Warehouse warehouse = warehouseRepository.getWarehouseById(warehouseId);
+        Shop shop = shopRepository.getShopById(shopId);
+
+        if (!warehouse.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
+        }
+        if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
+            //existed
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
+        }
+
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop).warehouse(warehouse).build()
+        );
+    }
+
     /**
      * Lấy danh sách nhân viên có quyền truy cập vào có có id: shopId
+     *
      * @param shopId
      * @return
      */
-    
+
     @Override
     public List<User> getListStaffOfShop(Long shopId) {
-        Shop shop  = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getShopById(shopId);
         Set<UserShopRelation> userRelation = shop.getUserShopRelation();
-        List<User> users = userRelation.stream().map(e -> e.getUser() ).collect(Collectors.toList());
+        List<User> users = userRelation.stream().map(e -> e.getUser()).collect(Collectors.toList());
         return users;
     }
 }

@@ -20,7 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.persistence.PostRemove;
 import java.util.List;
 
 @RestController
@@ -59,6 +58,8 @@ public class ShopController {
         Shop shop = shopService.getShopInfo(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
+
+
 
     /**
      * [WFSLL-63] Thêm cửa hàng mới
@@ -102,9 +103,9 @@ public class ShopController {
      * @return
      */
     @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{shopId}/deActiveShop")
+    @GetMapping("/{shopId}/deActivateShop")
     public ResponseEntity<GApiResponse> deActivateShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
-        Shop shop = shopService.deActiveShop(shopId);
+        Shop shop = shopService.deActivateShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
@@ -117,10 +118,10 @@ public class ShopController {
      * @return
      */
     @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{shopId}/activeShop")
-    public ResponseEntity<GApiResponse> activeShop(@ApiIgnore
+    @GetMapping("/{shopId}/activateShop")
+    public ResponseEntity<GApiResponse> activateShop(@ApiIgnore
                                                    @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
-        Shop shop = shopService.activeShop(shopId);
+        Shop shop = shopService.activateShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
@@ -136,6 +137,15 @@ public class ShopController {
         List<User> listStaff = shopService.getListStaffOfShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(listStaff));
     }
+
+
+    @PreAuthorizeAccessGeneralManagerToShop
+    @GetMapping("/{shopId}/linkWarehouse")
+    public ResponseEntity<GApiResponse> linkWarehouseToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestParam(name ="warehouseId") Long warehouseId) {
+        shopService.linkWarehouseToShop(userPrincipal.getId(), warehouseId, shopId);
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
 
     //End API
 

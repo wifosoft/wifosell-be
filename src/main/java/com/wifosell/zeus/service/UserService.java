@@ -20,8 +20,8 @@ public interface UserService {
     User updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
     void changePassword(Long userId, ChangePasswordRequest changePasswordRequest, boolean flagOld);
 
-    User deActiveUser(Long userId);
-    User activeUser(Long userId);
+    User deActivateUser(Long userId);
+    User activateUser(Long userId);
 
     User changeRole(Long userId, List<String> roles);
     User changePermission(Long userId, List<String> permission);

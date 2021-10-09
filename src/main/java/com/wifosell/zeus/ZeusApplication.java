@@ -6,11 +6,10 @@ import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
+import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.repository.RoleRepository;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
-import com.wifosell.zeus.repository.UserShopRelationRepository;
+import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +43,11 @@ public class ZeusApplication implements CommandLineRunner {
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    WarehouseShopRelationRepository warehouseShopRelationRepository;
+    @Autowired
+    WarehouseRepository warehouseRepository;
+
     @Autowired
     UserShopRelationRepository userShopRelationRepository;
     @Autowired
@@ -173,14 +177,14 @@ public class ZeusApplication implements CommandLineRunner {
                 .address("Đông Hưng Thái Bình")
                 .phone("123123")
                 .businessLine("Mỹ phẩm")
-                .generalManager(adminUser).build();
+                .generalManager(manager1).build();
         Shop shop2 = Shop.builder()
                 .name("Cửa hàng 2")
                 .shortName("CH2")
                 .address("Quận 5, Hồ Chí Minh")
                 .phone("123123")
                 .businessLine("Mỹ phẩm")
-                .generalManager(adminUser).build();
+                .generalManager(manager2).build();
 
         List<Shop> shops = new ArrayList<>();
         shops.add(shop1);
@@ -192,12 +196,60 @@ public class ZeusApplication implements CommandLineRunner {
 
         UserShopRelation userShopRelation1 = new UserShopRelation();
         userShopRelation1.setShop(shop1);
-        userShopRelation1.setUser(adminUser);
+        userShopRelation1.setUser(manager1);
         UserShopRelation userShopRelation2 = new UserShopRelation();
         userShopRelation2.setShop(shop2);
-        userShopRelation2.setUser(adminUser);
+        userShopRelation2.setUser(manager2);
         userShopRelationRepository.save(userShopRelation1);
         userShopRelationRepository.save(userShopRelation2);
+
+        Warehouse warehouse1 = Warehouse.builder()
+                .name("Kho thứ 1")
+                .address("Quận 1 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ1")
+                .description("Kho quần áo quận 1")
+                .generalManager(manager1).build();
+
+        Warehouse warehouse2 = Warehouse.builder()
+                .name("Kho thứ 2")
+                .address("Quận 2 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ2")
+                .description("Kho quần áo quận 2")
+                .generalManager(manager1).build();
+
+        Warehouse warehouse3 = Warehouse.builder()
+                .name("Kho thứ 3")
+                .address("Quận 3 Hồ Chí Minh")
+                .phone("0982259245")
+                .shortName("KQ3")
+                .description("Kho quần áo quận 3")
+                .generalManager(manager2).build();
+
+
+        warehouseRepository.save(warehouse1);
+        warehouseRepository.save(warehouse2);
+        warehouseRepository.save(warehouse3);
+
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop1).warehouse(warehouse1).build()
+        );
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop1).warehouse(warehouse2).build()
+        );
+
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse1).build()
+        );
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse2).build()
+        );
+        warehouseShopRelationRepository.save(
+                WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse3).build()
+        );
+
+
     }
 
 
