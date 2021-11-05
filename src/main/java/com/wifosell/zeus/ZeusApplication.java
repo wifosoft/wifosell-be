@@ -4,7 +4,6 @@ import com.wifosell.zeus.constant.DefaultUserPermission;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
-import com.wifosell.zeus.model.salechannel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
@@ -53,10 +52,6 @@ public class ZeusApplication implements CommandLineRunner {
     UserShopRelationRepository userShopRelationRepository;
     @Autowired
     ShopRepository shopRepository;
-
-    @Autowired
-    SaleChannelRepository saleChannelRepository;
-
     @PersistenceContext
     EntityManager entityManager;
 
@@ -253,20 +248,6 @@ public class ZeusApplication implements CommandLineRunner {
         warehouseShopRelationRepository.save(
                 WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse3).build()
         );
-
-
-        SaleChannel saleChannel1 = SaleChannel.builder().name("Shopee")
-                .shortName("S")
-                .generalManager(manager1).build();
-        SaleChannel saleChannel2 = SaleChannel.builder()
-                .name("Tiki")
-                .shortName("T")
-                .generalManager(manager2).build();
-
-        List<SaleChannel> saleChannel = new ArrayList<>();
-        saleChannel.add(saleChannel1);
-        saleChannel.add(saleChannel2);
-        saleChannelRepository.saveAll(saleChannel);
 
 
     }
