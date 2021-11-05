@@ -7,6 +7,7 @@ import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.RegisterRequest;
 import com.wifosell.zeus.payload.request.user.ChangePasswordRequest;
 import com.wifosell.zeus.payload.request.user.ChangeRoleRequest;
+import com.wifosell.zeus.payload.request.user.ListUserRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
 import com.wifosell.zeus.payload.response.AvailableResourceResponse;
 import com.wifosell.zeus.security.CurrentUser;
@@ -23,6 +24,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -135,6 +137,30 @@ public class UserController {
     }
 
 
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/deactivateListUser")
+    public ResponseEntity<GApiResponse> deActivateListUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody ListUserRequest listUserRequest) {
+        List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
+        List<Long> filterListAccount = childAccounts.stream().map(User::getId).filter(
+                id -> (listUserRequest.getListUserId().contains(id))
+        ).collect(Collectors.toList());
+        List<User> affectedUser = userService.deActivateListUser(filterListAccount);
+
+        return ResponseEntity.ok(GApiResponse.success(affectedUser));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/activateListUser")
+    public ResponseEntity<GApiResponse<List<User>>> activateListUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody ListUserRequest listUserRequest) {
+        List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
+        List<Long> filterListAccount = childAccounts.stream().map(User::getId).filter(
+                id -> (listUserRequest.getListUserId().contains(id))
+        ).collect(Collectors.toList());
+        List<User> affectedUser = userService.activateListUser(filterListAccount);
+        return ResponseEntity.ok(GApiResponse.success(affectedUser));
+    }
+
+
     /**
      * Ngừng hoạt động tài khoản theo soft delete
      *
@@ -148,6 +174,7 @@ public class UserController {
         User user = userService.deActivateUser(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
+
 
     /**
      * Kích hoạt lại tài khoản theo soft delete
@@ -177,14 +204,13 @@ public class UserController {
      * Lấy danh sách tài khoản con
      * P: Cần là tài khoản GENERAL_MANAGER
      *
-     * @param currentUser
      * @return
      */
     @PreAuthorize("hasRole('GENERAL_MANAGER')")
     @GetMapping("/listChildAccount")
     public ResponseEntity<GApiResponse<List<User>>> getListChildAccounts(@CurrentUser UserPrincipal userPrincipal) {
-        GApiResponse<List<User>> child_accounts = userService.getAllChildAccounts(userPrincipal);
-        return new ResponseEntity<>(child_accounts, HttpStatus.OK);
+        List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
+        return ResponseEntity.ok(GApiResponse.success(childAccounts));
     }
 
     @PreAuthorizeAccessToUser

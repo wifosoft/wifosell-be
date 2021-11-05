@@ -23,6 +23,10 @@ public interface UserService {
     User deActivateUser(Long userId);
     User activateUser(Long userId);
 
+    List<User> deActivateListUser(List<Long> userList);
+    List<User> activateListUser(List<Long> userList);
+
+
     User changeRole(Long userId, List<String> roles);
     User changePermission(Long userId, List<String> permission);
 
@@ -33,7 +37,7 @@ public interface UserService {
     boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId);
     boolean hasAccessToUser( UserPrincipal currentUser, Long userId);
 
-    GApiResponse<List<User>> getAllChildAccounts(UserPrincipal currentUser);
+   List<User> getAllChildAccounts(UserPrincipal currentUser);
 
     List<Shop> getListShopManage(UserPrincipal userPrincipal);
 
