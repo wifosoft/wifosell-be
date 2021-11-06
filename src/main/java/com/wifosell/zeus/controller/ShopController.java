@@ -60,7 +60,6 @@ public class ShopController {
     }
 
 
-
     /**
      * [WFSLL-63] Thêm cửa hàng mới
      *
@@ -120,13 +119,14 @@ public class ShopController {
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/activateShop")
     public ResponseEntity<GApiResponse> activateShop(@ApiIgnore
-                                                   @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
+                                                     @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.activateShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
     }
 
     /**
      * Lấy danh sách nhân viên của 1 cửa hàng
+     *
      * @param userPrincipal
      * @param shopId
      * @return
@@ -141,7 +141,7 @@ public class ShopController {
 
     @PreAuthorizeAccessGeneralManagerToShop
     @GetMapping("/{shopId}/linkWarehouse")
-    public ResponseEntity<GApiResponse> linkWarehouseToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestParam(name ="warehouseId") Long warehouseId) {
+    public ResponseEntity<GApiResponse> linkWarehouseToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestParam(name = "warehouseId") Long warehouseId) {
         shopService.linkWarehouseToShop(userPrincipal.getId(), warehouseId, shopId);
         return ResponseEntity.ok(GApiResponse.success(true));
     }
@@ -179,7 +179,6 @@ public class ShopController {
             //Không cho phép truy cập nếu không phải là tổng quản lý
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
         }
-
         shopService.givePermissionManageShop(userId, shopId);
         return new ResponseEntity<>(GApiResponse.success("OK"), HttpStatus.OK);
     }
