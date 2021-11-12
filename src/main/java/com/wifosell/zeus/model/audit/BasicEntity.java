@@ -1,7 +1,6 @@
 package com.wifosell.zeus.model.audit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,8 +32,6 @@ public abstract class BasicEntity {
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-
-
     @LastModifiedDate
     @Column(nullable = false)
     private Instant updatedAt;
@@ -42,8 +39,4 @@ public abstract class BasicEntity {
     public void setIsActive(boolean flag){
         this.isActive = flag;
     }
-
-
-
-
 }

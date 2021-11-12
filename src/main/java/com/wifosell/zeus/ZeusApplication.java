@@ -1,6 +1,7 @@
 package com.wifosell.zeus;
 
 import com.wifosell.zeus.constant.DefaultUserPermission;
+import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
@@ -52,6 +53,10 @@ public class ZeusApplication implements CommandLineRunner {
     UserShopRelationRepository userShopRelationRepository;
     @Autowired
     ShopRepository shopRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -249,7 +254,28 @@ public class ZeusApplication implements CommandLineRunner {
                 WarehouseShopRelation.builder().shop(shop2).warehouse(warehouse3).build()
         );
 
+        Category category1 = Category.builder()
+                .name("Thoi trang")
+                .description("Thoi trang CLC")
+                .shortName("TT")
+                .generalManager(adminUser1).build();
+        categoryRepository.save(category1);
 
+        Category category2 = Category.builder()
+                .name("Thoi trang nam")
+                .description("Thoi trang nam CLC")
+                .shortName("TTN")
+                .generalManager(adminUser1)
+                .parent(category1).build();
+        categoryRepository.save(category2);
+
+        Category category3 = Category.builder()
+                .name("Thoi trang nu")
+                .description("Thoi trang nu CLC")
+                .shortName("TTNu")
+                .generalManager(adminUser1)
+                .parent(category1).build();
+        categoryRepository.save(category3);
     }
 
 
