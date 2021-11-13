@@ -2,7 +2,6 @@ package com.wifosell.zeus.database;
 
 import com.wifosell.zeus.exception.AppException;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;

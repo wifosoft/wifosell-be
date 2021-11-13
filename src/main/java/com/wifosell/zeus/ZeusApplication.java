@@ -1,20 +1,8 @@
 package com.wifosell.zeus;
 
-import com.wifosell.zeus.constant.DefaultUserPermission;
 import com.wifosell.zeus.database.DatabaseSeeder;
-import com.wifosell.zeus.database.seeder.UserSeeder;
-import com.wifosell.zeus.model.role.Role;
-import com.wifosell.zeus.model.role.RoleName;
-import com.wifosell.zeus.model.role.UserRoleRelation;
-import com.wifosell.zeus.model.shop.Shop;
-import com.wifosell.zeus.model.shop.UserShopRelation;
-import com.wifosell.zeus.model.shop.WarehouseShopRelation;
-import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.model.warehouse.Warehouse;
-import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,11 +17,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TimeZone;
 
 @EnableSwagger2
@@ -41,27 +27,12 @@ import java.util.TimeZone;
 @EntityScan(basePackageClasses = {ZeusApplication.class, Jsr310Converters.class})
 @Transactional
 public class ZeusApplication implements CommandLineRunner {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    WarehouseShopRelationRepository warehouseShopRelationRepository;
-    @Autowired
-    WarehouseRepository warehouseRepository;
-
-    @Autowired
-    UserShopRelationRepository userShopRelationRepository;
-    @Autowired
-    ShopRepository shopRepository;
     @PersistenceContext
     EntityManager entityManager;
-
 
     public static void main(String[] args) {
         SpringApplication.run(ZeusApplication.class, args);
     }
-
 
     @PostConstruct
     void init() {
@@ -72,7 +43,6 @@ public class ZeusApplication implements CommandLineRunner {
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
-
 
     @Bean
     public ModelMapper modelMapper() {
@@ -87,13 +57,9 @@ public class ZeusApplication implements CommandLineRunner {
                 .build();
     }
 
-
     public static PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
 
     @Override
     public void run(String... args) throws Exception {
