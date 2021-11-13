@@ -16,8 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping("api/categories")
 public class CategoryController {
+    private final CategoryService categoryService;
+
     @Autowired
-    CategoryService categoryService;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')") // TODO haukc
     @GetMapping("/all")

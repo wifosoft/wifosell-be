@@ -6,19 +6,10 @@ import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 public class CategorySeeder extends BaseSeeder implements ISeeder {
     private CategoryRepository categoryRepository;
     private UserRepository userRepository;
-
-    @Autowired
-    public CategorySeeder(CategoryRepository categoryRepository, UserRepository userRepository) {
-        this.categoryRepository = categoryRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public void prepareJpaRepository() {
@@ -28,20 +19,23 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void run() {
-        User manager1 = userRepository.getUserByName("manager1");
+        User gm = userRepository.getUserByName("manager1");
+        while (!gm.isRoot()) {
+            gm = gm.getParent();
+        }
 
         Category category1 = Category.builder()
                 .name("Thoi trang")
                 .description("Thoi trang cao cap")
                 .shortName("TT")
-                .generalManager(manager1).build();
+                .generalManager(gm).build();
         categoryRepository.save(category1);
 
         Category category11 = Category.builder()
                 .name("Thoi trang nam")
                 .description("Thoi trang nam cao cap")
                 .shortName("TTN")
-                .generalManager(manager1)
+                .generalManager(gm)
                 .parent(category1).build();
         categoryRepository.save(category11);
 
@@ -49,7 +43,7 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
                 .name("Thoi trang nam tre em")
                 .description("Thoi trang nam tre em cao cap")
                 .shortName("TTNTE")
-                .generalManager(manager1)
+                .generalManager(gm)
                 .parent(category11).build();
         categoryRepository.save(category111);
 
@@ -57,7 +51,7 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
                 .name("Thoi trang nam nguoi lon")
                 .description("Thoi trang nam nguoi lon cao cap")
                 .shortName("TTNNL")
-                .generalManager(manager1)
+                .generalManager(gm)
                 .parent(category11).build();
         categoryRepository.save(category112);
 
@@ -65,7 +59,7 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
                 .name("Thoi trang nu")
                 .description("Thoi trang nu cao cap")
                 .shortName("TTNu")
-                .generalManager(manager1)
+                .generalManager(gm)
                 .parent(category1).build();
         categoryRepository.save(category12);
 
@@ -73,14 +67,14 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
                 .name("Cong nghe")
                 .description("Mat hang cong nghe")
                 .shortName("CN")
-                .generalManager(manager1).build();
+                .generalManager(gm).build();
         categoryRepository.save(category2);
 
         Category category21 = Category.builder()
                 .name("Dien thoai")
                 .description("Dien thoai thong minh cao cap")
                 .shortName("DT")
-                .generalManager(manager1)
+                .generalManager(gm)
                 .parent(category2).build();
         categoryRepository.save(category21);
 
@@ -88,7 +82,7 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
                 .name("Tai nghe")
                 .description("Tai nghe, tai nghe khong day")
                 .shortName("TN")
-                .generalManager(manager1)
+                .generalManager(gm)
                 .parent(category2).build();
         categoryRepository.save(category22);
     }

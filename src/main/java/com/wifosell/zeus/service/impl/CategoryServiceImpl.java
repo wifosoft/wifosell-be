@@ -91,9 +91,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private User getGeneralManagerByUser(User user) {
-        if (user.isRoot())
-            return user;
-        return this.getGeneralManagerByUser(user.getParent());
+        while (!user.isRoot()) {
+            user = user.getParent();
+        }
+        return user;
     }
 
     private User getGeneralManagerByUserId(Long userId) {
