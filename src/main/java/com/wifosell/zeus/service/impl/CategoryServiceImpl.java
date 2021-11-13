@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getCategories(Long userId) {
-        User gm = this.getGeneralManagerByUserId(userId);
+        User gm = userRepository.getUserById(userId).getGeneralManager();
         List<Category> categories = categoryRepository.findCategoriesByGeneralManagerId(gm.getId());
         this.removeInactiveCategories(categories);
         return categories;
@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getRootCategories(Long userId) {
-        User gm = this.getGeneralManagerByUserId(userId);
+        User gm = userRepository.getUserById(userId).getGeneralManager();
         return categoryRepository.findCategoriesByGeneralManagerId(gm.getId());
     }
 
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category addCategory(Long userId, CategoryRequest categoryRequest) {
-        User gm = this.getGeneralManagerByUserId(userId);
+        User gm = userRepository.getUserById(userId).getGeneralManager();
         Category category = new Category();
         this.updateCategoryByRequest(category, categoryRequest);
         category.setGeneralManager(gm);
@@ -88,18 +88,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findCategoryById(categoryId);
         category.setIsActive(false);
         return categoryRepository.save(category);
-    }
-
-    private User getGeneralManagerByUser(User user) {
-        while (!user.isRoot()) {
-            user = user.getParent();
-        }
-        return user;
-    }
-
-    private User getGeneralManagerByUserId(Long userId) {
-        User user = userRepository.getUserById(userId);
-        return this.getGeneralManagerByUser(user);
     }
 
     private void updateCategoryByRequest(Category category, CategoryRequest categoryRequest) {

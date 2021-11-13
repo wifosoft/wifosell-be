@@ -194,4 +194,11 @@ public class User extends BasicEntity {
         return this.parent == null;
     }
 
+    public User getGeneralManager() {
+        User gm = this;
+        while (!gm.isRoot()) {
+            gm = gm.getParent();
+        }
+        return gm;
+    }
 }
