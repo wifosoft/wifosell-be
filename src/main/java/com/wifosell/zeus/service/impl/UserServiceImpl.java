@@ -137,6 +137,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> deActivateListUser(List<Long> userList) {
+        List<User> affectedUser=  new ArrayList<>();
+        for(Long user : userList){
+            affectedUser.add(this.deActivateUser(user));
+        }
+        return affectedUser;
+    }
+
+    @Override
+    public List<User> activateListUser(List<Long> userList) {
+        List<User> affectedUser=  new ArrayList<>();
+        for(Long user : userList){
+            affectedUser.add(this.activateUser(user));
+        }
+        return affectedUser;
+    }
+
+    @Override
     public User changeRole(Long userId, List<String> roles) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException("Chao ban"));
 
@@ -260,11 +278,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GApiResponse<List<User>> getAllChildAccounts(UserPrincipal currentUser) {
-        List<User> listchilds = userRepository.findById(currentUser.getId())
+    public List<User> getAllChildAccounts(UserPrincipal currentUser) {
+        return userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId())).getChildrenUsers();
-        listchilds.forEach(e -> e.setParent(null));//remove parent field
-        return new GApiResponse(Boolean.TRUE, "", listchilds);
     }
 
     @Override

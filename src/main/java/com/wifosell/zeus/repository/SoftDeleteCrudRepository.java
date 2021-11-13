@@ -1,16 +1,15 @@
 package com.wifosell.zeus.repository;
 
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @NoRepositoryBean
 public interface SoftDeleteCrudRepository<T extends BasicEntity, ID extends Long> extends JpaRepository<T, ID> {
@@ -26,7 +25,7 @@ public interface SoftDeleteCrudRepository<T extends BasicEntity, ID extends Long
 
     @Transactional
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = true")
-    T findOne(ID id);
+    Optional<T> findOne(ID id);
 
     //Look up deleted entities
     @Query("select e from #{#entityName} e where e.isActive = false")
@@ -40,11 +39,8 @@ public interface SoftDeleteCrudRepository<T extends BasicEntity, ID extends Long
 
     @Transactional
     default boolean exists(ID id) {
-        return findOne(id) != null;
+        return findOne(id).isPresent();
     }
-
-
-
 
     @Query("update #{#entityName} e set e.isActive=false where e.id = ?1")
     @Transactional

@@ -29,8 +29,11 @@ public enum EAppExceptionCode {
     //shop
     SHOP_NOT_FOUND(200001),
     SHOP_MANAGED_BY_THIS_USER(200002),
-    SHOP_ADD_PERMISSION_BY_CHILD_USER(200003);
+    SHOP_ADD_PERMISSION_BY_CHILD_USER(200003),
 
+    // Category
+    CATEGORY_NOT_FOUND(700001),
+    PARENT_CATEGORY_NOT_FOUND(700002);
 
     private final int value;
 
