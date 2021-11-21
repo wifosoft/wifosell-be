@@ -27,6 +27,8 @@ public interface ShopService {
     void linkWarehouseToShop(Long warehouseId,  Long shopId);
     void linkWarehouseToShop(Long currentUserId, Long warehouseId,  Long shopId);
 
+    void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId);
+
     List<User> getListStaffOfShop(Long shopId);
 
 

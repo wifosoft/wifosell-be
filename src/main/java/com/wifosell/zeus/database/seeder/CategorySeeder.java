@@ -19,10 +19,7 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void run() {
-        User gm = userRepository.getUserByName("manager1");
-        while (!gm.isRoot()) {
-            gm = gm.getParent();
-        }
+        User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
         Category category1 = Category.builder()
                 .name("Thoi trang")
