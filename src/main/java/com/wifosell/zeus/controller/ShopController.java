@@ -11,6 +11,7 @@ import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
+import com.wifosell.zeus.service.SaleChannelService;
 import com.wifosell.zeus.service.ShopService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shops")
 public class ShopController {
+    private final ShopService shopService;
+
     @Autowired
-    ShopService shopService;
+    public ShopController(ShopService shopService) {
+        this.shopService = shopService;
+    }
 
     //Begin API
 
@@ -146,6 +151,14 @@ public class ShopController {
         return ResponseEntity.ok(GApiResponse.success(true));
     }
 
+    @PreAuthorizeAccessGeneralManagerToShop
+    @GetMapping("/{shopId}/linkSaleChannel")
+    public ResponseEntity<GApiResponse<Boolean>> linkSaleChannelToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+                                                                       @PathVariable(name = "shopId") Long shopId,
+                                                                       @RequestParam(name = "saleChannelId") Long saleChannelId) {
+        shopService.linkSaleChannelToShop(userPrincipal.getId(), saleChannelId, shopId);
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
 
     //End API
 

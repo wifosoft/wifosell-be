@@ -2,6 +2,8 @@ package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
@@ -28,23 +30,33 @@ import java.util.stream.Collectors;
 public class ShopServiceImpl implements ShopService {
     Logger logger = Logger.getLogger(ShopServiceImpl.class.getName());
 
-    @Autowired
-    ShopRepository shopRepository;
-
-    @Autowired
-    WarehouseShopRelationRepository warehouseShopRelationRepository;
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    UserShopRelationRepository userShopRelationRepository;
-
-    @Autowired
-    WarehouseRepository warehouseRepository;
+    private final ShopRepository shopRepository;
+    private final UserRepository userRepository;
+    private final UserShopRelationRepository userShopRelationRepository;
+    private final WarehouseRepository warehouseRepository;
+    private final WarehouseShopRelationRepository warehouseShopRelationRepository;
+    private final SaleChannelRepository saleChannelRepository;
+    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
 
     @PersistenceContext
     private EntityManager em;
 
+    @Autowired
+    public ShopServiceImpl(ShopRepository shopRepository,
+                           UserRepository userRepository,
+                           UserShopRelationRepository userShopRelationRepository,
+                           WarehouseRepository warehouseRepository,
+                           WarehouseShopRelationRepository warehouseShopRelationRepository,
+                           SaleChannelRepository saleChannelRepository,
+                           SaleChannelShopRelationRepository saleChannelShopRelationRepository) {
+        this.shopRepository = shopRepository;
+        this.userRepository = userRepository;
+        this.userShopRelationRepository = userShopRelationRepository;
+        this.warehouseRepository = warehouseRepository;
+        this.warehouseShopRelationRepository = warehouseShopRelationRepository;
+        this.saleChannelRepository = saleChannelRepository;
+        this.saleChannelShopRelationRepository = saleChannelShopRelationRepository;
+    }
 
     @Override
     public List<Shop> getCreatedShop(Long userId) {
@@ -217,6 +229,24 @@ public class ShopServiceImpl implements ShopService {
 
         warehouseShopRelationRepository.save(
                 WarehouseShopRelation.builder().shop(shop).warehouse(warehouse).build()
+        );
+    }
+
+    @Override
+    public void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId) {
+        SaleChannel saleChannel = saleChannelRepository.findSaleChannelById(saleChannelId);
+        Shop shop = shopRepository.getShopById(shopId);
+
+        if (!saleChannel.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
+        }
+
+        if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
+        }
+
+        saleChannelShopRelationRepository.save(
+                SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build()
         );
     }
 

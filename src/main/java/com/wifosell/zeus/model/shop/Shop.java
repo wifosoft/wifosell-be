@@ -2,14 +2,9 @@ package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.audit.DateAudit;
-import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
-import org.hibernate.annotations.TypeDef;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
@@ -65,13 +60,15 @@ public class Shop extends BasicEntity {
     //@JsonManagedReference
     Set<UserShopRelation> userShopRelation;
 
-
-
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     //@JsonManagedReference
     Set<WarehouseShopRelation> warehouseShopRelations;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    //@JsonManagedReference
+    Set<SaleChannelShopRelation> saleChannelShopRelations;
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

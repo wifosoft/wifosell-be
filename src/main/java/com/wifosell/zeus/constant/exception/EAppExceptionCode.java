@@ -33,7 +33,11 @@ public enum EAppExceptionCode {
 
     // Category
     CATEGORY_NOT_FOUND(700001),
-    PARENT_CATEGORY_NOT_FOUND(700002);
+    PARENT_CATEGORY_NOT_FOUND(700002),
+
+    //region Sale Channel
+    SALE_CHANNEL_NOT_FOUND(800001);
+    //endregion
 
     private final int value;
 
