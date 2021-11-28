@@ -18,8 +18,10 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(RoleSeeder.class);
         seederTask.add(UserSeeder.class);
         seederTask.add(ShopSeeder.class);
+        seederTask.add(SaleChannelSeeder.class);
         seederTask.add(WarehouseSeeder.class);
         seederTask.add(CategorySeeder.class);
+        seederTask.add(ProductSeeder.class);
     }
     public void run() {
         this.call(seederTask);

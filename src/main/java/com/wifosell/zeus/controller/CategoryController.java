@@ -54,7 +54,7 @@ public class CategoryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/{categoryId}")
+    @PostMapping("/{categoryId}/update")
     public ResponseEntity<GApiResponse<Category>> updateCategory(@CurrentUser UserPrincipal userPrincipal,
                                                        @PathVariable(name = "categoryId") Long categoryId,
                                                        @RequestBody CategoryRequest categoryRequest) {

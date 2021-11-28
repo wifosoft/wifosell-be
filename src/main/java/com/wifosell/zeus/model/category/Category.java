@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -45,4 +46,8 @@ public class Category extends BasicEntity {
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 }
