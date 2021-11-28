@@ -43,7 +43,7 @@ public class Product extends BasicEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    private int weight;
+    private Integer weight;
 
     @Size(max = 50)
     private String dimension;
