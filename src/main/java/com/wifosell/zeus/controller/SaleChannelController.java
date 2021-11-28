@@ -32,11 +32,16 @@ public class SaleChannelController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<SaleChannel>>> getSaleChannels(@CurrentUser UserPrincipal userPrincipal,
-                                                                                   @RequestParam(name = "shopId", required = false) Long shopId) {
-        List<SaleChannel> saleChannelList = shopId != null ?
-                saleChannelService.getSaleChannelsByShopId(shopId) :
-                saleChannelService.getSaleChannelsByUserId(userPrincipal.getId());
+    public ResponseEntity<GApiResponse<List<SaleChannel>>> getSaleChannels(@CurrentUser UserPrincipal userPrincipal) {
+        List<SaleChannel> saleChannelList = saleChannelService.getSaleChannelsByUserId(userPrincipal.getId());
+        return ResponseEntity.ok(GApiResponse.success(saleChannelList));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/shop={shopId}")
+    public ResponseEntity<GApiResponse<List<SaleChannel>>> getSaleChannelsByShopId(@CurrentUser UserPrincipal userPrincipal,
+                                                                           @PathVariable(name = "shopId") Long shopId) {
+        List<SaleChannel> saleChannelList = saleChannelService.getSaleChannelsByShopId(shopId);
         return ResponseEntity.ok(GApiResponse.success(saleChannelList));
     }
 
@@ -57,7 +62,7 @@ public class SaleChannelController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/{saleChannelId}")
+    @PostMapping("/{saleChannelId}/update")
     public ResponseEntity<GApiResponse<SaleChannel>> addSaleChannel(@CurrentUser UserPrincipal userPrincipal,
                                                                     @PathVariable(name = "saleChannelId") Long saleChannelId,
                                                                     @RequestBody SaleChannelRequest saleChannelRequest) {
