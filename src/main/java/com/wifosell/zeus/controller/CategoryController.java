@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,5 +90,27 @@ public class CategoryController {
         Category category = categoryService.deactivateCategory(categoryId);
         CategoryResponse categoryResponse = new CategoryResponse(category);
         return ResponseEntity.ok(GApiResponse.success(categoryResponse));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/activate")
+    public ResponseEntity<GApiResponse<List<CategoryResponse>>> activateCategories(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ids") List<Long> categoryIds) {
+        List<Category> categoryList = categoryService.activateCategories(categoryIds);
+        List<CategoryResponse> categoryResponses = categoryList.stream()
+                .map(CategoryResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(categoryResponses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/deactivate")
+    public ResponseEntity<GApiResponse<List<CategoryResponse>>> deactivateCategories(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ids") List<Long> categoryIds) {
+        List<Category> categoryList = categoryService.deactivateCategories(categoryIds);
+        List<CategoryResponse> categoryResponses = categoryList.stream()
+                .map(CategoryResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(categoryResponses));
     }
 }

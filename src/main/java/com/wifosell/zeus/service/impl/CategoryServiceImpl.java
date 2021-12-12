@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("CategoryService")
@@ -90,6 +91,16 @@ public class CategoryServiceImpl implements CategoryService {
         removeInactiveChildren(category);
         category.setIsActive(false);
         return categoryRepository.save(category);
+    }
+
+    @Override
+    public List<Category> activateCategories(List<Long> categoryIds) {
+        return categoryIds.stream().map(this::activateCategory).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Category> deactivateCategories(List<Long> categoryIds) {
+        return categoryIds.stream().map(this::deactivateCategory).collect(Collectors.toList());
     }
 
     private void updateCategoryByRequest(@NonNull Category category, @NonNull CategoryRequest categoryRequest) {

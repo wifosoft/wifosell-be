@@ -13,4 +13,6 @@ public interface CategoryService {
     Category updateCategory(Long categoryId, CategoryRequest categoryRequest);
     Category activateCategory(Long categoryId);
     Category deactivateCategory(Long categoryId);
+    List<Category> activateCategories(List<Long> categoryIds);
+    List<Category> deactivateCategories(List<Long> categoryIds);
 }
