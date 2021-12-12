@@ -44,6 +44,7 @@ public class Category extends BasicEntity {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children;
 
