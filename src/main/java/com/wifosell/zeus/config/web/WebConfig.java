@@ -1,5 +1,6 @@
 package com.wifosell.zeus.config.web;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -10,20 +11,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableTransactionManagement(proxyTargetClass = true)
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("cors.allowedOrigins")
-    private String allowedOrigins;
+    @Value("${cors.allowedOrigins}")
+    private String[] allowedOrigins;
 
-    public void addCorsMappings(CorsRegistry registry) {
-        final long MAX_AGE_SECS = 3600;
+    @Value("${cors.maxAgeSecs}")
+    private long maxAgeSecs;
 
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
-                .maxAge(MAX_AGE_SECS);
+                .maxAge(maxAgeSecs);
     }
-
-
-
-
 }
