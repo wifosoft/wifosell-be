@@ -24,6 +24,6 @@ public class ProductOption extends BasicEntity {
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "option")
-    private List<ProductOptionValue> values;
+    @OneToMany(mappedBy = "productOption")
+    private List<ProductOptionValue> productOptionValues;
 }

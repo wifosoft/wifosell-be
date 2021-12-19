@@ -49,13 +49,11 @@ public class Product extends BasicEntity {
 
     private Integer status = 0;
 
-    private Integer stock = 0;
+    @OneToMany(mappedBy = "product")
+    private List<ProductAttribute> productAttributes;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductAttribute> attributes;
-
-    @OneToMany(mappedBy = "product")
-    private List<ProductVariant> variants;
+    private List<ProductVariant> productVariants;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

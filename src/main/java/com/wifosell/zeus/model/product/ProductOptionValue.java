@@ -26,9 +26,9 @@ public class ProductOptionValue extends BasicEntity {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="option_id")
-    private ProductOption option;
+    private ProductOption productOption;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "optionValue")
+    @OneToMany(mappedBy = "productOptionValue")
     private List<ProductVariantValue> productVariantValues;
 }

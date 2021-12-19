@@ -19,12 +19,12 @@ public class ProductVariantValue {
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "option_value_id")
+    private ProductOptionValue productOptionValue;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_variant_id")
     private ProductVariant productVariant;
-
-    @ManyToOne
-    @JoinColumn(name = "option_value_id")
-    private ProductOptionValue optionValue;
 }
