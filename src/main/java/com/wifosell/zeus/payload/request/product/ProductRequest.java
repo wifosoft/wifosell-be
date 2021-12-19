@@ -32,6 +32,4 @@ public class ProductRequest {
     private Integer status;
 
     private Integer stock;
-
-    private Long parentId;
 }
