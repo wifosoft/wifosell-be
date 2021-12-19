@@ -26,5 +26,5 @@ public class ProductVariantValue {
 
     @ManyToOne
     @JoinColumn(name = "option_value_id")
-    private OptionValue optionValue;
+    private ProductOptionValue optionValue;
 }

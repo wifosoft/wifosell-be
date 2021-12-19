@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Option extends BasicEntity {
+public class ProductOption extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -25,5 +25,5 @@ public class Option extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "option")
-    private List<OptionValue> values;
+    private List<ProductOptionValue> values;
 }

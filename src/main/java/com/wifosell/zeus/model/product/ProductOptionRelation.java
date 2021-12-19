@@ -24,7 +24,7 @@ public class ProductOptionRelation {
 
     @ManyToOne
     @JoinColumn(name = "option_id")
-    private Option option;
+    private ProductOption option;
 
     @Override
     public int hashCode() {
