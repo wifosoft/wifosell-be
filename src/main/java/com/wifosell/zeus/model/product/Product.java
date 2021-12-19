@@ -51,11 +51,14 @@ public class Product extends BasicEntity {
 
     private Integer stock = 0;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductAttribute> attributes;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariant> variants;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
-
-    @OneToMany(mappedBy = "product")
-    private List<ProductVariant> variants;
 }
