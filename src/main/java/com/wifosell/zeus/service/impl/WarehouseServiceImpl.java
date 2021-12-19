@@ -1,6 +1,5 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;

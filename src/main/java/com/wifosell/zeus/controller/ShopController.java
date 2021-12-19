@@ -11,7 +11,6 @@ import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
-import com.wifosell.zeus.service.SaleChannelService;
 import com.wifosell.zeus.service.ShopService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;

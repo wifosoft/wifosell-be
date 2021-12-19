@@ -1,6 +1,5 @@
 package com.wifosell.zeus.annotation;
 
-import com.wifosell.zeus.security.UserPrincipal;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.lang.annotation.Retention;

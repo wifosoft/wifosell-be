@@ -2,7 +2,6 @@ package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 

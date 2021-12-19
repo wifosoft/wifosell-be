@@ -5,6 +5,7 @@ import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.repository.RoleRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 

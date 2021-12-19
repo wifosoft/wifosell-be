@@ -1,6 +1,5 @@
 package com.wifosell.zeus.repository;
 
-import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

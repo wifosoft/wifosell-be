@@ -1,9 +1,6 @@
 package com.wifosell.zeus.constant.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.data.repository.cdi.Eager;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 public enum EAppExceptionCode {
