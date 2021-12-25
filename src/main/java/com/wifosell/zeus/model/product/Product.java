@@ -22,7 +22,6 @@ import java.util.List;
 public class Product extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @NotBlank
@@ -37,7 +36,6 @@ public class Product extends BasicEntity {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     private Integer weight;
@@ -50,13 +48,12 @@ public class Product extends BasicEntity {
     private Integer status = 0;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductAttribute> productAttributes;
+    private List<Attribute> attributes;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductVariant> productVariants;
+    private List<Variant> variants;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
 }

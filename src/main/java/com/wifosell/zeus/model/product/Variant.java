@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,18 +15,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class ProductVariantValue {
+public class Variant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "option_value_id")
-    private ProductOptionValue productOptionValue;
+    private Long stock = 0L;
+
+    private BigDecimal costPrice;
+
+    @OneToMany(mappedBy = "variant")
+    private List<VariantValue> variantValues;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "product_variant_id")
-    private ProductVariant productVariant;
+    private Product product;
 }

@@ -13,10 +13,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class ProductAttribute extends BasicEntity {
+public class Attribute extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     private String name;
@@ -24,6 +23,5 @@ public class ProductAttribute extends BasicEntity {
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
     private Product product;
 }

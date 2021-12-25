@@ -15,15 +15,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class ProductOption extends BasicEntity {
+public class OptionValue extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    private String name;
+    private String value;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "productOption")
-    private List<ProductOptionValue> productOptionValues;
+    @ManyToOne
+    private Option option;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "optionValue")
+    private List<VariantValue> variantValues;
 }

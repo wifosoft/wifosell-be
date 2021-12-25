@@ -1,8 +1,7 @@
 package com.wifosell.zeus.model.shop;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.product.Product;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,22 +12,17 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaleChannelShopRelation {
-    @Id
-    @Column(name = "id")
+public class ShopSaleChannelProductRelation {
     @JsonIgnore
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "shop_id")
-    private Shop shop;
+    private ShopSaleChannelRelation shopSaleChannelRelation;
 
     @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "sale_channel_id")
-    private SaleChannel saleChannel;
+    private Product product;
 
     @Override
     public int hashCode() {

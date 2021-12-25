@@ -29,6 +29,6 @@ public interface SaleChannelRepository extends SoftDeleteCrudRepository<SaleChan
     List<SaleChannel> findSaleChannelsByGeneralManagerId(Long generalManagerId);
 
     @Transactional
-    @Query("select sc from SaleChannel sc join SaleChannelShopRelation scsr on sc.id = scsr.saleChannel.id where sc.isActive = true and scsr.shop.id = ?1")
+    @Query("select sc from SaleChannel sc join ShopSaleChannelRelation scsr on sc.id = scsr.saleChannel.id where sc.isActive = true and scsr.shop.id = ?1")
     List<SaleChannel> findSaleChannelsByShopId(Long shopId);
 }

@@ -22,7 +22,6 @@ import java.util.List;
 public class Category extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Size(max = 255)
@@ -36,12 +35,10 @@ public class Category extends BasicEntity {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
     private Category parent;
 
     @JsonIgnore

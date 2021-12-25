@@ -3,8 +3,8 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.ShopSaleChannelRelation;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
@@ -246,7 +246,7 @@ public class ShopServiceImpl implements ShopService {
         }
 
         saleChannelShopRelationRepository.save(
-                SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build()
+                ShopSaleChannelRelation.builder().shop(shop).saleChannel(saleChannel).build()
         );
     }
 

@@ -2,6 +2,7 @@ package com.wifosell.zeus.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,17 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class ProductVariant {
+public class Option extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private String name;
 
-    @OneToMany(mappedBy = "productVariant")
-    private List<ProductVariantValue> productVariantValues;
+    @JsonIgnore
+    @OneToMany(mappedBy = "option")
+    private List<OptionValue> optionValues;
 }
