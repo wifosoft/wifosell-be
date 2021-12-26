@@ -3,7 +3,6 @@ package com.wifosell.zeus.repository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

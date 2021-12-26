@@ -1,10 +1,12 @@
 package com.wifosell.zeus.payload.request.product;
 
+import com.wifosell.zeus.model.product.Attribute;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,4 +33,6 @@ public class ProductRequest {
     private Integer status;
 
     private Integer stock;
+
+    private List<Attribute> attributes;
 }

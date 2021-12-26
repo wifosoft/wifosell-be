@@ -1,5 +1,6 @@
 package com.wifosell.zeus.model.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import lombok.*;
@@ -22,6 +23,7 @@ public class Attribute extends BasicEntity {
 
     private String value;
 
+    @JsonIgnore
     @ManyToOne
     private Product product;
 }

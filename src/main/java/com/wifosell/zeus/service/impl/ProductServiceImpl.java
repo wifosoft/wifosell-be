@@ -1,9 +1,11 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
+import com.wifosell.zeus.repository.AttributeRepository;
 import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.ProductRepository;
 import com.wifosell.zeus.repository.UserRepository;
@@ -20,14 +22,17 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final AttributeRepository attributeRepository;
     private final UserRepository userRepository;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository,
                               CategoryRepository categoryRepository,
+                              AttributeRepository attributeRepository,
                               UserRepository userRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.attributeRepository = attributeRepository;
         this.userRepository = userRepository;
     }
 
@@ -75,5 +80,13 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productRequest.getDimension()).ifPresent(product::setDimension);
         Optional.ofNullable(productRequest.getState()).ifPresent(product::setState);
         Optional.ofNullable(productRequest.getStatus()).ifPresent(product::setStatus);
+        Optional.ofNullable(productRequest.getAttributes()).ifPresent(attributes -> {
+            attributeRepository.deleteAttributesByProductId(product.getId());
+            for (Attribute attribute : attributes) {
+                attribute.setProduct(product);
+                attributeRepository.save(attribute);
+            }
+            product.setAttributes(attributes);
+        });
     }
 }
