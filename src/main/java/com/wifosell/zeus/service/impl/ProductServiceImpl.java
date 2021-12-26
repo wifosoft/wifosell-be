@@ -81,6 +81,7 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productRequest.getState()).ifPresent(product::setState);
         Optional.ofNullable(productRequest.getStatus()).ifPresent(product::setStatus);
         Optional.ofNullable(productRequest.getAttributes()).ifPresent(attributes -> {
+            // TODO haukc: optimize
             attributeRepository.deleteAttributesByProductId(product.getId());
             for (Attribute attribute : attributes) {
                 attribute.setProduct(product);
