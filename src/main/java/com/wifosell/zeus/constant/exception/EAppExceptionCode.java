@@ -37,8 +37,7 @@ public enum EAppExceptionCode {
     //endregion
 
     //region Product
-    PRODUCT_NOT_FOUND(900001),
-    PARENT_PRODUCT_NOT_FOUND(900002);
+    PRODUCT_NOT_FOUND(900001);
     //endregion
 
     private final int value;
