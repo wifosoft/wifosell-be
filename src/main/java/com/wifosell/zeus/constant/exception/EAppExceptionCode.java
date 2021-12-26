@@ -37,7 +37,10 @@ public enum EAppExceptionCode {
     //endregion
 
     //region Product
-    PRODUCT_NOT_FOUND(900001);
+    PRODUCT_NOT_FOUND(900001),
+    ATTRIBUTE_NOT_FOUND(901001),
+    OPTION_NOT_FOUND(902001),
+    OPTION_VALUE_NOT_FOUND(903001);
     //endregion
 
     private final int value;
