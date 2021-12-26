@@ -36,7 +36,7 @@ public class ShopServiceImpl implements ShopService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseShopRelationRepository warehouseShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private final ShopSaleChannelRelationRepository shopSaleChannelRelationRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -48,14 +48,14 @@ public class ShopServiceImpl implements ShopService {
                            WarehouseRepository warehouseRepository,
                            WarehouseShopRelationRepository warehouseShopRelationRepository,
                            SaleChannelRepository saleChannelRepository,
-                           SaleChannelShopRelationRepository saleChannelShopRelationRepository) {
+                           ShopSaleChannelRelationRepository shopSaleChannelRelationRepository) {
         this.shopRepository = shopRepository;
         this.userRepository = userRepository;
         this.userShopRelationRepository = userShopRelationRepository;
         this.warehouseRepository = warehouseRepository;
         this.warehouseShopRelationRepository = warehouseShopRelationRepository;
         this.saleChannelRepository = saleChannelRepository;
-        this.saleChannelShopRelationRepository = saleChannelShopRelationRepository;
+        this.shopSaleChannelRelationRepository = shopSaleChannelRelationRepository;
     }
 
     @Override
@@ -158,12 +158,7 @@ public class ShopServiceImpl implements ShopService {
     public Shop addShop(ShopRequest shopRequest, Long userId) {
         User parentUser = userRepository.getUserById(userId);
         Shop shop = new Shop();
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        this.updateShopByRequest(shop, shopRequest);
         shop.setGeneralManager(parentUser);
         shop = shopRepository.save(shop);
         return shop;
@@ -172,12 +167,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Shop editShop(Long shopId, ShopRequest shopRequest) {
         Shop shop = shopRepository.getShopById(shopId);
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        this.updateShopByRequest(shop, shopRequest);
         shop = shopRepository.save(shop);
         return shop;
     }
@@ -241,11 +231,11 @@ public class ShopServiceImpl implements ShopService {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
         }
 
-        if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+        if (shopSaleChannelRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
         }
 
-        saleChannelShopRelationRepository.save(
+        shopSaleChannelRelationRepository.save(
                 ShopSaleChannelRelation.builder().shop(shop).saleChannel(saleChannel).build()
         );
     }
@@ -261,7 +251,15 @@ public class ShopServiceImpl implements ShopService {
     public List<User> getListStaffOfShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         Set<UserShopRelation> userRelation = shop.getUserShopRelation();
-        List<User> users = userRelation.stream().map(e -> e.getUser()).collect(Collectors.toList());
-        return users;
+        return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
+    }
+
+    private void updateShopByRequest(Shop shop, ShopRequest shopRequest) {
+        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
     }
 }
