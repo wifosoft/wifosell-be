@@ -1,11 +1,10 @@
 package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.product.Product;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,23 +12,17 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShopSaleChannelVariantRelation {
+public class ShopProductRelation {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    private ShopSaleChannelRelation shopSaleChannelRelation;
+    private Shop shop;
 
     @ManyToOne
-    private Variant variant;
-
-    private Long stock = 0L;
-
-    private BigDecimal originalPrice;
-
-    private BigDecimal sellingPrice;
+    private Product product;
 
     @Override
     public int hashCode() {

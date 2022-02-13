@@ -9,6 +9,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -57,6 +58,10 @@ public class Shop extends BasicEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     Set<ShopSaleChannelRelation> shopSaleChannelRelations;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    private List<ShopProductRelation> shopProductRelations;
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

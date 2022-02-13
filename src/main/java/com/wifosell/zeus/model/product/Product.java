@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.shop.ShopProductRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -50,8 +51,16 @@ public class Product extends BasicEntity {
     @OneToMany(mappedBy = "product")
     private List<Attribute> attributes;
 
-    @OneToMany(mappedBy = "product")
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ProductOptionRelation> productOptionRelations;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Variant> variants;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ShopProductRelation> shopProductRelations;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -23,8 +23,12 @@ public class Option extends BasicEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "option")
+    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
     private List<OptionValue> optionValues;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
+    private List<ProductOptionRelation> productOptionRelations;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
