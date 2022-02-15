@@ -9,6 +9,7 @@ import com.wifosell.zeus.payload.request.category.CategoryRequest;
 import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CategoryService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("CategoryService")
@@ -32,38 +34,36 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
-        this.removeInactiveCategories(categories);
+        categories.forEach(this::removeInactiveChildren);
         return categories;
     }
 
     @Override
-    public List<Category> getCategories(Long userId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        List<Category> categories = categoryRepository.findCategoriesByGeneralManagerId(gm.getId());
-        this.removeInactiveCategories(categories);
-        return categories;
-    }
-
-    @Override
-    public List<Category> getRootCategories(Long userId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return categoryRepository.findCategoriesByGeneralManagerId(gm.getId());
-    }
-
-    @Override
-    public List<Category> getChildCategories(Long parentCategoryId) {
-        return categoryRepository.findCategoriesByParentCategoryId(parentCategoryId);
+    public List<Category> getCategories(Long userId, Long parentCategoryId) {
+        if (parentCategoryId == null) {
+            User gm = userRepository.getUserById(userId).getGeneralManager();
+            List<Category> categories = categoryRepository.findCategoriesByGeneralManagerId(gm.getId());
+            categories.forEach(this::removeInactiveChildren);
+            return categories;
+        } else {
+            List<Category> categories = categoryRepository.findCategoriesByParentCategoryId(parentCategoryId);
+            categories.forEach(this::removeInactiveChildren);
+            return categories;
+        }
     }
 
     @Override
     public Category getCategory(Long categoryId) {
-        return categoryRepository.findCategoryById(categoryId);
+        Category category = categoryRepository.findCategoryById(categoryId);
+        removeInactiveChildren(category);
+        return category;
     }
 
     @Override
     public Category addCategory(Long userId, CategoryRequest categoryRequest) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Category category = new Category();
+        removeInactiveChildren(category);
         this.updateCategoryByRequest(category, categoryRequest);
         category.setGeneralManager(gm);
         return categoryRepository.save(category);
@@ -72,6 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category updateCategory(Long categoryId, CategoryRequest categoryRequest) {
         Category category = this.getCategory(categoryId);
+        removeInactiveChildren(category);
         this.updateCategoryByRequest(category, categoryRequest);
         return categoryRepository.save(category);
     }
@@ -79,6 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category activateCategory(Long categoryId) {
         Category category = categoryRepository.findCategoryById(categoryId, true);
+        removeInactiveChildren(category);
         category.setIsActive(true);
         return categoryRepository.save(category);
     }
@@ -86,11 +88,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category deactivateCategory(Long categoryId) {
         Category category = categoryRepository.findCategoryById(categoryId);
+        removeInactiveChildren(category);
         category.setIsActive(false);
         return categoryRepository.save(category);
     }
 
-    private void updateCategoryByRequest(Category category, CategoryRequest categoryRequest) {
+    @Override
+    public List<Category> activateCategories(List<Long> categoryIds) {
+        return categoryIds.stream().map(this::activateCategory).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Category> deactivateCategories(List<Long> categoryIds) {
+        return categoryIds.stream().map(this::deactivateCategory).collect(Collectors.toList());
+    }
+
+    private void updateCategoryByRequest(@NonNull Category category, @NonNull CategoryRequest categoryRequest) {
         Optional.ofNullable(categoryRequest.getName()).ifPresent(category::setName);
         Optional.ofNullable(categoryRequest.getDescription()).ifPresent(category::setDescription);
         Optional.ofNullable(categoryRequest.getShortName()).ifPresent(category::setShortName);
@@ -102,7 +115,7 @@ public class CategoryServiceImpl implements CategoryService {
         });
     }
 
-    private void removeInactiveCategories(List<Category> categories) {
+    private void removeInactiveCategories(@NonNull List<Category> categories) {
         List<Category> inactiveCategories = new ArrayList<>();
         categories.forEach(category -> {
             if (category.isActive()) {
@@ -112,5 +125,15 @@ public class CategoryServiceImpl implements CategoryService {
             }
         });
         categories.removeAll(inactiveCategories);
+    }
+
+    private void removeInactiveChildren(@NonNull Category category) {
+        List<Category> inactiveChildren = new ArrayList<>();
+        category.getChildren().forEach(child -> {
+            if (!child.isActive()) {
+                inactiveChildren.add(child);
+            }
+        });
+        category.getChildren().removeAll(inactiveChildren);
     }
 }
