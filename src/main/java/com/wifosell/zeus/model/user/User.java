@@ -194,6 +194,7 @@ public class User extends BasicEntity {
         return this.parent == null;
     }
 
+    @JsonIgnore
     public User getGeneralManager() {
         User gm = this;
         while (!gm.isRoot()) {
