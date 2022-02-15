@@ -14,6 +14,5 @@ public class UserResponse {
     private String avatar;
     private User parent;
     private Collection<String> authorities;
-
     private String email;
 }

@@ -3,6 +3,7 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
+import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CategoryService;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/categories")
@@ -25,56 +28,89 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')") // TODO haukc
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<Category>>> getAllCategories() {
+    public ResponseEntity<GApiResponse<List<CategoryResponse>>> getAllCategories() {
         List<Category> categoryList = categoryService.getAllCategories();
-        return ResponseEntity.ok(GApiResponse.success(categoryList));
+        List<CategoryResponse> categoryResponses = categoryList
+                .stream().map(CategoryResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(categoryResponses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<Category>>> getCategories(@CurrentUser UserPrincipal userPrincipal) {
-        List<Category> categoryList = categoryService.getCategories(userPrincipal.getId());
-        return ResponseEntity.ok(GApiResponse.success(categoryList));
+    public ResponseEntity<GApiResponse<List<CategoryResponse>>> getCategories(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "parentId", required = false) Long parentId) {
+        List<Category> categoryList = categoryService.getCategories(userPrincipal.getId(), parentId);
+        List<CategoryResponse> categoryResponses = categoryList
+                .stream().map(CategoryResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(categoryResponses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{categoryId}")
-    public ResponseEntity<GApiResponse<Category>> getCategory(@CurrentUser UserPrincipal userPrincipal,
+    public ResponseEntity<GApiResponse<CategoryResponse>> getCategory(@CurrentUser UserPrincipal userPrincipal,
                                                               @PathVariable(name = "categoryId") Long categoryId) {
         Category category = categoryService.getCategory(categoryId);
-        return ResponseEntity.ok(GApiResponse.success(category));
+        CategoryResponse categoryResponse = new CategoryResponse(category);
+        return ResponseEntity.ok(GApiResponse.success(categoryResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse<Category>> addCategory(@CurrentUser UserPrincipal userPrincipal,
+    public ResponseEntity<GApiResponse<CategoryResponse>> addCategory(@CurrentUser UserPrincipal userPrincipal,
                                                     @RequestBody CategoryRequest categoryRequest) {
         Category category = categoryService.addCategory(userPrincipal.getId(), categoryRequest);
-        return ResponseEntity.ok(GApiResponse.success(category));
+        CategoryResponse categoryResponse = new CategoryResponse(category);
+        return ResponseEntity.ok(GApiResponse.success(categoryResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{categoryId}/update")
-    public ResponseEntity<GApiResponse<Category>> updateCategory(@CurrentUser UserPrincipal userPrincipal,
+    public ResponseEntity<GApiResponse<CategoryResponse>> updateCategory(@CurrentUser UserPrincipal userPrincipal,
                                                        @PathVariable(name = "categoryId") Long categoryId,
                                                        @RequestBody CategoryRequest categoryRequest) {
         Category category = categoryService.updateCategory(categoryId, categoryRequest);
-        return ResponseEntity.ok(GApiResponse.success(category));
+        CategoryResponse categoryResponse = new CategoryResponse(category);
+        return ResponseEntity.ok(GApiResponse.success(categoryResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{categoryId}/activate")
-    public ResponseEntity<GApiResponse<Category>> activateCategory(@CurrentUser UserPrincipal userPrincipal,
+    public ResponseEntity<GApiResponse<CategoryResponse>> activateCategory(@CurrentUser UserPrincipal userPrincipal,
                                                          @PathVariable(name = "categoryId") Long categoryId) {
         Category category = categoryService.activateCategory(categoryId);
-        return ResponseEntity.ok(GApiResponse.success(category));
+        CategoryResponse categoryResponse = new CategoryResponse(category);
+        return ResponseEntity.ok(GApiResponse.success(categoryResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{categoryId}/deactivate")
-    public ResponseEntity<GApiResponse<Category>> deactivateCategory(@CurrentUser UserPrincipal userPrincipal,
+    public ResponseEntity<GApiResponse<CategoryResponse>> deactivateCategory(@CurrentUser UserPrincipal userPrincipal,
                                                            @PathVariable(name = "categoryId") Long categoryId) {
         Category category = categoryService.deactivateCategory(categoryId);
-        return ResponseEntity.ok(GApiResponse.success(category));
+        CategoryResponse categoryResponse = new CategoryResponse(category);
+        return ResponseEntity.ok(GApiResponse.success(categoryResponse));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/activate")
+    public ResponseEntity<GApiResponse<List<CategoryResponse>>> activateCategories(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ids") List<Long> categoryIds) {
+        List<Category> categoryList = categoryService.activateCategories(categoryIds);
+        List<CategoryResponse> categoryResponses = categoryList.stream()
+                .map(CategoryResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(categoryResponses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/deactivate")
+    public ResponseEntity<GApiResponse<List<CategoryResponse>>> deactivateCategories(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ids") List<Long> categoryIds) {
+        List<Category> categoryList = categoryService.deactivateCategories(categoryIds);
+        List<CategoryResponse> categoryResponses = categoryList.stream()
+                .map(CategoryResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(categoryResponses));
     }
 }
