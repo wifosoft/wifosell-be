@@ -57,7 +57,7 @@ public class ShopController {
      * @param shopId
      * @return
      */
-    @PreAuthorizeAccessToShop
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{shopId}")
     public ResponseEntity<GApiResponse> getShopInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.getShopInfo(shopId);
