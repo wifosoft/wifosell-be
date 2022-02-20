@@ -3,6 +3,7 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
+import com.wifosell.zeus.payload.response.product.ProductResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ProductService;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/products")
@@ -25,17 +27,19 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<Product>>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(GApiResponse.success(products));
+    public ResponseEntity<GApiResponse<List<ProductResponse>>> getAllProducts() {
+        List<ProductResponse> productResponses = productService.getAllProducts().
+                stream().map(ProductResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(productResponses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<Product>>> getProductsByUser(
+    public ResponseEntity<GApiResponse<List<ProductResponse>>> getProductsByUser(
             @CurrentUser UserPrincipal userPrincipal) {
-        List<Product> products = productService.getProductsByUserId(userPrincipal.getId());
-        return ResponseEntity.ok(GApiResponse.success(products));
+        List<ProductResponse> productResponses = productService.getProductsByUserId(userPrincipal.getId())
+                .stream().map(ProductResponse::new).collect(Collectors.toList());;
+        return ResponseEntity.ok(GApiResponse.success(productResponses));
     }
 
 //    @PreAuthorize("isAuthenticated()")
@@ -68,30 +72,33 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{productId}")
-    public ResponseEntity<GApiResponse<Product>> getProduct(
+    public ResponseEntity<GApiResponse<ProductResponse>> getProduct(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "productId") Long productId) {
         Product product = productService.getProduct(productId);
-        return ResponseEntity.ok(GApiResponse.success(product));
+        ProductResponse productResponse = new ProductResponse(product);
+        return ResponseEntity.ok(GApiResponse.success(productResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse<Product>> addProduct(
+    public ResponseEntity<GApiResponse<ProductResponse>> addProduct(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ProductRequest productRequest) {
         Product product = productService.addProduct(userPrincipal.getId(), productRequest);
-        return ResponseEntity.ok(GApiResponse.success(product));
+        ProductResponse productResponse = new ProductResponse(product);
+        return ResponseEntity.ok(GApiResponse.success(productResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{productId}/update")
-    public ResponseEntity<GApiResponse<Product>> updateProduct(
+    public ResponseEntity<GApiResponse<ProductResponse>> updateProduct(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "productId") Long productId,
             @RequestBody ProductRequest productRequest) {
         Product product = productService.updateProduct(productId, productRequest);
-        return ResponseEntity.ok(GApiResponse.success(product));
+        ProductResponse productResponse = new ProductResponse(product);
+        return ResponseEntity.ok(GApiResponse.success(productResponse));
     }
 
 //    @PreAuthorize("isAuthenticated()")

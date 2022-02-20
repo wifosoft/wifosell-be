@@ -1,6 +1,6 @@
 package com.wifosell.zeus.controller;
 
-import com.wifosell.zeus.model.product.Option;
+import com.wifosell.zeus.model.option.Option;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.option.OptionRequest;
 import com.wifosell.zeus.security.CurrentUser;

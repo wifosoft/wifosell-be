@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wifosell.zeus.model.option.Option;
 import lombok.*;
 
 import javax.persistence.*;

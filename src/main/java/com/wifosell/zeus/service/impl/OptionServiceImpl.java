@@ -1,7 +1,7 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.product.Option;
-import com.wifosell.zeus.model.product.OptionValue;
+import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.option.OptionRequest;
 import com.wifosell.zeus.repository.OptionRepository;
@@ -11,6 +11,7 @@ import com.wifosell.zeus.service.OptionService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,14 +63,20 @@ public class OptionServiceImpl implements OptionService {
 
     private void updateOptionByRequest(Option option, OptionRequest optionRequest) {
         Optional.ofNullable(optionRequest.getName()).ifPresent(option::setName);
-        Optional.ofNullable(optionRequest.getOptionValues()).ifPresent(optionValues -> {
-            // TODO haukc: optimize
+        Optional.ofNullable(optionRequest.getOptionValueRequests()).ifPresent(optionValueRequests -> {
+            // TODO haukc: optimize performance
             optionValueRepository.deleteOptionValuesByOptionId(option.getId());
-            for (OptionValue optionValue : optionValues) {
-                optionValue.setOption(option);
-                optionValueRepository.save(optionValue);
+
+            List<OptionValue> optionValues = new ArrayList<>();
+            for (OptionRequest.OptionValueRequest optionValueRequest : optionValueRequests) {
+                OptionValue optionValue = OptionValue.builder()
+                        .value(optionValueRequest.getValue())
+                        .option(option)
+                        .build();
+                optionValues.add(optionValueRepository.save(optionValue));
             }
             option.setOptionValues(optionValues);
+            optionRepository.save(option);
         });
     }
 }

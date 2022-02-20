@@ -1,19 +1,19 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.option.Option;
 import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.ProductOptionRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
-import com.wifosell.zeus.repository.AttributeRepository;
-import com.wifosell.zeus.repository.CategoryRepository;
-import com.wifosell.zeus.repository.ProductRepository;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,16 +23,22 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final AttributeRepository attributeRepository;
+    private final OptionRepository optionRepository;
+    private final ProductOptionRelationRepository productOptionRelationRepository;
     private final UserRepository userRepository;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository,
                               CategoryRepository categoryRepository,
                               AttributeRepository attributeRepository,
+                              OptionRepository optionRepository,
+                              ProductOptionRelationRepository productOptionRelationRepository,
                               UserRepository userRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.attributeRepository = attributeRepository;
+        this.optionRepository = optionRepository;
+        this.productOptionRelationRepository = productOptionRelationRepository;
         this.userRepository = userRepository;
     }
 
@@ -80,14 +86,41 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productRequest.getDimension()).ifPresent(product::setDimension);
         Optional.ofNullable(productRequest.getState()).ifPresent(product::setState);
         Optional.ofNullable(productRequest.getStatus()).ifPresent(product::setStatus);
-        Optional.ofNullable(productRequest.getAttributes()).ifPresent(attributes -> {
-            // TODO haukc: optimize
+
+        // Attributes
+        // TODO haukc: optimize performance
+        Optional.ofNullable(productRequest.getAttributeRequests()).ifPresent(attributeRequests -> {
             attributeRepository.deleteAttributesByProductId(product.getId());
-            for (Attribute attribute : attributes) {
-                attribute.setProduct(product);
-                attributeRepository.save(attribute);
+
+            List<Attribute> attributes = new ArrayList<>();
+            for (ProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+                Attribute attribute = Attribute.builder()
+                        .name(attributeRequest.getName())
+                        .value(attributeRequest.getValue())
+                        .product(product)
+                        .build();
+                attributes.add(attributeRepository.save(attribute));
             }
             product.setAttributes(attributes);
+            productRepository.save(product);
+        });
+
+        // Options
+        // TODO haukc: optimize performance
+        Optional.ofNullable(productRequest.getOptionRequests()).ifPresent(optionRequests -> {
+            productOptionRelationRepository.deleteProductOptionRelationByProductId(product.getId());
+
+            List<ProductOptionRelation> relations = new ArrayList<>();
+            for (ProductRequest.OptionRequest optionRequest : optionRequests) {
+                Option option = optionRepository.findOptionById(optionRequest.getId());
+                ProductOptionRelation relation = ProductOptionRelation.builder()
+                        .product(product)
+                        .option(option)
+                        .build();
+                relations.add(productOptionRelationRepository.save(relation));
+            }
+            product.setProductOptionRelations(relations);
+            productRepository.save(product);
         });
     }
 }
