@@ -119,11 +119,11 @@ pipeline {
         sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
 cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
 echo \'------- finish copy jar -------------------------------------\'
-echo \'------- restart zeus service------------------\'
-sudo systemctl restart zeus
-echo \'------- finish restart zeus service\'
-sudo systemctl status zeus
-echo \'------- finish restart zeus service\'
+echo \'------- restart spring-boot-hello service------------------\'
+sudo systemctl restart spring-boot-hello
+echo \'------- finish restart spring-boot-hello service\'
+sudo systemctl status spring-boot-hello
+echo \'------- finish restart spring-boot-hello service\'
 '''
         script {
           currentBuild.description = "Success Build! Access to API for using"
