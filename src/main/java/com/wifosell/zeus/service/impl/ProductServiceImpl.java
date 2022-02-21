@@ -4,7 +4,7 @@ import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.Option;
 import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductOptionRelation;
+import com.wifosell.zeus.model.product.OptionProductRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
 import com.wifosell.zeus.repository.*;
@@ -24,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final AttributeRepository attributeRepository;
     private final OptionRepository optionRepository;
-    private final ProductOptionRelationRepository productOptionRelationRepository;
+    private final OptionProductRelationRepository optionProductRelationRepository;
     private final UserRepository userRepository;
 
     @Autowired
@@ -32,13 +32,13 @@ public class ProductServiceImpl implements ProductService {
                               CategoryRepository categoryRepository,
                               AttributeRepository attributeRepository,
                               OptionRepository optionRepository,
-                              ProductOptionRelationRepository productOptionRelationRepository,
+                              OptionProductRelationRepository optionProductRelationRepository,
                               UserRepository userRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.attributeRepository = attributeRepository;
         this.optionRepository = optionRepository;
-        this.productOptionRelationRepository = productOptionRelationRepository;
+        this.optionProductRelationRepository = optionProductRelationRepository;
         this.userRepository = userRepository;
     }
 
@@ -108,18 +108,18 @@ public class ProductServiceImpl implements ProductService {
         // Options
         // TODO haukc: optimize performance
         Optional.ofNullable(productRequest.getOptionRequests()).ifPresent(optionRequests -> {
-            productOptionRelationRepository.deleteProductOptionRelationByProductId(product.getId());
+            optionProductRelationRepository.deleteProductOptionRelationByProductId(product.getId());
 
-            List<ProductOptionRelation> relations = new ArrayList<>();
+            List<OptionProductRelation> relations = new ArrayList<>();
             for (ProductRequest.OptionRequest optionRequest : optionRequests) {
                 Option option = optionRepository.findOptionById(optionRequest.getId());
-                ProductOptionRelation relation = ProductOptionRelation.builder()
+                OptionProductRelation relation = OptionProductRelation.builder()
                         .product(product)
                         .option(option)
                         .build();
-                relations.add(productOptionRelationRepository.save(relation));
+                relations.add(optionProductRelationRepository.save(relation));
             }
-            product.setProductOptionRelations(relations);
+            product.setOptionProductRelations(relations);
             productRepository.save(product);
         });
     }

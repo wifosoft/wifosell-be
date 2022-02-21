@@ -3,7 +3,7 @@ package com.wifosell.zeus.model.sale_channel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.shop.ShopSaleChannelRelation;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -35,7 +35,7 @@ public class SaleChannel extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "saleChannel", fetch = FetchType.LAZY)
-    Set<ShopSaleChannelRelation> shopSaleChannelRelations;
+    Set<SaleChannelShopRelation> saleChannelShopRelations;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

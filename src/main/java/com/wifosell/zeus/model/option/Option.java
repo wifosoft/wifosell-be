@@ -3,7 +3,7 @@ package com.wifosell.zeus.model.option;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.product.ProductOptionRelation;
+import com.wifosell.zeus.model.product.OptionProductRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -29,7 +29,7 @@ public class Option extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
-    private List<ProductOptionRelation> productOptionRelations;
+    private List<OptionProductRelation> optionProductRelations;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -4,7 +4,7 @@ import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
-import com.wifosell.zeus.model.shop.ShopSaleChannelRelation;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
@@ -36,7 +36,7 @@ public class ShopServiceImpl implements ShopService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseShopRelationRepository warehouseShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final ShopSaleChannelRelationRepository shopSaleChannelRelationRepository;
+    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -48,14 +48,14 @@ public class ShopServiceImpl implements ShopService {
                            WarehouseRepository warehouseRepository,
                            WarehouseShopRelationRepository warehouseShopRelationRepository,
                            SaleChannelRepository saleChannelRepository,
-                           ShopSaleChannelRelationRepository shopSaleChannelRelationRepository) {
+                           SaleChannelShopRelationRepository saleChannelShopRelationRepository) {
         this.shopRepository = shopRepository;
         this.userRepository = userRepository;
         this.userShopRelationRepository = userShopRelationRepository;
         this.warehouseRepository = warehouseRepository;
         this.warehouseShopRelationRepository = warehouseShopRelationRepository;
         this.saleChannelRepository = saleChannelRepository;
-        this.shopSaleChannelRelationRepository = shopSaleChannelRelationRepository;
+        this.saleChannelShopRelationRepository = saleChannelShopRelationRepository;
     }
 
     @Override
@@ -231,12 +231,12 @@ public class ShopServiceImpl implements ShopService {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
         }
 
-        if (shopSaleChannelRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+        if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
         }
 
-        shopSaleChannelRelationRepository.save(
-                ShopSaleChannelRelation.builder().shop(shop).saleChannel(saleChannel).build()
+        saleChannelShopRelationRepository.save(
+                SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build()
         );
     }
 

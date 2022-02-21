@@ -1,7 +1,7 @@
-package com.wifosell.zeus.model.product;
+package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.product.Product;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,17 +12,17 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductOptionRelation {
-    @Id
+public class ProductShopRelation {
     @JsonIgnore
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    private Product product;
+    private Shop shop;
 
     @ManyToOne
-    private Option option;
+    private Product product;
 
     @Override
     public int hashCode() {

@@ -57,11 +57,11 @@ public class Shop extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    Set<ShopSaleChannelRelation> shopSaleChannelRelations;
+    Set<SaleChannelShopRelation> saleChannelShopRelations;
 
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private List<ShopProductRelation> shopProductRelations;
+    private List<ProductShopRelation> productShopRelations;
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

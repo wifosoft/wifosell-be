@@ -3,7 +3,7 @@ package com.wifosell.zeus.payload.response.product;
 import com.wifosell.zeus.model.option.Option;
 import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductOptionRelation;
+import com.wifosell.zeus.model.product.OptionProductRelation;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import lombok.Getter;
@@ -36,8 +36,8 @@ public class ProductResponse extends BasicEntityResponse {
         this.state = product.getState();
         this.status = product.getStatus();
         this.attributes = product.getAttributes();
-        this.options = product.getProductOptionRelations()
-                .stream().map(ProductOptionRelation::getOption).collect(Collectors.toList());
+        this.options = product.getOptionProductRelations()
+                .stream().map(OptionProductRelation::getOption).collect(Collectors.toList());
         this.variants = product.getVariants();
     }
 }
