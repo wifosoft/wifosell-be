@@ -3,7 +3,9 @@ package com.wifosell.zeus.payload.response.category;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import lombok.Getter;
+import lombok.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,5 +25,21 @@ public class CategoryResponse extends BasicEntityResponse {
         this.description = category.getDescription();
         this.parent = category.getParent();
         this.children = category.getChildren();
+        this.removeInactiveCategories(this.children);
+    }
+
+    private void removeInactiveCategories(List<Category> categories) {
+        if (categories == null)
+            return;
+
+        List<Category> inactiveCategories = new ArrayList<>();
+        categories.forEach(category -> {
+            if (category.isActive()) {
+                this.removeInactiveCategories(category.getChildren());
+            } else {
+                inactiveCategories.add(category);
+            }
+        });
+        categories.removeAll(inactiveCategories);
     }
 }
