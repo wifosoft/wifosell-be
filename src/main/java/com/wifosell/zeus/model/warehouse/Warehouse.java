@@ -25,10 +25,12 @@ public class Warehouse extends BasicEntity {
     private Long id;
 
     private String name;
-    private String shortName;
-    @Size(max = 255)
 
+    private String shortName;
+
+    @Size(max = 255)
     private String address;
+
     @Size(max = 20)
     @Column(name = "phone")
     private String phone;
