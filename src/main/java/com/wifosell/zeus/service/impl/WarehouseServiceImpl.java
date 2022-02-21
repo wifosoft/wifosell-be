@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Transactional
@@ -74,6 +75,16 @@ public class WarehouseServiceImpl implements WarehouseService {
         Warehouse warehouse = warehouseRepository.getWarehouseById( warehouseId);
         warehouse.setIsActive(false);
         return warehouseRepository.save(warehouse);
+    }
+
+    @Override
+    public List<Warehouse> activateWarehouses(List<Long> warehouseIds) {
+        return warehouseIds.stream().map(this::activateWarehouse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Warehouse> deactivateWarehouses(List<Long> warehouseIds) {
+        return warehouseIds.stream().map(this::deActivateWarehouse).collect(Collectors.toList());
     }
 
 }

@@ -1,7 +1,10 @@
 package com.wifosell.zeus.controller;
 
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.payload.request.sale_channel.ActivateSaleChannelsRequest;
+import com.wifosell.zeus.payload.request.warehouse.ActivateWarehousesRequest;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -10,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/warehouses")
@@ -57,7 +62,21 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouseService.deActivateWarehouse(warehouseId)));
     }
 
-    //
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/activate")
+    public ResponseEntity<GApiResponse<List<Warehouse>>> activateWarehouses(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ActivateWarehousesRequest request) {
+        List<Warehouse> warehouses = warehouseService.activateWarehouses(request.getIds());
+        return ResponseEntity.ok(GApiResponse.success(warehouses));
+    }
 
-
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/deactivate")
+    public ResponseEntity<GApiResponse<List<Warehouse>>> deactivateWarehouses(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ActivateWarehousesRequest request) {
+        List<Warehouse> warehouses = warehouseService.deactivateWarehouses(request.getIds());
+        return ResponseEntity.ok(GApiResponse.success(warehouses));
+    }
 }
