@@ -22,6 +22,8 @@ public interface ShopService {
     Shop editShop(Long shopId ,ShopRequest shopRequest);
     Shop deActivateShop(Long shopId);
     Shop activateShop(Long shopId);
+    List<Shop> activateShops(List<Long> shopIds);
+    List<Shop> deactivateShops(List<Long> shopIds);
 
     void linkWarehouseToShop(Long warehouseId,  Long shopId);
     void linkWarehouseToShop(Long currentUserId, Long warehouseId,  Long shopId);

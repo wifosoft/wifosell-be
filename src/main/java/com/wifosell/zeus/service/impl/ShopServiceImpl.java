@@ -187,6 +187,16 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
+    public List<Shop> activateShops(List<Long> shopIds) {
+        return shopIds.stream().map(this::activateShop).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Shop> deactivateShops(List<Long> shopIds) {
+        return shopIds.stream().map(this::deActivateShop).collect(Collectors.toList());
+    }
+
+    @Override
     public void linkWarehouseToShop(Long warehouseId, Long shopId) {
 
         if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
