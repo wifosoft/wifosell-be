@@ -1,7 +1,5 @@
 package com.wifosell.zeus.exception;
 
-import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.exception.ValidationErrorDTO;
 import org.springframework.beans.factory.annotation.Autowired;

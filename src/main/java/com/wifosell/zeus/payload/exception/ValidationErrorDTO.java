@@ -1,6 +1,5 @@
 package com.wifosell.zeus.payload.exception;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

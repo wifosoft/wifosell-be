@@ -1,7 +1,6 @@
 package com.wifosell.zeus.payload.exception;
 
 
-import jdk.jfr.SettingDefinition;
 import lombok.Getter;
 import lombok.Setter;
 

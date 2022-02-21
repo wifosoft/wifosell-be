@@ -22,7 +22,6 @@ import java.util.Set;
 public class SaleChannel extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Size(max = 255)
@@ -30,18 +29,15 @@ public class SaleChannel extends BasicEntity {
     private String name;
 
     @Size(max = 50)
-    @Column(name = "short_name")
     private String shortName;
 
     private String description;
 
     @JsonIgnore
     @OneToMany(mappedBy = "saleChannel", fetch = FetchType.LAZY)
-    //@JsonManagedReference
     Set<SaleChannelShopRelation> saleChannelShopRelations;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
 }

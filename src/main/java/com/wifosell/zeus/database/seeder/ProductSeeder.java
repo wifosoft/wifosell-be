@@ -33,7 +33,6 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                 .dimension("50 x 100 (cm)")
                 .state(0)
                 .status(0)
-                .stock(10)
                 .generalManager(gm)
                 .build();
         productRepository.save(product1);
@@ -47,12 +46,11 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                 .dimension("60 x 100 (cm)")
                 .state(0)
                 .status(0)
-                .stock(50)
                 .generalManager(gm)
                 .build();
         productRepository.save(product2);
 
-        Product product11 = Product.builder()
+        Product product3 = Product.builder()
                 .name("Ao thun mua dong nam tay dai")
                 .sku("AT011A2X")
                 .barcode("1021120019")
@@ -61,10 +59,8 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                 .dimension("50 x 100 (cm)")
                 .state(0)
                 .status(0)
-                .stock(30)
-                .parent(product1)
                 .generalManager(gm)
                 .build();
-        productRepository.save(product11);
+        productRepository.save(product3);
     }
 }

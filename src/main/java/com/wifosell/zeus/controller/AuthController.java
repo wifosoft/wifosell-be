@@ -1,15 +1,6 @@
 package com.wifosell.zeus.controller;
 
-import com.wifosell.zeus.constant.DefaultUserPermission;
-import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.exception.AppException;
-import com.wifosell.zeus.exception.ZeusGlobalException;
-import com.wifosell.zeus.model.permission.UserPermission;
-import com.wifosell.zeus.model.role.Role;
-import com.wifosell.zeus.model.role.RoleName;
-import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.LoginRequest;
 import com.wifosell.zeus.payload.request.RegisterRequest;
@@ -19,12 +10,9 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.UserRoleRelationRepository;
 import com.wifosell.zeus.security.JWTTokenProvider;
 import com.wifosell.zeus.service.AuthService;
-import com.wifosell.zeus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,10 +26,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")

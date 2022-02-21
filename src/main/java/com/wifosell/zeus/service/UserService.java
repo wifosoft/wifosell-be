@@ -1,16 +1,12 @@
 package com.wifosell.zeus.service;
 
-import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.RegisterRequest;
 import com.wifosell.zeus.payload.request.user.ChangePasswordRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
 import com.wifosell.zeus.payload.response.AvailableResourceResponse;
 import com.wifosell.zeus.security.UserPrincipal;
-import org.apache.coyote.Request;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
 package com.wifosell.zeus.database.seeder;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.shop.Shop;
@@ -9,12 +8,7 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.UserShopRelationRepository;
-import com.wifosell.zeus.repository.WarehouseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import javax.persistence.ManyToOne;
 import java.util.ArrayList;
 import java.util.List;
 

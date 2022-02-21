@@ -1,20 +1,19 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.OptionProductRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
-import com.wifosell.zeus.repository.CategoryRepository;
-import com.wifosell.zeus.repository.ProductRepository;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,45 +21,36 @@ import java.util.Optional;
 @Service("Product")
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final AttributeRepository attributeRepository;
+    private final OptionRepository optionRepository;
+    private final OptionProductRelationRepository optionProductRelationRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, UserRepository userRepository, CategoryRepository categoryRepository) {
+    public ProductServiceImpl(ProductRepository productRepository,
+                              CategoryRepository categoryRepository,
+                              AttributeRepository attributeRepository,
+                              OptionRepository optionRepository,
+                              OptionProductRelationRepository optionProductRelationRepository,
+                              UserRepository userRepository) {
         this.productRepository = productRepository;
-        this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.attributeRepository = attributeRepository;
+        this.optionRepository = optionRepository;
+        this.optionProductRelationRepository = optionProductRelationRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<Product> getAllRootProducts() {
-        return productRepository.findAllRootProducts();
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
     @Override
-    public List<Product> getRootProductsByUserId(Long userId) {
+    public List<Product> getProductsByUserId(Long userId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        return productRepository.findRootProductsByGeneralManagerId(gm.getId());
-    }
-
-    @Override
-    public List<Product> getRootProductsByShopIdAndSaleChannelId(Long shopId, Long saleChannelId) {
-        return productRepository.findRootProductsByShopIdAndSaleChannelId(shopId, saleChannelId);
-    }
-
-    @Override
-    public List<Product> getRootProductsByShopId(Long shopId) {
-        return productRepository.findRootProductsByShopId(shopId);
-    }
-
-    @Override
-    public List<Product> getRootProductsBySaleChannelId(Long saleChannelId) {
-        return productRepository.findRootProductsBySaleChannelId(saleChannelId);
-    }
-
-    @Override
-    public List<Product> getProductsByParentProductId(Long parentProductId) {
-        return productRepository.findProductsByParentProductId(parentProductId);
+        return productRepository.findProductsByGeneralManagerId(gm.getId());
     }
 
     @Override
@@ -84,20 +74,6 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
-    @Override
-    public Product activateProduct(Long productId) {
-        Product product = productRepository.findProductById(productId, true);
-        product.setIsActive(true);
-        return productRepository.save(product);
-    }
-
-    @Override
-    public Product deactivateProduct(Long productId) {
-        Product product = productRepository.findProductById(productId);
-        product.setIsActive(false);
-        return productRepository.save(product);
-    }
-
     private void updateProductByRequest(Product product, ProductRequest productRequest) {
         Optional.ofNullable(productRequest.getName()).ifPresent(product::setName);
         Optional.ofNullable(productRequest.getSku()).ifPresent(product::setSku);
@@ -110,12 +86,41 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productRequest.getDimension()).ifPresent(product::setDimension);
         Optional.ofNullable(productRequest.getState()).ifPresent(product::setState);
         Optional.ofNullable(productRequest.getStatus()).ifPresent(product::setStatus);
-        Optional.ofNullable(productRequest.getStock()).ifPresent(product::setStock);
-        Optional.ofNullable(productRequest.getParentId()).ifPresent(parentProductId -> {
-            Product parentProduct = productRepository.findById(parentProductId).orElseThrow(
-                    () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PARENT_PRODUCT_NOT_FOUND))
-            );
-            product.setParent(parentProduct);
+
+        // Attributes
+        // TODO haukc: optimize performance
+        Optional.ofNullable(productRequest.getAttributeRequests()).ifPresent(attributeRequests -> {
+            attributeRepository.deleteAttributesByProductId(product.getId());
+
+            List<Attribute> attributes = new ArrayList<>();
+            for (ProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+                Attribute attribute = Attribute.builder()
+                        .name(attributeRequest.getName())
+                        .value(attributeRequest.getValue())
+                        .product(product)
+                        .build();
+                attributes.add(attributeRepository.save(attribute));
+            }
+            product.setAttributes(attributes);
+            productRepository.save(product);
+        });
+
+        // Options
+        // TODO haukc: optimize performance
+        Optional.ofNullable(productRequest.getOptionRequests()).ifPresent(optionRequests -> {
+            optionProductRelationRepository.deleteProductOptionRelationByProductId(product.getId());
+
+            List<OptionProductRelation> relations = new ArrayList<>();
+            for (ProductRequest.OptionRequest optionRequest : optionRequests) {
+                Option option = optionRepository.findOptionById(optionRequest.getId());
+                OptionProductRelation relation = OptionProductRelation.builder()
+                        .product(product)
+                        .option(option)
+                        .build();
+                relations.add(optionProductRelationRepository.save(relation));
+            }
+            product.setOptionProductRelations(relations);
+            productRepository.save(product);
         });
     }
 }

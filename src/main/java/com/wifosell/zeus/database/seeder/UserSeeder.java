@@ -1,31 +1,17 @@
 package com.wifosell.zeus.database.seeder;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.wifosell.zeus.constant.DefaultUserPermission;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
-import com.wifosell.zeus.database.Seeder;
 import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.RoleRepository;
-import com.wifosell.zeus.security.JWTTokenProvider;
-import org.hibernate.boot.cfgxml.spi.CfgXmlAccessService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
-import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -3,8 +3,8 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
@@ -158,12 +158,7 @@ public class ShopServiceImpl implements ShopService {
     public Shop addShop(ShopRequest shopRequest, Long userId) {
         User parentUser = userRepository.getUserById(userId);
         Shop shop = new Shop();
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        this.updateShopByRequest(shop, shopRequest);
         shop.setGeneralManager(parentUser);
         shop = shopRepository.save(shop);
         return shop;
@@ -172,12 +167,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Shop editShop(Long shopId, ShopRequest shopRequest) {
         Shop shop = shopRepository.getShopById(shopId);
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        this.updateShopByRequest(shop, shopRequest);
         shop = shopRepository.save(shop);
         return shop;
     }
@@ -261,7 +251,15 @@ public class ShopServiceImpl implements ShopService {
     public List<User> getListStaffOfShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         Set<UserShopRelation> userRelation = shop.getUserShopRelation();
-        List<User> users = userRelation.stream().map(e -> e.getUser()).collect(Collectors.toList());
-        return users;
+        return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
+    }
+
+    private void updateShopByRequest(Shop shop, ShopRequest shopRequest) {
+        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
     }
 }
