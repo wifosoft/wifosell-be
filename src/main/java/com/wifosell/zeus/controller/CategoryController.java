@@ -2,9 +2,8 @@ package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.GApiResponse;
-import com.wifosell.zeus.payload.request.category.ActivateCategoriesRequest;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
-import com.wifosell.zeus.payload.request.category.DeactivateCategoriesRequest;
+import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -97,7 +96,7 @@ public class CategoryController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> activateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ActivateCategoriesRequest request) {
+            @RequestBody ListIdRequest request) {
         List<Category> categoryList = categoryService.activateCategories(request.getIds());
         List<CategoryResponse> categoryResponses = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());
@@ -108,7 +107,7 @@ public class CategoryController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> deactivateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody DeactivateCategoriesRequest request) {
+            @RequestBody ListIdRequest request) {
         List<Category> categoryList = categoryService.deactivateCategories(request.getIds());
         List<CategoryResponse> categoryResponses = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());

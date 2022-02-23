@@ -1,4 +1,4 @@
-package com.wifosell.zeus.payload.request.shop;
+package com.wifosell.zeus.payload.request.common;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class DeactivateShopsRequest {
+public class ListIdRequest {
     @NotEmpty
     List<Long> ids;
 }

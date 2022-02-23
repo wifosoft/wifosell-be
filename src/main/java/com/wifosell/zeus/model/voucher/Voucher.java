@@ -3,14 +3,12 @@ package com.wifosell.zeus.model.voucher;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.Set;
 
 @Getter
 @Setter

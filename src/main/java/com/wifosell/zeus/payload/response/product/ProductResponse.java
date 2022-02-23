@@ -2,8 +2,8 @@ package com.wifosell.zeus.payload.response.product;
 
 import com.wifosell.zeus.model.option.Option;
 import com.wifosell.zeus.model.product.Attribute;
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.OptionProductRelation;
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import lombok.Getter;
