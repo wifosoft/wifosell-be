@@ -82,7 +82,7 @@ pipeline {
       steps {
         notifyGitHub('PENDING')
         echo 'Initiating maven build'
-        sh 'mvn clean install -Dlicense.skip=true'
+        sh 'mvn clean install -Dlicense.skip=true -Dmaven.test.skip'
         echo 'Maven build complete'
       }
     }
