@@ -5,9 +5,9 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.RegisterRequest;
+import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.user.ChangePasswordRequest;
 import com.wifosell.zeus.payload.request.user.ChangeRoleRequest;
-import com.wifosell.zeus.payload.request.user.ListUserRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
 import com.wifosell.zeus.payload.response.AvailableResourceResponse;
 import com.wifosell.zeus.security.CurrentUser;
@@ -137,24 +137,26 @@ public class UserController {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/deactivateListUser")
-    public ResponseEntity<GApiResponse> deActivateListUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody ListUserRequest listUserRequest) {
+    @PreAuthorizeAccessToUser
+    @PostMapping("/deactivate")
+    public ResponseEntity<GApiResponse<List<User>>> deactivateUsers(@CurrentUser UserPrincipal userPrincipal,
+                                                                       @RequestBody ListIdRequest request) {
         List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
         List<Long> filterListAccount = childAccounts.stream().map(User::getId).filter(
-                id -> (listUserRequest.getListUserId().contains(id))
+                id -> (request.getIds().contains(id))
         ).collect(Collectors.toList());
         List<User> affectedUser = userService.deActivateListUser(filterListAccount);
 
         return ResponseEntity.ok(GApiResponse.success(affectedUser));
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/activateListUser")
-    public ResponseEntity<GApiResponse<List<User>>> activateListUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody ListUserRequest listUserRequest) {
+    @PreAuthorizeAccessToUser
+    @PostMapping("/activate")
+    public ResponseEntity<GApiResponse<List<User>>> activateUsers(@CurrentUser UserPrincipal userPrincipal,
+                                                                  @RequestBody ListIdRequest request) {
         List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
         List<Long> filterListAccount = childAccounts.stream().map(User::getId).filter(
-                id -> (listUserRequest.getListUserId().contains(id))
+                id -> (request.getIds().contains(id))
         ).collect(Collectors.toList());
         List<User> affectedUser = userService.activateListUser(filterListAccount);
         return ResponseEntity.ok(GApiResponse.success(affectedUser));
