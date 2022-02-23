@@ -83,6 +83,10 @@ pipeline {
         notifyGitHub('PENDING')
         echo 'Initiating maven build'
         sh 'mvn clean install -Dlicense.skip=true -Dmaven.test.skip'
+        sh 'docker ps -f name=wifosell/wifosell-be -q | xargs --no-run-if-empty docker container stop'
+        sh 'docker container ls -a -fname=wifosell/wifosell-be -q | xargs -r docker container rm'
+        sh 'docker build -t wifosell/wifosell-be .'
+        sh 'docker run -p 8888:8888 wifosell/wifosell-be --name wifosell/wifosell-be'
         echo 'Maven build complete'
       }
     }
@@ -117,15 +121,15 @@ pipeline {
         notifyGitHub('PENDING')
         echo 'Initiating Deployment'
         echo 'Deployment Complete'
-        sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
-cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
-echo \'------- finish copy jar -------------------------------------\'
-echo \'------- restart spring-boot-hello service------------------\'
-sudo systemctl restart spring-boot-hello
-echo \'------- finish restart spring-boot-hello service\'
-sudo systemctl status spring-boot-hello
-echo \'------- finish restart spring-boot-hello service\'
-'''
+//         sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
+// cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
+// echo \'------- finish copy jar -------------------------------------\'
+// echo \'------- restart spring-boot-hello service------------------\'
+// sudo systemctl restart spring-boot-hello
+// echo \'------- finish restart spring-boot-hello service\'
+// sudo systemctl status spring-boot-hello
+// echo \'------- finish restart spring-boot-hello service\'
+// '''
         script {
           currentBuild.description = "Success Build! Access to API for using"
         //  updateGithubCommitStatus(currentBuild)
