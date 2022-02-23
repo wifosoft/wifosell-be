@@ -1,6 +1,6 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.option.OptionRequest;
@@ -30,38 +30,38 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public List<Option> getAllOptions() {
+    public List<OptionModel> getAllOptions() {
         return optionRepository.findAll();
     }
 
     @Override
-    public List<Option> getOptionsByUserId(Long userId) {
+    public List<OptionModel> getOptionsByUserId(Long userId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         return optionRepository.findOptionsByGeneralManagerId(gm.getId());
     }
 
     @Override
-    public Option getOption(Long optionId) {
+    public OptionModel getOption(Long optionId) {
         return optionRepository.findOptionById(optionId);
     }
 
     @Override
-    public Option addOption(Long userId, OptionRequest optionRequest) {
+    public OptionModel addOption(Long userId, OptionRequest optionRequest) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Option option = new Option();
+        OptionModel option = new OptionModel();
         this.updateOptionByRequest(option, optionRequest);
         option.setGeneralManager(gm);
         return optionRepository.save(option);
     }
 
     @Override
-    public Option updateOption(Long optionId, OptionRequest optionRequest) {
-        Option option = optionRepository.findOptionById(optionId);
+    public OptionModel updateOption(Long optionId, OptionRequest optionRequest) {
+        OptionModel option = optionRepository.findOptionById(optionId);
         this.updateOptionByRequest(option, optionRequest);
         return optionRepository.save(option);
     }
 
-    private void updateOptionByRequest(Option option, OptionRequest optionRequest) {
+    private void updateOptionByRequest(OptionModel option, OptionRequest optionRequest) {
         Optional.ofNullable(optionRequest.getName()).ifPresent(option::setName);
         Optional.ofNullable(optionRequest.getOptionValueRequests()).ifPresent(optionValueRequests -> {
             // TODO haukc: optimize performance

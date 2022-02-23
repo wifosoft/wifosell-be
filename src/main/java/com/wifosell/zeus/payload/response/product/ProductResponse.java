@@ -1,6 +1,6 @@
 package com.wifosell.zeus.payload.response.product;
 
-import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.OptionProductRelation;
 import com.wifosell.zeus.model.product.Product;
@@ -22,7 +22,7 @@ public class ProductResponse extends BasicEntityResponse {
     private final Integer state;
     private final Integer status;
     private final List<Attribute> attributes;
-    private final List<Option> options;
+    private final List<OptionModel> options;
     private final List<Variant> variants;
 
     public ProductResponse(Product product) {

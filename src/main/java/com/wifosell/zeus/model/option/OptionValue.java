@@ -25,7 +25,7 @@ public class OptionValue extends BasicEntity {
 
     @JsonIgnore
     @ManyToOne
-    private Option option;
+    private OptionModel option;
 
     @JsonIgnore
     @OneToMany(mappedBy = "optionValue")

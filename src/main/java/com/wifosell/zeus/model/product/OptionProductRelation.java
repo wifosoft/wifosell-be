@@ -1,7 +1,7 @@
 package com.wifosell.zeus.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.option.OptionModel;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,7 +22,7 @@ public class OptionProductRelation {
     private Product product;
 
     @ManyToOne
-    private Option option;
+    private OptionModel option;
 
     @Override
     public int hashCode() {

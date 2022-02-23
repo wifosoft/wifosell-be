@@ -1,7 +1,7 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.option.Option;
+import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.product.Attribute;
 import com.wifosell.zeus.model.product.OptionProductRelation;
 import com.wifosell.zeus.model.product.Product;
@@ -112,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
 
             List<OptionProductRelation> relations = new ArrayList<>();
             for (ProductRequest.OptionRequest optionRequest : optionRequests) {
-                Option option = optionRepository.findOptionById(optionRequest.getId());
+                OptionModel option = optionRepository.findOptionById(optionRequest.getId());
                 OptionProductRelation relation = OptionProductRelation.builder()
                         .product(product)
                         .option(option)
