@@ -139,7 +139,7 @@ public class ShopController {
 
     @PreAuthorizeAccessGeneralManagerToShop
     @PostMapping("/deactivate")
-    public ResponseEntity<GApiResponse<List<Shop>>> activateShops(
+    public ResponseEntity<GApiResponse<List<Shop>>> deactivateShops(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ListIdRequest request) {
         List<Shop> shops = shopService.deactivateShops(request.getIds());
