@@ -19,4 +19,6 @@ public class CategoryRequest {
     private String shortName;
 
     private Long parentCategoryId;
+
+    private Boolean active;
 }

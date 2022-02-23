@@ -3,7 +3,6 @@ package com.wifosell.zeus.payload.response.category;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import lombok.Getter;
-import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

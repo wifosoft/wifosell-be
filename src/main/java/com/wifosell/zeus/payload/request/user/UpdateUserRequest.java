@@ -30,4 +30,5 @@ public class UpdateUserRequest {
     @Size(max = 20)
     private String phone;
 
+    private Boolean active;
 }

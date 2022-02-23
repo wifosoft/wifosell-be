@@ -3,8 +3,8 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.Option;
 import com.wifosell.zeus.model.product.Attribute;
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.OptionProductRelation;
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
 import com.wifosell.zeus.repository.*;
@@ -122,5 +122,7 @@ public class ProductServiceImpl implements ProductService {
             product.setOptionProductRelations(relations);
             productRepository.save(product);
         });
+
+        Optional.ofNullable(productRequest.getActive()).ifPresent(product::setIsActive);
     }
 }

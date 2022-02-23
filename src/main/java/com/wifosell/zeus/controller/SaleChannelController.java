@@ -2,8 +2,7 @@ package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.payload.GApiResponse;
-import com.wifosell.zeus.payload.request.sale_channel.ActivateSaleChannelsRequest;
-import com.wifosell.zeus.payload.request.sale_channel.DeactivateSaleChannelsRequest;
+import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.sale_channel.SaleChannelRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -92,7 +91,7 @@ public class SaleChannelController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<SaleChannel>>> activateSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ActivateSaleChannelsRequest request) {
+            @RequestBody ListIdRequest request) {
         List<SaleChannel> saleChannels = saleChannelService.activateSaleChannels(request.getIds());
         return ResponseEntity.ok(GApiResponse.success(saleChannels));
     }
@@ -101,7 +100,7 @@ public class SaleChannelController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<SaleChannel>>> deactivateSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody DeactivateSaleChannelsRequest request) {
+            @RequestBody ListIdRequest request) {
         List<SaleChannel> saleChannels = saleChannelService.deactivateSaleChannels(request.getIds());
         return ResponseEntity.ok(GApiResponse.success(saleChannels));
     }

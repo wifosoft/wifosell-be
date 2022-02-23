@@ -3,8 +3,8 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
@@ -271,5 +271,6 @@ public class ShopServiceImpl implements ShopService {
         Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
         Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
         Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        Optional.ofNullable(shopRequest.getActive()).ifPresent(shop::setIsActive);
     }
 }

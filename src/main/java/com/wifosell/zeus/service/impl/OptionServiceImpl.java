@@ -78,5 +78,6 @@ public class OptionServiceImpl implements OptionService {
             option.setOptionValues(optionValues);
             optionRepository.save(option);
         });
+        Optional.ofNullable(optionRequest.getActive()).ifPresent(option::setIsActive);
     }
 }
