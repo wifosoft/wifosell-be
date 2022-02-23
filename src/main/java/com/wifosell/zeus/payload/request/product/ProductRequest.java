@@ -74,4 +74,6 @@ public class ProductRequest {
             private Long id;
         }
     }
+
+    private Boolean active;
 }

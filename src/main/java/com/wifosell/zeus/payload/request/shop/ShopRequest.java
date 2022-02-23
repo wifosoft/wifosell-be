@@ -28,4 +28,6 @@ public class ShopRequest {
 
     @Size(max = 50)
     private String businessLine;
+
+    private Boolean active;
 }

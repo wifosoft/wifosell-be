@@ -271,5 +271,6 @@ public class ShopServiceImpl implements ShopService {
         Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
         Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
         Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        Optional.ofNullable(shopRequest.getActive()).ifPresent(shop::setIsActive);
     }
 }

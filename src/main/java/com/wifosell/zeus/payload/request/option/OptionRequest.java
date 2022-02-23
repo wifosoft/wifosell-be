@@ -25,4 +25,6 @@ public class OptionRequest {
         @Size(max = 255)
         private String value;
     }
+
+    private Boolean active;
 }

@@ -122,5 +122,7 @@ public class ProductServiceImpl implements ProductService {
             product.setOptionProductRelations(relations);
             productRepository.save(product);
         });
+
+        Optional.ofNullable(productRequest.getActive()).ifPresent(product::setIsActive);
     }
 }

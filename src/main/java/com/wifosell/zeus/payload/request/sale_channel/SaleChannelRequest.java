@@ -17,4 +17,6 @@ public class SaleChannelRequest {
     private String shortName;
 
     private String description;
+
+    private Boolean active;
 }

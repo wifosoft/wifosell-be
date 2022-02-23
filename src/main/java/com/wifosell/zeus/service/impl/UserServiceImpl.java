@@ -80,6 +80,7 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(updateUserRequest.getEmail()).ifPresent(user::setEmail);
         Optional.ofNullable(updateUserRequest.getAddress()).ifPresent(user::setAddress);
         Optional.ofNullable(updateUserRequest.getPhone()).ifPresent(user::setPhone);
+        Optional.ofNullable(updateUserRequest.getActive()).ifPresent(user::setIsActive);
         userRepository.save(user);
 
 

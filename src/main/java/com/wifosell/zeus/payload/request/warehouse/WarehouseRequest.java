@@ -26,4 +26,5 @@ public class WarehouseRequest {
     @Size(max = 255)
     private String description;
 
+    private Boolean active;
 }
