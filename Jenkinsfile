@@ -86,7 +86,7 @@ pipeline {
         sh 'docker ps -f name=wifosell/wifosell-be -q | xargs --no-run-if-empty docker container stop'
         sh 'docker container ls -a -fname=wifosell/wifosell-be -q | xargs -r docker container rm'
         sh 'docker build -t wifosell/wifosell-be .'
-        sh 'docker run -d -p 8888:8888 wifosell/wifosell-be --name wifosell/wifosell-be --network=host'
+        sh 'docker run -d -p 8888:8888 --network wifosell-be_default --name wifosell/wifosell-be wifosell/wifosell-be'
         echo 'Maven build complete'
       }
     }
