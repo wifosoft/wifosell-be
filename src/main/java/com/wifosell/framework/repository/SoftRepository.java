@@ -32,6 +32,10 @@ public interface SoftRepository<T extends BasicEntity, ID extends Long> extends 
     Optional<T> findById(ID id, boolean isActive);
 
     @Transactional
+    @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
+    T getById(ID id, boolean isActive);
+
+    @Transactional
     @Query("select case when count(e.id) > 0 then true else false end from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
     boolean existsById(ID id, boolean isActive);
 
