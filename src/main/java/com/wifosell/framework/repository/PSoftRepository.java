@@ -36,4 +36,36 @@ public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
     Page<T> findAllRoot(boolean isActive, Pageable pageable);
+
+    @Transactional
+    @Query("select count(e) from #{#entityName} e where e.parent is null")
+    long countRoot();
+
+    @Transactional
+    @Query("select count(e) from #{#entityName} e where e.parent is null and e.isActive = ?1")
+    long countRoot(boolean isActive);
+
+    @Transactional
+    @Query("select e from #{#entityName} e where e.parent.id = ?1")
+    List<T> findByParentId(ID id);
+
+    @Transactional
+    @Query("select e from #{#entityName} e where e.parent.id = ?1")
+    List<T> findByParentId(ID id, Sort sort);
+
+    @Transactional
+    @Query("select e from #{#entityName} e where e.parent.id = ?1")
+    Page<T> findByParentId(ID id, Pageable pageable);
+
+    @Transactional
+    @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
+    List<T> findByParentId(ID id, boolean isActive);
+
+    @Transactional
+    @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
+    List<T> findByParentId(ID id, boolean isActive, Sort sort);
+
+    @Transactional
+    @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
+    Page<T> findByParentId(ID id, boolean isActive, Pageable pageable);
 }

@@ -2,6 +2,7 @@ package com.wifosell.framework.repository;
 
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +24,7 @@ public interface GMSoftRepository<T extends BasicEntity, ID extends Long> extend
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    List<Category> findAllByGMId(ID id, Pageable pageable);
+    Page<Category> findAllByGMId(ID id, Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
@@ -35,5 +36,5 @@ public interface GMSoftRepository<T extends BasicEntity, ID extends Long> extend
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllByGMId(ID id, boolean isActive, Pageable pageable);
+    Page<Category> findAllByGMId(ID id, boolean isActive, Pageable pageable);
 }
