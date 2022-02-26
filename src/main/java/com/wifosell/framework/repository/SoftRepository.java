@@ -27,6 +27,7 @@ public interface SoftRepository<T extends BasicEntity, ID extends Long> extends 
     @Query("select e from #{#entityName} e where e.isActive = ?1")
     Page<T> findAndPaginateAllWithActive(boolean isActive, Pageable pageable);
 
+
     @Transactional
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
     Optional<T> findByIdWithActive(ID id, boolean isActive);
