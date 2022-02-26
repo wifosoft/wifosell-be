@@ -15,35 +15,35 @@ import java.util.List;
 public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends SoftRepository<T, ID> {
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null")
-    List<T> findAllRoot();
+    List<T> findAllRoots();
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null")
-    List<T> findAndSortAllRoot(Sort sort);
+    List<T> findAndSortAllRoots(Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null")
-    Page<T> findAndPaginateAllRoot(Pageable pageable);
+    Page<T> findAndPaginateAllRoots(Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
-    List<T> findAllRoot(boolean isActive);
+    List<T> findAllRootsWithActive(boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
-    List<T> findAndSortAllRoot(boolean isActive, Sort sort);
+    List<T> findAndSortAllRootsWithActive(boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
-    Page<T> findAndPaginateAllRoot(boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllRootsWithActive(boolean isActive, Pageable pageable);
 
     @Transactional
     @Query("select count(e) from #{#entityName} e where e.parent is null")
-    long countRoot();
+    long countRoots();
 
     @Transactional
     @Query("select count(e) from #{#entityName} e where e.parent is null and e.isActive = ?1")
-    long countRoot(boolean isActive);
+    long countRootsWithActive(boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1")
@@ -59,13 +59,13 @@ public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
-    List<T> findByParentId(ID id, boolean isActive);
+    List<T> findByParentIdWithActive(ID id, boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
-    List<T> findAndSortByParentId(ID id, boolean isActive, Sort sort);
+    List<T> findAndSortByParentIdWithActive(ID id, boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
-    Page<T> findAndPaginateByParentId(ID id, boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateByParentIdWithActive(ID id, boolean isActive, Pageable pageable);
 }

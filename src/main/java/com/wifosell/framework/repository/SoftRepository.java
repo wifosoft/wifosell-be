@@ -17,31 +17,31 @@ import java.util.Optional;
 public interface SoftRepository<T extends BasicEntity, ID extends Long> extends JpaRepository<T, ID> {
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
-    List<T> findAll(boolean isActive);
+    List<T> findAllWithActive(boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
-    List<T> findAndSortAll(boolean isActive, Sort sort);
+    List<T> findAndSortAllWithActive(boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
-    Page<T> findAndPaginateAll(boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllWithActive(boolean isActive, Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
-    Optional<T> findById(ID id, boolean isActive);
+    Optional<T> findByIdWithActive(ID id, boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
-    T getById(ID id, boolean isActive);
+    T getByIdWithActive(ID id, boolean isActive);
 
     @Transactional
     @Query("select case when count(e.id) > 0 then true else false end from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
-    boolean existsById(ID id, boolean isActive);
+    boolean existsByIdWithActive(ID id, boolean isActive);
 
     @Transactional
     @Query("select count(e) from #{#entityName} e where e.isActive = ?1")
-    long count(boolean isActive);
+    long countWithActive(boolean isActive);
 
     @Transactional
     @Modifying

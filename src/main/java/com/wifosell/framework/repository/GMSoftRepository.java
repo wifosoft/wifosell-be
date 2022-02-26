@@ -27,13 +27,13 @@ public interface GMSoftRepository<T extends BasicEntity, ID extends Long> extend
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<T> findAllByGMId(ID id, boolean isActive);
+    List<T> findAllByGMIdWithActive(ID id, boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<T> findAndSortAllByGMId(ID id, boolean isActive, Sort sort);
+    List<T> findAndSortAllByGMIdWithActive(ID id, boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    Page<T> findAndPaginateAllByGMId(ID id, boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllByGMIdWithActive(ID id, boolean isActive, Pageable pageable);
 }
