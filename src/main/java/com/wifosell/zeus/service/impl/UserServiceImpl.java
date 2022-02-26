@@ -215,10 +215,12 @@ public class UserServiceImpl implements UserService {
 
         String email = registerRequest.getEmail().toLowerCase();
 
+        String phone = registerRequest.getPhone().toLowerCase();
+
         String password = passwordEncoder.encode(registerRequest.getPassword());
 
         String address = registerRequest.getAddress();
-        User user1 = new User(firstName, lastName, username, email, password);
+        User user1 = new User(firstName, lastName, username, email, phone, password);
         user1.setAddress(address);
         user1.setParent(parent);
         userRepository.save(user1);

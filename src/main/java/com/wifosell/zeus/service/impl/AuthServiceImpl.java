@@ -64,10 +64,12 @@ public class AuthServiceImpl implements AuthService {
 
         String email = registerRequest.getEmail().toLowerCase();
 
+        String phone = registerRequest.getPhone().toLowerCase();
+
         String password = passwordEncoder.encode(registerRequest.getPassword());
 
         String address = registerRequest.getAddress();
-        User user = new User(firstName, lastName, username, email, password);
+        User user = new User(firstName, lastName, username, email, phone, password);
         user.setAddress(address);
 
         List<Role> roles = new ArrayList<>();
