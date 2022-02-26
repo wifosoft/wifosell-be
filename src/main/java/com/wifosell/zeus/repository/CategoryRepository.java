@@ -1,42 +1,33 @@
 package com.wifosell.zeus.repository;
 
+import com.wifosell.framework.repository.GMSoftRepository;
+import com.wifosell.framework.repository.PGMSoftRepository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.GApiErrorBody;
-import lombok.NonNull;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @ApiIgnore
 @Repository
-public interface CategoryRepository extends SoftDeleteCrudRepository<Category, Long> {
+public interface CategoryRepository extends PGMSoftRepository<Category, Long> {
     @Override
     @Transactional
-    @NonNull
-    @Query("select c from Category c where c.isActive = true and c.parent is null ")
-    List<Category> findAll();
-
-    @Transactional
-    @Query("select c from Category c where c.isActive = true and c.parent is null and c.generalManager.id = ?1")
-    List<Category> findCategoriesByGeneralManagerId(Long generalManagerId);
-
-    @Transactional
-    @Query("select c from Category c where c.isActive = true and c.parent.id = ?1")
-    List<Category> findCategoriesByParentCategoryId(Long parentCategoryId);
-
-    default Category findCategoryById(Long categoryId) {
-        return this.findCategoryById(categoryId, false);
+    default Category getByIdWithGm(Long gmId, Long categoryId) {
+        Optional<Category> optional = this.findByIdWithGm(gmId, categoryId);
+        return optional.orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.CATEGORY_NOT_FOUND))
+        );
     }
 
-    default Category findCategoryById(Long categoryId, boolean includeInactive) {
-        Optional<Category> optionalCategory = includeInactive ? this.findById(categoryId) : this.findOne(categoryId);
-        return optionalCategory.orElseThrow(
+    @Transactional
+    default Category getByIdWithGmAndActive(Long gmId, Long categoryId, boolean isActive) {
+        Optional<Category> optional = this.findByIdWithGmAndActive(gmId, categoryId, isActive);
+        return optional.orElseThrow(
                 () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.CATEGORY_NOT_FOUND))
         );
     }

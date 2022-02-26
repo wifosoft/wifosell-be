@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productRequest.getSku()).ifPresent(product::setSku);
         Optional.ofNullable(productRequest.getBarcode()).ifPresent(product::setBarcode);
         Optional.ofNullable(productRequest.getCategoryId()).ifPresent(categoryId -> {
-            Category category = categoryRepository.findCategoryById(categoryId);
+            Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
         });
         Optional.ofNullable(productRequest.getWeight()).ifPresent(product::setWeight);
