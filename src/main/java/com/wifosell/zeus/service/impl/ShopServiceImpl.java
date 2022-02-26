@@ -234,7 +234,8 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId) {
-        SaleChannel saleChannel = saleChannelRepository.findSaleChannelById(saleChannelId);
+        User gm = userRepository.getUserById(currentUserId).getGeneralManager();
+        SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
         Shop shop = shopRepository.getShopById(shopId);
 
         if (!saleChannel.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
