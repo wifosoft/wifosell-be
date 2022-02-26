@@ -137,8 +137,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> deActivateListUser(List<Long> userList) {
-        List<User> affectedUser=  new ArrayList<>();
-        for(Long user : userList){
+        List<User> affectedUser = new ArrayList<>();
+        for (Long user : userList) {
             affectedUser.add(this.deActivateUser(user));
         }
         return affectedUser;
@@ -146,8 +146,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> activateListUser(List<Long> userList) {
-        List<User> affectedUser=  new ArrayList<>();
-        for(Long user : userList){
+        List<User> affectedUser = new ArrayList<>();
+        for (Long user : userList) {
             affectedUser.add(this.activateUser(user));
         }
         return affectedUser;
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
         //entityManager.persist(user);
         // entityManager.getTransaction().commit();
         User parent = userRepository.getUserById(parentId);
-        if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUserName()))) {
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUsername()))) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USERNAME_HAS_BEEN_TAKEN, "Username has been taken"));
         }
         if (Boolean.TRUE.equals(userRepository.existsByEmail(registerRequest.getEmail()))) {
@@ -211,7 +211,7 @@ public class UserServiceImpl implements UserService {
 
         String lastName = registerRequest.getLastName().toLowerCase();
 
-        String username = registerRequest.getUserName().toLowerCase();
+        String username = registerRequest.getUsername().toLowerCase();
 
         String email = registerRequest.getEmail().toLowerCase();
 
@@ -227,6 +227,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Kiểm tra quyền truy cập : là tài khoản GeneralManager của shopId  (tạo ra shopId)
+     *
      * @param currentUser
      * @param shopId
      * @return
@@ -234,11 +235,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean hasAccessGeneralManagerToShop(UserPrincipal currentUser, Long shopId) {
         List<Shop> lsShopCanAccess = shopService.getCreatedShop(currentUser.getId());
-        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+        return lsShopCanAccess.stream().anyMatch(x -> x.getId().equals(shopId));
     }
 
     /**
      * Kiểm tra có quyền truy cập vào shop X
+     *
      * @param currentUser
      * @param shopId
      * @return
@@ -246,11 +248,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean hasAccessToShop(UserPrincipal currentUser, Long shopId) {
         List<Shop> lsShopCanAccess = shopService.getCanAccessShop(currentUser.getId());
-        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+        return lsShopCanAccess.stream().anyMatch(x -> x.getId().equals(shopId));
     }
 
     /**
      * Kiểm tra có quyền truy cập vào danh sách shop của tài khoản cha
+     *
      * @param currentUser
      * @param shopId
      * @return
@@ -258,7 +261,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId) {
         List<Shop> lsShopCanAccess = shopService.getRelevantShop(currentUser.getId());
-        return lsShopCanAccess.stream().anyMatch(x-> x.getId().equals(shopId));
+        return lsShopCanAccess.stream().anyMatch(x -> x.getId().equals(shopId));
     }
 
     /**

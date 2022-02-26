@@ -46,8 +46,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public User register(RegisterRequest registerRequest)  {
-        if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUserName()))) {
+    public User register(RegisterRequest registerRequest) {
+        if (Boolean.TRUE.equals(userRepository.existsByUsername(registerRequest.getUsername()))) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USERNAME_HAS_BEEN_TAKEN, "Username has been taken"));
         }
 
@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
         String lastName = registerRequest.getLastName().toLowerCase();
 
-        String username = registerRequest.getUserName().toLowerCase();
+        String username = registerRequest.getUsername().toLowerCase();
 
         String email = registerRequest.getEmail().toLowerCase();
 
