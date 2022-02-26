@@ -6,6 +6,7 @@ import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.WarehouseRepository;
 import com.wifosell.zeus.service.WarehouseService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,68 +23,84 @@ public class WarehouseServiceImpl implements WarehouseService {
     private final UserRepository userRepository;
 
     @Autowired
-    public WarehouseServiceImpl(WarehouseRepository warehouseRepository,
-                                UserRepository userRepository) {
+    public WarehouseServiceImpl(
+            WarehouseRepository warehouseRepository,
+            UserRepository userRepository
+    ) {
         this.warehouseRepository = warehouseRepository;
         this.userRepository = userRepository;
     }
 
     @Override
-    public List<Warehouse> getAllWarehouse() {
-        return warehouseRepository.findAll();
+    public List<Warehouse> getAllWarehouses(Boolean isActive) {
+        if (isActive == null)
+            return warehouseRepository.findAll();
+        return warehouseRepository.findAllWithActive(isActive);
     }
 
     @Override
-    public Warehouse addWarehouse(Long userId, WarehouseRequest warehouseRequest) {
+    public List<Warehouse> getWarehouses(@NonNull Long userId, Boolean isActive) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        if (isActive == null)
+            return warehouseRepository.findAllWithGm(gm.getId());
+        return warehouseRepository.findAllWithGmAndActive(gm.getId(), isActive);
+    }
+
+    @Override
+    public Warehouse getWarehouse(@NonNull Long userId, @NonNull Long warehouseId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        return warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
+    }
+
+    @Override
+    public Warehouse addWarehouse(@NonNull Long userId, @NonNull WarehouseRequest request) {
         User gm = userRepository.getUserById(userId);
         Warehouse warehouse = new Warehouse();
-        this.updateWarehouseByRequest(warehouse, warehouseRequest);
-        warehouse.setGeneralManager(gm);
+        return this.updateWarehouseByRequest(warehouse, request, gm);
+    }
+
+    @Override
+    public Warehouse updateWarehouse(@NonNull Long userId, @NonNull Long warehouseId, @NonNull WarehouseRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
+        this.updateWarehouseByRequest(warehouse, request, gm);
         return warehouseRepository.save(warehouse);
     }
 
     @Override
-    public Warehouse getWarehouse(Long warehouseId) {
-        return warehouseRepository.getWarehouseById(warehouseId);
-    }
-
-    @Override
-    public Warehouse updateWarehouse(Long warehouseId, WarehouseRequest warehouseRequest) {
-        Warehouse warehouse = warehouseRepository.getWarehouseById(warehouseId);
-        this.updateWarehouseByRequest(warehouse, warehouseRequest);
-        return warehouseRepository.save(warehouse);
-    }
-
-    @Override
-    public Warehouse activateWarehouse(Long warehouseId) {
-        Warehouse warehouse = warehouseRepository.getWarehouseById( warehouseId);
+    public Warehouse activateWarehouse(@NonNull Long userId, @NonNull Long warehouseId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
         warehouse.setIsActive(true);
         return warehouseRepository.save(warehouse);
     }
 
     @Override
-    public Warehouse deActivateWarehouse(Long warehouseId) {
-        Warehouse warehouse = warehouseRepository.getWarehouseById( warehouseId);
+    public Warehouse deactivateWarehouse(@NonNull Long userId, @NonNull Long warehouseId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
         warehouse.setIsActive(false);
         return warehouseRepository.save(warehouse);
     }
 
     @Override
-    public List<Warehouse> activateWarehouses(List<Long> warehouseIds) {
-        return warehouseIds.stream().map(this::activateWarehouse).collect(Collectors.toList());
+    public List<Warehouse> activateWarehouses(@NonNull Long userId, @NonNull List<Long> warehouseIds) {
+        return warehouseIds.stream().map(id -> this.activateWarehouse(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Warehouse> deactivateWarehouses(List<Long> warehouseIds) {
-        return warehouseIds.stream().map(this::deActivateWarehouse).collect(Collectors.toList());
+    public List<Warehouse> deactivateWarehouses(@NonNull Long userId, @NonNull List<Long> warehouseIds) {
+        return warehouseIds.stream().map(id -> this.deactivateWarehouse(userId, id)).collect(Collectors.toList());
     }
 
-    private void updateWarehouseByRequest(Warehouse warehouse, WarehouseRequest warehouseRequest) {
-        Optional.ofNullable(warehouseRequest.getName()).ifPresent(warehouse::setName);
-        Optional.ofNullable(warehouseRequest.getShortName()).ifPresent(warehouse::setShortName);
-        Optional.ofNullable(warehouseRequest.getAddress()).ifPresent(warehouse::setAddress);
-        Optional.ofNullable(warehouseRequest.getPhone()).ifPresent(warehouse::setPhone);
-        Optional.ofNullable(warehouseRequest.getDescription()).ifPresent(warehouse::setDescription);
-        Optional.ofNullable(warehouseRequest.getActive()).ifPresent(warehouse::setIsActive);
+    private Warehouse updateWarehouseByRequest(@NonNull Warehouse warehouse, @NonNull WarehouseRequest request, @NonNull User gm) {
+        Optional.ofNullable(request.getName()).ifPresent(warehouse::setName);
+        Optional.ofNullable(request.getShortName()).ifPresent(warehouse::setShortName);
+        Optional.ofNullable(request.getAddress()).ifPresent(warehouse::setAddress);
+        Optional.ofNullable(request.getPhone()).ifPresent(warehouse::setPhone);
+        Optional.ofNullable(request.getDescription()).ifPresent(warehouse::setDescription);
+        Optional.ofNullable(request.getActive()).ifPresent(warehouse::setIsActive);
+        warehouse.setGeneralManager(gm);
+        return warehouseRepository.save(warehouse);
     }
 }

@@ -208,7 +208,7 @@ public class ShopServiceImpl implements ShopService {
                 WarehouseShopRelation.builder().shop(
                         shopRepository.getShopById(shopId)
                 ).warehouse(
-                        warehouseRepository.getWarehouseById(warehouseId)
+                        warehouseRepository.getById(warehouseId)
                 ).build()
         );
 
@@ -216,7 +216,8 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public void linkWarehouseToShop(Long currentUserId, Long warehouseId, Long shopId) {
-        Warehouse warehouse = warehouseRepository.getWarehouseById(warehouseId);
+        User gm = userRepository.getUserById(currentUserId).getGeneralManager();
+        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
         Shop shop = shopRepository.getShopById(shopId);
 
         if (!warehouse.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {

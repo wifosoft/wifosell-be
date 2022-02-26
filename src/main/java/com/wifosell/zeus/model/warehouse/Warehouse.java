@@ -32,11 +32,9 @@ public class Warehouse extends BasicEntity {
     private String address;
 
     @Size(max = 20)
-    @Column(name = "phone")
     private String phone;
 
     @Size(max = 255)
-    @Column(name = "description")
     private String description;
 
     @JsonIgnore
@@ -44,11 +42,7 @@ public class Warehouse extends BasicEntity {
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "warehouse")
-    //@JsonManagedReference
     Set<WarehouseShopRelation> warehouseShopRelation;
-
-
 }
