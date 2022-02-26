@@ -3,9 +3,11 @@ package com.wifosell.zeus.payload.response.category;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class CategoryResponse extends BasicEntityResponse {
@@ -13,32 +15,31 @@ public class CategoryResponse extends BasicEntityResponse {
     private final String name;
     private final String shortName;
     private final String description;
-    private final Category parent;
-    private final List<Category> children;
+    private final Long parentId;
+    private final List<CategoryResponse> children;
 
-    public CategoryResponse(Category category) {
+    public CategoryResponse(@NonNull Category category) {
         super(category);
         this.id = category.getId();
         this.name = category.getName();
         this.shortName = category.getShortName();
         this.description = category.getDescription();
-        this.parent = category.getParent();
-        this.children = category.getChildren();
-        this.removeInactiveCategories(this.children);
+        this.parentId = category.getParent() != null ? category.getParent().getId() : null;
+        this.children = category.getChildren().stream()
+                .map(CategoryResponse::new)
+                .collect(Collectors.toList());
     }
 
-    private void removeInactiveCategories(List<Category> categories) {
-        if (categories == null)
-            return;
-
-        List<Category> inactiveCategories = new ArrayList<>();
-        categories.forEach(category -> {
-            if (category.isActive()) {
-                this.removeInactiveCategories(category.getChildren());
-            } else {
-                inactiveCategories.add(category);
-            }
-        });
-        categories.removeAll(inactiveCategories);
+    public CategoryResponse(@NonNull Category category, @NonNull Boolean isActive) {
+        super(category);
+        this.id = category.getId();
+        this.name = category.getName();
+        this.shortName = category.getShortName();
+        this.description = category.getDescription();
+        this.parentId = category.getParent() != null ? category.getParent().getId() : null;
+        this.children = category.getChildren().stream()
+                .filter(c -> c.isActive() == isActive)
+                .map(c -> new CategoryResponse(c, isActive))
+                .collect(Collectors.toList());
     }
 }
