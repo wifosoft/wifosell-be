@@ -1,7 +1,6 @@
 package com.wifosell.framework.repository;
 
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.category.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,25 +15,25 @@ import java.util.List;
 public interface GMSoftRepository<T extends BasicEntity, ID extends Long> extends SoftRepository<T, ID> {
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    List<Category> findAllByGMId(ID id);
+    List<T> findAllByGMId(ID id);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    List<Category> findAllByGMId(ID id, Sort sort);
+    List<T> findAndSortAllByGMIdSort(ID id, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    Page<Category> findAllByGMId(ID id, Pageable pageable);
+    Page<T> findAndPaginateAllByGMId(ID id, Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllByGMId(ID id, boolean isActive);
+    List<T> findAllByGMId(ID id, boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllByGMId(ID id, boolean isActive, Sort sort);
+    List<T> findAndSortAllByGMId(ID id, boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    Page<Category> findAllByGMId(ID id, boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllByGMId(ID id, boolean isActive, Pageable pageable);
 }

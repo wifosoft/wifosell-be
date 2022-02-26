@@ -1,7 +1,6 @@
 package com.wifosell.framework.repository;
 
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.category.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,52 +15,52 @@ import java.util.List;
 public interface GMPSoftRepository<T extends BasicEntity, ID extends Long> extends PSoftRepository<T, ID> {
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null and e.generalManager.id = ?1")
-    List<Category> findAllRootByGMId(ID id);
+    List<T> findAllRootByGMId(ID id);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null and e.generalManager.id = ?1")
-    List<Category> findAllRootByGMId(ID id, Sort sort);
+    List<T> findAndSortAllRootByGMId(ID id, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null and e.generalManager.id = ?1")
-    Page<Category> findAllRootByGMId(ID id, Pageable pageable);
+    Page<T> findAndPaginateAllRootByGMId(ID id, Pageable pageable);
 
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null and e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllRootByGMId(ID id, boolean isActive);
+    List<T> findAllRootByGMId(ID id, boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null and e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllRootByGMId(ID id, boolean isActive, Sort sort);
+    List<T> findAndSortAllRootByGMId(ID id, boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null and e.generalManager.id = ?1 and e.isActive = ?2")
-    Page<Category> findAllRootByGMId(ID id, boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllRootByGMId(ID id, boolean isActive, Pageable pageable);
 
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    List<Category> findAllByGMId(ID id);
+    List<T> findAllByGMId(ID id);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    List<Category> findAllByGMId(ID id, Sort sort);
+    List<T> findAndSortAllByGMId(ID id, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1")
-    Page<Category> findAllByGMId(ID id, Pageable pageable);
+    Page<T> findAndPaginateAllByGMId(ID id, Pageable pageable);
 
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllByGMId(ID id, boolean isActive);
+    List<T> findAllByGMId(ID id, boolean isActive);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    List<Category> findAllByGMId(ID id, boolean isActive, Sort sort);
+    List<T> findAndSortAllByGMId(ID id, boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.isActive = ?2")
-    Page<Category> findAllByGMId(ID id, boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllByGMId(ID id, boolean isActive, Pageable pageable);
 }

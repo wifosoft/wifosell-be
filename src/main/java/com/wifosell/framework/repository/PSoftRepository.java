@@ -19,11 +19,11 @@ public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null")
-    List<T> findAllRoot(Sort sort);
+    List<T> findAndSortAllRoot(Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent is null")
-    Page<T> findAllRoot(Pageable pageable);
+    Page<T> findAndPaginateAllRoot(Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
@@ -31,11 +31,11 @@ public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
-    List<T> findAllRoot(boolean isActive, Sort sort);
+    List<T> findAndSortAllRoot(boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1 and e.parent is null")
-    Page<T> findAllRoot(boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAllRoot(boolean isActive, Pageable pageable);
 
     @Transactional
     @Query("select count(e) from #{#entityName} e where e.parent is null")
@@ -51,11 +51,11 @@ public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1")
-    List<T> findByParentId(ID id, Sort sort);
+    List<T> findAndSortByParentId(ID id, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1")
-    Page<T> findByParentId(ID id, Pageable pageable);
+    Page<T> findAndPaginateByParentId(ID id, Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
@@ -63,9 +63,9 @@ public interface PSoftRepository<T extends BasicEntity, ID extends Long> extends
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
-    List<T> findByParentId(ID id, boolean isActive, Sort sort);
+    List<T> findAndSortByParentId(ID id, boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.parent.id = ?1 and e.isActive = ?2")
-    Page<T> findByParentId(ID id, boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateByParentId(ID id, boolean isActive, Pageable pageable);
 }

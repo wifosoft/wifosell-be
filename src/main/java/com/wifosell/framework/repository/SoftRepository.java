@@ -21,11 +21,11 @@ public interface SoftRepository<T extends BasicEntity, ID extends Long> extends 
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
-    List<T> findAll(boolean isActive, Sort sort);
+    List<T> findAndSortAll(boolean isActive, Sort sort);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
-    Page<T> findAll(boolean isActive, Pageable pageable);
+    Page<T> findAndPaginateAll(boolean isActive, Pageable pageable);
 
     @Transactional
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
