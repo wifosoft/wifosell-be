@@ -6,6 +6,8 @@ import lombok.Getter;
 public enum EAppExceptionCode {
     UNEXPECTED_ERROR(-1),
     RECORD_EXISTED(-2),
+    ENTITY_NOT_FOUND(-3),
+
     //User
     USER_NOT_FOUND(100001),
     USER_NOT_IN_RELEVANT_SHOP(100002),

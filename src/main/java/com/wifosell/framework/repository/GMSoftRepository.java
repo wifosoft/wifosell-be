@@ -1,6 +1,8 @@
 package com.wifosell.framework.repository;
 
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -51,12 +53,20 @@ public interface GMSoftRepository<T extends BasicEntity, ID extends Long> extend
 
 
     @Transactional
-    @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.id = ?2")
-    T getByIdWithGm(ID gmId, ID id);
+    default T getByIdWithGm(ID gmId, ID id) {
+        Optional<T> optional = this.findByIdWithGm(gmId, id);
+        return optional.orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
+        );
+    }
 
     @Transactional
-    @Query("select e from #{#entityName} e where e.generalManager.id = ?1 and e.id = ?2 and e.isActive = ?3")
-    T getByIdWithGmAndActive(ID gmId, ID id, boolean isActive);
+    default T getByIdWithGmAndActive(ID gmId, ID id, boolean isActive) {
+        Optional<T> optional = this.findByIdWithGmAndActive(gmId, id, isActive);
+        return optional.orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
+        );
+    }
 
 
     @Transactional

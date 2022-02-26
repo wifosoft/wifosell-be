@@ -1,6 +1,10 @@
 package com.wifosell.framework.repository;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.payload.GApiErrorBody;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +19,10 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface SoftRepository<T extends BasicEntity, ID extends Long> extends JpaRepository<T, ID> {
+    default EAppExceptionCode getExceptionCodeEntityNotFound() {
+        return EAppExceptionCode.ENTITY_NOT_FOUND;
+    }
+    
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
     List<T> findAllWithActive(boolean isActive);
@@ -32,9 +40,25 @@ public interface SoftRepository<T extends BasicEntity, ID extends Long> extends 
     @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
     Optional<T> findByIdWithActive(ID id, boolean isActive);
 
+
     @Transactional
-    @Query("select e from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
-    T getByIdWithActive(ID id, boolean isActive);
+    @NonNull
+    @Override
+    default T getById(@NonNull ID id) {
+        Optional<T> optional = this.findById(id);
+        return optional.orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
+        );
+    }
+
+    @Transactional
+    default T getByIdWithActive(ID id, boolean isActive) {
+        Optional<T> optional = this.findByIdWithActive(id, isActive);
+        return optional.orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
+        );
+    }
+
 
     @Transactional
     @Query("select case when count(e.id) > 0 then true else false end from #{#entityName} e where e.id = ?1 and e.isActive = ?2")
