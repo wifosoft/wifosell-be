@@ -9,6 +9,7 @@ import com.wifosell.zeus.payload.response.category.GetCategoriesResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CategoryService;
+import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,8 +31,9 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getAllRootCategories(
-            @RequestParam(name = "active", required = false) Boolean isActive
+            @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
+        Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Category> categories = categoryService.getAllRootCategories(isActive);
         List<GetCategoriesResponse> response = categories.stream()
                 .map(c -> new GetCategoriesResponse(c, isActive))
@@ -43,8 +45,9 @@ public class CategoryController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getRootCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) Boolean isActive
-            ) {
+            @RequestParam(name = "active", required = false) List<Boolean> actives
+    ) {
+        Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Category> categories = categoryService.getRootCategories(userPrincipal.getId(), isActive);
         List<GetCategoriesResponse> response = categories.stream()
                 .map(c -> new GetCategoriesResponse(c, isActive))
