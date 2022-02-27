@@ -137,27 +137,32 @@ public class UserController {
     }
 
 
-    @PreAuthorizeAccessToUser
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
-    public ResponseEntity<GApiResponse<List<User>>> deactivateUsers(@CurrentUser UserPrincipal userPrincipal,
-                                                                       @RequestBody ListIdRequest request) {
+    public ResponseEntity<GApiResponse<List<User>>> deactivateUsers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ListIdRequest request
+    ) {
         List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
-        List<Long> filterListAccount = childAccounts.stream().map(User::getId).filter(
-                id -> (request.getIds().contains(id))
-        ).collect(Collectors.toList());
+        List<Long> filterListAccount = childAccounts.stream()
+                .map(User::getId)
+                .filter(id -> (request.getIds().contains(id)))
+                .collect(Collectors.toList());
         List<User> affectedUser = userService.deActivateListUser(filterListAccount);
-
         return ResponseEntity.ok(GApiResponse.success(affectedUser));
     }
 
-    @PreAuthorizeAccessToUser
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/activate")
-    public ResponseEntity<GApiResponse<List<User>>> activateUsers(@CurrentUser UserPrincipal userPrincipal,
-                                                                  @RequestBody ListIdRequest request) {
+    public ResponseEntity<GApiResponse<List<User>>> activateUsers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ListIdRequest request
+    ) {
         List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
-        List<Long> filterListAccount = childAccounts.stream().map(User::getId).filter(
-                id -> (request.getIds().contains(id))
-        ).collect(Collectors.toList());
+        List<Long> filterListAccount = childAccounts.stream()
+                .map(User::getId)
+                .filter(id -> (request.getIds().contains(id)))
+                .collect(Collectors.toList());
         List<User> affectedUser = userService.activateListUser(filterListAccount);
         return ResponseEntity.ok(GApiResponse.success(affectedUser));
     }
