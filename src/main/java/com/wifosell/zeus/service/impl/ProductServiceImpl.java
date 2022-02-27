@@ -9,6 +9,7 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("Product")
@@ -43,53 +45,82 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<Product> getAllProducts(Boolean isActive) {
+        if (isActive == null)
+            return productRepository.findAll();
+        return productRepository.findAllWithActive(isActive);
     }
 
     @Override
-    public List<Product> getProductsByUserId(Long userId) {
+    public List<Product> getProducts(@NonNull Long userId, Boolean isActive) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        return productRepository.findProductsByGeneralManagerId(gm.getId());
+        if (isActive == null)
+            return productRepository.findAllWithGm(gm.getId());
+        return productRepository.findAllWithGmAndActive(gm.getId(), isActive);
     }
 
     @Override
-    public Product getProduct(Long productId) {
-        return productRepository.findProductById(productId);
+    public Product getProduct(@NonNull Long userId, @NonNull Long productId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        return productRepository.getByIdWithGm(gm.getId(), productId);
     }
 
     @Override
-    public Product addProduct(Long userId, ProductRequest productRequest) {
+    public Product addProduct(@NonNull Long userId, @NonNull ProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Product product = new Product();
-        this.updateProductByRequest(product, productRequest);
-        product.setGeneralManager(gm);
+        return this.updateProductByRequest(product, request, gm);
+    }
+
+    @Override
+    public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @NonNull ProductRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+        return this.updateProductByRequest(product, request, gm);
+    }
+
+    @Override
+    public Product activateProduct(@NonNull Long userId, @NonNull Long productId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+        product.setIsActive(true);
         return productRepository.save(product);
     }
 
     @Override
-    public Product updateProduct(Long productId, ProductRequest productRequest) {
-        Product product = productRepository.findProductById(productId);
-        this.updateProductByRequest(product, productRequest);
+    public Product deactivateProduct(@NonNull Long userId, @NonNull Long productId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+        product.setIsActive(false);
         return productRepository.save(product);
     }
 
-    private void updateProductByRequest(Product product, ProductRequest productRequest) {
-        Optional.ofNullable(productRequest.getName()).ifPresent(product::setName);
-        Optional.ofNullable(productRequest.getSku()).ifPresent(product::setSku);
-        Optional.ofNullable(productRequest.getBarcode()).ifPresent(product::setBarcode);
-        Optional.ofNullable(productRequest.getCategoryId()).ifPresent(categoryId -> {
+    @Override
+    public List<Product> activateProducts(@NonNull Long userId, @NonNull List<Long> productIds) {
+        return productIds.stream().map(id -> this.activateProduct(userId, id)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Product> deactivateProducts(@NonNull Long userId, @NonNull List<Long> productIds) {
+        return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
+    }
+
+    private Product updateProductByRequest(@NonNull Product product, @NonNull ProductRequest request, @NonNull User gm) {
+        Optional.ofNullable(request.getName()).ifPresent(product::setName);
+        Optional.ofNullable(request.getSku()).ifPresent(product::setSku);
+        Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
+        Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
             Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
         });
-        Optional.ofNullable(productRequest.getWeight()).ifPresent(product::setWeight);
-        Optional.ofNullable(productRequest.getDimension()).ifPresent(product::setDimension);
-        Optional.ofNullable(productRequest.getState()).ifPresent(product::setState);
-        Optional.ofNullable(productRequest.getStatus()).ifPresent(product::setStatus);
+        Optional.ofNullable(request.getWeight()).ifPresent(product::setWeight);
+        Optional.ofNullable(request.getDimension()).ifPresent(product::setDimension);
+        Optional.ofNullable(request.getState()).ifPresent(product::setState);
+        Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
         // Attributes
         // TODO haukc: optimize performance
-        Optional.ofNullable(productRequest.getAttributeRequests()).ifPresent(attributeRequests -> {
+        Optional.ofNullable(request.getAttributeRequests()).ifPresent(attributeRequests -> {
             attributeRepository.deleteAttributesByProductId(product.getId());
 
             List<Attribute> attributes = new ArrayList<>();
@@ -107,7 +138,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Options
         // TODO haukc: optimize performance
-        Optional.ofNullable(productRequest.getOptionRequests()).ifPresent(optionRequests -> {
+        Optional.ofNullable(request.getOptionRequests()).ifPresent(optionRequests -> {
             optionProductRelationRepository.deleteProductOptionRelationByProductId(product.getId());
 
             List<OptionProductRelation> relations = new ArrayList<>();
@@ -123,6 +154,9 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
         });
 
-        Optional.ofNullable(productRequest.getActive()).ifPresent(product::setIsActive);
+        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
+
+        product.setGeneralManager(gm);
+        return productRepository.save(product);
     }
 }
