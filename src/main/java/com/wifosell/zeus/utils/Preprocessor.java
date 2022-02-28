@@ -7,10 +7,10 @@ public class Preprocessor {
     // [true, true,..., true] --> true
     // [false, false,..., false] --> false
     public static Boolean convertToIsActive(List<Boolean> actives) {
-        if (actives == null)
+        if (actives == null || actives.size() == 0)
             return null;
-        Boolean isActive = null;
-        if (actives.size() > 0 && !actives.stream().reduce((a, b) -> a ^ b).get())
+        Boolean isActive = actives.get(0);
+        if (actives.size() > 1 && !actives.stream().reduce((a, b) -> a ^ b).get())
             isActive = actives.get(0);
         return isActive;
     }
