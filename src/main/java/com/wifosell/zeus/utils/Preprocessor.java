@@ -9,9 +9,8 @@ public class Preprocessor {
     public static Boolean convertToIsActive(List<Boolean> actives) {
         if (actives == null || actives.size() == 0)
             return null;
-        Boolean isActive = actives.get(0);
-        if (actives.size() > 1 && !actives.stream().reduce((a, b) -> a ^ b).get())
-            isActive = actives.get(0);
-        return isActive;
+        if (actives.size() == 1 || !actives.stream().reduce((a, b) -> a ^ b).get())
+            return actives.get(0);
+        return null;
     }
 }
