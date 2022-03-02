@@ -29,6 +29,16 @@ public interface VoucherRepository extends SoftDeleteCrudRepository<Voucher, Lon
     List<Voucher> findVouchersByGeneralManagerId(Long generalManagerId);
 
     @Transactional
-    @Query("select v from Voucher v join SaleChannelShopRelation scsr on v.id = scsr.saleChannel.id where v.isActive = true and scsr.shop.id = ?1")
+    @Query("select v " +
+            "from Voucher v " +
+            "join VoucherSaleChannelShopRelation vscsr on v.saleChannel.id = vscsr.saleChannel.id " +
+            "where v.isActive = true and vscsr.saleChannel.id = ?1")
+    List<Voucher> findVouchersBySaleChannelId(Long saleChannelId);
+
+    @Transactional
+    @Query("select v " +
+            "from Voucher v " +
+            "join VoucherSaleChannelShopRelation vscsr on v.saleChannel.id = vscsr.saleChannel.id " +
+            "where v.isActive = true and vscsr.shop.id = ?1")
     List<Voucher> findVouchersByShopId(Long shopId);
 }

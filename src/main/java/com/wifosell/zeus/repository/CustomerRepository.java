@@ -27,6 +27,6 @@ public interface CustomerRepository extends SoftDeleteCrudRepository<Customer, L
     List<Customer> findCustomersByGeneralManagerId(Long generalManagerId);
 
     @Transactional
-    @Query("select sc from Customer sc join SaleChannelShopRelation scsr on sc.id = scsr.saleChannel.id where sc.isActive = true and scsr.shop.id = ?1")
+    @Query("select c from Customer c join CustomerShopRelation csr on c.id = csr.customer.id where c.isActive = true and csr.shop.id = ?1")
     List<Customer> findCustomersByShopId(Long shopId);
 }
