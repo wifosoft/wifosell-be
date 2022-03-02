@@ -1,6 +1,5 @@
 package com.wifosell.zeus.exception;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 
 public class AppExceptionErrorData <T>{

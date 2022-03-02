@@ -28,6 +28,7 @@ public interface VoucherRepository extends SoftDeleteCrudRepository<Voucher, Lon
     @Query("select v from Voucher v where v.isActive = true and v.generalManager.id = ?1")
     List<Voucher> findVouchersByGeneralManagerId(Long generalManagerId);
 
+    // TODO sang: link Voucher with SaleChannelShop
     @Transactional
     @Query("select v " +
             "from Voucher v " +

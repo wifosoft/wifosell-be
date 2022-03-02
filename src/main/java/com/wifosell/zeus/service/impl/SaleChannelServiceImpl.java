@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("SaleChannel")
@@ -76,9 +77,20 @@ public class SaleChannelServiceImpl implements SaleChannelService {
         return saleChannelRepository.save(saleChannel);
     }
 
+    @Override
+    public List<SaleChannel> activateSaleChannels(List<Long> saleChannelIds) {
+        return saleChannelIds.stream().map(this::activateSaleChannel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SaleChannel> deactivateSaleChannels(List<Long> saleChannelIds) {
+        return saleChannelIds.stream().map(this::deactivateSaleChannel).collect(Collectors.toList());
+    }
+
     private void updateSaleChannelByRequest(SaleChannel saleChannel, SaleChannelRequest saleChannelRequest) {
         Optional.ofNullable(saleChannelRequest.getName()).ifPresent(saleChannel::setName);
         Optional.ofNullable(saleChannelRequest.getShortName()).ifPresent(saleChannel::setShortName);
         Optional.ofNullable(saleChannelRequest.getDescription()).ifPresent(saleChannel::setDescription);
+        Optional.ofNullable(saleChannelRequest.getActive()).ifPresent(saleChannel::setIsActive);
     }
 }

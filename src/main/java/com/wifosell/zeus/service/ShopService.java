@@ -3,7 +3,6 @@ package com.wifosell.zeus.service;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
-import com.wifosell.zeus.security.UserPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +22,8 @@ public interface ShopService {
     Shop editShop(Long shopId ,ShopRequest shopRequest);
     Shop deActivateShop(Long shopId);
     Shop activateShop(Long shopId);
+    List<Shop> activateShops(List<Long> shopIds);
+    List<Shop> deactivateShops(List<Long> shopIds);
 
     void linkWarehouseToShop(Long warehouseId,  Long shopId);
     void linkWarehouseToShop(Long currentUserId, Long warehouseId,  Long shopId);

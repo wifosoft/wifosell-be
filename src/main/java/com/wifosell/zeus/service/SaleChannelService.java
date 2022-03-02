@@ -14,4 +14,6 @@ public interface SaleChannelService {
     SaleChannel updateSaleChannel(Long saleChannelId, SaleChannelRequest saleChannelRequest);
     SaleChannel activateSaleChannel(Long saleChannelId);
     SaleChannel deactivateSaleChannel(Long saleChannelId);
+    List<SaleChannel> activateSaleChannels(List<Long> saleChannelIds);
+    List<SaleChannel> deactivateSaleChannels(List<Long> saleChannelIds);
 }

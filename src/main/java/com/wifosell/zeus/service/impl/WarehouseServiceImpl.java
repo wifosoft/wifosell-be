@@ -1,6 +1,5 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
@@ -13,60 +12,52 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Transactional
 @Service("WarehouseService")
 public class WarehouseServiceImpl implements WarehouseService {
-    @Autowired
-    WarehouseRepository warehouseRepository;
+    private final WarehouseRepository warehouseRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    public WarehouseServiceImpl(WarehouseRepository warehouseRepository,
+                                UserRepository userRepository) {
+        this.warehouseRepository = warehouseRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<Warehouse> getAllWarehouse() {
-        List<Warehouse> lsWarehouse = warehouseRepository.findAll();
-        return lsWarehouse;
+        return warehouseRepository.findAll();
     }
 
     @Override
     public Warehouse addWarehouse(Long userId, WarehouseRequest warehouseRequest) {
         User gm = userRepository.getUserById(userId);
         Warehouse warehouse = new Warehouse();
-        Optional.ofNullable(warehouseRequest.getName()).ifPresent(warehouse::setName);
-        Optional.ofNullable(warehouseRequest.getShortName()).ifPresent(warehouse::setShortName);
-        Optional.ofNullable(warehouseRequest.getAddress()).ifPresent(warehouse::setAddress);
-        Optional.ofNullable(warehouseRequest.getPhone()).ifPresent(warehouse::setPhone);
-        Optional.ofNullable(warehouseRequest.getDescription()).ifPresent(warehouse::setDescription);
+        this.updateWarehouseByRequest(warehouse, warehouseRequest);
         warehouse.setGeneralManager(gm);
-        warehouse = warehouseRepository.save(warehouse);
-        return warehouse;
+        return warehouseRepository.save(warehouse);
     }
 
     @Override
     public Warehouse getWarehouse(Long warehouseId) {
-        Warehouse warehouse = warehouseRepository.getWarehouseById(warehouseId);
-        return warehouse;
+        return warehouseRepository.getWarehouseById(warehouseId);
     }
 
     @Override
     public Warehouse updateWarehouse(Long warehouseId, WarehouseRequest warehouseRequest) {
         Warehouse warehouse = warehouseRepository.getWarehouseById(warehouseId);
-        Optional.ofNullable(warehouseRequest.getName()).ifPresent(warehouse::setName);
-        Optional.ofNullable(warehouseRequest.getShortName()).ifPresent(warehouse::setShortName);
-        Optional.ofNullable(warehouseRequest.getAddress()).ifPresent(warehouse::setAddress);
-        Optional.ofNullable(warehouseRequest.getPhone()).ifPresent(warehouse::setPhone);
-        Optional.ofNullable(warehouseRequest.getDescription()).ifPresent(warehouse::setDescription);
-        warehouse = warehouseRepository.save(warehouse);
-        return warehouse;
+        this.updateWarehouseByRequest(warehouse, warehouseRequest);
+        return warehouseRepository.save(warehouse);
     }
 
     @Override
     public Warehouse activateWarehouse(Long warehouseId) {
         Warehouse warehouse = warehouseRepository.getWarehouseById( warehouseId);
         warehouse.setIsActive(true);
-
         return warehouseRepository.save(warehouse);
     }
 
@@ -77,4 +68,22 @@ public class WarehouseServiceImpl implements WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
+    @Override
+    public List<Warehouse> activateWarehouses(List<Long> warehouseIds) {
+        return warehouseIds.stream().map(this::activateWarehouse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Warehouse> deactivateWarehouses(List<Long> warehouseIds) {
+        return warehouseIds.stream().map(this::deActivateWarehouse).collect(Collectors.toList());
+    }
+
+    private void updateWarehouseByRequest(Warehouse warehouse, WarehouseRequest warehouseRequest) {
+        Optional.ofNullable(warehouseRequest.getName()).ifPresent(warehouse::setName);
+        Optional.ofNullable(warehouseRequest.getShortName()).ifPresent(warehouse::setShortName);
+        Optional.ofNullable(warehouseRequest.getAddress()).ifPresent(warehouse::setAddress);
+        Optional.ofNullable(warehouseRequest.getPhone()).ifPresent(warehouse::setPhone);
+        Optional.ofNullable(warehouseRequest.getDescription()).ifPresent(warehouse::setDescription);
+        Optional.ofNullable(warehouseRequest.getActive()).ifPresent(warehouse::setIsActive);
+    }
 }

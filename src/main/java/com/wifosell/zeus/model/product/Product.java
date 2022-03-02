@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.shop.ProductSaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.ProductShopRelation;
 import com.wifosell.zeus.model.user.User;
-import io.swagger.models.auth.In;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -25,7 +23,6 @@ import java.util.List;
 public class Product extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @NotBlank
@@ -40,7 +37,6 @@ public class Product extends BasicEntity {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     private Integer weight;
@@ -52,24 +48,21 @@ public class Product extends BasicEntity {
 
     private Integer status = 0;
 
-    private Integer stock = 0;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Product parent;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> children;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
-    private User generalManager;
+    @OneToMany(mappedBy = "product")
+    private List<Attribute> attributes;
 
     @JsonIgnore
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    //@JsonManagedReference
-    List<ProductSaleChannelShopRelation> productSaleChannelShopRelations;
+    private List<OptionProductRelation> optionProductRelations;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<Variant> variants;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ProductShopRelation> productShopRelations;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User generalManager;
 }

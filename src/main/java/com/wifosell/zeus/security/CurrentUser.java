@@ -1,7 +1,6 @@
 package com.wifosell.zeus.security;
 
 
-import io.swagger.annotations.Api;
 import lombok.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import springfox.documentation.annotations.ApiIgnore;

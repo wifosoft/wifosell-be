@@ -74,14 +74,19 @@ pipeline {
   
   stages {
     stage('Build') {  
-      when { anyOf { branch 'main'; branch 'develop'; branch 'PR-*' } }
+//       when { anyOf { branch 'main'; branch 'develop'; branch 'PR-*' } }
+      when { anyOf { branch 'main'} }
       options {
         lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
       }
       steps {
         notifyGitHub('PENDING')
         echo 'Initiating maven build'
-        sh 'mvn clean install -Dlicense.skip=true'
+        sh 'mvn clean install -P prod -Dlicense.skip=true -Dmaven.test.skip'
+        sh 'docker ps -f name=wifosellbe -q | xargs --no-run-if-empty docker container stop'
+        sh 'docker container ls -a -fname=wifosellbe -q | xargs -r docker container rm'
+        sh 'docker build -t wifosell/wifosell-be .'
+        sh 'docker run -d -p 8888:8888 --network wifosell-be_default --name wifosellbe wifosell/wifosell-be'
         echo 'Maven build complete'
       }
     }
@@ -116,15 +121,15 @@ pipeline {
         notifyGitHub('PENDING')
         echo 'Initiating Deployment'
         echo 'Deployment Complete'
-        sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
-cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
-echo \'------- finish copy jar -------------------------------------\'
-echo \'------- restart zeus service------------------\'
-sudo systemctl restart zeus
-echo \'------- finish restart zeus service\'
-sudo systemctl status zeus
-echo \'------- finish restart zeus service\'
-'''
+//         sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
+// cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
+// echo \'------- finish copy jar -------------------------------------\'
+// echo \'------- restart spring-boot-hello service------------------\'
+// sudo systemctl restart spring-boot-hello
+// echo \'------- finish restart spring-boot-hello service\'
+// sudo systemctl status spring-boot-hello
+// echo \'------- finish restart spring-boot-hello service\'
+// '''
         script {
           currentBuild.description = "Success Build! Access to API for using"
         //  updateGithubCommitStatus(currentBuild)

@@ -3,6 +3,7 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
+import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,22 +93,22 @@ public class CategoryController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/activate")
+    @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> activateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "ids") List<Long> categoryIds) {
-        List<Category> categoryList = categoryService.activateCategories(categoryIds);
+            @RequestBody ListIdRequest request) {
+        List<Category> categoryList = categoryService.activateCategories(request.getIds());
         List<CategoryResponse> categoryResponses = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(categoryResponses));
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/deactivate")
+    @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> deactivateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "ids") List<Long> categoryIds) {
-        List<Category> categoryList = categoryService.deactivateCategories(categoryIds);
+            @RequestBody ListIdRequest request) {
+        List<Category> categoryList = categoryService.deactivateCategories(request.getIds());
         List<CategoryResponse> categoryResponses = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(categoryResponses));

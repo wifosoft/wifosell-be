@@ -158,12 +158,7 @@ public class ShopServiceImpl implements ShopService {
     public Shop addShop(ShopRequest shopRequest, Long userId) {
         User parentUser = userRepository.getUserById(userId);
         Shop shop = new Shop();
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        this.updateShopByRequest(shop, shopRequest);
         shop.setGeneralManager(parentUser);
         shop = shopRepository.save(shop);
         return shop;
@@ -172,12 +167,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Shop editShop(Long shopId, ShopRequest shopRequest) {
         Shop shop = shopRepository.getShopById(shopId);
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        this.updateShopByRequest(shop, shopRequest);
         shop = shopRepository.save(shop);
         return shop;
     }
@@ -194,6 +184,16 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.getShopById(shopId);
         shop.setIsActive(true);
         return shopRepository.save(shop);
+    }
+
+    @Override
+    public List<Shop> activateShops(List<Long> shopIds) {
+        return shopIds.stream().map(this::activateShop).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Shop> deactivateShops(List<Long> shopIds) {
+        return shopIds.stream().map(this::deActivateShop).collect(Collectors.toList());
     }
 
     @Override
@@ -261,7 +261,16 @@ public class ShopServiceImpl implements ShopService {
     public List<User> getListStaffOfShop(Long shopId) {
         Shop shop = shopRepository.getShopById(shopId);
         Set<UserShopRelation> userRelation = shop.getUserShopRelation();
-        List<User> users = userRelation.stream().map(e -> e.getUser()).collect(Collectors.toList());
-        return users;
+        return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
+    }
+
+    private void updateShopByRequest(Shop shop, ShopRequest shopRequest) {
+        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        Optional.ofNullable(shopRequest.getActive()).ifPresent(shop::setIsActive);
     }
 }

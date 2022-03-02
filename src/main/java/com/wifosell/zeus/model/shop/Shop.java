@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,22 +12,19 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
 
-@ApiIgnore
-@Entity
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@Entity
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(
         name = "shops",
         uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Shop extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Size(max = 255)
@@ -40,51 +36,43 @@ public class Shop extends BasicEntity {
     private String shortName;
 
     @Size(max = 255)
-    @Column(name = "address")
     private String address;
 
     @Size(max = 20)
-    @Column(name = "phone")
     private String phone;
 
     @Size(max = 255)
-    @Column(name = "description")
     private String description;
 
     @Size(max = 50)
-    @Column(name = "business_line")
     private String businessLine;
 
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    //@JsonManagedReference
     Set<UserShopRelation> userShopRelation;
 
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    //@JsonManagedReference
     Set<WarehouseShopRelation> warehouseShopRelations;
 
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    //@JsonManagedReference
     Set<SaleChannelShopRelation> saleChannelShopRelations;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    private List<ProductShopRelation> productShopRelations;
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
 
-
     /*
-
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-//    @JsonManagedReference
+    @JsonManagedReference
     @ManyToMany(mappedBy = "shops")
     List<User> staffOfShop;
-*/
-
-
+    */
 }

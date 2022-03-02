@@ -6,9 +6,11 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
-import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.repository.ShopRepository;
+import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.WarehouseRepository;
+import com.wifosell.zeus.repository.WarehouseShopRelationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

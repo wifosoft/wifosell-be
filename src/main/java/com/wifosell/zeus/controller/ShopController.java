@@ -1,17 +1,16 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.annotation.PreAuthorizeAccessGeneralManagerToShop;
-import com.wifosell.zeus.annotation.PreAuthorizeAccessToShop;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
-import com.wifosell.zeus.service.SaleChannelService;
 import com.wifosell.zeus.service.ShopService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class ShopController {
      * @param shopId
      * @return
      */
-    @PreAuthorizeAccessToShop
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{shopId}")
     public ResponseEntity<GApiResponse> getShopInfo(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.getShopInfo(shopId);
@@ -107,7 +106,7 @@ public class ShopController {
      * @return
      */
     @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{shopId}/deActivateShop")
+    @GetMapping("/{shopId}/deactivate")
     public ResponseEntity<GApiResponse> deActivateShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.deActivateShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
@@ -122,11 +121,29 @@ public class ShopController {
      * @return
      */
     @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{shopId}/activateShop")
+    @GetMapping("/{shopId}/activate")
     public ResponseEntity<GApiResponse> activateShop(@ApiIgnore
                                                      @CurrentUser UserPrincipal userPrincipal, @PathVariable("shopId") Long shopId) {
         Shop shop = shopService.activateShop(shopId);
         return ResponseEntity.ok(GApiResponse.success(shop));
+    }
+
+    @PreAuthorizeAccessGeneralManagerToShop
+    @PostMapping("/activate")
+    public ResponseEntity<GApiResponse<List<Shop>>> activateShops(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ListIdRequest request) {
+        List<Shop> shops = shopService.activateShops(request.getIds());
+        return ResponseEntity.ok(GApiResponse.success(shops));
+    }
+
+    @PreAuthorizeAccessGeneralManagerToShop
+    @PostMapping("/deactivate")
+    public ResponseEntity<GApiResponse<List<Shop>>> deactivateShops(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ListIdRequest request) {
+        List<Shop> shops = shopService.deactivateShops(request.getIds());
+        return ResponseEntity.ok(GApiResponse.success(shops));
     }
 
     /**

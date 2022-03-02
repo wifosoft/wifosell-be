@@ -14,7 +14,6 @@ public interface WarehouseService {
     Warehouse updateWarehouse(Long warehouseId, WarehouseRequest warehouseRequest);
     Warehouse activateWarehouse(Long warehouseId);
     Warehouse deActivateWarehouse(Long warehouseId);
-    //Lấy toàn bộ warehouse trong chuỗi cửa hàng
-
-
+    List<Warehouse> activateWarehouses(List<Long> warehouseIds);
+    List<Warehouse> deactivateWarehouses(List<Long> warehouseIds);
 }

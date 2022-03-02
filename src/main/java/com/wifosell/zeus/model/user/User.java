@@ -1,16 +1,17 @@
 package com.wifosell.zeus.model.user;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.audit.DateAudit;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
-import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import springfox.documentation.annotations.ApiIgnore;
@@ -19,7 +20,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -194,6 +194,7 @@ public class User extends BasicEntity {
         return this.parent == null;
     }
 
+    @JsonIgnore
     public User getGeneralManager() {
         User gm = this;
         while (!gm.isRoot()) {

@@ -1,9 +1,6 @@
 package com.wifosell.zeus.constant.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.data.repository.cdi.Eager;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 public enum EAppExceptionCode {
@@ -41,7 +38,9 @@ public enum EAppExceptionCode {
 
     //region Product
     PRODUCT_NOT_FOUND(900001),
-    PARENT_PRODUCT_NOT_FOUND(900002);
+    ATTRIBUTE_NOT_FOUND(901001),
+    OPTION_NOT_FOUND(902001),
+    OPTION_VALUE_NOT_FOUND(903001);
     //endregion
 
     private final int value;

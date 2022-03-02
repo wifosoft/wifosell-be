@@ -2,9 +2,7 @@ package com.wifosell.zeus.model.warehouse;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
@@ -27,10 +25,12 @@ public class Warehouse extends BasicEntity {
     private Long id;
 
     private String name;
-    private String shortName;
-    @Size(max = 255)
 
+    private String shortName;
+
+    @Size(max = 255)
     private String address;
+
     @Size(max = 20)
     @Column(name = "phone")
     private String phone;
