@@ -1,9 +1,9 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
-import com.wifosell.zeus.model.product.Attribute;
-import com.wifosell.zeus.model.product.OptionProductRelation;
+import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
@@ -26,21 +26,23 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final AttributeRepository attributeRepository;
     private final OptionRepository optionRepository;
-    private final OptionProductRelationRepository optionProductRelationRepository;
+    private final OptionValueRepository optionValueRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository,
-                              CategoryRepository categoryRepository,
-                              AttributeRepository attributeRepository,
-                              OptionRepository optionRepository,
-                              OptionProductRelationRepository optionProductRelationRepository,
-                              UserRepository userRepository) {
+    public ProductServiceImpl(
+            ProductRepository productRepository,
+            CategoryRepository categoryRepository,
+            AttributeRepository attributeRepository,
+            OptionRepository optionRepository,
+            OptionValueRepository optionValueRepository,
+            UserRepository userRepository
+    ) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.attributeRepository = attributeRepository;
         this.optionRepository = optionRepository;
-        this.optionProductRelationRepository = optionProductRelationRepository;
+        this.optionValueRepository = optionValueRepository;
         this.userRepository = userRepository;
     }
 
@@ -105,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 
-    private Product updateProductByRequest(@NonNull Product product, @NonNull ProductRequest request, @NonNull User gm) {
+    private Product updateProductByRequest(Product product, ProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getSku()).ifPresent(product::setSku);
         Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
@@ -120,8 +122,8 @@ public class ProductServiceImpl implements ProductService {
 
         // Attributes
         // TODO haukc: optimize performance
-        Optional.ofNullable(request.getAttributeRequests()).ifPresent(attributeRequests -> {
-            attributeRepository.deleteAttributesByProductId(product.getId());
+        Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
+            attributeRepository.deleteAllByProductId(product.getId());
 
             List<Attribute> attributes = new ArrayList<>();
             for (ProductRequest.AttributeRequest attributeRequest : attributeRequests) {
@@ -130,33 +132,49 @@ public class ProductServiceImpl implements ProductService {
                         .value(attributeRequest.getValue())
                         .product(product)
                         .build();
-                attributes.add(attributeRepository.save(attribute));
+                attributes.add(attribute);
             }
-            product.setAttributes(attributes);
+            product.getAttributes().addAll(attributes);
+
+            attributeRepository.saveAll(attributes);
             productRepository.save(product);
         });
 
         // Options
         // TODO haukc: optimize performance
-        Optional.ofNullable(request.getOptionRequests()).ifPresent(optionRequests -> {
-            optionProductRelationRepository.deleteProductOptionRelationByProductId(product.getId());
+        Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
+            optionRepository.deleteAllByProductId(product.getId());
 
-            List<OptionProductRelation> relations = new ArrayList<>();
+            List<OptionModel> optionModels = new ArrayList<>();
             for (ProductRequest.OptionRequest optionRequest : optionRequests) {
-                OptionModel option = optionRepository.findOptionById(optionRequest.getId());
-                OptionProductRelation relation = OptionProductRelation.builder()
-                        .product(product)
-                        .option(option)
-                        .build();
-                relations.add(optionProductRelationRepository.save(relation));
+                OptionModel optionModel = OptionModel.builder()
+                        .name(optionRequest.getName())
+                        .product(product).build();
+                List<OptionValue> optionValues = new ArrayList<>();
+                for (String value : optionRequest.getValues()) {
+                    OptionValue optionValue = OptionValue.builder()
+                            .value(value)
+                            .option(optionModel).build();
+                    optionValues.add(optionValue);
+                }
+                optionModel.setOptionValues(optionValues);
+
+                optionModels.add(optionModel);
+
+                optionValueRepository.saveAll(optionValues);
+                optionRepository.save(optionModel);
             }
-            product.setOptionProductRelations(relations);
+            product.getOptions().addAll(optionModels);
+
             productRepository.save(product);
         });
 
-        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
+        // Variants
 
+
+        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
+
         return productRepository.save(product);
     }
 }

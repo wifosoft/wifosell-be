@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,8 +25,8 @@ public class Variant {
 
     private BigDecimal costPrice;
 
-    @OneToMany(mappedBy = "variant")
-    private List<VariantValue> variantValues;
+    @OneToMany(mappedBy = "variant", orphanRemoval = true)
+    private List<VariantValue> variantValues = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -40,7 +41,12 @@ public class ProductRequest {
     private Integer status;
 
     @NotNull
-    private List<AttributeRequest> attributeRequests;
+    private List<AttributeRequest> attributes;
+
+    @NotNull
+    private List<OptionRequest> options;
+
+    private Boolean active;
 
     @Getter
     @Setter
@@ -54,25 +60,14 @@ public class ProductRequest {
         private String value;
     }
 
-    @NotNull
-    private List<OptionRequest> optionRequests;
-
     @Getter
     @Setter
     public static class OptionRequest {
-        @NotNull
-        private Long id;
+        @NotBlank
+        @Size(max = 255)
+        private String name;
 
-        @NotNull
-        private List<OptionValueRequest> optionValueRequests;
-
-        @Getter
-        @Setter
-        public static class OptionValueRequest {
-            @NotNull
-            private Long id;
-        }
+        @NotEmpty
+        private List<String> values;
     }
-
-    private Boolean active;
 }

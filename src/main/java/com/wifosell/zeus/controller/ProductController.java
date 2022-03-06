@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,7 +96,7 @@ public class ProductController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<ProductResponse>> addProduct(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ProductRequest request
+            @Valid @RequestBody ProductRequest request
     ) {
         Product product = productService.addProduct(userPrincipal.getId(), request);
         ProductResponse response = new ProductResponse(product);
@@ -107,7 +108,7 @@ public class ProductController {
     public ResponseEntity<GApiResponse<ProductResponse>> updateProduct(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "productId") Long productId,
-            @RequestBody ProductRequest request
+            @Valid @RequestBody ProductRequest request
     ) {
         Product product = productService.updateProduct(userPrincipal.getId(), productId, request);
         ProductResponse response = new ProductResponse(product);

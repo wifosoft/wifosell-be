@@ -1,8 +1,9 @@
-package com.wifosell.zeus.model.product;
+package com.wifosell.zeus.model.attribute;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.product.Product;
 import lombok.*;
 
 import javax.persistence.*;
