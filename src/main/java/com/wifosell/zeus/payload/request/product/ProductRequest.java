@@ -1,12 +1,10 @@
 package com.wifosell.zeus.payload.request.product;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @Getter
@@ -46,6 +44,9 @@ public class ProductRequest {
     @NotNull
     private List<OptionRequest> options;
 
+    @NonNull
+    private List<VariantRequest> variants;
+
     private Boolean active;
 
     @Getter
@@ -69,5 +70,21 @@ public class ProductRequest {
 
         @NotEmpty
         private List<String> values;
+    }
+
+    @Getter
+    @Setter
+    public static class VariantRequest {
+        @NonNull
+        @PositiveOrZero
+        private Long stock;
+
+        @NotBlank
+        @Size(max = 255)
+        private String sku;
+
+        @NotBlank
+        @Size(max = 255)
+        private String cost;
     }
 }

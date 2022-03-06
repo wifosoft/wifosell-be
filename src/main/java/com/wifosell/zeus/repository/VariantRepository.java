@@ -1,7 +1,15 @@
 package com.wifosell.zeus.repository;
 
+import com.wifosell.framework.repository.SoftRepository;
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.model.product.Variant;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface VariantRepository extends CrudRepository<Variant, Long> {
+@Repository
+public interface VariantRepository extends SoftRepository<Variant, Long> {
+    default EAppExceptionCode getExceptionCodeEntityNotFound() {
+        return EAppExceptionCode.VARIANT_NOT_FOUND;
+    }
+
+    void deleteAllByProductId(Long productId);
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class  OptionValue extends BasicEntity {
+public class OptionValue extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +28,6 @@ public class  OptionValue extends BasicEntity {
     private OptionModel option;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "optionValue")
+    @OneToMany(mappedBy = "optionValue", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<VariantValue> variantValues;
 }

@@ -5,6 +5,8 @@ import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.ProductRequest;
 import com.wifosell.zeus.repository.*;
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +31,8 @@ public class ProductServiceImpl implements ProductService {
     private final AttributeRepository attributeRepository;
     private final OptionRepository optionRepository;
     private final OptionValueRepository optionValueRepository;
+    private final VariantRepository variantRepository;
+    private final VariantValueRepository variantValueRepository;
     private final UserRepository userRepository;
 
     @Autowired
@@ -36,6 +42,8 @@ public class ProductServiceImpl implements ProductService {
             AttributeRepository attributeRepository,
             OptionRepository optionRepository,
             OptionValueRepository optionValueRepository,
+            VariantRepository variantRepository,
+            VariantValueRepository variantValueRepository,
             UserRepository userRepository
     ) {
         this.productRepository = productRepository;
@@ -43,6 +51,8 @@ public class ProductServiceImpl implements ProductService {
         this.attributeRepository = attributeRepository;
         this.optionRepository = optionRepository;
         this.optionValueRepository = optionValueRepository;
+        this.variantRepository = variantRepository;
+        this.variantValueRepository = variantValueRepository;
         this.userRepository = userRepository;
     }
 
@@ -170,11 +180,48 @@ public class ProductServiceImpl implements ProductService {
         });
 
         // Variants
-
+        variantRepository.deleteAllByProductId(product.getId());
+        this.genVariants(product, product.getOptions());
+        productRepository.save(product);
 
         Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
 
         return productRepository.save(product);
+    }
+
+    private void genVariants(Product product, List<OptionModel> options) {
+        List<OptionValue> combination = Arrays.asList(new OptionValue[options.size()]);
+        int i = 0, j = 0;
+        this.genVariants(product, options, combination, i, j);
+    }
+
+    private void genVariants(Product product, List<OptionModel> options, List<OptionValue> combination, int i, int j) {
+        if (i == options.size()) {
+            Variant variant = Variant.builder()
+                    .stock(1L)
+                    .costPrice(new BigDecimal(1000))
+                    .product(product).build();
+
+            List<VariantValue> variantValues = new ArrayList<>();
+            for (OptionValue optionValue : combination) {
+                VariantValue variantValue = VariantValue.builder()
+                        .optionValue(optionValue)
+                        .variant(variant).build();
+                variantValues.add(variantValue);
+            }
+
+            variant.setVariantValues(variantValues);
+            product.getVariants().add(variant);
+
+            variantValueRepository.saveAll(variantValues);
+            variantRepository.save(variant);
+            return;
+        }
+
+        for (OptionValue optionValue : options.get(i).getOptionValues()) {
+            combination.set(j, optionValue);
+            genVariants(product, options, combination, i + 1, j + 1);
+        }
     }
 }

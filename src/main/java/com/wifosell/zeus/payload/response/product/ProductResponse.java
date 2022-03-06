@@ -1,15 +1,14 @@
 package com.wifosell.zeus.payload.response.product;
 
 import com.wifosell.zeus.model.attribute.Attribute;
-import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.Attr;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ public class ProductResponse extends BasicEntityResponse {
     private final Integer status;
     private final List<AttributeResponse> attributes;
     private final List<OptionResponse> options;
-    private final List<Variant> variants;
+    private final List<VariantResponse> variants;
 
     public ProductResponse(Product product) {
         super(product);
@@ -38,7 +37,7 @@ public class ProductResponse extends BasicEntityResponse {
         this.status = product.getStatus();
         this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
         this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
-        this.variants = product.getVariants();
+        this.variants = product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList());
     }
 
     @Getter
@@ -75,6 +74,23 @@ public class ProductResponse extends BasicEntityResponse {
                 super(optionValue);
                 this.value = optionValue.getValue();
             }
+        }
+    }
+
+    @Getter
+    @Setter
+    private static class VariantResponse extends BasicEntityResponse {
+        private Long stock;
+        private String costPrice;
+        private List<String> options;
+
+        public VariantResponse(Variant variant) {
+            super(variant);
+            this.stock = variant.getStock();
+            this.costPrice = variant.getCostPrice().toString();
+            this.options = variant.getVariantValues().stream()
+                    .map(VariantValue::getOptionValue)
+                    .map(OptionValue::getValue).collect(Collectors.toList());
         }
     }
 }
