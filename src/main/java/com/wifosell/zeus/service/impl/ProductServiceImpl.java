@@ -154,6 +154,7 @@ public class ProductServiceImpl implements ProductService {
         // TODO haukc: optimize performance
         Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
             optionRepository.deleteAllByProductId(product.getId());
+            product.getOptions().clear();
 
             List<OptionModel> optionModels = new ArrayList<>();
             for (ProductRequest.OptionRequest optionRequest : optionRequests) {
@@ -181,6 +182,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Variants
         variantRepository.deleteAllByProductId(product.getId());
+        product.getVariants().clear();
         this.genVariants(product, product.getOptions());
         productRepository.save(product);
 
