@@ -1,9 +1,11 @@
 package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.payload.request.product.ProductRequest;
+import com.wifosell.zeus.payload.request.product.AddProductRequest;
+import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import lombok.NonNull;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface ProductService {
@@ -13,9 +15,9 @@ public interface ProductService {
 
     Product getProduct(@NonNull Long userId, @NonNull Long productId);
 
-    Product addProduct(@NonNull Long userId, @NonNull ProductRequest request);
+    Product addProduct(@NonNull Long userId, @Valid AddProductRequest request);
 
-    Product updateProduct(@NonNull Long userId, @NonNull Long productId, @NonNull ProductRequest request);
+    Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request);
 
     Product activateProduct(@NonNull Long userId, @NonNull Long productId);
 

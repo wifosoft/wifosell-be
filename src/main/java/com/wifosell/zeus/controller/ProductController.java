@@ -3,7 +3,8 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
-import com.wifosell.zeus.payload.request.product.ProductRequest;
+import com.wifosell.zeus.payload.request.product.AddProductRequest;
+import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.payload.response.product.ProductResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -96,7 +97,7 @@ public class ProductController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<ProductResponse>> addProduct(
             @CurrentUser UserPrincipal userPrincipal,
-            @Valid @RequestBody ProductRequest request
+            @RequestBody AddProductRequest request
     ) {
         Product product = productService.addProduct(userPrincipal.getId(), request);
         ProductResponse response = new ProductResponse(product);
@@ -108,7 +109,7 @@ public class ProductController {
     public ResponseEntity<GApiResponse<ProductResponse>> updateProduct(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "productId") Long productId,
-            @Valid @RequestBody ProductRequest request
+            @RequestBody UpdateProductRequest request
     ) {
         Product product = productService.updateProduct(userPrincipal.getId(), productId, request);
         ProductResponse response = new ProductResponse(product);

@@ -8,7 +8,9 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.request.product.ProductRequest;
+import com.wifosell.zeus.payload.request.product.AddProductRequest;
+import com.wifosell.zeus.payload.request.product.IProductRequest;
+import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
 import lombok.NonNull;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,14 +81,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product addProduct(@NonNull Long userId, @NonNull ProductRequest request) {
+    public Product addProduct(@NonNull Long userId, @Valid AddProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Product product = new Product();
         return this.updateProductByRequest(product, request, gm);
     }
 
     @Override
-    public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @NonNull ProductRequest request) {
+    public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Product product = productRepository.getByIdWithGm(gm.getId(), productId);
         return this.updateProductByRequest(product, request, gm);
@@ -117,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 
-    private Product updateProductByRequest(Product product, ProductRequest request, User gm) {
+    private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getSku()).ifPresent(product::setSku);
         Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
@@ -135,7 +138,7 @@ public class ProductServiceImpl implements ProductService {
             attributeRepository.deleteAllByProductId(product.getId());
 
             List<Attribute> attributes = new ArrayList<>();
-            for (ProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+            for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
                 Attribute attribute = Attribute.builder()
                         .name(attributeRequest.getName())
                         .value(attributeRequest.getValue())
@@ -155,7 +158,7 @@ public class ProductServiceImpl implements ProductService {
             product.getOptions().clear();
 
             List<OptionModel> optionModels = new ArrayList<>();
-            for (ProductRequest.OptionRequest optionRequest : optionRequests) {
+            for (IProductRequest.OptionRequest optionRequest : optionRequests) {
                 OptionModel optionModel = OptionModel.builder()
                         .name(optionRequest.getName())
                         .product(product).build();
@@ -192,15 +195,15 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
-    private void genVariants(Product product, List<OptionModel> options, List<ProductRequest.VariantRequest> variantRequests) {
+    private void genVariants(Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests) {
         List<OptionValue> combination = Arrays.asList(new OptionValue[options.size()]);
         int i = 0, j = 0, k = 0;
         this.genVariants(product, options, variantRequests, combination, i, j, k);
     }
 
-    private int genVariants(Product product, List<OptionModel> options, List<ProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
+    private int genVariants(Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
         if (i == options.size()) {
-            ProductRequest.VariantRequest variantRequest = variantRequests.get(j);
+            IProductRequest.VariantRequest variantRequest = variantRequests.get(j);
             Variant variant = Variant.builder()
                     .stock(variantRequest.getStock())
                     .cost(new BigDecimal(variantRequest.getCost()))

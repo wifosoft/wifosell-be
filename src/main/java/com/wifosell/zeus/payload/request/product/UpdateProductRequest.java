@@ -1,0 +1,34 @@
+package com.wifosell.zeus.payload.request.product;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+public class UpdateProductRequest implements IProductRequest {
+    private String name;
+
+    private String sku;
+
+    private String barcode;
+
+    private Long categoryId;
+
+    private Integer weight;
+
+    private String dimension;
+
+    private Integer state;
+
+    private Integer status;
+
+    private List<AttributeRequest> attributes;
+
+    private List<OptionRequest> options;
+
+    private List<VariantRequest> variants;
+
+    private Boolean active;
+}
