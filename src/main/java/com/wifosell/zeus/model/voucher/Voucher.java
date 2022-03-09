@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.ProductSaleChannelShopRelation;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
-import com.wifosell.zeus.model.shop.WarehouseShopRelation;
+import com.wifosell.zeus.model.shop.VoucherSaleChannelShopRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -14,7 +12,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -62,5 +59,5 @@ public class Voucher extends BasicEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "voucher", fetch = FetchType.LAZY)
     //@JsonManagedReference
-    List<SaleChannelShopRelation> saleChannelShopRelations;
+    List<VoucherSaleChannelShopRelation> voucherSaleChannelShopRelations;
 }
