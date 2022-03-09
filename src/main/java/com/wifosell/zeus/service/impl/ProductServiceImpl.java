@@ -131,7 +131,6 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
         // Attributes
-        // TODO haukc: optimize performance
         Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
             attributeRepository.deleteAllByProductId(product.getId());
 
@@ -150,8 +149,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
         });
 
-        // Options
-        // TODO haukc: optimize performance
+        // Options & Variants
         Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
             optionRepository.deleteAllByProductId(product.getId());
             product.getOptions().clear();
@@ -181,10 +179,12 @@ public class ProductServiceImpl implements ProductService {
         });
 
         // Variants
-        variantRepository.deleteAllByProductId(product.getId());
-        product.getVariants().clear();
-        this.genVariants(product, product.getOptions());
-        productRepository.save(product);
+        Optional.ofNullable(request.getVariants()).ifPresent(variantRequests -> {
+            variantRepository.deleteAllByProductId(product.getId());
+            product.getVariants().clear();
+            this.genVariants(product, product.getOptions(), variantRequests);
+            productRepository.save(product);
+        });
 
         Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
@@ -192,17 +192,19 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
-    private void genVariants(Product product, List<OptionModel> options) {
+    private void genVariants(Product product, List<OptionModel> options, List<ProductRequest.VariantRequest> variantRequests) {
         List<OptionValue> combination = Arrays.asList(new OptionValue[options.size()]);
-        int i = 0, j = 0;
-        this.genVariants(product, options, combination, i, j);
+        int i = 0, j = 0, k = 0;
+        this.genVariants(product, options, variantRequests, combination, i, j, k);
     }
 
-    private void genVariants(Product product, List<OptionModel> options, List<OptionValue> combination, int i, int j) {
+    private int genVariants(Product product, List<OptionModel> options, List<ProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
         if (i == options.size()) {
+            ProductRequest.VariantRequest variantRequest = variantRequests.get(j);
             Variant variant = Variant.builder()
-                    .stock(1L)
-                    .costPrice(new BigDecimal(1000))
+                    .stock(variantRequest.getStock())
+                    .cost(new BigDecimal(variantRequest.getCost()))
+                    .sku(variantRequest.getSku())
                     .product(product).build();
 
             List<VariantValue> variantValues = new ArrayList<>();
@@ -218,12 +220,14 @@ public class ProductServiceImpl implements ProductService {
 
             variantValueRepository.saveAll(variantValues);
             variantRepository.save(variant);
-            return;
+            return ++j;
         }
 
         for (OptionValue optionValue : options.get(i).getOptionValues()) {
-            combination.set(j, optionValue);
-            genVariants(product, options, combination, i + 1, j + 1);
+            combination.set(k, optionValue);
+            j = genVariants(product, options, variantRequests, combination, i + 1, j, k + 1);
         }
+
+        return j;
     }
 }

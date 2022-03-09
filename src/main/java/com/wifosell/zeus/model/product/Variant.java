@@ -24,7 +24,9 @@ public class Variant extends BasicEntity {
 
     private Long stock = 0L;
 
-    private BigDecimal costPrice;
+    private BigDecimal cost;
+
+    private String sku;
 
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
     private List<VariantValue> variantValues = new ArrayList<>();

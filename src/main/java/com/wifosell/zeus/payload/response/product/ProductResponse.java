@@ -81,13 +81,15 @@ public class ProductResponse extends BasicEntityResponse {
     @Setter
     private static class VariantResponse extends BasicEntityResponse {
         private Long stock;
-        private String costPrice;
+        private String cost;
+        private String sku;
         private List<String> options;
 
         public VariantResponse(Variant variant) {
             super(variant);
             this.stock = variant.getStock();
-            this.costPrice = variant.getCostPrice().toString();
+            this.cost = variant.getCost().toString();
+            this.sku = variant.getSku();
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
                     .map(OptionValue::getValue).collect(Collectors.toList());
