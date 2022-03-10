@@ -6,6 +6,7 @@ import com.wifosell.zeus.payload.request.category.CategoryRequest;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.payload.response.category.GetCategoriesResponse;
+import com.wifosell.zeus.payload.response.category.GetCategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CategoryService;
@@ -57,11 +58,11 @@ public class CategoryController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{categoryId}")
-    public ResponseEntity<GApiResponse<CategoryResponse>> getCategory(
+    public ResponseEntity<GApiResponse<GetCategoryResponse>> getCategory(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "categoryId") Long categoryId) {
         Category category = categoryService.getCategory(userPrincipal.getId(), categoryId);
-        CategoryResponse response = new CategoryResponse(category);
+        GetCategoryResponse response = new GetCategoryResponse(category);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
