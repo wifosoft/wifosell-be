@@ -7,6 +7,7 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
+import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +23,7 @@ public class ProductResponse extends BasicEntityResponse {
     private final String dimension;
     private final Integer state;
     private final Integer status;
+    private final CategoryResponse category;
     private final List<AttributeResponse> attributes;
     private final List<OptionResponse> options;
     private final List<VariantResponse> variants;
@@ -35,6 +37,7 @@ public class ProductResponse extends BasicEntityResponse {
         this.dimension = product.getDimension();
         this.state = product.getState();
         this.status = product.getStatus();
+        this.category = new CategoryResponse(product.getCategory());
         this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
         this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
         this.variants = product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList());
