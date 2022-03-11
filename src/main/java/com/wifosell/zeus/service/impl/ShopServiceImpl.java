@@ -145,7 +145,7 @@ public class ShopServiceImpl implements ShopService {
      */
     @Override
     public Shop getShopInfo(Long shopId) {
-        return shopRepository.getShopById(shopId);
+        return shopRepository.getById(shopId);
     }
 
     /**
@@ -166,7 +166,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public Shop editShop(Long shopId, ShopRequest shopRequest) {
-        Shop shop = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getById(shopId);
         this.updateShopByRequest(shop, shopRequest);
         shop = shopRepository.save(shop);
         return shop;
@@ -174,14 +174,14 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public Shop deActivateShop(Long shopId) {
-        Shop shop = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getById(shopId);
         shop.setIsActive(false);
         return shopRepository.save(shop);
     }
 
     @Override
     public Shop activateShop(Long shopId) {
-        Shop shop = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getById(shopId);
         shop.setIsActive(true);
         return shopRepository.save(shop);
     }
@@ -206,7 +206,7 @@ public class ShopServiceImpl implements ShopService {
 
         warehouseShopRelationRepository.save(
                 WarehouseShopRelation.builder().shop(
-                        shopRepository.getShopById(shopId)
+                        shopRepository.getById(shopId)
                 ).warehouse(
                         warehouseRepository.getById(warehouseId)
                 ).build()
@@ -218,7 +218,7 @@ public class ShopServiceImpl implements ShopService {
     public void linkWarehouseToShop(Long currentUserId, Long warehouseId, Long shopId) {
         User gm = userRepository.getUserById(currentUserId).getGeneralManager();
         Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
-        Shop shop = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getById(shopId);
 
         if (!warehouse.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
@@ -237,7 +237,7 @@ public class ShopServiceImpl implements ShopService {
     public void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId) {
         User gm = userRepository.getUserById(currentUserId).getGeneralManager();
         SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
-        Shop shop = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getById(shopId);
 
         if (!saleChannel.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
@@ -261,7 +261,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public List<User> getListStaffOfShop(Long shopId) {
-        Shop shop = shopRepository.getShopById(shopId);
+        Shop shop = shopRepository.getById(shopId);
         Set<UserShopRelation> userRelation = shop.getUserShopRelation();
         return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
     }

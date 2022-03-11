@@ -13,6 +13,8 @@ public interface ProductService {
 
     List<Product> getProducts(@NonNull Long userId, Boolean isActive);
 
+    List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive);
+    
     Product getProduct(@NonNull Long userId, @NonNull Long productId);
 
     Product addProduct(@NonNull Long userId, @Valid AddProductRequest request);

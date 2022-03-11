@@ -29,7 +29,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<ProductResponse>>> getAllProducts(
             @RequestParam(name = "active", required = false) List<Boolean> actives
@@ -45,42 +45,19 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "shopId", required = false) Long shopId,
             @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<ProductResponse> responses = productService.getProducts(userPrincipal.getId(), isActive).stream()
-                .map(ProductResponse::new)
-                .collect(Collectors.toList());
+        List<Product> products;
+        if (shopId != null) {
+            products = productService.getProductsByShopId(userPrincipal.getId(), shopId, isActive);
+        } else {
+            products = productService.getProducts(userPrincipal.getId(), isActive);
+        }
+        List<ProductResponse> responses = products.stream().map(ProductResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
-
-//    @PreAuthorize("isAuthenticated()")
-//    @GetMapping("/shop={shopId}/saleChannel={saleChannelId}")
-//    public ResponseEntity<GApiResponse<List<Product>>> getRootProductsByShopIdAndSaleChannelId(
-//            @CurrentUser UserPrincipal userPrincipal,
-//            @PathVariable(name = "shopId") Long shopId,
-//            @PathVariable(name = "saleChannelId") Long saleChannelId) {
-//        List<Product> products = productService.getRootProductsByShopIdAndSaleChannelId(shopId, saleChannelId);
-//        return ResponseEntity.ok(GApiResponse.success(products));
-//    }
-//
-//    @PreAuthorize("isAuthenticated()")
-//    @GetMapping("/shop={shopId}")
-//    public ResponseEntity<GApiResponse<List<Product>>> getRootProductsByShopId(
-//            @CurrentUser UserPrincipal userPrincipal,
-//            @PathVariable(name = "shopId") Long shopId) {
-//        List<Product> products = productService.getRootProductsByShopId(shopId);
-//        return ResponseEntity.ok(GApiResponse.success(products));
-//    }
-//
-//    @PreAuthorize("isAuthenticated()")
-//    @GetMapping("/saleChannel={saleChannelId}")
-//    public ResponseEntity<GApiResponse<List<Product>>> getRootProductsBySaleChannelId(
-//            @CurrentUser UserPrincipal userPrincipal,
-//            @PathVariable(name = "saleChannelId") Long saleChannelId) {
-//        List<Product> products = productService.getRootProductsBySaleChannelId(saleChannelId);
-//        return ResponseEntity.ok(GApiResponse.success(products));
-//    }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{productId}")

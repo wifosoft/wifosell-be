@@ -7,6 +7,10 @@ import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.ProductShopRelation;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
@@ -14,7 +18,7 @@ import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,9 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Service("Product")
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -37,27 +43,8 @@ public class ProductServiceImpl implements ProductService {
     private final VariantRepository variantRepository;
     private final VariantValueRepository variantValueRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public ProductServiceImpl(
-            ProductRepository productRepository,
-            CategoryRepository categoryRepository,
-            AttributeRepository attributeRepository,
-            OptionRepository optionRepository,
-            OptionValueRepository optionValueRepository,
-            VariantRepository variantRepository,
-            VariantValueRepository variantValueRepository,
-            UserRepository userRepository
-    ) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-        this.attributeRepository = attributeRepository;
-        this.optionRepository = optionRepository;
-        this.optionValueRepository = optionValueRepository;
-        this.variantRepository = variantRepository;
-        this.variantValueRepository = variantValueRepository;
-        this.userRepository = userRepository;
-    }
+    private final ShopRepository shopRepository;
+    private final SaleChannelRepository saleChannelRepository;
 
     @Override
     public List<Product> getAllProducts(Boolean isActive) {
@@ -72,6 +59,16 @@ public class ProductServiceImpl implements ProductService {
         if (isActive == null)
             return productRepository.findAllWithGm(gm.getId());
         return productRepository.findAllWithGmAndActive(gm.getId(), isActive);
+    }
+
+    @Override
+    public List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+        Stream<Product> productStream = shop.getProductShopRelations().stream().map(ProductShopRelation::getProduct);
+        if (isActive != null)
+            productStream = productStream.filter(product -> product.isActive() == isActive);
+        return productStream.collect(Collectors.toList());
     }
 
     @Override
