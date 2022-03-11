@@ -22,45 +22,45 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void run() {
-        User gm = userRepository.getUserByName("manager1").getGeneralManager();
-
-        Product product1 = Product.builder()
-                .name("Ao thun mua dong nam")
-                .sku("AT001A2X")
-                .barcode("1011120019")
-                .category(categoryRepository.getById(3L))
-                .weight(850)
-                .dimension("50 x 100 (cm)")
-                .state(0)
-                .status(0)
-                .generalManager(gm)
-                .build();
-        productRepository.save(product1);
-
-        Product product2 = Product.builder()
-                .name("Ao thun mua he nam")
-                .sku("AT112Y2Z")
-                .barcode("1281200121")
-                .category(categoryRepository.getById(3L))
-                .weight(850)
-                .dimension("60 x 100 (cm)")
-                .state(0)
-                .status(0)
-                .generalManager(gm)
-                .build();
-        productRepository.save(product2);
-
-        Product product3 = Product.builder()
-                .name("Ao thun mua dong nam tay dai")
-                .sku("AT011A2X")
-                .barcode("1021120019")
-                .category(categoryRepository.getById(3L))
-                .weight(850)
-                .dimension("50 x 100 (cm)")
-                .state(0)
-                .status(0)
-                .generalManager(gm)
-                .build();
-        productRepository.save(product3);
+//        User gm = userRepository.getUserByName("manager1").getGeneralManager();
+//
+//        Product product1 = Product.builder()
+//                .name("Ao thun mua dong nam")
+//                .sku("AT001A2X")
+//                .barcode("1011120019")
+//                .category(categoryRepository.getById(3L))
+//                .weight(850)
+//                .dimension("50 x 100 (cm)")
+//                .state(0)
+//                .status(0)
+//                .generalManager(gm)
+//                .build();
+//        productRepository.save(product1);
+//
+//        Product product2 = Product.builder()
+//                .name("Ao thun mua he nam")
+//                .sku("AT112Y2Z")
+//                .barcode("1281200121")
+//                .category(categoryRepository.getById(3L))
+//                .weight(850)
+//                .dimension("60 x 100 (cm)")
+//                .state(0)
+//                .status(0)
+//                .generalManager(gm)
+//                .build();
+//        productRepository.save(product2);
+//
+//        Product product3 = Product.builder()
+//                .name("Ao thun mua dong nam tay dai")
+//                .sku("AT011A2X")
+//                .barcode("1021120019")
+//                .category(categoryRepository.getById(3L))
+//                .weight(850)
+//                .dimension("50 x 100 (cm)")
+//                .state(0)
+//                .status(0)
+//                .generalManager(gm)
+//                .build();
+//        productRepository.save(product3);
     }
 }
