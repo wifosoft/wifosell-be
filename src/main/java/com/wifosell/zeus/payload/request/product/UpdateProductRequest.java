@@ -10,7 +10,7 @@ import java.util.List;
 public class UpdateProductRequest implements IProductRequest {
     private String name;
 
-    private String sku;
+    private String description;
 
     private String barcode;
 

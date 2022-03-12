@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ProductResponse extends BasicEntityResponse {
     private final String name;
-    private final String sku;
+    private final String description;
     private final String barcode;
     private final Integer weight;
     private final String dimension;
@@ -31,7 +31,7 @@ public class ProductResponse extends BasicEntityResponse {
     public ProductResponse(Product product) {
         super(product);
         this.name = product.getName();
-        this.sku = product.getSku();
+        this.description = product.getDescription();
         this.barcode = product.getBarcode();
         this.weight = product.getWeight();
         this.dimension = product.getDimension();

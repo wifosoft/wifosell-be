@@ -7,9 +7,7 @@ import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.ProductShopRelation;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
@@ -119,7 +117,7 @@ public class ProductServiceImpl implements ProductService {
 
     private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
-        Optional.ofNullable(request.getSku()).ifPresent(product::setSku);
+        Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
         Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
             Category category = categoryRepository.getById(categoryId);

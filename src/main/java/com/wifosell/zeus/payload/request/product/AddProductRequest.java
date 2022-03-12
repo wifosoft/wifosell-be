@@ -15,7 +15,7 @@ public class AddProductRequest implements IProductRequest {
     private String name;
 
     @NotBlank
-    private String sku;
+    private String description;
 
     @NotBlank
     private String barcode;

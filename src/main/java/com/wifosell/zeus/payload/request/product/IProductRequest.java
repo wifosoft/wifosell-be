@@ -11,7 +11,7 @@ public interface IProductRequest {
     String getName();
 
     @Size(max = 100)
-    String getSku();
+    String getDescription();
 
     @Size(max = 100)
     String getBarcode();

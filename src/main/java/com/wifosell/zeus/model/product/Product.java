@@ -33,7 +33,7 @@ public class Product extends BasicEntity {
     private String name;
 
     @Size(max = 255)
-    private String sku;
+    private String description;
 
     @Size(max = 255)
     private String barcode;
