@@ -28,7 +28,7 @@ public class Variant extends BasicEntity {
 
     private String sku;
 
-    @Column(unique = true)
+//    @Column(unique = true)    // TODO haukc
     private String barcode;
 
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
