@@ -118,7 +118,6 @@ public class ProductServiceImpl implements ProductService {
     private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
-        Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
             Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
@@ -203,6 +202,7 @@ public class ProductServiceImpl implements ProductService {
                     .stock(variantRequest.getStock())
                     .cost(new BigDecimal(variantRequest.getCost()))
                     .sku(variantRequest.getSku())
+                    .barcode(variantRequest.getBarcode())
                     .product(product).build();
 
             List<VariantValue> variantValues = new ArrayList<>();
@@ -229,3 +229,4 @@ public class ProductServiceImpl implements ProductService {
         return j;
     }
 }
+

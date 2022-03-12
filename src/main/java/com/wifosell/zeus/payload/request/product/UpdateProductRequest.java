@@ -12,8 +12,6 @@ public class UpdateProductRequest implements IProductRequest {
 
     private String description;
 
-    private String barcode;
-
     private Long categoryId;
 
     private Integer weight;

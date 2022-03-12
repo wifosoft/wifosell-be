@@ -1,8 +1,7 @@
 [
   {
     "name": "iPhone 12",
-    "description": "ABCDE",
-    "barcode": "1211001201",
+    "description": "Qua la iphone",
     "categoryId": 7,
     "weight": 2500,
     "dimension": "4.1x7.2 (inch)",
@@ -39,32 +38,38 @@
       {
         "stock": 100,
         "cost": "100.25",
-        "sku": "ABC100"
+        "sku": "ABC100",
+        "barcode": "00000000"
       },
       {
         "stock": 200,
         "cost": "120.75",
-        "sku": "ABC101"
+        "sku": "ABC101",
+        "barcode": "00000001"
       },
       {
         "stock": 300,
         "cost": "110",
-        "sku": "ABC102"
+        "sku": "ABC102",
+        "barcode": "00000002"
       },
       {
         "stock": 400,
         "cost": "100.25",
-        "sku": "ABC103"
+        "sku": "ABC103",
+        "barcode": "00000003"
       },
       {
         "stock": 500,
         "cost": "90.55",
-        "sku": "ABC104"
+        "sku": "ABC104",
+        "barcode": "00000004"
       },
       {
         "stock": 600,
         "cost": "110",
-        "sku": "ABC105"
+        "sku": "ABC105",
+        "barcode": "00000005"
       }
     ],
     "active": true
@@ -72,7 +77,6 @@
   {
     "name": "Ao thun nam",
     "description": "Ao thun duoc lam tu 100% cotton...",
-    "barcode": "5846952548",
     "categoryId": 2,
     "weight": 100,
     "dimension": "200x100x50",
@@ -110,47 +114,56 @@
       {
         "stock": 100,
         "cost": "100.25",
-        "sku": "SBC100"
+        "sku": "SBC100",
+        "barcode": "00000006"
       },
       {
         "stock": 200,
         "cost": "120.75",
-        "sku": "SBC101"
+        "sku": "SBC101",
+        "barcode": "00000007"
       },
       {
         "stock": 300,
         "cost": "110",
-        "sku": "SBC102"
+        "sku": "SBC102",
+        "barcode": "00000008"
       },
       {
         "stock": 400,
         "cost": "100.25",
-        "sku": "SBC103"
+        "sku": "SBC103",
+        "barcode": "00000009"
       },
       {
         "stock": 500,
         "cost": "90.55",
-        "sku": "SBC104"
+        "sku": "SBC104",
+        "barcode": "00000010"
       },
       {
         "stock": 600,
         "cost": "110",
-        "sku": "SBC105"
+        "sku": "SBC105",
+        "barcode": "00000011"
       },
       {
         "stock": 700,
         "cost": "120.25",
-        "sku": "SBC106"
+        "sku": "SBC106",
+        "barcode": "00000012"
       },
       {
         "stock": 800,
         "cost": "90.55",
-        "sku": "SBC107"
+        "sku": "SBC107",
+        "barcode": "00000013"
       },
       {
         "stock": 900,
         "cost": "110",
-        "sku": "SBC108"
+        "sku": "SBC108",
+        "barcode": "00000014"
       }
     ],
     "active": true

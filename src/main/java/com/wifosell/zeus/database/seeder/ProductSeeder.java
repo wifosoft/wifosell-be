@@ -67,7 +67,6 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
-        Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
             Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
@@ -152,6 +151,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                     .stock(variantRequest.getStock())
                     .cost(new BigDecimal(variantRequest.getCost()))
                     .sku(variantRequest.getSku())
+                    .barcode(variantRequest.getBarcode())
                     .product(product).build();
 
             List<VariantValue> variantValues = new ArrayList<>();

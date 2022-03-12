@@ -35,9 +35,6 @@ public class Product extends BasicEntity {
     @Size(max = 255)
     private String description;
 
-    @Size(max = 255)
-    private String barcode;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;

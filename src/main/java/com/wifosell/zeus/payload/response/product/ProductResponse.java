@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class ProductResponse extends BasicEntityResponse {
     private final String name;
     private final String description;
-    private final String barcode;
     private final Integer weight;
     private final String dimension;
     private final Integer state;
@@ -32,7 +31,6 @@ public class ProductResponse extends BasicEntityResponse {
         super(product);
         this.name = product.getName();
         this.description = product.getDescription();
-        this.barcode = product.getBarcode();
         this.weight = product.getWeight();
         this.dimension = product.getDimension();
         this.state = product.getState();
@@ -86,6 +84,7 @@ public class ProductResponse extends BasicEntityResponse {
         private Long stock;
         private String cost;
         private String sku;
+        private String barcode;
         private List<String> options;
 
         public VariantResponse(Variant variant) {
@@ -93,6 +92,7 @@ public class ProductResponse extends BasicEntityResponse {
             this.stock = variant.getStock();
             this.cost = variant.getCost().toString();
             this.sku = variant.getSku();
+            this.barcode = variant.getBarcode();
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
                     .map(OptionValue::getValue).collect(Collectors.toList());

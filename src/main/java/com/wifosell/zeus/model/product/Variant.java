@@ -28,6 +28,9 @@ public class Variant extends BasicEntity {
 
     private String sku;
 
+    @Column(unique = true)
+    private String barcode;
+
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
     private List<VariantValue> variantValues = new ArrayList<>();
 
