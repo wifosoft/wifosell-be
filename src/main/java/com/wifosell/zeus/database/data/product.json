@@ -1,0 +1,158 @@
+[
+  {
+    "name": "iPhone 12",
+    "description": "ABCDE",
+    "barcode": "1211001201",
+    "categoryId": 7,
+    "weight": 2500,
+    "dimension": "4.1x7.2 (inch)",
+    "state": 0,
+    "status": 0,
+    "attributes": [
+      {
+        "name": "Origin",
+        "value": "USA"
+      },
+      {
+        "name": "Brand",
+        "value": "Apple"
+      }
+    ],
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Red",
+          "Blue",
+          "White"
+        ]
+      },
+      {
+        "name": "RAM",
+        "values": [
+          "256GB",
+          "512GB"
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "stock": 100,
+        "cost": "100.25",
+        "sku": "ABC100"
+      },
+      {
+        "stock": 200,
+        "cost": "120.75",
+        "sku": "ABC101"
+      },
+      {
+        "stock": 300,
+        "cost": "110",
+        "sku": "ABC102"
+      },
+      {
+        "stock": 400,
+        "cost": "100.25",
+        "sku": "ABC103"
+      },
+      {
+        "stock": 500,
+        "cost": "90.55",
+        "sku": "ABC104"
+      },
+      {
+        "stock": 600,
+        "cost": "110",
+        "sku": "ABC105"
+      }
+    ],
+    "active": true
+  },
+  {
+    "name": "Ao thun nam",
+    "description": "Ao thun duoc lam tu 100% cotton...",
+    "barcode": "5846952548",
+    "categoryId": 2,
+    "weight": 100,
+    "dimension": "200x100x50",
+    "state": 0,
+    "status": 0,
+    "attributes": [
+      {
+        "name": "Xuat xu",
+        "value": "Viet Nam"
+      },
+      {
+        "name": "Thuong hieu",
+        "value": "Gumac"
+      }
+    ],
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Red",
+          "Blue",
+          "White"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "S",
+          "M",
+          "L"
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "stock": 100,
+        "cost": "100.25",
+        "sku": "SBC100"
+      },
+      {
+        "stock": 200,
+        "cost": "120.75",
+        "sku": "SBC101"
+      },
+      {
+        "stock": 300,
+        "cost": "110",
+        "sku": "SBC102"
+      },
+      {
+        "stock": 400,
+        "cost": "100.25",
+        "sku": "SBC103"
+      },
+      {
+        "stock": 500,
+        "cost": "90.55",
+        "sku": "SBC104"
+      },
+      {
+        "stock": 600,
+        "cost": "110",
+        "sku": "SBC105"
+      },
+      {
+        "stock": 700,
+        "cost": "120.25",
+        "sku": "SBC106"
+      },
+      {
+        "stock": 800,
+        "cost": "90.55",
+        "sku": "SBC107"
+      },
+      {
+        "stock": 900,
+        "cost": "110",
+        "sku": "SBC108"
+      }
+    ],
+    "active": true
+  }
+]
