@@ -3,11 +3,12 @@ package com.wifosell.zeus.model.option;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.product.OptionProductRelation;
-import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.product.Product;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,14 +25,11 @@ public class OptionModel extends BasicEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
-    private List<OptionValue> optionValues;
+    @NotNull
+    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<OptionValue> optionValues = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY)
-    private List<OptionProductRelation> optionProductRelations;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User generalManager;
+    @ManyToOne
+    private Product product;
 }

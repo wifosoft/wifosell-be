@@ -28,6 +28,6 @@ public class OptionValue extends BasicEntity {
     private OptionModel option;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "optionValue")
+    @OneToMany(mappedBy = "optionValue", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<VariantValue> variantValues;
 }

@@ -7,6 +7,7 @@ import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
+import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +28,9 @@ public class WarehouseController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<Warehouse>>> getAllWarehouses(
-            @RequestParam(name = "active", required = false) Boolean isActive
+            @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
+        Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Warehouse> warehouses = warehouseService.getAllWarehouses(isActive);
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
@@ -37,8 +39,9 @@ public class WarehouseController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<Warehouse>>> getWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) Boolean isActive
+            @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
+        Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Warehouse> warehouses = warehouseService.getWarehouses(userPrincipal.getId(), isActive);
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }

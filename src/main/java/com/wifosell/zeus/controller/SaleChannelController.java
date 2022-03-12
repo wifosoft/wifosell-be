@@ -7,6 +7,7 @@ import com.wifosell.zeus.payload.request.sale_channel.SaleChannelRequest;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.SaleChannelService;
+import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +28,9 @@ public class SaleChannelController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<SaleChannel>>> getAllSaleChannels(
-            @RequestParam(name = "active", required = false) Boolean isActive
+            @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
+        Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<SaleChannel> saleChannels = saleChannelService.getAllSaleChannels(isActive);
         return ResponseEntity.ok(GApiResponse.success(saleChannels));
     }
@@ -38,8 +40,9 @@ public class SaleChannelController {
     public ResponseEntity<GApiResponse<List<SaleChannel>>> getSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) Long shopId,
-            @RequestParam(name = "active", required = false) Boolean isActive
+            @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
+        Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<SaleChannel> saleChannels;
         if (shopId == null) {
             saleChannels = saleChannelService.getSaleChannelsByUserId(userPrincipal.getId(), isActive);

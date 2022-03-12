@@ -7,14 +7,12 @@ import lombok.NonNull;
 
 @Getter
 public class CategoryResponse extends BasicEntityResponse {
-    private final Long id;
     private final String name;
     private final String shortName;
     private final String description;
 
     public CategoryResponse(@NonNull Category category) {
         super(category);
-        this.id = category.getId();
         this.name = category.getName();
         this.shortName = category.getShortName();
         this.description = category.getDescription();

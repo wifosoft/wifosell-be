@@ -2,10 +2,12 @@ package com.wifosell.zeus.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,17 +17,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Variant {
+public class Variant extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long stock = 0L;
 
-    private BigDecimal costPrice;
+    private BigDecimal cost;
 
-    @OneToMany(mappedBy = "variant")
-    private List<VariantValue> variantValues;
+    private String sku;
+
+    @OneToMany(mappedBy = "variant", orphanRemoval = true)
+    private List<VariantValue> variantValues = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne

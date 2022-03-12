@@ -2,8 +2,10 @@ package com.wifosell.zeus.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.shop.ProductShopRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
@@ -11,6 +13,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,7 +33,7 @@ public class Product extends BasicEntity {
     private String name;
 
     @Size(max = 255)
-    private String sku;
+    private String description;
 
     @Size(max = 255)
     private String barcode;
@@ -48,19 +51,18 @@ public class Product extends BasicEntity {
 
     private Integer status = 0;
 
-    @OneToMany(mappedBy = "product")
-    private List<Attribute> attributes;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Attribute> attributes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<OptionModel> options = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Variant> variants = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<OptionProductRelation> optionProductRelations;
-
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<Variant> variants;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductShopRelation> productShopRelations;
+    private List<ProductShopRelation> productShopRelations = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
