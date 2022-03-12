@@ -3,7 +3,6 @@ package com.wifosell.zeus.service;
 import com.wifosell.zeus.model.channel.Channel;
 import com.wifosell.zeus.payload.request.channel.ChannelRequest;
 
-
 import java.util.List;
 
 public interface ChannelService {

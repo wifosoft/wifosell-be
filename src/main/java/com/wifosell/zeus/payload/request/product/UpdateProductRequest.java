@@ -22,6 +22,8 @@ public class UpdateProductRequest implements IProductRequest {
 
     private Integer status;
 
+    private List<String> images;
+
     private List<AttributeRequest> attributes;
 
     private List<OptionRequest> options;

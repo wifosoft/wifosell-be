@@ -25,6 +25,8 @@ public interface IProductRequest {
 
     Integer getStatus();
 
+    List<String> getImages();
+
     List<AttributeRequest> getAttributes();
 
     List<OptionRequest> getOptions();

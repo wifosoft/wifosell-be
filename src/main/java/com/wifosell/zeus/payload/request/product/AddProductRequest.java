@@ -33,6 +33,9 @@ public class AddProductRequest implements IProductRequest {
     private Integer status;
 
     @NotNull
+    private List<String> images;
+
+    @NotNull
     private List<AttributeRequest> attributes;
 
     @NotNull

@@ -8,6 +8,7 @@ import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.user.User;
@@ -15,6 +16,7 @@ import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.repository.*;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 public class ProductSeeder extends BaseSeeder implements ISeeder {
     private ProductRepository productRepository;
+    private ProductImageRepository productImageRepository;
     private AttributeRepository attributeRepository;
     private OptionRepository optionRepository;
     private OptionValueRepository optionValueRepository;
@@ -36,6 +39,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
     @Override
     public void prepareJpaRepository() {
         this.productRepository = this.factory.getRepository(ProductRepository.class);
+        this.productImageRepository = this.factory.getRepository(ProductImageRepository.class);
         this.attributeRepository = this.factory.getRepository(AttributeRepository.class);
         this.optionRepository = this.factory.getRepository(OptionRepository.class);
         this.optionValueRepository = this.factory.getRepository(OptionValueRepository.class);
@@ -76,9 +80,28 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
         Optional.ofNullable(request.getState()).ifPresent(product::setState);
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
+        // Images
+        Optional.ofNullable(request.getImages()).ifPresent(urls -> {
+            productImageRepository.deleteAllByProductId(product.getId());
+            product.getImages().clear();
+
+            List<ProductImage> images = new ArrayList<>();
+            for (String url : urls) {
+                ProductImage image = ProductImage.builder()
+                        .url(url)
+                        .product(product).build();
+                images.add(image);
+            }
+            product.getImages().addAll(images);
+
+            productImageRepository.saveAll(images);
+            productRepository.save(product);
+        });
+
         // Attributes
         Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
             attributeRepository.deleteAllByProductId(product.getId());
+            product.getAttributes().clear();
 
             List<Attribute> attributes = new ArrayList<>();
             for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {

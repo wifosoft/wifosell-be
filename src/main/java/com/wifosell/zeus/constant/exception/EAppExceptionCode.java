@@ -44,7 +44,8 @@ public enum EAppExceptionCode {
     OPTION_NOT_FOUND(902001),
     OPTION_VALUE_NOT_FOUND(903001),
     VARIANT_NOT_FOUND(904001),
-    VARIANT_VALUE_NOT_FOUND(905001);
+    VARIANT_VALUE_NOT_FOUND(905001),
+    PRODUCT_IMAGE_NOT_FOUND(906001);
     //endregion
 
     private final int value;
