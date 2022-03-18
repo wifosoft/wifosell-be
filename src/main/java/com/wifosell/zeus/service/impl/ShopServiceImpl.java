@@ -3,10 +3,7 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
-import com.wifosell.zeus.model.shop.Shop;
-import com.wifosell.zeus.model.shop.UserShopRelation;
-import com.wifosell.zeus.model.shop.WarehouseShopRelation;
+import com.wifosell.zeus.model.shop.*;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiErrorBody;
@@ -37,6 +34,8 @@ public class ShopServiceImpl implements ShopService {
     private final WarehouseShopRelationRepository warehouseShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private final VoucherRepository voucherRepository;
+    private final VoucherSaleChannelShopRelationRepository voucherSaleChannelShopRelationRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -48,7 +47,7 @@ public class ShopServiceImpl implements ShopService {
                            WarehouseRepository warehouseRepository,
                            WarehouseShopRelationRepository warehouseShopRelationRepository,
                            SaleChannelRepository saleChannelRepository,
-                           SaleChannelShopRelationRepository saleChannelShopRelationRepository) {
+                           SaleChannelShopRelationRepository saleChannelShopRelationRepository, VoucherRepository voucherRepository, VoucherSaleChannelShopRelationRepository voucherSaleChannelShopRelationRepository) {
         this.shopRepository = shopRepository;
         this.userRepository = userRepository;
         this.userShopRelationRepository = userShopRelationRepository;
@@ -56,6 +55,8 @@ public class ShopServiceImpl implements ShopService {
         this.warehouseShopRelationRepository = warehouseShopRelationRepository;
         this.saleChannelRepository = saleChannelRepository;
         this.saleChannelShopRelationRepository = saleChannelShopRelationRepository;
+        this.voucherRepository = voucherRepository;
+        this.voucherSaleChannelShopRelationRepository = voucherSaleChannelShopRelationRepository;
     }
 
     @Override
@@ -249,6 +250,24 @@ public class ShopServiceImpl implements ShopService {
 
         saleChannelShopRelationRepository.save(
                 SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build()
+        );
+    }
+
+    @Override
+    public void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId){
+        if (voucherSaleChannelShopRelationRepository.existsVoucherSaleChannelShopRelation(voucherId, saleChannelId, shopId)) {
+            //existed
+            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
+        }
+
+        voucherSaleChannelShopRelationRepository.save(
+                VoucherSaleChannelShopRelation.builder().shop(
+                        shopRepository.getById(shopId)
+                ).saleChannel(
+                        saleChannelRepository.getById(saleChannelId)
+                ).voucher(
+                        voucherRepository.getById(voucherId)
+                ).build()
         );
     }
 
