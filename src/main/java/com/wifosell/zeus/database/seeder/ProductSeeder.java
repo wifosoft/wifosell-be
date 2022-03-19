@@ -16,7 +16,6 @@ import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.repository.*;
 
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;

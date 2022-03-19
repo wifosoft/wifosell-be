@@ -77,6 +77,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void updateCustomerByRequest(Customer customer, CustomerRequest channelRequest) {
-        Optional.ofNullable(channelRequest.getFullname()).ifPresent(customer::setFullname);
+        Optional.ofNullable(channelRequest.getFullName()).ifPresent(customer::setFullName);
     }
 }

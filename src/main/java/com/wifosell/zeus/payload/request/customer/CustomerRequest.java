@@ -9,5 +9,5 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class CustomerRequest {
     @NotBlank
-    private String fullname;
+    private String fullName;
 }

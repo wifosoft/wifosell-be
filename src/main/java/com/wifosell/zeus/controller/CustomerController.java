@@ -24,7 +24,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<Customer>>> getAllCustomers() {
         List<Customer> customerList = customerService.getAllCustomers();
