@@ -6,8 +6,6 @@ import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Getter
@@ -22,48 +20,37 @@ public class Customer extends BasicEntity {
     @Column(name = "id")
     private Long id;
 
-    @NotBlank
-    @Size(max = 255)
-    private String fullname;
+    private String fullName;
 
-    @Size(max = 50)
+    private Date dob;   // Date of birth
+
+    @Enumerated(EnumType.ORDINAL)
+    private Sex sex;
+
     private String phone;
 
-    @Size(max = 50)
-    private Date birthday;
-
-    @Size(max = 50)
     private String email;
 
-    @Size(max = 50)
+    private String cin; // Citizen Identification Number
+
+    private String nation;
+
     private String city;
 
-    @Size(max = 50)
-    private String ward;
-
-    @Size(max = 50)
     private String district;
 
-    @Size(max = 50)
-    private String facebook;
+    private String ward;
 
-    private int sex;
-
-    @Column(name = "support_staff_id")
-    private Long supportStaffID;
-
-    @Size(max = 255)
-    @Column(name = "address_detail")
-    private String address;
-
-    @Size(max = 255)
-    private String cmnd;
-
-    @Column(name = "customer_type")
-    private int customerType;
+    private String addressDetail;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
+
+    public enum Sex {
+        MALE,
+        FEMALE,
+        OTHER
+    }
 }

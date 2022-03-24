@@ -23,6 +23,7 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(CategorySeeder.class);
         seederTask.add(ProductSeeder.class);
         seederTask.add(VoucherSeeder.class);
+        seederTask.add(CustomerSeeder.class);
     }
     public void run() {
         this.call(seederTask);
