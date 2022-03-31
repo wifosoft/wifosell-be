@@ -1,0 +1,102 @@
+package com.wifosell.zeus.payload.response.order;
+
+import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.option.OptionValue;
+import com.wifosell.zeus.model.order.OrderItem;
+import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.product.ProductImage;
+import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.payload.response.BasicEntityResponse;
+import lombok.Getter;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Getter
+public class OrderResponse extends BasicEntityResponse {
+    private final List<OrderItemResponse> orderItems;
+    private final ShopResponse shop;
+    private final SaleChannelResponse saleChannel;
+    private final CustomerResponse customer;
+    private final BigDecimal subtotal;
+
+    public OrderResponse(OrderModel order) {
+        super(order);
+        this.orderItems = order.getOrderItems().stream().map(OrderItemResponse::new).collect(Collectors.toList());
+        this.shop = new ShopResponse(order.getSaleChannelShopRelation().getShop());
+        this.saleChannel = new SaleChannelResponse(order.getSaleChannelShopRelation().getSaleChannel());
+        this.customer = new CustomerResponse(order.getCustomer());
+        this.subtotal = order.getSubtotal();
+    }
+
+    @Getter
+    private static class OrderItemResponse extends BasicEntityResponse {
+        private final String name;
+        private final List<String> images;
+        private final List<String> options;
+
+        public OrderItemResponse(OrderItem orderItem) {
+            super(orderItem);
+            this.name = orderItem.getVariant().getProduct().getName();
+            this.images = orderItem.getVariant().getProduct().getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
+            this.options = orderItem.getVariant().getVariantValues().stream().map(VariantValue::getOptionValue).map(OptionValue::getValue).collect(Collectors.toList());
+        }
+    }
+
+    @Getter
+    private static class ShopResponse extends BasicEntityResponse {
+        private final String name;
+        private final String address;
+        private final String phone;
+
+        public ShopResponse(Shop shop) {
+            super(shop);
+            this.name = shop.getName();
+            this.address = shop.getAddress();
+            this.phone = shop.getPhone();
+        }
+    }
+
+    @Getter
+    private static class SaleChannelResponse extends BasicEntityResponse {
+        private final String name;
+
+        public SaleChannelResponse(SaleChannel saleChannel) {
+            super(saleChannel);
+            this.name = saleChannel.getName();
+        }
+    }
+
+    @Getter
+    private static class CustomerResponse extends BasicEntityResponse {
+        private final String fullName;
+        private final String dob;
+        private final Integer sex;
+        private final String phone;
+        private final String email;
+        private final String cin;
+        private final String nation;
+        private final String city;
+        private final String district;
+        private final String ward;
+        private final String addressDetail;
+
+        public CustomerResponse(Customer customer) {
+            super(customer);
+            this.fullName = customer.getFullName();
+            this.dob = customer.getDob().toString();
+            this.sex = customer.getSex().ordinal();
+            this.phone = customer.getPhone();
+            this.email = customer.getEmail();
+            this.cin = customer.getCin();
+            this.nation = customer.getNation();
+            this.city = customer.getCity();
+            this.district = customer.getDistrict();
+            this.ward = customer.getWard();
+            this.addressDetail = customer.getAddressDetail();
+        }
+    }
+}

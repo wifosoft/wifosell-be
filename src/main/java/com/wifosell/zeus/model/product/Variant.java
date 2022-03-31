@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,7 +29,7 @@ public class Variant extends BasicEntity {
 
     private String sku;
 
-//    @Column(unique = true)    // TODO haukc
+    //    @Column(unique = true)    // TODO haukc
     private String barcode;
 
     @OneToMany(mappedBy = "variant", orphanRemoval = true)

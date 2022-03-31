@@ -1,10 +1,12 @@
 package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,6 +25,10 @@ public class SaleChannelShopRelation {
 
     @ManyToOne
     private SaleChannel saleChannel;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "saleChannelShopRelation")
+    private List<OrderModel> orders;
 
     @Override
     public int hashCode() {
