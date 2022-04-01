@@ -4,7 +4,6 @@ import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
 import lombok.NonNull;
-import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
 import java.util.List;

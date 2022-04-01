@@ -6,12 +6,15 @@ import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CustomerService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("Customer")
@@ -26,67 +29,86 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<Customer> getAllCustomers(
+            Boolean isActive
+    ) {
+        if (isActive == null)
+            return customerRepository.findAll();
+        return customerRepository.findAllWithActive(isActive);
     }
 
     @Override
-    public List<Customer> getCustomersByUserId(Long userId) {
+    public List<Customer> getCustomers(
+            @NonNull Long userId,
+            Boolean isActive
+    ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        return customerRepository.findCustomersByGeneralManagerId(gm.getId());
+        if (isActive == null)
+            return customerRepository.findAllWithGm(gm.getId());
+        return customerRepository.findAllWithGmAndActive(gm.getId(), isActive);
     }
 
     @Override
-    public List<Customer> getCustomersByShopId(Long shopId) {
-        return customerRepository.findCustomersByShopId(shopId);
+    public Customer getCustomer(
+            @NonNull Long userId,
+            @NonNull Long customerId
+    ) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        return customerRepository.getByIdWithGm(gm.getId(), customerId);
     }
 
     @Override
-    public Customer getCustomer(Long channelId) {
-        return customerRepository.findCustomerById(channelId);
-    }
-
-    @Override
-    public Customer addCustomer(Long userId, CustomerRequest customerRequest) {
+    public Customer addCustomer(@NonNull Long userId, @Valid CustomerRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Customer customer = new Customer();
-        this.updateCustomerByRequest(customer, customerRequest);
-        customer.setGeneralManager(gm);
-        return customerRepository.save(customer);
+        return this.updateCustomerByRequest(customer, request, gm);
     }
 
     @Override
-    public Customer updateCustomer(Long customerId, CustomerRequest channelRequest) {
-        Customer customer = customerRepository.findCustomerById(customerId);
-        this.updateCustomerByRequest(customer, channelRequest);
-        return customerRepository.save(customer);
+    public Customer updateCustomer(@NonNull Long userId, @NonNull Long customerId, @Valid CustomerRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+        return this.updateCustomerByRequest(customer, request, gm);
     }
 
     @Override
-    public Customer activateCustomer(Long customerId) {
-        Customer customer = customerRepository.findCustomerById(customerId, true);
+    public Customer activateCustomer(@NonNull Long userId, @NonNull Long customerId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
         customer.setIsActive(true);
         return customerRepository.save(customer);
     }
 
     @Override
-    public Customer deactivateCustomer(Long customerId) {
-        Customer customer = customerRepository.findCustomerById(customerId);
+    public Customer deactivateCustomer(@NonNull Long userId, @NonNull Long customerId) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
         customer.setIsActive(false);
         return customerRepository.save(customer);
     }
 
-    private void updateCustomerByRequest(Customer customer, CustomerRequest channelRequest) {
-        Optional.ofNullable(channelRequest.getFullName()).ifPresent(customer::setFullName);
-        Optional.ofNullable(channelRequest.getDob()).ifPresent(customer::setDob);
-        Optional.ofNullable(channelRequest.getSex()).ifPresent(customer::setSex);
-        Optional.ofNullable(channelRequest.getPhone()).ifPresent(customer::setPhone);
-        Optional.ofNullable(channelRequest.getEmail()).ifPresent(customer::setEmail);
-        Optional.ofNullable(channelRequest.getCin()).ifPresent(customer::setCin);
-        Optional.ofNullable(channelRequest.getNation()).ifPresent(customer::setNation);
-        Optional.ofNullable(channelRequest.getCity()).ifPresent(customer::setCity);
-        Optional.ofNullable(channelRequest.getDistrict()).ifPresent(customer::setDistrict);
-        Optional.ofNullable(channelRequest.getWard()).ifPresent(customer::setWard);
-        Optional.ofNullable(channelRequest.getAddressDetail()).ifPresent(customer::setAddressDetail);
+    public List<Customer> activateCustomers(@NonNull Long userId, @NonNull List<Long> customerIds) {
+        return customerIds.stream().map(id -> this.activateCustomer(userId, id)).collect(Collectors.toList());
+    }
+
+    public List<Customer> deactivateCustomers(@NonNull Long userId, @NonNull List<Long> customerIds) {
+        return customerIds.stream().map(id -> this.deactivateCustomer(userId, id)).collect(Collectors.toList());
+    }
+
+    private Customer updateCustomerByRequest(Customer customer, CustomerRequest request, User gm) {
+        Optional.ofNullable(request.getFullName()).ifPresent(customer::setFullName);
+        Optional.ofNullable(request.getDob()).ifPresent(customer::setDob);
+        Optional.ofNullable(request.getSex()).ifPresent(customer::setSex);
+        Optional.ofNullable(request.getPhone()).ifPresent(customer::setPhone);
+        Optional.ofNullable(request.getEmail()).ifPresent(customer::setEmail);
+        Optional.ofNullable(request.getCin()).ifPresent(customer::setCin);
+        Optional.ofNullable(request.getNation()).ifPresent(customer::setNation);
+        Optional.ofNullable(request.getCity()).ifPresent(customer::setCity);
+        Optional.ofNullable(request.getDistrict()).ifPresent(customer::setDistrict);
+        Optional.ofNullable(request.getWard()).ifPresent(customer::setWard);
+        Optional.ofNullable(request.getAddressDetail()).ifPresent(customer::setAddressDetail);
+        Optional.ofNullable(request.getActive()).ifPresent(customer::setIsActive);
+        customer.setGeneralManager(gm);
+        return customerRepository.save(customer);
     }
 }

@@ -35,4 +35,6 @@ public class CustomerRequest {
     private String ward;
 
     private String addressDetail;
+
+    private Boolean active;
 }

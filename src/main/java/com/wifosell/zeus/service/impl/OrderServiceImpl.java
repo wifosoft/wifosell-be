@@ -1,14 +1,11 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
@@ -16,7 +13,6 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -174,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Customer
         Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
-            Customer customer = customerRepository.findCustomerById(customerId, true);
+            Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
             order.setCustomer(customer);
         });
 
