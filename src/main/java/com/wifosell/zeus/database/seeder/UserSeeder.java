@@ -52,7 +52,7 @@ public class UserSeeder extends BaseSeeder implements ISeeder {
                 .lastName("An 1")
                 .address("Đường Nguyễn Văn Cừ, quận 5, thành phố Hồ Chí Minh")
                 .phone("0982259246")
-                .parent(adminUser)
+                .parent(null)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
@@ -64,7 +64,7 @@ public class UserSeeder extends BaseSeeder implements ISeeder {
                 .lastName("Thứ 2")
                 .address("Đường Trần Hưng Đạo, Quận Tân Phú, Thành Phố Hồ Chí Min")
                 .phone("0982259247")
-                .parent(adminUser)
+                .parent(null)
                 .userPermission(DefaultUserPermission.getDefaultPermissionFromRole(RoleName.ROLE_GENERAL_MANAGER))
                 .build();
 
@@ -73,7 +73,7 @@ public class UserSeeder extends BaseSeeder implements ISeeder {
         users.add(adminUser);
         users.add(manager1);
         users.add(manager2);
-        Role gmRole = roleRepository.getRoleByName(RoleName.ROLE_GENERAL_MANAGER) ;
+        Role gmRole = roleRepository.getRoleByName(RoleName.ROLE_GENERAL_MANAGER);
         Role adminRole = roleRepository.getRoleByName(RoleName.ROLE_ADMIN);
         users.forEach(e -> {
             entityManager.persist(e);

@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.shop;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
