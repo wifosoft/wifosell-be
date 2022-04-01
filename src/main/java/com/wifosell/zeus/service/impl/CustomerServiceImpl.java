@@ -78,5 +78,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     private void updateCustomerByRequest(Customer customer, CustomerRequest channelRequest) {
         Optional.ofNullable(channelRequest.getFullName()).ifPresent(customer::setFullName);
+        Optional.ofNullable(channelRequest.getDob()).ifPresent(customer::setDob);
+        Optional.ofNullable(channelRequest.getSex()).ifPresent(customer::setSex);
+        Optional.ofNullable(channelRequest.getPhone()).ifPresent(customer::setPhone);
+        Optional.ofNullable(channelRequest.getEmail()).ifPresent(customer::setEmail);
+        Optional.ofNullable(channelRequest.getCin()).ifPresent(customer::setCin);
+        Optional.ofNullable(channelRequest.getNation()).ifPresent(customer::setNation);
+        Optional.ofNullable(channelRequest.getCity()).ifPresent(customer::setCity);
+        Optional.ofNullable(channelRequest.getDistrict()).ifPresent(customer::setDistrict);
+        Optional.ofNullable(channelRequest.getWard()).ifPresent(customer::setWard);
+        Optional.ofNullable(channelRequest.getAddressDetail()).ifPresent(customer::setAddressDetail);
     }
 }
