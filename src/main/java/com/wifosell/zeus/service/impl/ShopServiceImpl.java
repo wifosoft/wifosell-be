@@ -10,12 +10,14 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ShopService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -148,28 +150,18 @@ public class ShopServiceImpl implements ShopService {
         return shopRepository.getById(shopId);
     }
 
-    /**
-     * API thêm cửa hàng mới
-     *
-     * @param shopRequest
-     * @return
-     */
     @Override
-    public Shop addShop(ShopRequest shopRequest, Long userId) {
-        User parentUser = userRepository.getUserById(userId);
+    public Shop addShop(@NonNull Long userId, @Valid ShopRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
         Shop shop = new Shop();
-        this.updateShopByRequest(shop, shopRequest);
-        shop.setGeneralManager(parentUser);
-        shop = shopRepository.save(shop);
-        return shop;
+        return this.updateShopByRequest(shop, request, gm);
     }
 
     @Override
-    public Shop editShop(Long shopId, ShopRequest shopRequest) {
-        Shop shop = shopRepository.getById(shopId);
-        this.updateShopByRequest(shop, shopRequest);
-        shop = shopRepository.save(shop);
-        return shop;
+    public Shop updateShop(@NonNull Long userId, @NonNull Long shopId, @Valid ShopRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+        return this.updateShopByRequest(shop, request, gm);
     }
 
     @Override
@@ -284,13 +276,47 @@ public class ShopServiceImpl implements ShopService {
         return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
     }
 
-    private void updateShopByRequest(Shop shop, ShopRequest shopRequest) {
-        Optional.ofNullable(shopRequest.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(shopRequest.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(shopRequest.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(shopRequest.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(shopRequest.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(shopRequest.getBusinessLine()).ifPresent(shop::setBusinessLine);
-        Optional.ofNullable(shopRequest.getActive()).ifPresent(shop::setIsActive);
+    private Shop updateShopByRequest(Shop shop, ShopRequest request, User gm) {
+        // Create or update Shop
+        Optional.ofNullable(request.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(request.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(request.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(request.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(request.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(request.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        Optional.ofNullable(request.getActive()).ifPresent(shop::setIsActive);
+        shop.setGeneralManager(gm);
+        shopRepository.save(shop);
+
+        // Link Sale Channels with Shop
+        Optional.ofNullable(request.getSaleChannelIds()).ifPresent(requestSaleChannelIds -> {
+            List<Long> curSaleChannelIds = shop.getSaleChannelShopRelations().stream()
+                    .map(SaleChannelShopRelation::getSaleChannel)
+                    .map(SaleChannel::getId)
+                    .collect(Collectors.toList());
+
+            // Remove relations
+            curSaleChannelIds.forEach(curSaleChannelId -> {
+                if (!requestSaleChannelIds.contains(curSaleChannelId)) {
+                    saleChannelShopRelationRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
+                    Optional<SaleChannelShopRelation> relationOptional = shop.getSaleChannelShopRelations().stream()
+                            .filter(relation -> relation.getSaleChannel().getId().equals(curSaleChannelId))
+                            .findFirst();
+                    relationOptional.ifPresent(relation -> shop.getSaleChannelShopRelations().remove(relation));
+                }
+            });
+
+            // Add new relations
+            requestSaleChannelIds.forEach(requestSaleChannelId -> {
+                if (!curSaleChannelIds.contains(requestSaleChannelId)) {
+                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), requestSaleChannelId);
+                    SaleChannelShopRelation relation = SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build();
+                    saleChannelShopRelationRepository.save(relation);
+                    shop.getSaleChannelShopRelations().add(relation);
+                }
+            });
+        });
+
+        return shop;
     }
 }

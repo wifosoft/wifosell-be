@@ -75,11 +75,14 @@ public class ShopController {
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse<ShopResponse>> addShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @RequestBody ShopRequest shopRequest) {
+    public ResponseEntity<GApiResponse<ShopResponse>> addShop(
+            @ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ShopRequest shopRequest
+    ) {
         if (userPrincipal.getParent() != null) {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SHOP_ADD_PERMISSION_BY_CHILD_USER));
         }
-        Shop shop = shopService.addShop(shopRequest, userPrincipal.getId());
+        Shop shop = shopService.addShop(userPrincipal.getId(), shopRequest);
         ShopResponse response = new ShopResponse(shop);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
@@ -97,8 +100,12 @@ public class ShopController {
      */
     @PreAuthorizeAccessGeneralManagerToShop
     @PostMapping("/{shopId}/update")
-    public ResponseEntity<GApiResponse<ShopResponse>> editShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestBody ShopRequest shopRequest) {
-        Shop shop = shopService.editShop(shopId, shopRequest);
+    public ResponseEntity<GApiResponse<ShopResponse>> updateShop(
+            @ApiIgnore @CurrentUser UserPrincipal userPrincipal,
+            @PathVariable(name = "shopId") Long shopId,
+            @RequestBody ShopRequest shopRequest
+    ) {
+        Shop shop = shopService.updateShop(userPrincipal.getId(), shopId, shopRequest);
         ShopResponse response = new ShopResponse(shop);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
