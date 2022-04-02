@@ -254,7 +254,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId){
+    public void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId) {
         if (voucherSaleChannelShopRelationRepository.existsVoucherSaleChannelShopRelation(voucherId, saleChannelId, shopId)) {
             //existed
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
@@ -281,7 +281,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public List<User> getListStaffOfShop(Long shopId) {
         Shop shop = shopRepository.getById(shopId);
-        Set<UserShopRelation> userRelation = shop.getUserShopRelation();
+        List<UserShopRelation> userRelation = shop.getUserShopRelations();
         return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
     }
 
