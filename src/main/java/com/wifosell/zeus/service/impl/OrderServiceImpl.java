@@ -1,11 +1,15 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
@@ -29,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final VariantRepository variantRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ShopRepository shopRepository;
+    private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
@@ -163,8 +169,15 @@ public class OrderServiceImpl implements OrderService {
         // Sale Channel & Shop
         Optional.ofNullable(request.getShopId()).ifPresent(shopId -> {
             Optional.ofNullable(request.getSaleChannelId()).ifPresent(saleChannelId -> {
-                SaleChannelShopRelation relation = saleChannelShopRelationRepository.getSaleChannelShopRelationByShopIdAndSaleChannelId(shopId, saleChannelId);
-                order.setSaleChannelShopRelation(relation);
+                if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+                    Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+                    order.setShop(shop);
+
+                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+                    order.setSaleChannel(saleChannel);
+                } else {
+                    throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));
+                }
             });
         });
 

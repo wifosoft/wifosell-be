@@ -26,10 +26,6 @@ public class SaleChannelShopRelation {
     @ManyToOne
     private SaleChannel saleChannel;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "saleChannelShopRelation")
-    private List<OrderModel> orders;
-
     @Override
     public int hashCode() {
         final int prime = 31;

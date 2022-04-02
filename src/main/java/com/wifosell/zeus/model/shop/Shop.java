@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.shop;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -63,6 +64,10 @@ public class Shop extends BasicEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<ProductShopRelation> productShopRelations = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "shop")
+    private List<OrderModel> orders = new ArrayList<>();
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

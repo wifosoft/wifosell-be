@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -29,8 +31,12 @@ public class OrderModel extends BasicEntity {
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "sale_channel_shop_id")
-    private SaleChannelShopRelation saleChannelShopRelation;
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
+    @ManyToOne
+    @JoinColumn(name = "sale_channel_id")
+    private SaleChannel saleChannel;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

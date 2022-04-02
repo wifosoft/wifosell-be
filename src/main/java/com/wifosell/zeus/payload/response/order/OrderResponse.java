@@ -26,8 +26,8 @@ public class OrderResponse extends BasicEntityResponse {
     public OrderResponse(OrderModel order) {
         super(order);
         this.orderItems = order.getOrderItems().stream().map(OrderItemResponse::new).collect(Collectors.toList());
-        this.shop = new ShopResponse(order.getSaleChannelShopRelation().getShop());
-        this.saleChannel = new SaleChannelResponse(order.getSaleChannelShopRelation().getSaleChannel());
+        this.shop = new ShopResponse(order.getShop());
+        this.saleChannel = new SaleChannelResponse(order.getSaleChannel());
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
     }

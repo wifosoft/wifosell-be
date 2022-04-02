@@ -18,9 +18,8 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     }
 
     @Transactional
-    @Query("select o from OrderModel o join SaleChannelShopRelation r " +
-            "on o.saleChannelShopRelation.id = r.id " +
-            "where r.shop.id = :shopId " +
+    @Query("select o from OrderModel o " +
+            "where o.shop.id = :shopId " +
             "and o.generalManager.id = :gmId")
     List<OrderModel> findAllByShopIdWithGm(
             @Param("gmId") Long gmId,
@@ -28,9 +27,8 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     );
 
     @Transactional
-    @Query("select o from OrderModel o join SaleChannelShopRelation r " +
-            "on o.saleChannelShopRelation.id = r.id " +
-            "where r.shop.id = :shopId " +
+    @Query("select o from OrderModel o " +
+            "where o.shop.id = :shopId " +
             "and o.generalManager.id = :gmId " +
             "and o.isActive = :isActive")
     List<OrderModel> findAllByShopIdWithGmAndActive(
@@ -40,9 +38,8 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     );
 
     @Transactional
-    @Query("select o from OrderModel o join SaleChannelShopRelation r " +
-            "on o.saleChannelShopRelation.id = r.id " +
-            "where r.saleChannel.id = :saleChannelId " +
+    @Query("select o from OrderModel o " +
+            "where o.saleChannel.id = :saleChannelId " +
             "and o.generalManager.id = :gmId")
     List<OrderModel> findAllBySaleChannelIdWithGm(
             @Param("gmId") Long gmId,
@@ -50,9 +47,8 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     );
 
     @Transactional
-    @Query("select o from OrderModel o join SaleChannelShopRelation r " +
-            "on o.saleChannelShopRelation.id = r.id " +
-            "where r.saleChannel.id = :saleChannelId " +
+    @Query("select o from OrderModel o " +
+            "where o.saleChannel.id = :saleChannelId " +
             "and o.generalManager.id = :gmId " +
             "and o.isActive = :isActive")
     List<OrderModel> findAllBySaleChannelIdWithGmAndActive(
@@ -62,10 +58,9 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     );
 
     @Transactional
-    @Query("select o from OrderModel o join SaleChannelShopRelation r " +
-            "on o.saleChannelShopRelation.id = r.id " +
-            "where r.shop.id = :shopId " +
-            "and r.saleChannel.id = :saleChannelId " +
+    @Query("select o from OrderModel o " +
+            "where o.shop.id = :shopId " +
+            "and o.saleChannel.id = :saleChannelId " +
             "and o.generalManager.id = :gmId")
     List<OrderModel> findAllByShopIdAndSaleChannelIdWithGm(
             @Param("gmId") Long gmId,
@@ -74,10 +69,9 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     );
 
     @Transactional
-    @Query("select o from OrderModel o join SaleChannelShopRelation r " +
-            "on o.saleChannelShopRelation.id = r.id " +
-            "where r.shop.id = :shopId " +
-            "and r.saleChannel.id = :saleChannelId " +
+    @Query("select o from OrderModel o " +
+            "where o.shop.id = :shopId " +
+            "and o.saleChannel.id = :saleChannelId " +
             "and o.generalManager.id = :gmId " +
             "and o.isActive = :isActive")
     List<OrderModel> findAllByShopIdAndSaleChannelIdWithGmAndActive(
