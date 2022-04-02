@@ -22,6 +22,7 @@ public class CustomerRequest {
     @Enumerated(EnumType.ORDINAL)
     private Customer.Sex sex;
 
+    @NotBlank
     private String phone;
 
     private String email;
