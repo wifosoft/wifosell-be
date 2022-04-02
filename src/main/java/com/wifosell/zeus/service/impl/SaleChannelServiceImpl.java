@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,11 +44,21 @@ public class SaleChannelServiceImpl implements SaleChannelService {
     }
 
     @Override
-    public List<SaleChannel> getSaleChannelsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive) {
+    public List<SaleChannel> getSaleChannelsByShopIds(@NonNull Long userId, @NonNull List<Long> shopIds, Boolean isActive) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return saleChannelRepository.findAllByShopIdWithGm(gm.getId(), shopId);
-        return saleChannelRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive);
+        if (isActive == null) {
+            return shopIds.stream()
+                    .map(shopId -> saleChannelRepository.findAllByShopIdWithGm(gm.getId(), shopId))
+                    .flatMap(Collection::stream)
+                    .distinct()
+                    .collect(Collectors.toList());
+        } else {
+            return shopIds.stream()
+                    .map(shopId -> saleChannelRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive))
+                    .flatMap(Collection::stream)
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
