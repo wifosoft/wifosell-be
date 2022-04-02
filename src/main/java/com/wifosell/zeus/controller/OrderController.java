@@ -13,6 +13,7 @@ import com.wifosell.zeus.utils.Preprocessor;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,10 +40,22 @@ public class OrderController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<OrderResponse>>> getOrders(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
             @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<OrderModel> orders = orderService.getOrders(userPrincipal.getId(), isActive);
+        if (shopIds != null) {
+            orders = orders.stream()
+                    .filter(order -> shopIds.contains(order.getShop().getId()))
+                    .collect(Collectors.toList());
+        }
+        if (saleChannelIds != null) {
+            orders = orders.stream()
+                    .filter(order -> saleChannelIds.contains(order.getSaleChannel().getId()))
+                    .collect(Collectors.toList());
+        }
         List<OrderResponse> responses = orders.stream().map(OrderResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }

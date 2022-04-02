@@ -22,9 +22,11 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service("OrderService")
 @Transactional
@@ -60,40 +62,53 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderModel> getOrdersByShopId(
+    public List<OrderModel> getOrdersByShopIds(
             @NonNull Long userId,
-            @NonNull Long shopId,
+            @NonNull List<Long> shopIds,
             Boolean isActive
     ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllByShopIdWithGm(gm.getId(), shopId);
-        return orderRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive);
+        if (isActive == null) {
+            return shopIds.stream()
+                    .map(shopId -> orderRepository.findAllByShopIdWithGm(gm.getId(), shopId))
+                    .flatMap(Collection::stream)
+                    .distinct().collect(Collectors.toList());
+        }
+        return shopIds.stream()
+                .map(shopId -> orderRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive))
+                .flatMap(Collection::stream)
+                .distinct().collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderModel> getOrdersBySaleChannelId(
+    public List<OrderModel> getOrdersBySaleChannelIds(
             @NonNull Long userId,
-            @NonNull Long saleChannelId,
+            @NonNull List<Long> saleChannelIds,
             Boolean isActive
     ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllBySaleChannelIdWithGm(gm.getId(), saleChannelId);
-        return orderRepository.findAllBySaleChannelIdWithGmAndActive(gm.getId(), saleChannelId, isActive);
+        if (isActive == null) {
+            return saleChannelIds.stream()
+                    .map(saleChannelId -> orderRepository.findAllBySaleChannelIdWithGm(gm.getId(), saleChannelId))
+                    .flatMap(Collection::stream)
+                    .distinct().collect(Collectors.toList());
+        }
+        return saleChannelIds.stream()
+                .map(saleChannelId -> orderRepository.findAllBySaleChannelIdWithGmAndActive(gm.getId(), saleChannelId, isActive))
+                .flatMap(Collection::stream)
+                .distinct().collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderModel> getOrdersByShopIdAndSaleChannelId(
+    public List<OrderModel> getOrdersByShopIdsAndSaleChannelIds(
             @NonNull Long userId,
-            @NonNull Long shopId,
-            @NonNull Long saleChannelId,
+            @NonNull List<Long> shopIds,
+            @NonNull List<Long> saleChannelIds,
             Boolean isActive
     ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllByShopIdAndSaleChannelIdWithGm(gm.getId(), shopId, saleChannelId);
-        return orderRepository.findAllByShopIdAndSaleChannelIdWithGmAndActive(gm.getId(), shopId, saleChannelId, isActive);
+        List<OrderModel> orders1 = this.getOrdersByShopIds(userId, shopIds, isActive);
+        List<OrderModel> orders2 = this.getOrdersBySaleChannelIds(userId, shopIds, isActive);
+        return orders1.stream().filter(orders2::contains).collect(Collectors.toList());
     }
 
     @Override
