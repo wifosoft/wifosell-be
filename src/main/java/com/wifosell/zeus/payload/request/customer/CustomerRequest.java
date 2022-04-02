@@ -1,8 +1,10 @@
 package com.wifosell.zeus.payload.request.customer;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wifosell.zeus.model.customer.Customer;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,6 +17,7 @@ public class CustomerRequest {
     @NotBlank
     private String fullName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dob;   // Date of birth
 
     @Enumerated(EnumType.ORDINAL)
