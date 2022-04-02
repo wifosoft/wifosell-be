@@ -59,7 +59,7 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<GApiResponse<OrderResponse>> addOrder(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody AddOrderRequest request

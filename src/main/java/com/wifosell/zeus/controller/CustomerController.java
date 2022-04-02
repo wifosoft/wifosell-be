@@ -59,7 +59,7 @@ public class CustomerController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<GApiResponse<CustomerResponse>> addCustomer(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody CustomerRequest request
