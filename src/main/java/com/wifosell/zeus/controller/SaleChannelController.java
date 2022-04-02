@@ -44,7 +44,7 @@ public class SaleChannelController {
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<SaleChannel> saleChannels;
-        if (shopIds == null) {
+        if (shopIds == null || shopIds.isEmpty()) {
             saleChannels = saleChannelService.getSaleChannelsByUserId(userPrincipal.getId(), isActive);
         } else {
             saleChannels = saleChannelService.getSaleChannelsByShopIds(userPrincipal.getId(), shopIds, isActive);
