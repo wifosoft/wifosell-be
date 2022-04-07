@@ -37,12 +37,16 @@ public class OrderResponse extends BasicEntityResponse {
         private final String name;
         private final List<String> images;
         private final List<String> options;
+        private final BigDecimal price;
+        private final Integer quantity;
 
         public OrderItemResponse(OrderItem orderItem) {
             super(orderItem);
             this.name = orderItem.getVariant().getProduct().getName();
             this.images = orderItem.getVariant().getProduct().getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
             this.options = orderItem.getVariant().getVariantValues().stream().map(VariantValue::getOptionValue).map(OptionValue::getValue).collect(Collectors.toList());
+            this.price = orderItem.getPrice();
+            this.quantity = orderItem.getQuantity();
         }
     }
 
