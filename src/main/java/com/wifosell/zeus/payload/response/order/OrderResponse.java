@@ -34,6 +34,7 @@ public class OrderResponse extends BasicEntityResponse {
 
     @Getter
     private static class OrderItemResponse extends BasicEntityResponse {
+        private final Long productId;
         private final String name;
         private final List<String> images;
         private final List<String> options;
@@ -42,6 +43,7 @@ public class OrderResponse extends BasicEntityResponse {
 
         public OrderItemResponse(OrderItem orderItem) {
             super(orderItem);
+            this.productId = orderItem.getVariant().getProduct().getId();
             this.name = orderItem.getVariant().getProduct().getName();
             this.images = orderItem.getVariant().getProduct().getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
             this.options = orderItem.getVariant().getVariantValues().stream().map(VariantValue::getOptionValue).map(OptionValue::getValue).collect(Collectors.toList());
