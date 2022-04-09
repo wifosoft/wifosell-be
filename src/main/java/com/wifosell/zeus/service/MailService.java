@@ -1,7 +1,9 @@
 package com.wifosell.zeus.service;
 
-import com.wifosell.zeus.model.mail.Mail;
+import lombok.NonNull;
+
+import javax.validation.constraints.Email;
 
 public interface MailService {
-    public void sendEmail(Mail mail);
+    void sendEmail(@NonNull @Email String mailTo, @NonNull String subject, @NonNull String content);
 }

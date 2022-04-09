@@ -7,7 +7,7 @@ import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CustomerService;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,15 +18,10 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service("Customer")
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository, UserRepository userRepository) {
-        this.customerRepository = customerRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public List<Customer> getAllCustomers(

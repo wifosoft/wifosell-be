@@ -14,9 +14,7 @@ import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
-import com.wifosell.zeus.payload.response.product.ProductResponse;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
