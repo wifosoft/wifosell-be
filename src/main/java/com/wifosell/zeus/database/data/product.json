@@ -42,37 +42,37 @@
     "variants": [
       {
         "stock": 100,
-        "cost": "100.25",
+        "cost": "21000000",
         "sku": "ABC100",
         "barcode": "00000000"
       },
       {
         "stock": 200,
-        "cost": "120.75",
+        "cost": "22000000",
         "sku": "ABC101",
         "barcode": "00000001"
       },
       {
         "stock": 300,
-        "cost": "110",
+        "cost": "23000000",
         "sku": "ABC102",
         "barcode": "00000002"
       },
       {
         "stock": 400,
-        "cost": "100.25",
+        "cost": "21500000",
         "sku": "ABC103",
         "barcode": "00000003"
       },
       {
         "stock": 500,
-        "cost": "90.55",
+        "cost": "21000000",
         "sku": "ABC104",
         "barcode": "00000004"
       },
       {
         "stock": 600,
-        "cost": "110",
+        "cost": "32000000",
         "sku": "ABC105",
         "barcode": "00000005"
       }
@@ -126,55 +126,55 @@
     "variants": [
       {
         "stock": 100,
-        "cost": "100.25",
+        "cost": "150000",
         "sku": "SBC100",
         "barcode": "00000006"
       },
       {
         "stock": 200,
-        "cost": "120.75",
+        "cost": "175000",
         "sku": "SBC101",
         "barcode": "00000007"
       },
       {
         "stock": 300,
-        "cost": "110",
+        "cost": "200000",
         "sku": "SBC102",
         "barcode": "00000008"
       },
       {
         "stock": 400,
-        "cost": "100.25",
+        "cost": "1820000",
         "sku": "SBC103",
         "barcode": "00000009"
       },
       {
         "stock": 500,
-        "cost": "90.55",
+        "cost": "155000",
         "sku": "SBC104",
         "barcode": "00000010"
       },
       {
         "stock": 600,
-        "cost": "110",
+        "cost": "210000",
         "sku": "SBC105",
         "barcode": "00000011"
       },
       {
         "stock": 700,
-        "cost": "120.25",
+        "cost": "180000",
         "sku": "SBC106",
         "barcode": "00000012"
       },
       {
         "stock": 800,
-        "cost": "90.55",
+        "cost": "220000",
         "sku": "SBC107",
         "barcode": "00000013"
       },
       {
         "stock": 900,
-        "cost": "110",
+        "cost": "185000",
         "sku": "SBC108",
         "barcode": "00000014"
       }

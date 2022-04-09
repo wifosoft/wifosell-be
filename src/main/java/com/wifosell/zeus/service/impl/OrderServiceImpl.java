@@ -6,7 +6,8 @@ import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
@@ -16,12 +17,12 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +34,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final VariantRepository variantRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ShopRepository shopRepository;
+    private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
@@ -58,40 +61,53 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderModel> getOrdersByShopId(
+    public List<OrderModel> getOrdersByShopIds(
             @NonNull Long userId,
-            @NonNull Long shopId,
+            @NonNull List<Long> shopIds,
             Boolean isActive
     ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllByShopIdWithGm(gm.getId(), shopId);
-        return orderRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive);
+        if (isActive == null) {
+            return shopIds.stream()
+                    .map(shopId -> orderRepository.findAllByShopIdWithGm(gm.getId(), shopId))
+                    .flatMap(Collection::stream)
+                    .distinct().collect(Collectors.toList());
+        }
+        return shopIds.stream()
+                .map(shopId -> orderRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive))
+                .flatMap(Collection::stream)
+                .distinct().collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderModel> getOrdersBySaleChannelId(
+    public List<OrderModel> getOrdersBySaleChannelIds(
             @NonNull Long userId,
-            @NonNull Long saleChannelId,
+            @NonNull List<Long> saleChannelIds,
             Boolean isActive
     ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllBySaleChannelIdWithGm(gm.getId(), saleChannelId);
-        return orderRepository.findAllBySaleChannelIdWithGmAndActive(gm.getId(), saleChannelId, isActive);
+        if (isActive == null) {
+            return saleChannelIds.stream()
+                    .map(saleChannelId -> orderRepository.findAllBySaleChannelIdWithGm(gm.getId(), saleChannelId))
+                    .flatMap(Collection::stream)
+                    .distinct().collect(Collectors.toList());
+        }
+        return saleChannelIds.stream()
+                .map(saleChannelId -> orderRepository.findAllBySaleChannelIdWithGmAndActive(gm.getId(), saleChannelId, isActive))
+                .flatMap(Collection::stream)
+                .distinct().collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderModel> getOrdersByShopIdAndSaleChannelId(
+    public List<OrderModel> getOrdersByShopIdsAndSaleChannelIds(
             @NonNull Long userId,
-            @NonNull Long shopId,
-            @NonNull Long saleChannelId,
+            @NonNull List<Long> shopIds,
+            @NonNull List<Long> saleChannelIds,
             Boolean isActive
     ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllByShopIdAndSaleChannelIdWithGm(gm.getId(), shopId, saleChannelId);
-        return orderRepository.findAllByShopIdAndSaleChannelIdWithGmAndActive(gm.getId(), shopId, saleChannelId, isActive);
+        List<OrderModel> orders1 = this.getOrdersByShopIds(userId, shopIds, isActive);
+        List<OrderModel> orders2 = this.getOrdersBySaleChannelIds(userId, shopIds, isActive);
+        return orders1.stream().filter(orders2::contains).collect(Collectors.toList());
     }
 
     @Override
@@ -167,14 +183,21 @@ public class OrderServiceImpl implements OrderService {
         // Sale Channel & Shop
         Optional.ofNullable(request.getShopId()).ifPresent(shopId -> {
             Optional.ofNullable(request.getSaleChannelId()).ifPresent(saleChannelId -> {
-                SaleChannelShopRelation relation = saleChannelShopRelationRepository.getSaleChannelShopRelationByShopIdAndSaleChannelId(shopId, saleChannelId);
-                order.setSaleChannelShopRelation(relation);
+                if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+                    Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+                    order.setShop(shop);
+
+                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+                    order.setSaleChannel(saleChannel);
+                } else {
+                    throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));
+                }
             });
         });
 
         // Customer
         Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
-            Customer customer = customerRepository.findCustomerById(customerId, true);
+            Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
             order.setCustomer(customer);
         });
 

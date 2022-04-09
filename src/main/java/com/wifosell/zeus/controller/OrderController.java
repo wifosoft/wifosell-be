@@ -39,10 +39,22 @@ public class OrderController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<OrderResponse>>> getOrders(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
             @RequestParam(name = "active", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<OrderModel> orders = orderService.getOrders(userPrincipal.getId(), isActive);
+        if (shopIds != null) {
+            orders = orders.stream()
+                    .filter(order -> shopIds.contains(order.getShop().getId()))
+                    .collect(Collectors.toList());
+        }
+        if (saleChannelIds != null) {
+            orders = orders.stream()
+                    .filter(order -> saleChannelIds.contains(order.getSaleChannel().getId()))
+                    .collect(Collectors.toList());
+        }
         List<OrderResponse> responses = orders.stream().map(OrderResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
@@ -59,7 +71,7 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<GApiResponse<OrderResponse>> addOrder(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody AddOrderRequest request

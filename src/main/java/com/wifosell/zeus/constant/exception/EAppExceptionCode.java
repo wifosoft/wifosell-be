@@ -51,7 +51,11 @@ public enum EAppExceptionCode {
 
     //region Order
     ORDER_NOT_FOUND(1000001),
-    ORDER_ITEM_NOT_FOUND(1001001);
+    ORDER_ITEM_NOT_FOUND(1001001),
+    //endregion
+
+    //region Customer
+    CUSTOMER_NOT_FOUND(1100001);
     //endregion
 
     private final int value;

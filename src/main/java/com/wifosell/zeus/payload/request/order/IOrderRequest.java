@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -28,7 +27,7 @@ public interface IOrderRequest {
 
         @Positive
         private Integer quantity;
-        
+
         @Size(max = 1000)
         private String note;
     }

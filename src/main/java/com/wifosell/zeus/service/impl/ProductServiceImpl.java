@@ -175,7 +175,9 @@ public class ProductServiceImpl implements ProductService {
             for (IProductRequest.OptionRequest optionRequest : optionRequests) {
                 OptionModel optionModel = OptionModel.builder()
                         .name(optionRequest.getName())
-                        .product(product).build();
+                        .product(product)
+                        .generalManager(gm)
+                        .build();
                 List<OptionValue> optionValues = new ArrayList<>();
                 for (String value : optionRequest.getValues()) {
                     OptionValue optionValue = OptionValue.builder()

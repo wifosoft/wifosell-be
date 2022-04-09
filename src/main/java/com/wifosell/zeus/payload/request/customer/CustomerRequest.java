@@ -1,5 +1,6 @@
 package com.wifosell.zeus.payload.request.customer;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wifosell.zeus.model.customer.Customer;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,11 +16,13 @@ public class CustomerRequest {
     @NotBlank
     private String fullName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dob;   // Date of birth
 
     @Enumerated(EnumType.ORDINAL)
     private Customer.Sex sex;
 
+    @NotBlank
     private String phone;
 
     private String email;
@@ -35,4 +38,6 @@ public class CustomerRequest {
     private String ward;
 
     private String addressDetail;
+
+    private Boolean active;
 }
