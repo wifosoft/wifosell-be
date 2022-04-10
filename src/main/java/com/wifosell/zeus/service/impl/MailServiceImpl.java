@@ -1,6 +1,7 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.mail.Mail;
+import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.MailService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,26 +18,26 @@ import javax.validation.constraints.Email;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
+    private final UserRepository userRepository;
 
     public void sendEmail(@NonNull @Email String mailTo, @NonNull String subject, @NonNull String content) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
-            Mail mail = new Mail();
-            mail.setMailFrom("ductm@evscare.com");
-            mail.setMailTo(mailTo);
-            mail.setMailSubject(subject);
-            mail.setMailContent(content);
-
-            mimeMessageHelper.setSubject(mail.getMailSubject());
-            mimeMessageHelper.setFrom(new InternetAddress(mail.getMailFrom()));
-            mimeMessageHelper.setTo(mail.getMailTo());
-            mimeMessageHelper.setText(mail.getMailContent());
+            mimeMessageHelper.setFrom(new InternetAddress("ductm@evscare.com"));
+            mimeMessageHelper.setTo(mailTo);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(content);
 
             mailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendEmail(@NonNull Long userId, @NonNull String subject, @NonNull String content) {
+        User user = userRepository.getUserById(userId);
+        this.sendEmail(user.getEmail(), subject, content);
     }
 }
