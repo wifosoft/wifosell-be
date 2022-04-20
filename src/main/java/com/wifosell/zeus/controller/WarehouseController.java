@@ -1,9 +1,12 @@
 package com.wifosell.zeus.controller;
 
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
+import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
+import com.wifosell.zeus.payload.response.stock.StockResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,7 +39,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<Warehouse>>> getWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
@@ -46,7 +50,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("/{warehouseId}")
     public ResponseEntity<GApiResponse<Warehouse>> getWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -56,7 +60,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouse));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("")
     public ResponseEntity<GApiResponse<Warehouse>> addWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -67,7 +71,7 @@ public class WarehouseController {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("/{warehouseId}/update")
     public ResponseEntity<GApiResponse<Warehouse>> updateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -79,7 +83,7 @@ public class WarehouseController {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("/{warehouseId}/activate")
     public ResponseEntity<GApiResponse<Warehouse>> activateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -89,7 +93,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouse));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("/{warehouseId}/deActivate")
     public ResponseEntity<GApiResponse<Warehouse>> deactiveWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -99,7 +103,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouse));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<Warehouse>>> activateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
@@ -108,12 +112,33 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<Warehouse>>> deactivateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ListIdRequest request) {
         List<Warehouse> warehouses = warehouseService.deactivateWarehouses(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(warehouses));
+    }
+
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @GetMapping("/{warehouseId}/stocks")
+    public ResponseEntity<GApiResponse<List<Product>>> getStocks(
+            @CurrentUser UserPrincipal userPrincipal,
+            @PathVariable(name = "warehouseId") Long warehouseId
+    ) {
+        List<Product> products = warehouseService.getStocks(userPrincipal.getId(), warehouseId);
+        return ResponseEntity.ok(GApiResponse.success(products));
+    }
+
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PostMapping("/{warehouseId}/stocks/import")
+    public ResponseEntity<GApiResponse<Boolean>> importStocks(
+            @CurrentUser UserPrincipal userPrincipal,
+            @PathVariable(name = "warehouseId") Long warehouseId,
+            @RequestBody ImportStocksRequest request
+    ) {
+        Boolean successful = warehouseService.importStocks(userPrincipal.getId(), warehouseId, request);
+        return ResponseEntity.ok(GApiResponse.success(successful));
     }
 }

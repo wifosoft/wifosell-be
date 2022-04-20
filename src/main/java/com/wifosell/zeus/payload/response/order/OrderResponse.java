@@ -52,7 +52,6 @@ public class OrderResponse extends BasicEntityResponse {
 
         @Getter
         private static class VariantResponse extends BasicEntityResponse {
-            private final Long stock;
             private final String cost;
             private final String sku;
             private final String barcode;
@@ -61,7 +60,6 @@ public class OrderResponse extends BasicEntityResponse {
 
             public VariantResponse(Variant variant) {
                 super(variant);
-                this.stock = variant.getStock();
                 this.cost = variant.getCost().toString();
                 this.sku = variant.getSku();
                 this.barcode = variant.getBarcode();

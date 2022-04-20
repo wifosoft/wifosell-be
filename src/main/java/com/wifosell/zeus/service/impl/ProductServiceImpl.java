@@ -221,7 +221,6 @@ public class ProductServiceImpl implements ProductService {
         if (i == options.size()) {
             IProductRequest.VariantRequest variantRequest = variantRequests.get(j);
             Variant variant = Variant.builder()
-                    .stock(variantRequest.getStock())
                     .cost(new BigDecimal(variantRequest.getCost()))
                     .sku(variantRequest.getSku())
                     .barcode(variantRequest.getBarcode())

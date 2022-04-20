@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.warehouse.Stock;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,8 +23,6 @@ public class Variant extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long stock = 0L;
-
     private BigDecimal cost;
 
     private String sku;
@@ -37,4 +36,8 @@ public class Variant extends BasicEntity {
     @JsonIgnore
     @ManyToOne
     private Product product;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "warehouse")
+    private List<Stock> stocks = new ArrayList<>();
 }
