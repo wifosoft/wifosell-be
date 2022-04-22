@@ -1,0 +1,184 @@
+[
+  {
+    "name": "iPhone 12",
+    "description": "Qua la iphone",
+    "categoryId": 7,
+    "weight": 2500,
+    "dimension": "4.1x7.2 (inch)",
+    "state": 0,
+    "status": 0,
+    "images": [
+      "https://cf.shopee.vn/file/a4b5339add6e7d19a6be6ab459db91c3",
+      "https://cf.shopee.vn/file/102f1de2b71e74dc947b16cbcc26359b",
+      "https://cf.shopee.vn/file/d68c250de71755c946640c5402f4bcd7"
+    ],
+    "attributes": [
+      {
+        "name": "Origin",
+        "value": "USA"
+      },
+      {
+        "name": "Brand",
+        "value": "Apple"
+      }
+    ],
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Red",
+          "Blue",
+          "White"
+        ]
+      },
+      {
+        "name": "RAM",
+        "values": [
+          "256GB",
+          "512GB"
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "stock": 100,
+        "cost": "21000000",
+        "sku": "ABC100",
+        "barcode": "00000000"
+      },
+      {
+        "stock": 200,
+        "cost": "22000000",
+        "sku": "ABC101",
+        "barcode": "00000001"
+      },
+      {
+        "stock": 300,
+        "cost": "23000000",
+        "sku": "ABC102",
+        "barcode": "00000002"
+      },
+      {
+        "stock": 400,
+        "cost": "21500000",
+        "sku": "ABC103",
+        "barcode": "00000003"
+      },
+      {
+        "stock": 500,
+        "cost": "21000000",
+        "sku": "ABC104",
+        "barcode": "00000004"
+      },
+      {
+        "stock": 600,
+        "cost": "32000000",
+        "sku": "ABC105",
+        "barcode": "00000005"
+      }
+    ],
+    "active": true
+  },
+  {
+    "name": "Ao thun nam",
+    "description": "Ao thun duoc lam tu 100% cotton...",
+    "categoryId": 2,
+    "weight": 100,
+    "dimension": "200x100x50",
+    "state": 0,
+    "status": 0,
+    "images": [
+      "https://cf.shopee.vn/file/191a95b2ff7821b6bb657fa6ed2c7bdc",
+      "https://cf.shopee.vn/file/8f93afeab9c8825e8e7a60c5cd1b5aa1",
+      "https://cf.shopee.vn/file/7f4e30d61c1ce5c1689d009eb6177706",
+      "https://cf.shopee.vn/file/4a775aa4226fffd577beb5d8e88c0db9",
+      "https://cf.shopee.vn/file/7e767303ceaa695d06e6038c5ff58499",
+      "https://cf.shopee.vn/file/9f8d2e34c1a1378edb367a735cc9287a"
+    ],
+    "attributes": [
+      {
+        "name": "Xuat xu",
+        "value": "Viet Nam"
+      },
+      {
+        "name": "Thuong hieu",
+        "value": "Gumac"
+      }
+    ],
+    "options": [
+      {
+        "name": "Color",
+        "values": [
+          "Red",
+          "Blue",
+          "White"
+        ]
+      },
+      {
+        "name": "Size",
+        "values": [
+          "S",
+          "M",
+          "L"
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "stock": 100,
+        "cost": "150000",
+        "sku": "SBC100",
+        "barcode": "00000006"
+      },
+      {
+        "stock": 200,
+        "cost": "175000",
+        "sku": "SBC101",
+        "barcode": "00000007"
+      },
+      {
+        "stock": 300,
+        "cost": "200000",
+        "sku": "SBC102",
+        "barcode": "00000008"
+      },
+      {
+        "stock": 400,
+        "cost": "1820000",
+        "sku": "SBC103",
+        "barcode": "00000009"
+      },
+      {
+        "stock": 500,
+        "cost": "155000",
+        "sku": "SBC104",
+        "barcode": "00000010"
+      },
+      {
+        "stock": 600,
+        "cost": "210000",
+        "sku": "SBC105",
+        "barcode": "00000011"
+      },
+      {
+        "stock": 700,
+        "cost": "180000",
+        "sku": "SBC106",
+        "barcode": "00000012"
+      },
+      {
+        "stock": 800,
+        "cost": "220000",
+        "sku": "SBC107",
+        "barcode": "00000013"
+      },
+      {
+        "stock": 900,
+        "cost": "185000",
+        "sku": "SBC108",
+        "barcode": "00000014"
+      }
+    ],
+    "active": true
+  }
+]

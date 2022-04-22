@@ -13,9 +13,6 @@ public interface IProductRequest {
     @Size(max = 100)
     String getDescription();
 
-    @Size(max = 100)
-    String getBarcode();
-
     Long getCategoryId();
 
     @Positive
@@ -27,6 +24,8 @@ public interface IProductRequest {
     Integer getState();
 
     Integer getStatus();
+
+    List<String> getImages();
 
     List<AttributeRequest> getAttributes();
 
@@ -72,5 +71,8 @@ public interface IProductRequest {
         @NotBlank
         @Size(max = 100)
         String sku;
+
+        @Size(max = 100)
+        String barcode;
     }
 }

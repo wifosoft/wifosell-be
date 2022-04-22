@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,4 +31,6 @@ public class ShopRequest {
     private String businessLine;
 
     private Boolean active;
+
+    private List<Long> saleChannelIds;
 }

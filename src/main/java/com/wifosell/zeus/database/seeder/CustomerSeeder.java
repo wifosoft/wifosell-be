@@ -25,46 +25,43 @@ public class CustomerSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
         Customer customer1 = Customer.builder()
-                .fullname("Kieu Cong Hau")
+                .fullName("Kieu Cong Hau")
                 .phone("0987654321")
-                .birthday(new Date(122, Calendar.JANUARY, 12, 0, 0, 0))
+                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
                 .email("hau@gmail.com")
                 .city("HCM")
                 .ward("1")
                 .district("1")
-                .address("1 Le Duan")
-                .facebook("")
-                .sex(1)
+                .addressDetail("1 Le Duan")
+                .sex(Customer.Sex.MALE)
                 .generalManager(gm)
                 .build();
         customerRepository.save(customer1);
 
         Customer customer2 = Customer.builder()
-                .fullname("Kieu Cong Hau")
+                .fullName("Kieu Cong Hau")
                 .phone("0987654321")
-                .birthday(new Date(122, Calendar.JANUARY, 12, 0, 0, 0))
+                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
                 .email("hau@gmail.com")
                 .city("HCM")
                 .ward("1")
                 .district("1")
-                .address("1 Le Duan")
-                .facebook("")
-                .sex(1)
+                .addressDetail("1 Le Duan")
+                .sex(Customer.Sex.MALE)
                 .generalManager(gm)
                 .build();
         customerRepository.save(customer2);
 
         Customer customer3 = Customer.builder()
-                .fullname("Kieu Cong Hau")
+                .fullName("Kieu Cong Hau")
                 .phone("0987654321")
-                .birthday(new Date(122, Calendar.JANUARY, 12, 0, 0, 0))
+                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
                 .email("hau@gmail.com")
                 .city("HCM")
                 .ward("1")
                 .district("1")
-                .address("1 Le Duan")
-                .facebook("")
-                .sex(1)
+                .addressDetail("1 Le Duan")
+                .sex(Customer.Sex.MALE)
                 .generalManager(gm)
                 .build();
         customerRepository.save(customer3);

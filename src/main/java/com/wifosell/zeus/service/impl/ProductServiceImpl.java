@@ -5,6 +5,7 @@ import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.shop.ProductShopRelation;
@@ -42,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
     private final VariantValueRepository variantValueRepository;
     private final UserRepository userRepository;
     private final ShopRepository shopRepository;
-    private final SaleChannelRepository saleChannelRepository;
+    private final ProductImageRepository productImageRepository;
 
     @Override
     public List<Product> getAllProducts(Boolean isActive) {
@@ -118,7 +119,6 @@ public class ProductServiceImpl implements ProductService {
     private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
-        Optional.ofNullable(request.getBarcode()).ifPresent(product::setBarcode);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
             Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
@@ -128,9 +128,28 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(request.getState()).ifPresent(product::setState);
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
+        // Images
+        Optional.ofNullable(request.getImages()).ifPresent(urls -> {
+            productImageRepository.deleteAllByProductId(product.getId());
+            product.getImages().clear();
+
+            List<ProductImage> images = new ArrayList<>();
+            for (String url : urls) {
+                ProductImage image = ProductImage.builder()
+                        .url(url)
+                        .product(product).build();
+                images.add(image);
+            }
+            product.getImages().addAll(images);
+
+            productImageRepository.saveAll(images);
+            productRepository.save(product);
+        });
+
         // Attributes
         Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
             attributeRepository.deleteAllByProductId(product.getId());
+            product.getAttributes().clear();
 
             List<Attribute> attributes = new ArrayList<>();
             for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
@@ -156,7 +175,9 @@ public class ProductServiceImpl implements ProductService {
             for (IProductRequest.OptionRequest optionRequest : optionRequests) {
                 OptionModel optionModel = OptionModel.builder()
                         .name(optionRequest.getName())
-                        .product(product).build();
+                        .product(product)
+                        .generalManager(gm)
+                        .build();
                 List<OptionValue> optionValues = new ArrayList<>();
                 for (String value : optionRequest.getValues()) {
                     OptionValue optionValue = OptionValue.builder()
@@ -200,9 +221,9 @@ public class ProductServiceImpl implements ProductService {
         if (i == options.size()) {
             IProductRequest.VariantRequest variantRequest = variantRequests.get(j);
             Variant variant = Variant.builder()
-                    .stock(variantRequest.getStock())
                     .cost(new BigDecimal(variantRequest.getCost()))
                     .sku(variantRequest.getSku())
+                    .barcode(variantRequest.getBarcode())
                     .product(product).build();
 
             List<VariantValue> variantValues = new ArrayList<>();
@@ -229,3 +250,4 @@ public class ProductServiceImpl implements ProductService {
         return j;
     }
 }
+

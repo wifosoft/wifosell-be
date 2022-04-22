@@ -36,6 +36,7 @@ public enum EAppExceptionCode {
 
     //region Sale Channel
     SALE_CHANNEL_NOT_FOUND(800001),
+    SALE_CHANNEL_SHOP_RELATION_NOT_FOUND(800002),
     //endregion
 
     //region Product
@@ -44,7 +45,17 @@ public enum EAppExceptionCode {
     OPTION_NOT_FOUND(902001),
     OPTION_VALUE_NOT_FOUND(903001),
     VARIANT_NOT_FOUND(904001),
-    VARIANT_VALUE_NOT_FOUND(905001);
+    VARIANT_VALUE_NOT_FOUND(905001),
+    PRODUCT_IMAGE_NOT_FOUND(906001),
+    //endregion
+
+    //region Order
+    ORDER_NOT_FOUND(1000001),
+    ORDER_ITEM_NOT_FOUND(1001001),
+    //endregion
+
+    //region Customer
+    CUSTOMER_NOT_FOUND(1100001);
     //endregion
 
     private final int value;

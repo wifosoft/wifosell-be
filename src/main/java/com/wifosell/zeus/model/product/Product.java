@@ -35,9 +35,6 @@ public class Product extends BasicEntity {
     @Size(max = 255)
     private String description;
 
-    @Size(max = 255)
-    private String barcode;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
@@ -50,6 +47,9 @@ public class Product extends BasicEntity {
     private Integer state = 0;
 
     private Integer status = 0;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Attribute> attributes = new ArrayList<>();

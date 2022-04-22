@@ -4,6 +4,7 @@ import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
@@ -18,12 +19,12 @@ import java.util.stream.Collectors;
 public class ProductResponse extends BasicEntityResponse {
     private final String name;
     private final String description;
-    private final String barcode;
     private final Integer weight;
     private final String dimension;
     private final Integer state;
     private final Integer status;
     private final CategoryResponse category;
+    private final List<String> images;
     private final List<AttributeResponse> attributes;
     private final List<OptionResponse> options;
     private final List<VariantResponse> variants;
@@ -32,12 +33,12 @@ public class ProductResponse extends BasicEntityResponse {
         super(product);
         this.name = product.getName();
         this.description = product.getDescription();
-        this.barcode = product.getBarcode();
         this.weight = product.getWeight();
         this.dimension = product.getDimension();
         this.state = product.getState();
         this.status = product.getStatus();
         this.category = new CategoryResponse(product.getCategory());
+        this.images = product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
         this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
         this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
         this.variants = product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList());
@@ -83,16 +84,16 @@ public class ProductResponse extends BasicEntityResponse {
     @Getter
     @Setter
     private static class VariantResponse extends BasicEntityResponse {
-        private Long stock;
         private String cost;
         private String sku;
+        private String barcode;
         private List<String> options;
 
         public VariantResponse(Variant variant) {
             super(variant);
-            this.stock = variant.getStock();
             this.cost = variant.getCost().toString();
             this.sku = variant.getSku();
+            this.barcode = variant.getBarcode();
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
                     .map(OptionValue::getValue).collect(Collectors.toList());
