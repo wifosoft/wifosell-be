@@ -39,8 +39,17 @@ public class StockController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/import/transaction/{importTransactionId}")
-    public ResponseEntity<GApiResponse<Boolean>> getStockHistory(
+    @GetMapping("/import/transactions")
+    public ResponseEntity<GApiResponse<Boolean>> getImportStockTransactions(
+            @CurrentUser UserPrincipal userPrincipal
+    ) {
+        // TODO haukc
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/import/transactions/{importTransactionId}")
+    public ResponseEntity<GApiResponse<Boolean>> getImportStockTransaction(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "importTransactionId") Long importTransactionId
     ) {
@@ -55,6 +64,25 @@ public class StockController {
             @RequestBody TransferStocksRequest request
     ) {
         stockService.transferStocks(userPrincipal.getId(), request);
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/transfer/transactions")
+    public ResponseEntity<GApiResponse<Boolean>> getTransferStockTransactions(
+            @CurrentUser UserPrincipal userPrincipal
+    ) {
+        // TODO haukc
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/transfer/transactions/{transferTransactionId}")
+    public ResponseEntity<GApiResponse<Boolean>> getTransferStockTransactions(
+            @CurrentUser UserPrincipal userPrincipal,
+            @PathVariable(name = "transferTransactionId") Long transferTransactionId
+    ) {
+        // TODO haukc
         return ResponseEntity.ok(GApiResponse.success(true));
     }
 }

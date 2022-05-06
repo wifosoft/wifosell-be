@@ -31,18 +31,18 @@ public class StockServiceImpl implements StockService {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getWarehouseId());
         Supplier supplier = supplierRepository.getByIdWithGm(gm.getId(), request.getSupplierId());
-        request.getStocks().forEach(stockRequest -> {
-            Variant variant = variantRepository.getById(stockRequest.getVariantId());
+        request.getItems().forEach(item -> {
+            Variant variant = variantRepository.getById(item.getVariantId());
             Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
             if (stock != null) {
-                stock.setActualQuantity(stock.getActualQuantity() + stockRequest.getQuantity());
-                stock.setQuantity(stock.getQuantity() + stockRequest.getQuantity());
+                stock.setActualQuantity(stock.getActualQuantity() + item.getQuantity());
+                stock.setQuantity(stock.getQuantity() + item.getQuantity());
             } else {
                 stock = Stock.builder()
                         .warehouse(warehouse)
                         .variant(variant)
-                        .actualQuantity(stockRequest.getQuantity())
-                        .quantity(stockRequest.getQuantity())
+                        .actualQuantity(item.getQuantity())
+                        .quantity(item.getQuantity())
                         .build();
             }
             stockRepository.save(stock);
