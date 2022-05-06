@@ -4,17 +4,18 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import lombok.NonNull;
+import org.springframework.data.domain.Page;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface ProductService {
-    List<Product> getAllProducts(Boolean isActive);
+    Page<Product> getAllProducts(Boolean isActive, int offset, int limit, String sortBy, String orderBy);
 
-    List<Product> getProducts(@NonNull Long userId, Boolean isActive);
+    Page<Product> getProducts(@NonNull Long userId, Boolean isActive, int offset, int limit, String sortBy, String orderBy);
 
-    List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive);
-    
+//    List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive);
+
     Product getProduct(@NonNull Long userId, @NonNull Long productId);
 
     Product addProduct(@NonNull Long userId, @Valid AddProductRequest request);

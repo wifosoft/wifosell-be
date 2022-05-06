@@ -11,12 +11,12 @@ import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/products")
@@ -30,31 +30,33 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<ProductResponse>>> getAllProducts(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+    public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
+            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<ProductResponse> responses = productService.getAllProducts(isActive).stream()
-                .map(ProductResponse::new)
-                .collect(Collectors.toList());
+        Page<ProductResponse> responses = productService.getAllProducts(isActive, offset, limit, sortBy, orderBy)
+                .map(ProductResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<ProductResponse>>> getProducts(
+    public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "shopId", required = false) Long shopId,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+//            @RequestParam(name = "shopId", required = false) Long shopId,
+            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<Product> products;
-        if (shopId != null) {
-            products = productService.getProductsByShopId(userPrincipal.getId(), shopId, isActive);
-        } else {
-            products = productService.getProducts(userPrincipal.getId(), isActive);
-        }
-        List<ProductResponse> responses = products.stream().map(ProductResponse::new).collect(Collectors.toList());
+        Page<Product> products = productService.getProducts(userPrincipal.getId(), isActive, offset, limit, sortBy, orderBy);
+        Page<ProductResponse> responses = products.map(ProductResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

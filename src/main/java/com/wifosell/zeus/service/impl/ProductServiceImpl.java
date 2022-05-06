@@ -8,8 +8,6 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
-import com.wifosell.zeus.model.shop.ProductShopRelation;
-import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
@@ -18,6 +16,10 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Transactional
 @Service("Product")
@@ -46,29 +47,31 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public List<Product> getAllProducts(Boolean isActive) {
+    public Page<Product> getAllProducts(Boolean isActive, int offset, int limit, String sortBy, String orderBy) {
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.fromString(orderBy), sortBy));
         if (isActive == null)
-            return productRepository.findAll();
-        return productRepository.findAllWithActive(isActive);
+            return productRepository.findAll(pageable);
+        return productRepository.findAndPaginateAllWithActive(isActive, pageable);
     }
 
     @Override
-    public List<Product> getProducts(@NonNull Long userId, Boolean isActive) {
+    public Page<Product> getProducts(@NonNull Long userId, Boolean isActive, int offset, int limit, String sortBy, String orderBy) {
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.fromString(orderBy), sortBy));
         User gm = userRepository.getUserById(userId).getGeneralManager();
         if (isActive == null)
-            return productRepository.findAllWithGm(gm.getId());
-        return productRepository.findAllWithGmAndActive(gm.getId(), isActive);
+            return productRepository.findAndPaginateAllWithGm(gm.getId(), pageable);
+        return productRepository.findAndPaginateAllWithGmAndActive(gm.getId(), isActive, pageable);
     }
 
-    @Override
-    public List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
-        Stream<Product> productStream = shop.getProductShopRelations().stream().map(ProductShopRelation::getProduct);
-        if (isActive != null)
-            productStream = productStream.filter(product -> product.isActive() == isActive);
-        return productStream.collect(Collectors.toList());
-    }
+//    @Override
+//    public List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive) {
+//        User gm = userRepository.getUserById(userId).getGeneralManager();
+//        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+//        Stream<Product> productStream = shop.getProductShopRelations().stream().map(ProductShopRelation::getProduct);
+//        if (isActive != null)
+//            productStream = productStream.filter(product -> product.isActive() == isActive);
+//        return productStream.collect(Collectors.toList());
+//    }
 
     @Override
     public Product getProduct(@NonNull Long userId, @NonNull Long productId) {
