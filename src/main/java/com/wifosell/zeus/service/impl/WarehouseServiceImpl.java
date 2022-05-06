@@ -1,11 +1,7 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.model.warehouse.Stock;
 import com.wifosell.zeus.model.warehouse.Warehouse;
-import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.WarehouseService;
@@ -14,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,9 +21,6 @@ import java.util.stream.Collectors;
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final UserRepository userRepository;
-    private final StockRepository stockRepository;
-    private final VariantRepository variantRepository;
-    private final ProductRepository productRepository;
 
     @Override
     public List<Warehouse> getAllWarehouses(Boolean isActive) {
@@ -90,36 +82,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public List<Warehouse> deactivateWarehouses(@NonNull Long userId, @NonNull List<Long> warehouseIds) {
         return warehouseIds.stream().map(id -> this.deactivateWarehouse(userId, id)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Boolean importStocks(@NonNull Long userId, @NonNull Long warehouseId, @Valid ImportStocksRequest request) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
-        request.getStocks().forEach(stockRequest -> {
-            Variant variant = variantRepository.getById(stockRequest.getVariantId());
-            Optional<Stock> optionalStock = stockRepository.findStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
-            Stock stock;
-            if (optionalStock.isPresent()) {
-                stock = optionalStock.get();
-                stock.setActualQuantity(stock.getActualQuantity() + stockRequest.getQuantity());
-                stock.setQuantity(stock.getQuantity() + stockRequest.getQuantity());
-            } else {
-                stock = Stock.builder()
-                        .warehouse(warehouse)
-                        .variant(variant)
-                        .actualQuantity(stockRequest.getQuantity())
-                        .quantity(stockRequest.getQuantity())
-                        .build();
-            }
-            stockRepository.save(stock);
-        });
-        return true;
-    }
-
-    @Override
-    public List<Product> getStocks(@NonNull Long userId, @NonNull Long warehouseId) {
-        return productRepository.getAllByWarehouseId(warehouseId);
     }
 
     private Warehouse updateWarehouseByRequest(@NonNull Warehouse warehouse, @NonNull WarehouseRequest request, @NonNull User gm) {

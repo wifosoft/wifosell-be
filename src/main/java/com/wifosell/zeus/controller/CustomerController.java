@@ -35,7 +35,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> getCustomers(
             @CurrentUser UserPrincipal userPrincipal,
@@ -47,7 +47,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("/{customerId}")
     public ResponseEntity<GApiResponse<CustomerResponse>> getCustomer(
             @CurrentUser UserPrincipal userPrincipal,
@@ -58,7 +58,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("")
     public ResponseEntity<GApiResponse<CustomerResponse>> addCustomer(
             @CurrentUser UserPrincipal userPrincipal,
@@ -69,9 +69,9 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("/{customerId}/update")
-    public ResponseEntity<GApiResponse<CustomerResponse>> addCustomer(
+    public ResponseEntity<GApiResponse<CustomerResponse>> updateCustomer(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "customerId") Long customerId,
             @RequestBody CustomerRequest request
@@ -81,7 +81,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("/{customerId}/activate")
     public ResponseEntity<GApiResponse<CustomerResponse>> activateCustomer(
             @CurrentUser UserPrincipal userPrincipal,
@@ -92,7 +92,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @GetMapping("/{customerId}/deactivate")
     public ResponseEntity<GApiResponse<CustomerResponse>> deactivateCustomer(
             @CurrentUser UserPrincipal userPrincipal,
@@ -103,7 +103,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> activateCustomers(
             @CurrentUser UserPrincipal userPrincipal,
@@ -114,7 +114,7 @@ public class CustomerController {
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> deactivateCustomers(
             @CurrentUser UserPrincipal userPrincipal,

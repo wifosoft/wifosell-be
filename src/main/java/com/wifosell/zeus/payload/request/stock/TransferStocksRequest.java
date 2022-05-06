@@ -5,17 +5,16 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
 @Setter
-public class ImportStocksRequest {
-    @NotNull
-    Long warehouseId;
+public class TransferStocksRequest {
+    @NonNull
+    Long fromWarehouseId;
 
     @NonNull
-    Long supplierId;
+    Long toWarehouseId;
 
     @NotEmpty
     List<StockRequest> stocks;

@@ -1,12 +1,9 @@
 package com.wifosell.zeus.controller;
 
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
-import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
-import com.wifosell.zeus.payload.response.stock.StockResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
@@ -16,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -119,26 +115,5 @@ public class WarehouseController {
             @RequestBody ListIdRequest request) {
         List<Warehouse> warehouses = warehouseService.deactivateWarehouses(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(warehouses));
-    }
-
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
-    @GetMapping("/{warehouseId}/stocks")
-    public ResponseEntity<GApiResponse<List<Product>>> getStocks(
-            @CurrentUser UserPrincipal userPrincipal,
-            @PathVariable(name = "warehouseId") Long warehouseId
-    ) {
-        List<Product> products = warehouseService.getStocks(userPrincipal.getId(), warehouseId);
-        return ResponseEntity.ok(GApiResponse.success(products));
-    }
-
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
-    @PostMapping("/{warehouseId}/stocks/import")
-    public ResponseEntity<GApiResponse<Boolean>> importStocks(
-            @CurrentUser UserPrincipal userPrincipal,
-            @PathVariable(name = "warehouseId") Long warehouseId,
-            @RequestBody ImportStocksRequest request
-    ) {
-        Boolean successful = warehouseService.importStocks(userPrincipal.getId(), warehouseId, request);
-        return ResponseEntity.ok(GApiResponse.success(successful));
     }
 }
