@@ -103,7 +103,7 @@ public class SupplierController {
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<SupplierResponse>>> deactivateSuppliers(
             @CurrentUser UserPrincipal userPrincipal,

@@ -35,7 +35,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<Warehouse>>> getWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
@@ -46,7 +46,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{warehouseId}")
     public ResponseEntity<GApiResponse<Warehouse>> getWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -56,7 +56,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouse));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("")
     public ResponseEntity<GApiResponse<Warehouse>> addWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -67,7 +67,7 @@ public class WarehouseController {
     }
 
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{warehouseId}/update")
     public ResponseEntity<GApiResponse<Warehouse>> updateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -79,7 +79,7 @@ public class WarehouseController {
     }
 
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{warehouseId}/activate")
     public ResponseEntity<GApiResponse<Warehouse>> activateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -89,7 +89,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouse));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{warehouseId}/deActivate")
     public ResponseEntity<GApiResponse<Warehouse>> deactiveWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
@@ -99,7 +99,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouse));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<Warehouse>>> activateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
@@ -108,7 +108,7 @@ public class WarehouseController {
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<Warehouse>>> deactivateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,

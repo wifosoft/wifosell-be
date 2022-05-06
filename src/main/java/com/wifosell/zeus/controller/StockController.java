@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class StockController {
     private final StockService stockService;
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/import")
     public ResponseEntity<GApiResponse<Boolean>> importStocks(
             @CurrentUser UserPrincipal userPrincipal,
@@ -28,7 +28,7 @@ public class StockController {
         return ResponseEntity.ok(GApiResponse.success(true));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/importFromExcel")
     public ResponseEntity<GApiResponse<Boolean>> importStocksFromExcel(
             @CurrentUser UserPrincipal userPrincipal,
@@ -38,7 +38,7 @@ public class StockController {
         return ResponseEntity.ok(GApiResponse.success(true));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/import/transaction/{importTransactionId}")
     public ResponseEntity<GApiResponse<Boolean>> getStockHistory(
             @CurrentUser UserPrincipal userPrincipal,
@@ -48,7 +48,7 @@ public class StockController {
         return ResponseEntity.ok(GApiResponse.success(true));
     }
 
-    @PreAuthorize("isAuthenticated() and hasRole('GENERAL_MANAGER')")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/transfer")
     public ResponseEntity<GApiResponse<Boolean>> transferStocks(
             @CurrentUser UserPrincipal userPrincipal,
