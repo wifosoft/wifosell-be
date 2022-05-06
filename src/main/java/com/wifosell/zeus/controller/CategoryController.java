@@ -29,7 +29,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getAllRootCategories(
             @RequestParam(name = "active", required = false) List<Boolean> actives

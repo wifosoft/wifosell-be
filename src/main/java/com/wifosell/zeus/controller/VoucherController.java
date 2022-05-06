@@ -23,7 +23,7 @@ public class VoucherController {
         this.voucherService = voucherService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<Voucher>>> getAllVoucher() {
         List<Voucher> voucherList = voucherService.getAllVouchers();
@@ -40,7 +40,7 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/shop={shopId}")
     public ResponseEntity<GApiResponse<List<Voucher>>> getVouchersByShopId(@CurrentUser UserPrincipal userPrincipal,
-                                                                               @PathVariable(name = "shopId") Long shopId) {
+                                                                           @PathVariable(name = "shopId") Long shopId) {
         List<Voucher> voucherList = voucherService.getVouchersByShopId(shopId);
         return ResponseEntity.ok(GApiResponse.success(voucherList));
     }
@@ -48,7 +48,7 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{voucherId}")
     public ResponseEntity<GApiResponse<Voucher>> getVoucher(@CurrentUser UserPrincipal userPrincipal,
-                                                                    @PathVariable(name = "voucherId") Long voucherId) {
+                                                            @PathVariable(name = "voucherId") Long voucherId) {
         Voucher voucher = voucherService.getVoucher(voucherId);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
@@ -56,7 +56,7 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
     public ResponseEntity<GApiResponse<Voucher>> addVoucher(@CurrentUser UserPrincipal userPrincipal,
-                                                                    @RequestBody VoucherRequest voucherRequest) {
+                                                            @RequestBody VoucherRequest voucherRequest) {
         Voucher voucher = voucherService.addVoucher(userPrincipal.getId(), voucherRequest);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
@@ -64,8 +64,8 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{voucherId}/update")
     public ResponseEntity<GApiResponse<Voucher>> addVoucher(@CurrentUser UserPrincipal userPrincipal,
-                                                                    @PathVariable(name = "voucherId") Long voucherId,
-                                                                    @RequestBody VoucherRequest voucherRequest) {
+                                                            @PathVariable(name = "voucherId") Long voucherId,
+                                                            @RequestBody VoucherRequest voucherRequest) {
         Voucher voucher = voucherService.updateVoucher(voucherId, voucherRequest);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
@@ -73,7 +73,7 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{voucherId}/activate")
     public ResponseEntity<GApiResponse<Voucher>> activateVoucher(@CurrentUser UserPrincipal userPrincipal,
-                                                                         @PathVariable(name = "voucherId") Long voucherId) {
+                                                                 @PathVariable(name = "voucherId") Long voucherId) {
         Voucher voucher = voucherService.activateVoucher(voucherId);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
@@ -81,7 +81,7 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{voucherId}/deactivate")
     public ResponseEntity<GApiResponse<Voucher>> deactivateVoucher(@CurrentUser UserPrincipal userPrincipal,
-                                                                           @PathVariable(name = "voucherId") Long voucherId) {
+                                                                   @PathVariable(name = "voucherId") Long voucherId) {
         Voucher voucher = voucherService.deactivateSaleChannel(voucherId);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
