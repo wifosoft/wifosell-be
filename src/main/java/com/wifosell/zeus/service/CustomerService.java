@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface CustomerService {
-    List<Customer> getAllCustomers(Boolean isActive);
+    Page<Customer> getAllCustomers(Boolean isActive, int offset, int limit, String sortBy, String orderBy);
 
     Page<Customer> getCustomers(@NonNull Long userId, Boolean isActive, int offset, int limit, String sortBy, String orderBy);
 

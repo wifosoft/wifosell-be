@@ -28,12 +28,17 @@ public class CustomerServiceImpl implements CustomerService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Customer> getAllCustomers(
-            Boolean isActive
+    public Page<Customer> getAllCustomers(
+            Boolean isActive,
+            int offset,
+            int limit,
+            String sortBy,
+            String orderBy
     ) {
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.fromString(orderBy), sortBy));
         if (isActive == null)
-            return customerRepository.findAll();
-        return customerRepository.findAllWithActive(isActive);
+            return customerRepository.findAll(pageable);
+        return customerRepository.findAndPaginateAllWithActive(isActive, pageable);
     }
 
     @Override

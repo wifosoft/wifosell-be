@@ -28,12 +28,16 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<CustomerResponse>>> getAllCustomers(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+    public ResponseEntity<GApiResponse<Page<CustomerResponse>>> getAllCustomers(
+            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<Customer> customers = customerService.getAllCustomers(isActive);
-        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
+        Page<Customer> customers = customerService.getAllCustomers(isActive, offset, limit, sortBy, orderBy);
+        Page<CustomerResponse> responses = customers.map(CustomerResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
