@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import java.text.SimpleDateFormat;
 
-
+@Getter
 public class CustomerResponse extends BasicEntityResponse {
     private final String fullName;
     private final String dob;
