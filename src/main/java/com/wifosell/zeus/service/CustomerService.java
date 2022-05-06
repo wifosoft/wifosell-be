@@ -3,6 +3,7 @@ package com.wifosell.zeus.service;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import lombok.NonNull;
+import org.springframework.data.domain.Page;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface CustomerService {
     List<Customer> getAllCustomers(Boolean isActive);
 
-    List<Customer> getCustomers(@NonNull Long userId, Boolean isActive);
+    Page<Customer> getCustomers(@NonNull Long userId, Boolean isActive, int offset, int limit, String sortBy, String orderBy);
 
     Customer getCustomer(@NonNull Long userId, @NonNull Long customerId);
 

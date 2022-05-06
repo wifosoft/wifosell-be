@@ -10,6 +10,8 @@ import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
 import com.wifosell.zeus.utils.Preprocessor;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +39,17 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<CustomerResponse>>> getCustomers(
+    public ResponseEntity<GApiResponse<Page<CustomerResponse>>> getCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
+            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
+            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<Customer> customers = customerService.getCustomers(userPrincipal.getId(), isActive);
-        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
+        Page<Customer> customers = customerService.getCustomers(userPrincipal.getId(), isActive, offset, limit, sortBy, orderBy);
+        Page<CustomerResponse> responses = customers.map(CustomerResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

@@ -8,6 +8,10 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CustomerService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,14 +37,19 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> getCustomers(
+    public Page<Customer> getCustomers(
             @NonNull Long userId,
-            Boolean isActive
+            Boolean isActive,
+            int offset,
+            int limit,
+            String sortBy,
+            String orderBy
     ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.fromString(orderBy), sortBy));
         if (isActive == null)
-            return customerRepository.findAllWithGm(gm.getId());
-        return customerRepository.findAllWithGmAndActive(gm.getId(), isActive);
+            return customerRepository.findAndPaginateAllWithGm(gm.getId(), pageable);
+        return customerRepository.findAndPaginateAllWithGmAndActive(gm.getId(), isActive, pageable);
     }
 
     @Override
