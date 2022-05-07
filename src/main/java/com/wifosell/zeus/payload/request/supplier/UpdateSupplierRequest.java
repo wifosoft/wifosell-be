@@ -22,5 +22,5 @@ public class UpdateSupplierRequest implements ISupplierRequest {
 
     String addressDetail;
 
-    Boolean active;
+    Boolean isActive;
 }

@@ -92,6 +92,6 @@ public class VoucherServiceImpl implements VoucherService {
         //Optional.ofNullable(voucherRequest.getName()).ifPresent(voucher::setName);
         //Optional.ofNullable(voucherRequest.getShortName()).ifPresent(voucher::setShortName);
         Optional.ofNullable(voucherRequest.getDescription()).ifPresent(voucher::setDescription);
-        Optional.ofNullable(voucherRequest.getActive()).ifPresent(voucher::setIsActive);
+        Optional.ofNullable(voucherRequest.getIsActive()).ifPresent(voucher::setIsActive);
     }
 }

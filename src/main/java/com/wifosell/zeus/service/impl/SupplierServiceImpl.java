@@ -88,7 +88,7 @@ public class SupplierServiceImpl implements SupplierService {
         Optional.ofNullable(request.getDistrict()).ifPresent(supplier::setDistrict);
         Optional.ofNullable(request.getWard()).ifPresent(supplier::setWard);
         Optional.ofNullable(request.getAddressDetail()).ifPresent(supplier::setAddressDetail);
-        Optional.ofNullable(request.getActive()).ifPresent(supplier::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(supplier::setIsActive);
         supplier.setGeneralManager(gm);
         return supplierRepository.save(supplier);
     }

@@ -90,7 +90,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Optional.ofNullable(request.getAddress()).ifPresent(warehouse::setAddress);
         Optional.ofNullable(request.getPhone()).ifPresent(warehouse::setPhone);
         Optional.ofNullable(request.getDescription()).ifPresent(warehouse::setDescription);
-        Optional.ofNullable(request.getActive()).ifPresent(warehouse::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(warehouse::setIsActive);
         warehouse.setGeneralManager(gm);
         return warehouseRepository.save(warehouse);
     }

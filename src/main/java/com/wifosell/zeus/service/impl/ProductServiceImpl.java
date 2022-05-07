@@ -208,7 +208,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
         });
 
-        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
 
         return productRepository.save(product);

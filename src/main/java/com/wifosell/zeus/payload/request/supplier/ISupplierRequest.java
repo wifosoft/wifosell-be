@@ -17,5 +17,5 @@ public interface ISupplierRequest {
 
     String getAddressDetail();
 
-    Boolean getActive();
+    Boolean getIsActive();
 }

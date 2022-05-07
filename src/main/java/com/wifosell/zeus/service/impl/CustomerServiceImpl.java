@@ -116,7 +116,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional.ofNullable(request.getDistrict()).ifPresent(customer::setDistrict);
         Optional.ofNullable(request.getWard()).ifPresent(customer::setWard);
         Optional.ofNullable(request.getAddressDetail()).ifPresent(customer::setAddressDetail);
-        Optional.ofNullable(request.getActive()).ifPresent(customer::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(customer::setIsActive);
         customer.setGeneralManager(gm);
         return customerRepository.save(customer);
     }

@@ -202,7 +202,7 @@ public class OrderServiceImpl implements OrderService {
         });
 
         // Active
-        Optional.ofNullable(request.getActive()).ifPresent(order::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
         // General manager
         order.setGeneralManager(gm);

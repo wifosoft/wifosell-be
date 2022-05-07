@@ -156,7 +156,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
             productRepository.save(product);
         });
 
-        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
 
         productRepository.save(product);

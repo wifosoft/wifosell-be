@@ -20,5 +20,5 @@ public class CategoryRequest {
 
     private Long parentCategoryId;
 
-    private Boolean active;
+    private Boolean isActive;
 }

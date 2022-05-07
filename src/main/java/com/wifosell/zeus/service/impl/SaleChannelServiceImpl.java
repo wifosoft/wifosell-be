@@ -111,7 +111,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
         Optional.ofNullable(saleChannelRequest.getName()).ifPresent(saleChannel::setName);
         Optional.ofNullable(saleChannelRequest.getShortName()).ifPresent(saleChannel::setShortName);
         Optional.ofNullable(saleChannelRequest.getDescription()).ifPresent(saleChannel::setDescription);
-        Optional.ofNullable(saleChannelRequest.getActive()).ifPresent(saleChannel::setIsActive);
+        Optional.ofNullable(saleChannelRequest.getIsActive()).ifPresent(saleChannel::setIsActive);
         saleChannel.setGeneralManager(gm);
         return saleChannelRepository.save(saleChannel);
     }
