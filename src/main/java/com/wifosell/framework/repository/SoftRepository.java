@@ -3,7 +3,6 @@ package com.wifosell.framework.repository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
