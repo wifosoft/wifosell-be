@@ -28,7 +28,7 @@ public class SaleChannelController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<SaleChannel>>> getAllSaleChannels(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<SaleChannel> saleChannels = saleChannelService.getAllSaleChannels(isActive);
@@ -40,7 +40,7 @@ public class SaleChannelController {
     public ResponseEntity<GApiResponse<List<SaleChannel>>> getSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<SaleChannel> saleChannels;

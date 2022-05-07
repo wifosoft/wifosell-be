@@ -28,7 +28,7 @@ public class SupplierController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<SupplierResponse>>> getSuppliers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Supplier> suppliers = supplierService.getSuppliers(userPrincipal.getId(), isActive);

@@ -27,7 +27,7 @@ public class OrderController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<OrderResponse>>> getAllOrders(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<OrderModel> orders = orderService.getAllOrders(isActive);
@@ -41,7 +41,7 @@ public class OrderController {
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
             @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<OrderModel> orders = orderService.getOrders(userPrincipal.getId(), isActive);

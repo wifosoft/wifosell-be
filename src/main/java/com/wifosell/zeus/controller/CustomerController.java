@@ -29,7 +29,7 @@ public class CustomerController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<CustomerResponse>>> getAllCustomers(
-            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
             @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -45,7 +45,7 @@ public class CustomerController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<CustomerResponse>>> getCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
             @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,

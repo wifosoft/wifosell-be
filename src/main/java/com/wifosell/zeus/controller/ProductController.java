@@ -31,7 +31,7 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
-            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
             @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
@@ -48,7 +48,7 @@ public class ProductController {
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
 //            @RequestParam(name = "shopId", required = false) Long shopId,
-            @RequestParam(name = "active", required = false) List<Boolean> actives,
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
             @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
             @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,

@@ -27,7 +27,7 @@ public class OptionController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<OptionResponse>>> getAllOrders(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<OptionModel> options = optionService.getAllOptions(isActive);
@@ -39,7 +39,7 @@ public class OptionController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<OptionResponse>>> getOrders(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<OptionModel> options = optionService.getOptions(userPrincipal.getId(), isActive);
