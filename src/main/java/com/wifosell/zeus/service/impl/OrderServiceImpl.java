@@ -15,14 +15,16 @@ import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
-import lombok.NonNull;
+import com.wifosell.zeus.specs.OrderSpecs;
+import com.wifosell.zeus.utils.Preprocessor;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,118 +43,68 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
 
     @Override
-    public List<OrderModel> getAllOrders(
-            Boolean isActive
+    public Page<OrderModel> getOrders(
+            Long userId,
+            List<Long> shopIds,
+            List<Long> saleChannelIds,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit,
+            String sortBy,
+            String orderBy
     ) {
-        if (isActive == null)
-            return orderRepository.findAll();
-        return orderRepository.findAllWithActive(isActive);
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return orderRepository.findAll(
+                OrderSpecs.hasGeneralManager(gmId)
+                        .and(OrderSpecs.inShops(shopIds))
+                        .and(OrderSpecs.inSaleChannels(saleChannelIds))
+                        .and(OrderSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 
     @Override
-    public List<OrderModel> getOrders(
-            @NonNull Long userId,
-            Boolean isActive
-    ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return orderRepository.findAllWithGm(gm.getId());
-        return orderRepository.findAllWithGmAndActive(gm.getId(), isActive);
+    public OrderModel getOrder(Long userId, Long orderId) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return orderRepository.getOne(OrderSpecs.hasGeneralManager(gmId)
+                .and(OrderSpecs.hasId(orderId)));
     }
 
     @Override
-    public List<OrderModel> getOrdersByShopIds(
-            @NonNull Long userId,
-            @NonNull List<Long> shopIds,
-            Boolean isActive
-    ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null) {
-            return shopIds.stream()
-                    .map(shopId -> orderRepository.findAllByShopIdWithGm(gm.getId(), shopId))
-                    .flatMap(Collection::stream)
-                    .distinct().collect(Collectors.toList());
-        }
-        return shopIds.stream()
-                .map(shopId -> orderRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive))
-                .flatMap(Collection::stream)
-                .distinct().collect(Collectors.toList());
-    }
-
-    @Override
-    public List<OrderModel> getOrdersBySaleChannelIds(
-            @NonNull Long userId,
-            @NonNull List<Long> saleChannelIds,
-            Boolean isActive
-    ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null) {
-            return saleChannelIds.stream()
-                    .map(saleChannelId -> orderRepository.findAllBySaleChannelIdWithGm(gm.getId(), saleChannelId))
-                    .flatMap(Collection::stream)
-                    .distinct().collect(Collectors.toList());
-        }
-        return saleChannelIds.stream()
-                .map(saleChannelId -> orderRepository.findAllBySaleChannelIdWithGmAndActive(gm.getId(), saleChannelId, isActive))
-                .flatMap(Collection::stream)
-                .distinct().collect(Collectors.toList());
-    }
-
-    @Override
-    public List<OrderModel> getOrdersByShopIdsAndSaleChannelIds(
-            @NonNull Long userId,
-            @NonNull List<Long> shopIds,
-            @NonNull List<Long> saleChannelIds,
-            Boolean isActive
-    ) {
-        List<OrderModel> orders1 = this.getOrdersByShopIds(userId, shopIds, isActive);
-        List<OrderModel> orders2 = this.getOrdersBySaleChannelIds(userId, shopIds, isActive);
-        return orders1.stream().filter(orders2::contains).collect(Collectors.toList());
-    }
-
-    @Override
-    public OrderModel getOrder(@NonNull Long userId, @NonNull Long orderId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return orderRepository.getByIdWithGm(gm.getId(), orderId);
-    }
-
-    @Override
-    public OrderModel addOrder(@NonNull Long userId, AddOrderRequest request) {
+    public OrderModel addOrder(Long userId, AddOrderRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         OrderModel order = new OrderModel();
         return this.updateOrderByRequest(order, request, gm);
     }
 
     @Override
-    public OrderModel updateOrder(@NonNull Long userId, @NonNull Long orderId, UpdateOrderRequest request) {
+    public OrderModel updateOrder(Long userId, Long orderId, UpdateOrderRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        OrderModel order = orderRepository.getByIdWithGm(gm.getId(), orderId);
+        OrderModel order = getOrder(userId, orderId);
         return this.updateOrderByRequest(order, request, gm);
     }
 
     @Override
-    public OrderModel activateOrder(@NonNull Long userId, @NonNull Long orderId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        OrderModel order = orderRepository.getByIdWithGm(gm.getId(), orderId);
+    public OrderModel activateOrder(Long userId, Long orderId) {
+        OrderModel order = getOrder(userId, orderId);
         order.setIsActive(true);
         return orderRepository.save(order);
     }
 
     @Override
-    public OrderModel deactivateOrder(@NonNull Long userId, @NonNull Long orderId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        OrderModel order = orderRepository.getByIdWithGm(gm.getId(), orderId);
+    public OrderModel deactivateOrder(Long userId, Long orderId) {
+        OrderModel order = getOrder(userId, orderId);
         order.setIsActive(false);
         return orderRepository.save(order);
     }
 
     @Override
-    public List<OrderModel> activateOrders(@NonNull Long userId, @NonNull List<Long> orderIds) {
+    public List<OrderModel> activateOrders(Long userId, List<Long> orderIds) {
         return orderIds.stream().map(id -> this.activateOrder(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderModel> deactivateOrders(@NonNull Long userId, @NonNull List<Long> orderIds) {
+    public List<OrderModel> deactivateOrders(Long userId, List<Long> orderIds) {
         return orderIds.stream().map(id -> this.deactivateOrder(userId, id)).collect(Collectors.toList());
     }
 
