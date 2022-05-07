@@ -39,4 +39,8 @@ public abstract class BasicEntity {
     public void setIsActive(boolean flag){
         this.isActive = flag;
     }
+
+    public boolean getIsActive() {
+        return this.isActive;
+    }
 }

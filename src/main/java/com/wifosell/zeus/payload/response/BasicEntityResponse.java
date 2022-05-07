@@ -18,7 +18,7 @@ public abstract class BasicEntityResponse {
 
     public BasicEntityResponse(BasicEntity entity) {
         this.id = entity.getId();
-        this.isActive = entity.isActive();
+        this.isActive = entity.getIsActive();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
     }
