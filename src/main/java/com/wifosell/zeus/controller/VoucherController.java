@@ -1,8 +1,11 @@
 package com.wifosell.zeus.controller;
 
+import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.voucher.Voucher;
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.voucher.VoucherRequest;
+import com.wifosell.zeus.payload.response.customer.CustomerResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.VoucherService;
@@ -12,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/vouchers")
@@ -82,7 +86,27 @@ public class VoucherController {
     @GetMapping("/{voucherId}/deactivate")
     public ResponseEntity<GApiResponse<Voucher>> deactivateVoucher(@CurrentUser UserPrincipal userPrincipal,
                                                                    @PathVariable(name = "voucherId") Long voucherId) {
-        Voucher voucher = voucherService.deactivateSaleChannel(voucherId);
+        Voucher voucher = voucherService.deactivateVoucher(voucherId);
         return ResponseEntity.ok(GApiResponse.success(voucher));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/activate")
+    public ResponseEntity<GApiResponse<List<Voucher>>> activateVouchers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ListIdRequest request
+    ) {
+        List<Voucher> vouchers = voucherService.activateVouchers(userPrincipal.getId(), request.getIds());
+        return ResponseEntity.ok(GApiResponse.success(vouchers));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/deactivate")
+    public ResponseEntity<GApiResponse<List<Voucher>>> deactivateCustomers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody ListIdRequest request
+    ) {
+        List<Voucher> customers = voucherService.deactivateVouchers(userPrincipal.getId(), request.getIds());
+        return ResponseEntity.ok(GApiResponse.success(customers));
     }
 }
