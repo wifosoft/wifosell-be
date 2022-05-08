@@ -61,10 +61,6 @@ public class Product extends BasicEntity {
     private List<Variant> variants = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductShopRelation> productShopRelations = new ArrayList<>();
-
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
 }
