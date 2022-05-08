@@ -8,7 +8,6 @@ import com.wifosell.zeus.payload.response.customer.CustomerResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
-import com.wifosell.zeus.utils.Preprocessor;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +27,13 @@ public class CustomerController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<CustomerResponse>>> getAllCustomers(
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
-            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        Page<Customer> customers = customerService.getAllCustomers(isActive, offset, limit, sortBy, orderBy);
+        Page<Customer> customers = customerService.getCustomers(null, isActives, offset, limit, sortBy, orderBy);
         Page<CustomerResponse> responses = customers.map(CustomerResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
@@ -44,14 +42,14 @@ public class CustomerController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<CustomerResponse>>> getCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
-            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        Page<Customer> customers = customerService.getCustomers(userPrincipal.getId(), isActive, offset, limit, sortBy, orderBy);
+
+        Page<Customer> customers = customerService.getCustomers(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
         Page<CustomerResponse> responses = customers.map(CustomerResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }

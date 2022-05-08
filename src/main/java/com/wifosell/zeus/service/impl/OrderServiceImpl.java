@@ -15,6 +15,7 @@ import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
+import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.OrderSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
@@ -65,8 +66,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderModel getOrder(Long userId, Long orderId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
-        return orderRepository.getOne(OrderSpecs.hasGeneralManager(gmId)
-                .and(OrderSpecs.hasId(orderId)));
+        return orderRepository.getOne(OrderSpecs.hasGeneralManager(gmId).and(OrderSpecs.hasId(orderId)));
     }
 
     @Override
@@ -148,7 +148,8 @@ public class OrderServiceImpl implements OrderService {
 
         // Customer
         Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
-            Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+            Customer customer = customerRepository.getOne(
+                    CustomerSpecs.hasGeneralManager(gm.getId()).and(CustomerSpecs.hasId(customerId)));
             order.setCustomer(customer);
         });
 

@@ -9,7 +9,7 @@ public class ZeusUtils {
         if (offset == null) offset = 0;
         if (limit == null) limit = 10;
         if (orderBy == null) orderBy = Sort.Direction.ASC.name();
-        Sort sort = sortBy == null || sortBy.equals("") ? Sort.unsorted() : Sort.by(Sort.Direction.fromString(orderBy), sortBy);
+        Sort sort = sortBy == null ? Sort.unsorted() : Sort.by(Sort.Direction.fromString(orderBy), sortBy);
         return PageRequest.of(offset, limit, sort);
     }
 }
