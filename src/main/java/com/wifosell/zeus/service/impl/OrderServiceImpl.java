@@ -17,6 +17,7 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.OrderSpecs;
+import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -141,7 +142,10 @@ public class OrderServiceImpl implements OrderService {
                     Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
                     order.setShop(shop);
 
-                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+                    SaleChannel saleChannel = saleChannelRepository.getOne(
+                            SaleChannelSpecs.hasGeneralManager(gm.getId())
+                                    .and(SaleChannelSpecs.hasId(saleChannelId))
+                    );
                     order.setSaleChannel(saleChannel);
                 } else {
                     throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));

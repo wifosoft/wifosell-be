@@ -10,6 +10,7 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ShopService;
+import com.wifosell.zeus.specs.SaleChannelSpecs;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -228,7 +229,10 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId) {
         User gm = userRepository.getUserById(currentUserId).getGeneralManager();
-        SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+        SaleChannel saleChannel = saleChannelRepository.getOne(
+                SaleChannelSpecs.hasGeneralManager(gm.getId())
+                        .and(SaleChannelSpecs.hasId(saleChannelId))
+        );
         Shop shop = shopRepository.getById(shopId);
 
         if (!saleChannel.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
@@ -309,7 +313,10 @@ public class ShopServiceImpl implements ShopService {
             // Add new relations
             requestSaleChannelIds.forEach(requestSaleChannelId -> {
                 if (!curSaleChannelIds.contains(requestSaleChannelId)) {
-                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), requestSaleChannelId);
+                    SaleChannel saleChannel = saleChannelRepository.getOne(
+                            SaleChannelSpecs.hasGeneralManager(gm.getId())
+                                    .and(SaleChannelSpecs.hasId(requestSaleChannelId))
+                    );
                     SaleChannelShopRelation relation = SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build();
                     saleChannelShopRelationRepository.save(relation);
                     shop.getSaleChannelShopRelations().add(relation);
