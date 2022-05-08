@@ -73,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     ) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return productRepository.getOne(
-                ProductSpecs.hasId(gmId)
+                ProductSpecs.hasGeneralManager(gmId)
                         .and(ProductSpecs.hasId(productId))
         );
     }

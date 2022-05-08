@@ -66,7 +66,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderModel getOrder(Long userId, Long orderId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
-        return orderRepository.getOne(OrderSpecs.hasGeneralManager(gmId).and(OrderSpecs.hasId(orderId)));
+        return orderRepository.getOne(
+                OrderSpecs.hasGeneralManager(gmId).
+                        and(OrderSpecs.hasId(orderId))
+        );
     }
 
     @Override
@@ -149,7 +152,9 @@ public class OrderServiceImpl implements OrderService {
         // Customer
         Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
             Customer customer = customerRepository.getOne(
-                    CustomerSpecs.hasGeneralManager(gm.getId()).and(CustomerSpecs.hasId(customerId)));
+                    CustomerSpecs.hasGeneralManager(gm.getId())
+                            .and(CustomerSpecs.hasId(customerId))
+            );
             order.setCustomer(customer);
         });
 
