@@ -14,6 +14,9 @@ import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
+import com.wifosell.zeus.specs.CustomerSpecs;
+import com.wifosell.zeus.specs.ProductSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,40 +50,39 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public Page<Product> getAllProducts(Boolean isActive, int offset, int limit, String sortBy, String orderBy) {
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.fromString(orderBy), sortBy));
-        if (isActive == null)
-            return productRepository.findAll(pageable);
-        return productRepository.findAndPaginateAllWithActive(isActive, pageable);
+    public Page<Product> getProducts(
+            Long userId,
+            List<Boolean> isActives,
+            int offset,
+            int limit,
+            String sortBy,
+            String orderBy
+    ) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return productRepository.findAll(
+                ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 
     @Override
-    public Page<Product> getProducts(@NonNull Long userId, Boolean isActive, int offset, int limit, String sortBy, String orderBy) {
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by(Sort.Direction.fromString(orderBy), sortBy));
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return productRepository.findAndPaginateAllWithGm(gm.getId(), pageable);
-        return productRepository.findAndPaginateAllWithGmAndActive(gm.getId(), isActive, pageable);
-    }
-
-//    @Override
-//    public List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive) {
-//        User gm = userRepository.getUserById(userId).getGeneralManager();
-//        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
-//        Stream<Product> productStream = shop.getProductShopRelations().stream().map(ProductShopRelation::getProduct);
-//        if (isActive != null)
-//            productStream = productStream.filter(product -> product.isActive() == isActive);
-//        return productStream.collect(Collectors.toList());
-//    }
-
-    @Override
-    public Product getProduct(@NonNull Long userId, @NonNull Long productId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return productRepository.getByIdWithGm(gm.getId(), productId);
+    public Product getProduct(
+            Long userId,
+            @NonNull Long productId
+    ) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return productRepository.getOne(
+                ProductSpecs.hasId(gmId)
+                        .and(ProductSpecs.hasId(productId))
+        );
     }
 
     @Override
-    public Product addProduct(@NonNull Long userId, @Valid AddProductRequest request) {
+    public Product addProduct(
+            @NonNull Long userId,
+            @Valid AddProductRequest request
+    ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Product product = new Product();
         return this.updateProductByRequest(product, request, gm);
@@ -89,33 +91,31 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+        Product product = getProduct(userId, productId);
         return this.updateProductByRequest(product, request, gm);
     }
 
     @Override
-    public Product activateProduct(@NonNull Long userId, @NonNull Long productId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+    public Product activateProduct(Long userId, @NonNull Long productId) {
+        Product product = getProduct(userId, productId);
         product.setIsActive(true);
         return productRepository.save(product);
     }
 
     @Override
-    public Product deactivateProduct(@NonNull Long userId, @NonNull Long productId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+    public Product deactivateProduct(Long userId, @NonNull Long productId) {
+        Product product = getProduct(userId, productId);
         product.setIsActive(false);
         return productRepository.save(product);
     }
 
     @Override
-    public List<Product> activateProducts(@NonNull Long userId, @NonNull List<Long> productIds) {
+    public List<Product> activateProducts(Long userId, @NonNull List<Long> productIds) {
         return productIds.stream().map(id -> this.activateProduct(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Product> deactivateProducts(@NonNull Long userId, @NonNull List<Long> productIds) {
+    public List<Product> deactivateProducts(Long userId, @NonNull List<Long> productIds) {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 

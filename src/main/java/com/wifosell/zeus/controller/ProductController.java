@@ -31,15 +31,14 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
-            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        Page<ProductResponse> responses = productService.getAllProducts(isActive, offset, limit, sortBy, orderBy)
-                .map(ProductResponse::new);
+        Page<Product> products = productService.getProducts(null, isActives, offset, limit, sortBy, orderBy);
+        Page<ProductResponse> responses = products.map(ProductResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -47,15 +46,13 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
-//            @RequestParam(name = "shopId", required = false) Long shopId,
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives,
-            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "20") int limit,
-            @RequestParam(name = "sortBy", required = false, defaultValue = "id") String sortBy,
-            @RequestParam(name = "orderBy", required = false, defaultValue = "asc") String orderBy
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        Page<Product> products = productService.getProducts(userPrincipal.getId(), isActive, offset, limit, sortBy, orderBy);
+        Page<Product> products = productService.getProducts(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
         Page<ProductResponse> responses = products.map(ProductResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
