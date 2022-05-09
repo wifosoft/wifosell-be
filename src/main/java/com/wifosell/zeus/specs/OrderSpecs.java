@@ -22,7 +22,7 @@ public class OrderSpecs {
         return (root, query, criteriaBuilder) -> {
             if (generalManagerId == null)
                 return criteriaBuilder.and();
-            return root.get(OrderModel_.GENERAL_MANAGER).get(User_.ID).in(generalManagerId);
+            return criteriaBuilder.equal(root.get(OrderModel_.GENERAL_MANAGER).get(User_.ID), generalManagerId);
         };
     }
 

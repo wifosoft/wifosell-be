@@ -1,5 +1,6 @@
 package com.wifosell.zeus.specs;
 
+import com.wifosell.zeus.model.order.OrderModel_;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.sale_channel.SaleChannel_;
 import com.wifosell.zeus.model.user.User_;
@@ -20,7 +21,7 @@ public class SaleChannelSpecs {
         return (root, query, criteriaBuilder) -> {
             if (generalManagerId == null)
                 return criteriaBuilder.and();
-            return root.get(SaleChannel_.GENERAL_MANAGER).get(User_.ID).in(generalManagerId);
+            return criteriaBuilder.equal(root.get(SaleChannel_.GENERAL_MANAGER).get(User_.ID), generalManagerId);
         };
     }
 
