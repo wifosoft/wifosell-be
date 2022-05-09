@@ -55,7 +55,11 @@ public enum EAppExceptionCode {
     //endregion
 
     //region Customer
-    CUSTOMER_NOT_FOUND(1100001);
+    CUSTOMER_NOT_FOUND(1100001),
+    //endregion
+
+    //region Supplier
+    SUPPLIER_NOT_FOUND(1200001);
     //endregion
 
     private final int value;

@@ -9,8 +9,8 @@ import com.wifosell.zeus.payload.response.order.OrderResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.OrderService;
-import com.wifosell.zeus.utils.Preprocessor;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,36 +26,36 @@ public class OrderController {
 
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<OrderResponse>>> getAllOrders(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+    public ResponseEntity<GApiResponse<Page<OrderResponse>>> getAllOrders(
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<OrderModel> orders = orderService.getAllOrders(isActive);
-        List<OrderResponse> responses = orders.stream().map(OrderResponse::new).collect(Collectors.toList());
+        Page<OrderModel> orders = orderService.getOrders(
+                null, shopIds, saleChannelIds, isActives, offset, limit, sortBy, orderBy);
+        Page<OrderResponse> responses = orders.map(OrderResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<OrderResponse>>> getOrders(
+    public ResponseEntity<GApiResponse<Page<OrderResponse>>> getOrders(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
             @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<OrderModel> orders = orderService.getOrders(userPrincipal.getId(), isActive);
-        if (shopIds != null) {
-            orders = orders.stream()
-                    .filter(order -> shopIds.contains(order.getShop().getId()))
-                    .collect(Collectors.toList());
-        }
-        if (saleChannelIds != null) {
-            orders = orders.stream()
-                    .filter(order -> saleChannelIds.contains(order.getSaleChannel().getId()))
-                    .collect(Collectors.toList());
-        }
-        List<OrderResponse> responses = orders.stream().map(OrderResponse::new).collect(Collectors.toList());
+        Page<OrderModel> orders = orderService.getOrders(
+                userPrincipal.getId(), shopIds, saleChannelIds, isActives, offset, limit, sortBy, orderBy);
+        Page<OrderResponse> responses = orders.map(OrderResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

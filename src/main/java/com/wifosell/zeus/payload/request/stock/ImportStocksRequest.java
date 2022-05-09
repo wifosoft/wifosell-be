@@ -1,23 +1,31 @@
 package com.wifosell.zeus.payload.request.stock;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
 @Setter
 public class ImportStocksRequest {
-    @NotEmpty
-    List<StockRequest> stocks;
+    @NotNull
+    Long warehouseId;
 
-    SupplierRequest supplier;
+    @NonNull
+    Long supplierId;
+
+    @NotEmpty
+    List<Item> items;
 
     @Getter
     @Setter
-    public static class StockRequest {
+    public static class Item {
         @NotNull
         Long variantId;
 
@@ -26,28 +34,5 @@ public class ImportStocksRequest {
 
         @NotBlank
         BigDecimal unitCost;
-    }
-
-    @Getter
-    @Setter
-    public static class SupplierRequest {
-        @NotBlank
-        String name;
-
-        @NotBlank
-        String phone;
-
-        @Email
-        String email;
-
-        String nation;
-
-        String city;
-
-        String district;
-
-        String ward;
-
-        String addressDetail;
     }
 }

@@ -1,12 +1,9 @@
 package com.wifosell.zeus.service;
 
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.warehouse.Warehouse;
-import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import lombok.NonNull;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -28,8 +25,4 @@ public interface WarehouseService {
     List<Warehouse> activateWarehouses(@NonNull Long userId, @NonNull List<Long> warehouseIds);
 
     List<Warehouse> deactivateWarehouses(@NonNull Long userId, @NonNull List<Long> warehouseIds);
-
-    Boolean importStocks(@NonNull Long userId, @NonNull Long warehouseId, @Valid ImportStocksRequest request);
-
-    List<Product> getStocks(@NonNull Long userId, @NonNull Long warehouseId);
 }

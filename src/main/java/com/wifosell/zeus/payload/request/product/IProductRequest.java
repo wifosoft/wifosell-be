@@ -33,7 +33,7 @@ public interface IProductRequest {
 
     List<VariantRequest> getVariants();
 
-    Boolean getActive();
+    Boolean getIsActive();
 
     @Getter
     @Setter

@@ -29,10 +29,10 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getAllRootCategories(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Category> categories = categoryService.getAllRootCategories(isActive);
@@ -46,7 +46,7 @@ public class CategoryController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getRootCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Category> categories = categoryService.getRootCategories(userPrincipal.getId(), isActive);

@@ -6,12 +6,14 @@ import com.wifosell.zeus.payload.request.voucher.VoucherRequest;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.VoucherRepository;
 import com.wifosell.zeus.service.VoucherService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("Voucher")
@@ -70,16 +72,26 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Voucher deactivateSaleChannel(Long voucherId) {
+    public Voucher deactivateVoucher(Long voucherId) {
         Voucher voucher = voucherRepository.findVoucherById(voucherId);
         voucher.setIsActive(false);
         return voucherRepository.save(voucher);
+    }
+
+    @Override
+    public List<Voucher> activateVouchers(@NonNull Long userId, @NonNull List<Long> voucherIds) {
+        return voucherIds.stream().map(this::activateVoucher).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Voucher> deactivateVouchers(@NonNull Long userId, @NonNull List<Long> voucherIds) {
+        return voucherIds.stream().map(this::deactivateVoucher).collect(Collectors.toList());
     }
 
     private void updateVoucherByRequest(Voucher voucher, VoucherRequest voucherRequest) {
         //Optional.ofNullable(voucherRequest.getName()).ifPresent(voucher::setName);
         //Optional.ofNullable(voucherRequest.getShortName()).ifPresent(voucher::setShortName);
         Optional.ofNullable(voucherRequest.getDescription()).ifPresent(voucher::setDescription);
-        Optional.ofNullable(voucherRequest.getActive()).ifPresent(voucher::setIsActive);
+        Optional.ofNullable(voucherRequest.getIsActive()).ifPresent(voucher::setIsActive);
     }
 }

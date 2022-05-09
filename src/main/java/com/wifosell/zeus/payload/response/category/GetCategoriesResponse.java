@@ -19,7 +19,7 @@ public class GetCategoriesResponse extends CategoryResponse {
                     .collect(Collectors.toList());
         } else {
             this.children = category.getChildren().stream()
-                    .filter(c -> c.isActive() == isActive)
+                    .filter(c -> c.getIsActive() == isActive)
                     .map(c -> new GetCategoriesResponse(c, isActive))
                     .collect(Collectors.toList());
         }

@@ -101,7 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
             );
             category.setParent(parentCategory);
         });
-        Optional.ofNullable(categoryRequest.getActive()).ifPresent(category::setIsActive);
+        Optional.ofNullable(categoryRequest.getIsActive()).ifPresent(category::setIsActive);
         category.setGeneralManager(gm);
         return categoryRepository.save(category);
     }

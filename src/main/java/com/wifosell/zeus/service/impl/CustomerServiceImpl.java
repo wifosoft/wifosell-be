@@ -6,8 +6,11 @@ import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CustomerService;
+import com.wifosell.zeus.specs.CustomerSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,69 +27,70 @@ public class CustomerServiceImpl implements CustomerService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Customer> getAllCustomers(
-            Boolean isActive
+    public Page<Customer> getCustomers(
+            Long userId,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit,
+            String sortBy,
+            String orderBy
     ) {
-        if (isActive == null)
-            return customerRepository.findAll();
-        return customerRepository.findAllWithActive(isActive);
-    }
-
-    @Override
-    public List<Customer> getCustomers(
-            @NonNull Long userId,
-            Boolean isActive
-    ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return customerRepository.findAllWithGm(gm.getId());
-        return customerRepository.findAllWithGmAndActive(gm.getId(), isActive);
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return customerRepository.findAll(
+                CustomerSpecs.hasGeneralManager(gmId)
+                        .and(CustomerSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 
     @Override
     public Customer getCustomer(
-            @NonNull Long userId,
+            Long userId,
             @NonNull Long customerId
     ) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return customerRepository.getByIdWithGm(gm.getId(), customerId);
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return customerRepository.getOne(
+                CustomerSpecs.hasGeneralManager(gmId)
+                        .and(CustomerSpecs.hasId(customerId))
+        );
     }
 
     @Override
-    public Customer addCustomer(@NonNull Long userId, @Valid CustomerRequest request) {
+    public Customer addCustomer(
+            Long userId,
+            @Valid CustomerRequest request
+    ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Customer customer = new Customer();
         return this.updateCustomerByRequest(customer, request, gm);
     }
 
     @Override
-    public Customer updateCustomer(@NonNull Long userId, @NonNull Long customerId, @Valid CustomerRequest request) {
+    public Customer updateCustomer(Long userId, @NonNull Long customerId, @Valid CustomerRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+        Customer customer = getCustomer(userId, customerId);
         return this.updateCustomerByRequest(customer, request, gm);
     }
 
     @Override
-    public Customer activateCustomer(@NonNull Long userId, @NonNull Long customerId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+    public Customer activateCustomer(Long userId, @NonNull Long customerId) {
+        Customer customer = getCustomer(userId, customerId);
         customer.setIsActive(true);
         return customerRepository.save(customer);
     }
 
     @Override
-    public Customer deactivateCustomer(@NonNull Long userId, @NonNull Long customerId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+    public Customer deactivateCustomer(Long userId, @NonNull Long customerId) {
+        Customer customer = getCustomer(userId, customerId);
         customer.setIsActive(false);
         return customerRepository.save(customer);
     }
 
-    public List<Customer> activateCustomers(@NonNull Long userId, @NonNull List<Long> customerIds) {
+    public List<Customer> activateCustomers(Long userId, @NonNull List<Long> customerIds) {
         return customerIds.stream().map(id -> this.activateCustomer(userId, id)).collect(Collectors.toList());
     }
 
-    public List<Customer> deactivateCustomers(@NonNull Long userId, @NonNull List<Long> customerIds) {
+    public List<Customer> deactivateCustomers(Long userId, @NonNull List<Long> customerIds) {
         return customerIds.stream().map(id -> this.deactivateCustomer(userId, id)).collect(Collectors.toList());
     }
 
@@ -102,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional.ofNullable(request.getDistrict()).ifPresent(customer::setDistrict);
         Optional.ofNullable(request.getWard()).ifPresent(customer::setWard);
         Optional.ofNullable(request.getAddressDetail()).ifPresent(customer::setAddressDetail);
-        Optional.ofNullable(request.getActive()).ifPresent(customer::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(customer::setIsActive);
         customer.setGeneralManager(gm);
         return customerRepository.save(customer);
     }

@@ -16,5 +16,5 @@ public class UpdateOrderRequest implements IOrderRequest {
 
     private Long customerId;
 
-    private Boolean active;
+    private Boolean isActive;
 }

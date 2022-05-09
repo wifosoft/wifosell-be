@@ -30,5 +30,5 @@ public class UpdateProductRequest implements IProductRequest {
 
     private List<VariantRequest> variants;
 
-    private Boolean active;
+    private Boolean isActive;
 }

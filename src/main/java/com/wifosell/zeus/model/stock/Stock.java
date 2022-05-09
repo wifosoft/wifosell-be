@@ -1,7 +1,8 @@
-package com.wifosell.zeus.model.warehouse;
+package com.wifosell.zeus.model.stock;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
 import javax.persistence.*;

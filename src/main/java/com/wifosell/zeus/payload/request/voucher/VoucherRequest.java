@@ -31,5 +31,5 @@ public class VoucherRequest {
     @Size(max = 255)
     private String description;
 
-    private Boolean active;
+    private Boolean isActive;
 }

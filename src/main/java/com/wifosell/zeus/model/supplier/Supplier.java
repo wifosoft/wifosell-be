@@ -1,4 +1,4 @@
-package com.wifosell.zeus.model.warehouse;
+package com.wifosell.zeus.model.supplier;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.audit.BasicEntity;

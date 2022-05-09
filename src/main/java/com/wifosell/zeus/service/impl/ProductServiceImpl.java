@@ -8,16 +8,21 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
-import com.wifosell.zeus.model.shop.ProductShopRelation;
-import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
+import com.wifosell.zeus.specs.CustomerSpecs;
+import com.wifosell.zeus.specs.ProductSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,7 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Transactional
 @Service("Product")
@@ -46,38 +50,39 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public List<Product> getAllProducts(Boolean isActive) {
-        if (isActive == null)
-            return productRepository.findAll();
-        return productRepository.findAllWithActive(isActive);
+    public Page<Product> getProducts(
+            Long userId,
+            List<Boolean> isActives,
+            int offset,
+            int limit,
+            String sortBy,
+            String orderBy
+    ) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return productRepository.findAll(
+                ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 
     @Override
-    public List<Product> getProducts(@NonNull Long userId, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return productRepository.findAllWithGm(gm.getId());
-        return productRepository.findAllWithGmAndActive(gm.getId(), isActive);
+    public Product getProduct(
+            Long userId,
+            @NonNull Long productId
+    ) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return productRepository.getOne(
+                ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.hasId(productId))
+        );
     }
 
     @Override
-    public List<Product> getProductsByShopId(@NonNull Long userId, @NonNull Long shopId, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
-        Stream<Product> productStream = shop.getProductShopRelations().stream().map(ProductShopRelation::getProduct);
-        if (isActive != null)
-            productStream = productStream.filter(product -> product.isActive() == isActive);
-        return productStream.collect(Collectors.toList());
-    }
-
-    @Override
-    public Product getProduct(@NonNull Long userId, @NonNull Long productId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return productRepository.getByIdWithGm(gm.getId(), productId);
-    }
-
-    @Override
-    public Product addProduct(@NonNull Long userId, @Valid AddProductRequest request) {
+    public Product addProduct(
+            @NonNull Long userId,
+            @Valid AddProductRequest request
+    ) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Product product = new Product();
         return this.updateProductByRequest(product, request, gm);
@@ -86,33 +91,31 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+        Product product = getProduct(userId, productId);
         return this.updateProductByRequest(product, request, gm);
     }
 
     @Override
-    public Product activateProduct(@NonNull Long userId, @NonNull Long productId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+    public Product activateProduct(Long userId, @NonNull Long productId) {
+        Product product = getProduct(userId, productId);
         product.setIsActive(true);
         return productRepository.save(product);
     }
 
     @Override
-    public Product deactivateProduct(@NonNull Long userId, @NonNull Long productId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = productRepository.getByIdWithGm(gm.getId(), productId);
+    public Product deactivateProduct(Long userId, @NonNull Long productId) {
+        Product product = getProduct(userId, productId);
         product.setIsActive(false);
         return productRepository.save(product);
     }
 
     @Override
-    public List<Product> activateProducts(@NonNull Long userId, @NonNull List<Long> productIds) {
+    public List<Product> activateProducts(Long userId, @NonNull List<Long> productIds) {
         return productIds.stream().map(id -> this.activateProduct(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Product> deactivateProducts(@NonNull Long userId, @NonNull List<Long> productIds) {
+    public List<Product> deactivateProducts(Long userId, @NonNull List<Long> productIds) {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 
@@ -205,7 +208,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
         });
 
-        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
 
         return productRepository.save(product);

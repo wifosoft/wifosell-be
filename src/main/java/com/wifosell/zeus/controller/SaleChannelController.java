@@ -9,6 +9,7 @@ import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.SaleChannelService;
 import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,28 +28,33 @@ public class SaleChannelController {
 
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<SaleChannel>>> getAllSaleChannels(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+    public ResponseEntity<GApiResponse<Page<SaleChannel>>> getAllSaleChannels(
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<SaleChannel> saleChannels = saleChannelService.getAllSaleChannels(isActive);
+        Page<SaleChannel> saleChannels = saleChannelService.getSaleChannels(
+                null, shopIds, isActives, offset, limit, sortBy, orderBy);
         return ResponseEntity.ok(GApiResponse.success(saleChannels));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<SaleChannel>>> getSaleChannels(
+    public ResponseEntity<GApiResponse<Page<SaleChannel>>> getSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<SaleChannel> saleChannels;
-        if (shopIds == null) {
-            saleChannels = saleChannelService.getSaleChannelsByUserId(userPrincipal.getId(), isActive);
-        } else {
-            saleChannels = saleChannelService.getSaleChannelsByShopIds(userPrincipal.getId(), shopIds, isActive);
-        }
+        Page<SaleChannel> saleChannels = saleChannelService.getSaleChannels(
+                userPrincipal.getId(), shopIds, isActives, offset, limit, sortBy, orderBy
+        );
         return ResponseEntity.ok(GApiResponse.success(saleChannels));
     }
 

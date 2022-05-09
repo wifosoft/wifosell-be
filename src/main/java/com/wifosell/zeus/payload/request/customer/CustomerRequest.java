@@ -39,5 +39,5 @@ public class CustomerRequest {
 
     private String addressDetail;
 
-    private Boolean active;
+    private Boolean isActive;
 }
