@@ -6,7 +6,6 @@ import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
-import com.wifosell.zeus.model.shop.ProductShopRelation;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
@@ -44,19 +43,25 @@ public class Product extends BasicEntity {
     @Size(max = 50)
     private String dimension;
 
+    @Builder.Default
     private Integer state = 0;
 
+    @Builder.Default
     private Integer status = 0;
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Attribute> attributes = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OptionModel> options = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Variant> variants = new ArrayList<>();
 
