@@ -13,7 +13,7 @@ public class DatabaseSeeder extends Seeder {
         super(entityManager);
     }
 
-    public void prepare(){
+    public void prepare() {
         seederTask.clear();
         seederTask.add(RoleSeeder.class);
         seederTask.add(UserSeeder.class);
@@ -24,8 +24,9 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(ProductSeeder.class);
         seederTask.add(VoucherSeeder.class);
         seederTask.add(CustomerSeeder.class);
-        //seederTask.add(OrderSeeder.class);
+//        seederTask.add(OrderSeeder.class);    // TODO haukc: link shop to sales channel
     }
+
     public void run() {
         this.call(seederTask);
     }

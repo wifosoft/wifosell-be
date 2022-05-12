@@ -2,7 +2,6 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.customer.Customer_;
-import com.wifosell.zeus.model.order.OrderModel_;
 import com.wifosell.zeus.model.user.User_;
 import org.springframework.data.jpa.domain.Specification;
 

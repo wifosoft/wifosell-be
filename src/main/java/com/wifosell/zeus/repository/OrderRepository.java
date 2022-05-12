@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
 
 @Repository
 public interface OrderRepository extends SoftRepository<OrderModel, Long> {
@@ -21,6 +19,6 @@ public interface OrderRepository extends SoftRepository<OrderModel, Long> {
     Long countAllByCreatedAtBetween(Instant dateForm, Instant dateTo);
 
     @Transactional
-    Long countAllByShopIdAndCreatedAtBetween (Long shopId, Instant dateForm, Instant dateTo);
+    Long countAllByShopIdAndCreatedAtBetween(Long shopId, Instant dateForm, Instant dateTo);
 
 }

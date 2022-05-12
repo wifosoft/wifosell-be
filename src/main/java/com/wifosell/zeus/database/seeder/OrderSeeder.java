@@ -16,6 +16,8 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.specs.CustomerSpecs;
+import com.wifosell.zeus.specs.SaleChannelSpecs;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +49,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     }
 
     @Override
-    public void run(){
+    public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
         ObjectMapper mapper = new ObjectMapper();
         File file = new File("src/main/java/com/wifosell/zeus/database/data/order.json");
@@ -62,10 +64,10 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         }
     }
 
-    private void updateOrderByRequest(IOrderRequest request, User gm){
-
+    private void updateOrderByRequest(IOrderRequest request, User gm) {
         OrderModel order = new OrderModel();
 
+        // Order items
         Optional.ofNullable(request.getOrderItems()).ifPresent(orderItemRequests -> {
             orderItemRepository.deleteAllByOrderId(order.getId());
             order.getOrderItems().clear();
@@ -95,7 +97,10 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
                     Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
                     order.setShop(shop);
 
-                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+                    SaleChannel saleChannel = saleChannelRepository.getOne(
+                            SaleChannelSpecs.hasGeneralManager(gm.getId())
+                                    .and(SaleChannelSpecs.hasId(saleChannelId))
+                    );
                     order.setSaleChannel(saleChannel);
                 } else {
                     throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));
@@ -105,12 +110,15 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
 
         // Customer
         Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
-            Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+            Customer customer = customerRepository.getOne(
+                    CustomerSpecs.hasGeneralManager(gm.getId())
+                            .and(CustomerSpecs.hasId(customerId))
+            );
             order.setCustomer(customer);
         });
 
         // Active
-        Optional.ofNullable(request.getActive()).ifPresent(order::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
         // General manager
         order.setGeneralManager(gm);
