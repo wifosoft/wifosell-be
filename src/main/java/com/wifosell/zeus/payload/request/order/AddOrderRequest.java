@@ -22,5 +22,5 @@ public class AddOrderRequest implements IOrderRequest {
     @NonNull
     private Long customerId;
 
-    private Boolean active;
+    private Boolean isActive;
 }

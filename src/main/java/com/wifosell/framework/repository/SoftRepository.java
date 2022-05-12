@@ -8,21 +8,32 @@ import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.lang.Nullable;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface SoftRepository<T extends BasicEntity, ID extends Long> extends JpaRepository<T, ID> {
+public interface SoftRepository<T extends BasicEntity, ID extends Long> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
     default EAppExceptionCode getExceptionCodeEntityNotFound() {
         return EAppExceptionCode.ENTITY_NOT_FOUND;
     }
-    
+
+    @Transactional
+    default T getOne(@Nullable Specification<T> spec) {
+        Optional<T> optional = findOne(spec);
+        return optional.orElseThrow(
+                () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
+        );
+    }
+
     @Transactional
     @Query("select e from #{#entityName} e where e.isActive = ?1")
     List<T> findAllWithActive(boolean isActive);

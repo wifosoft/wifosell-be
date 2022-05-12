@@ -3,33 +3,26 @@ package com.wifosell.zeus.service;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
-import lombok.NonNull;
+import org.springframework.data.domain.Page;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface OrderService {
-    List<OrderModel> getAllOrders(Boolean isActive);
+    Page<OrderModel> getOrders(Long userId, List<Long> shopIds, List<Long> saleChannelIds, List<Boolean> isActives,
+                               Integer offset, Integer limit, String sortBy, String orderBy);
 
-    List<OrderModel> getOrders(@NonNull Long userId, Boolean isActive);
+    OrderModel getOrder(Long userId, Long orderId);
 
-    List<OrderModel> getOrdersByShopIds(@NonNull Long userId, @NonNull List<Long> shopIds, Boolean isActive);
+    OrderModel addOrder(Long userId, @Valid AddOrderRequest request);
 
-    List<OrderModel> getOrdersBySaleChannelIds(@NonNull Long userId, @NonNull List<Long> saleChannelIds, Boolean isActive);
+    OrderModel updateOrder(Long userId, Long orderId, @Valid UpdateOrderRequest request);
 
-    List<OrderModel> getOrdersByShopIdsAndSaleChannelIds(@NonNull Long userId, @NonNull List<Long> shopIds, @NonNull List<Long> saleChannelIds, Boolean isActive);
+    OrderModel activateOrder(Long userId, Long orderId);
 
-    OrderModel getOrder(@NonNull Long userId, @NonNull Long orderId);
+    OrderModel deactivateOrder(Long userId, Long orderId);
 
-    OrderModel addOrder(@NonNull Long userId, @Valid AddOrderRequest request);
+    List<OrderModel> activateOrders(Long userId, List<Long> orderIds);
 
-    OrderModel updateOrder(@NonNull Long userId, @NonNull Long orderId, @Valid UpdateOrderRequest request);
-
-    OrderModel activateOrder(@NonNull Long userId, @NonNull Long orderId);
-
-    OrderModel deactivateOrder(@NonNull Long userId, @NonNull Long orderId);
-
-    List<OrderModel> activateOrders(@NonNull Long userId, @NonNull List<Long> orderIds);
-
-    List<OrderModel> deactivateOrders(@NonNull Long userId, @NonNull List<Long> orderIds);
+    List<OrderModel> deactivateOrders(Long userId, List<Long> orderIds);
 }

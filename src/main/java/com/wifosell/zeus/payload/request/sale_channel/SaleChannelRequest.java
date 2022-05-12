@@ -18,5 +18,5 @@ public class SaleChannelRequest {
 
     private String description;
 
-    private Boolean active;
+    private Boolean isActive;
 }

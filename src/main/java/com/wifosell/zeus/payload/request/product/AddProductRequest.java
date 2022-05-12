@@ -44,5 +44,5 @@ public class AddProductRequest implements IProductRequest {
     @NonNull
     private List<VariantRequest> variants;
 
-    private Boolean active;
+    private Boolean isActive;
 }

@@ -156,7 +156,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
             productRepository.save(product);
         });
 
-        Optional.ofNullable(request.getActive()).ifPresent(product::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(product::setIsActive);
         product.setGeneralManager(gm);
 
         productRepository.save(product);
@@ -172,7 +172,6 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
         if (i == options.size()) {
             IProductRequest.VariantRequest variantRequest = variantRequests.get(j);
             Variant variant = Variant.builder()
-                    .stock(variantRequest.getStock())
                     .cost(new BigDecimal(variantRequest.getCost()))
                     .sku(variantRequest.getSku())
                     .barcode(variantRequest.getBarcode())

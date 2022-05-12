@@ -7,7 +7,7 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.WarehouseRepository;
 import com.wifosell.zeus.service.WarehouseService;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,18 +18,10 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service("WarehouseService")
+@RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public WarehouseServiceImpl(
-            WarehouseRepository warehouseRepository,
-            UserRepository userRepository
-    ) {
-        this.warehouseRepository = warehouseRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public List<Warehouse> getAllWarehouses(Boolean isActive) {
@@ -99,7 +91,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Optional.ofNullable(request.getAddress()).ifPresent(warehouse::setAddress);
         Optional.ofNullable(request.getPhone()).ifPresent(warehouse::setPhone);
         Optional.ofNullable(request.getDescription()).ifPresent(warehouse::setDescription);
-        Optional.ofNullable(request.getActive()).ifPresent(warehouse::setIsActive);
+        Optional.ofNullable(request.getIsActive()).ifPresent(warehouse::setIsActive);
         warehouse.setGeneralManager(gm);
         return warehouseRepository.save(warehouse);
     }

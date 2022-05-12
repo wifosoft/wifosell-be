@@ -28,7 +28,7 @@ public class WarehouseController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<List<Warehouse>>> getAllWarehouses(
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Warehouse> warehouses = warehouseService.getAllWarehouses(isActive);
@@ -39,7 +39,7 @@ public class WarehouseController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<Warehouse>>> getWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "active", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> actives
     ) {
         Boolean isActive = Preprocessor.convertToIsActive(actives);
         List<Warehouse> warehouses = warehouseService.getWarehouses(userPrincipal.getId(), isActive);

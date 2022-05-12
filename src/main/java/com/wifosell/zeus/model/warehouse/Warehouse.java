@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.shop.WarehouseShopRelation;
+import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,13 +29,10 @@ public class Warehouse extends BasicEntity {
 
     private String shortName;
 
-    @Size(max = 255)
     private String address;
 
-    @Size(max = 20)
     private String phone;
 
-    @Size(max = 255)
     private String description;
 
     @JsonIgnore
@@ -44,5 +42,9 @@ public class Warehouse extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "warehouse")
-    Set<WarehouseShopRelation> warehouseShopRelation;
+    private List<WarehouseShopRelation> warehouseShopRelations = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "warehouse")
+    private List<Stock> stocks = new ArrayList<>();
 }

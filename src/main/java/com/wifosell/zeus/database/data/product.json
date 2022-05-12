@@ -77,7 +77,7 @@
         "barcode": "00000005"
       }
     ],
-    "active": true
+    "isActive": true
   },
   {
     "name": "Ao thun nam",
@@ -179,6 +179,6 @@
         "barcode": "00000014"
       }
     ],
-    "active": true
+    "isActive": true
   }
 ]

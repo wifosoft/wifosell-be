@@ -6,65 +6,50 @@ import com.wifosell.zeus.payload.request.sale_channel.SaleChannelRequest;
 import com.wifosell.zeus.repository.SaleChannelRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.SaleChannelService;
+import com.wifosell.zeus.specs.SaleChannelSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Transactional
 @Service("SaleChannel")
+@Transactional
+@RequiredArgsConstructor
 public class SaleChannelServiceImpl implements SaleChannelService {
     private final SaleChannelRepository saleChannelRepository;
     private final UserRepository userRepository;
 
-    @Autowired
-    public SaleChannelServiceImpl(SaleChannelRepository saleChannelRepository, UserRepository userRepository) {
-        this.saleChannelRepository = saleChannelRepository;
-        this.userRepository = userRepository;
+    @Override
+    public Page<SaleChannel> getSaleChannels(
+            Long userId,
+            List<Long> shopIds,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit,
+            String sortBy,
+            String orderBy
+    ) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return saleChannelRepository.findAll(
+                SaleChannelSpecs.hasGeneralManager(gmId)
+                        .and(SaleChannelSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 
     @Override
-    public List<SaleChannel> getAllSaleChannels(Boolean isActive) {
-        if (isActive == null)
-            return saleChannelRepository.findAll();
-        return saleChannelRepository.findAllWithActive(isActive);
-    }
-
-    @Override
-    public List<SaleChannel> getSaleChannelsByUserId(@NonNull Long userId, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return saleChannelRepository.findAllWithGm(gm.getId());
-        return saleChannelRepository.findAllWithGmAndActive(gm.getId(), isActive);
-    }
-
-    @Override
-    public List<SaleChannel> getSaleChannelsByShopIds(@NonNull Long userId, @NonNull List<Long> shopIds, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null) {
-            return shopIds.stream()
-                    .map(shopId -> saleChannelRepository.findAllByShopIdWithGm(gm.getId(), shopId))
-                    .flatMap(Collection::stream)
-                    .distinct()
-                    .collect(Collectors.toList());
-        } else {
-            return shopIds.stream()
-                    .map(shopId -> saleChannelRepository.findAllByShopIdWithGmAndActive(gm.getId(), shopId, isActive))
-                    .flatMap(Collection::stream)
-                    .distinct()
-                    .collect(Collectors.toList());
-        }
-    }
-
-    @Override
-    public SaleChannel getSaleChannel(@NonNull Long userId, @NonNull Long saleChannelId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+    public SaleChannel getSaleChannel(Long userId, @NonNull Long saleChannelId) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return saleChannelRepository.getOne(
+                SaleChannelSpecs.hasGeneralManager(gmId)
+                        .and(SaleChannelSpecs.hasId(saleChannelId))
+        );
     }
 
     @Override
@@ -82,28 +67,26 @@ public class SaleChannelServiceImpl implements SaleChannelService {
     }
 
     @Override
-    public SaleChannel activateSaleChannel(@NonNull Long userId, @NonNull Long saleChannelId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+    public SaleChannel activateSaleChannel(Long userId, @NonNull Long saleChannelId) {
+        SaleChannel saleChannel = this.getSaleChannel(userId, saleChannelId);
         saleChannel.setIsActive(true);
         return saleChannelRepository.save(saleChannel);
     }
 
     @Override
-    public SaleChannel deactivateSaleChannel(@NonNull Long userId, @NonNull Long saleChannelId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+    public SaleChannel deactivateSaleChannel(Long userId, @NonNull Long saleChannelId) {
+        SaleChannel saleChannel = this.getSaleChannel(userId, saleChannelId);
         saleChannel.setIsActive(false);
         return saleChannelRepository.save(saleChannel);
     }
 
     @Override
-    public List<SaleChannel> activateSaleChannels(@NonNull Long userId, @NonNull List<Long> saleChannelIds) {
+    public List<SaleChannel> activateSaleChannels(Long userId, @NonNull List<Long> saleChannelIds) {
         return saleChannelIds.stream().map(id -> this.activateSaleChannel(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<SaleChannel> deactivateSaleChannels(@NonNull Long userId, @NonNull List<Long> saleChannelIds) {
+    public List<SaleChannel> deactivateSaleChannels(Long userId, @NonNull List<Long> saleChannelIds) {
         return saleChannelIds.stream().map(id -> this.deactivateSaleChannel(userId, id)).collect(Collectors.toList());
     }
 
@@ -111,7 +94,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
         Optional.ofNullable(saleChannelRequest.getName()).ifPresent(saleChannel::setName);
         Optional.ofNullable(saleChannelRequest.getShortName()).ifPresent(saleChannel::setShortName);
         Optional.ofNullable(saleChannelRequest.getDescription()).ifPresent(saleChannel::setDescription);
-        Optional.ofNullable(saleChannelRequest.getActive()).ifPresent(saleChannel::setIsActive);
+        Optional.ofNullable(saleChannelRequest.getIsActive()).ifPresent(saleChannel::setIsActive);
         saleChannel.setGeneralManager(gm);
         return saleChannelRepository.save(saleChannel);
     }

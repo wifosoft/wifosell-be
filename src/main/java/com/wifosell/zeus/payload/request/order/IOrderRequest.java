@@ -17,7 +17,7 @@ public interface IOrderRequest {
 
     Long getCustomerId();
 
-    Boolean getActive();
+    Boolean getIsActive();
 
     @Getter
     @Setter
