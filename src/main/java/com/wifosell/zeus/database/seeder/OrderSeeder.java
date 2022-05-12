@@ -1,0 +1,124 @@
+package com.wifosell.zeus.database.seeder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.database.BaseSeeder;
+import com.wifosell.zeus.database.ISeeder;
+import com.wifosell.zeus.exception.AppException;
+import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.order.OrderItem;
+import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.GApiErrorBody;
+import com.wifosell.zeus.payload.request.order.AddOrderRequest;
+import com.wifosell.zeus.payload.request.order.IOrderRequest;
+import com.wifosell.zeus.repository.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class OrderSeeder extends BaseSeeder implements ISeeder {
+    private OrderRepository orderRepository;
+    private VariantRepository variantRepository;
+    private OrderItemRepository orderItemRepository;
+    private ShopRepository shopRepository;
+    private SaleChannelRepository saleChannelRepository;
+    private SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
+
+    @Override
+    public void prepareJpaRepository() {
+        this.orderRepository = this.factory.getRepository(OrderRepository.class);
+        this.variantRepository = this.factory.getRepository(VariantRepository.class);
+        this.orderItemRepository = this.factory.getRepository(OrderItemRepository.class);
+        this.shopRepository = this.factory.getRepository(ShopRepository.class);
+        this.saleChannelRepository = this.factory.getRepository(SaleChannelRepository.class);
+        this.saleChannelShopRelationRepository = this.factory.getRepository(SaleChannelShopRelationRepository.class);
+        this.customerRepository = this.factory.getRepository(CustomerRepository.class);
+        this.userRepository = this.factory.getRepository(UserRepository.class);
+    }
+
+    @Override
+    public void run(){
+        User gm = userRepository.getUserByName("manager1").getGeneralManager();
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File("src/main/java/com/wifosell/zeus/database/data/order.json");
+
+        try {
+            AddOrderRequest[] requests = mapper.readValue(file, AddOrderRequest[].class);
+            for (AddOrderRequest request : requests) {
+                this.updateOrderByRequest(request, gm);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateOrderByRequest(IOrderRequest request, User gm){
+
+        OrderModel order = new OrderModel();
+
+        Optional.ofNullable(request.getOrderItems()).ifPresent(orderItemRequests -> {
+            orderItemRepository.deleteAllByOrderId(order.getId());
+            order.getOrderItems().clear();
+
+            List<OrderItem> orderItems = new ArrayList<>();
+            for (IOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
+                Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
+                OrderItem orderItem = OrderItem.builder()
+                        .variant(variant)
+                        .price(variant.getCost())
+                        .quantity(orderItemRequest.getQuantity())
+                        .note(orderItemRequest.getNote())
+                        .order(order)
+                        .build();
+                orderItems.add(orderItem);
+            }
+
+            order.getOrderItems().addAll(orderItems);
+            orderItemRepository.saveAll(orderItems);
+            orderRepository.save(order);
+        });
+
+        // Sale Channel & Shop
+        Optional.ofNullable(request.getShopId()).ifPresent(shopId -> {
+            Optional.ofNullable(request.getSaleChannelId()).ifPresent(saleChannelId -> {
+                if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+                    Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+                    order.setShop(shop);
+
+                    SaleChannel saleChannel = saleChannelRepository.getByIdWithGm(gm.getId(), saleChannelId);
+                    order.setSaleChannel(saleChannel);
+                } else {
+                    throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));
+                }
+            });
+        });
+
+        // Customer
+        Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
+            Customer customer = customerRepository.getByIdWithGm(gm.getId(), customerId);
+            order.setCustomer(customer);
+        });
+
+        // Active
+        Optional.ofNullable(request.getActive()).ifPresent(order::setIsActive);
+
+        // General manager
+        order.setGeneralManager(gm);
+
+        // Subtotal
+        BigDecimal subtotal = order.calcSubTotal();
+        order.setSubtotal(subtotal);
+
+        orderRepository.save(order);
+    }
+}

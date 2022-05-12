@@ -1,0 +1,42 @@
+[
+  {
+    "orderItems": [
+      {
+        "variantId": 1,
+        "quantity": 2
+      },
+      {
+        "variantId": 2,
+        "quantity": 5
+      },
+      {
+        "variantId": 3,
+        "quantity": 9
+      }
+    ],
+    "shopId": 2,
+    "saleChannelId": 2,
+    "customerId": 1,
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 1,
+        "quantity": 2
+      },
+      {
+        "variantId": 2,
+        "quantity": 5
+      },
+      {
+        "variantId": 3,
+        "quantity": 9
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 2,
+    "customerId": 2,
+    "isActive": true
+  }
+]

@@ -24,6 +24,7 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(ProductSeeder.class);
         seederTask.add(VoucherSeeder.class);
         seederTask.add(CustomerSeeder.class);
+        //seederTask.add(OrderSeeder.class);
     }
     public void run() {
         this.call(seederTask);

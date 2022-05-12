@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -83,26 +84,9 @@ public interface OrderRepository extends GMSoftRepository<OrderModel, Long> {
     );
 
     @Transactional
-    @Query(value =
-            "SELECT COUNT *" +
-            "FROM OrderModel o" +
-            "WHERE o.createdAt BETWEEN dateForm AND dateTo",
-           nativeQuery = true)
-    Long getTotalOrder(
-            @Param("dateForm") Date dateForm,
-            @Param("dateTo") Date dateTo
-    );
+    Long countAllByCreatedAtBetween(Instant dateForm, Instant dateTo);
 
     @Transactional
-    @Query(value =
-            "SELECT COUNT *" +
-            "FROM OrderModel o" +
-            "WHERE o.shop.id =:shopId" +
-            "AND o.createdAt BETWEEN dateForm AND dateTo",
-            nativeQuery = true)
-    Long getTotalOrderByShopId(
-            @Param("shopId") Long shopId,
-            @Param("dateForm") Date dateForm,
-            @Param("dateTo") Date dateTo
-    );
+    Long countAllByShopIdAndCreatedAtBetween (Long shopId, Instant dateForm, Instant dateTo);
+
 }

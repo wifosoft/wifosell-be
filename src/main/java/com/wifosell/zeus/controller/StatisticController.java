@@ -2,12 +2,14 @@ package com.wifosell.zeus.controller;
 
 
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.payload.request.statistic.StatisticRequest;
 import com.wifosell.zeus.service.StatisticService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Date;
 
 @RestController
@@ -18,23 +20,21 @@ public class StatisticController {
 
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/totalorder")
-    public ResponseEntity<GApiResponse<Long>> getTotalOrder(
-            @PathVariable(name = "dateFrom") Date dateFrom,
-            @PathVariable(name = "dateTo") Date dateTo
-    ) {
-        Long totalOrder = statisticService.totalOrder(dateFrom, dateTo);
+    @PostMapping("/totalorder")
+    public ResponseEntity<GApiResponse<Long>> getTotalOrder(@RequestBody StatisticRequest statisticRequest) {
+        Long totalOrder = statisticService.totalOrder(Instant.ofEpochMilli(statisticRequest.getDateFrom()), Instant.ofEpochMilli(statisticRequest.getDateTo()));
         return ResponseEntity.ok(GApiResponse.success(totalOrder));
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/totalorder/{shopId}")
+    @PostMapping("/totalorder/{shopId}")
     public ResponseEntity<GApiResponse<Long>> getTotalOrderById(
-            @PathVariable(name = "dateFrom") Date dateFrom,
-            @PathVariable(name = "dateTo") Date dateTo,
+            @RequestBody StatisticRequest statisticRequest,
             @PathVariable("shopId") Long shopId
     ) {
-        Long totalOrderByShopId = statisticService.totalOrderByShopId(shopId,dateFrom, dateTo);
+        Long totalOrderByShopId = statisticService.totalOrderByShopId(shopId, Instant.ofEpochMilli(statisticRequest.getDateFrom()), Instant.ofEpochMilli(statisticRequest.getDateTo()));
         return ResponseEntity.ok(GApiResponse.success(totalOrderByShopId));
     }
+
+
 }
