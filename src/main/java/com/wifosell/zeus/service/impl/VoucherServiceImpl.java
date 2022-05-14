@@ -89,9 +89,11 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     private void updateVoucherByRequest(Voucher voucher, VoucherRequest voucherRequest) {
-        //Optional.ofNullable(voucherRequest.getName()).ifPresent(voucher::setName);
-        //Optional.ofNullable(voucherRequest.getShortName()).ifPresent(voucher::setShortName);
         Optional.ofNullable(voucherRequest.getDescription()).ifPresent(voucher::setDescription);
+        Optional.ofNullable(voucherRequest.getType()).ifPresent(voucher::setType);
+        Optional.ofNullable(voucherRequest.getValue()).ifPresent(voucher::setValue);
         Optional.ofNullable(voucherRequest.getIsActive()).ifPresent(voucher::setIsActive);
+        Optional.ofNullable(voucherRequest.getValidFrom()).ifPresent(voucher::setValidFrom);
+        Optional.ofNullable(voucherRequest.getValidTo()).ifPresent(voucher::setValidTo);
     }
 }

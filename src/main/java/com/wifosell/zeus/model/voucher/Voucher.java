@@ -28,7 +28,7 @@ public class Voucher extends BasicEntity {
     @Column(name = "id")
     private Long id;
 
-    private int type;
+    private Long type;
     private String value;
 
     //@JsonFormat(pattern="MM-dd-yyyy HH:mm:ss")
