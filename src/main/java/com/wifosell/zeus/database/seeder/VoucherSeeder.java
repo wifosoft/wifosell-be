@@ -9,6 +9,7 @@ import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.VoucherRepository;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,8 +37,8 @@ public class VoucherSeeder extends BaseSeeder implements ISeeder {
                 .value("Voucher1")
                 .isActivated(true)
                 .description("Khuyen mai 25%")
-                .validFrom(new Date(122, Calendar.JANUARY, 30, 0, 0, 0))
-                .validTo(new Date(122, Calendar.MARCH, 29, 23, 59, 59))
+                .validFrom(new Date(122, Calendar.JANUARY, 30, 0, 0, 0).toInstant())
+                .validTo(new Date(122, Calendar.MARCH, 29, 23, 59, 59).toInstant())
                 .generalManager(gm).build();
         voucherRepository.save(voucher1);
 
@@ -46,8 +47,8 @@ public class VoucherSeeder extends BaseSeeder implements ISeeder {
                 .value("Voucher2")
                 .isActivated(true)
                 .description("Khuyen mai 50%")
-                .validFrom(new Date(122, Calendar.JANUARY, 12, 0, 0, 0))
-                .validTo(new Date(122, Calendar.MARCH, 25, 23, 59, 59))
+                .validFrom(new Date(122, Calendar.JANUARY, 12, 0, 0, 0).toInstant())
+                .validTo(new Date(122, Calendar.MARCH, 25, 23, 59, 59).toInstant())
                 .generalManager(gm).build();
         voucherRepository.save(voucher2);
 
@@ -56,8 +57,8 @@ public class VoucherSeeder extends BaseSeeder implements ISeeder {
                 .value("Voucher3")
                 .isActivated(false)
                 .description("Mua 1 tang 1")
-                .validFrom(new Date(122, Calendar.APRIL, 1, 0, 0, 0))
-                .validTo(new Date(122, Calendar.DECEMBER, 24, 23, 59, 59))
+                .validFrom(new Date(122, Calendar.APRIL, 1, 0, 0, 0).toInstant())
+                .validTo(new Date(122, Calendar.DECEMBER, 24, 23, 59, 59).toInstant())
                 .generalManager(gm).build();
         voucherRepository.save(voucher3);
 
@@ -67,8 +68,8 @@ public class VoucherSeeder extends BaseSeeder implements ISeeder {
                 .value("Voucher4")
                 .isActivated(true)
                 .description("Hoan 20k khi mua tu 40k")
-                .validFrom(new Date(122, Calendar.JANUARY, 12, 0, 0, 0))
-                .validTo(new Date(122, Calendar.MARCH, 25, 23, 59, 59))
+                .validFrom(new Date(122, Calendar.JANUARY, 12, 0, 0, 0).toInstant())
+                .validTo(new Date(122, Calendar.MARCH, 25, 23, 59, 59).toInstant())
                 .generalManager(gm).build();
         voucherRepository.save(voucher4);
 

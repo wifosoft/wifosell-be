@@ -11,6 +11,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -30,10 +31,10 @@ public class Voucher extends BasicEntity {
     private int type;
     private String value;
 
-    @JsonFormat(pattern="MM-dd-yyyy")
-    private Date validFrom;
-    @JsonFormat(pattern="MM-dd-yyyy")
-    private Date validTo;
+    //@JsonFormat(pattern="MM-dd-yyyy HH:mm:ss")
+    private Instant validFrom;
+    //@JsonFormat(pattern="MM-dd-yyyy HH:mm:ss")
+    private Instant validTo;
 
     private boolean isActivated;
     private String rule;
