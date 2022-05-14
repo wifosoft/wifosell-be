@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class VoucherServiceImpl implements VoucherService {
         Optional.ofNullable(voucherRequest.getType()).ifPresent(voucher::setType);
         Optional.ofNullable(voucherRequest.getValue()).ifPresent(voucher::setValue);
         Optional.ofNullable(voucherRequest.getIsActive()).ifPresent(voucher::setIsActive);
-        Optional.ofNullable(voucherRequest.getValidFrom()).ifPresent(voucher::setValidFrom);
-        Optional.ofNullable(voucherRequest.getValidTo()).ifPresent(voucher::setValidTo);
+        Optional.ofNullable(Instant.ofEpochMilli(voucherRequest.getValidFrom())).ifPresent(voucher::setValidFrom);
+        Optional.ofNullable(Instant.ofEpochMilli(voucherRequest.getValidTo())).ifPresent(voucher::setValidTo);
     }
 }

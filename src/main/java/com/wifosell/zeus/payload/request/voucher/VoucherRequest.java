@@ -16,9 +16,8 @@ public class VoucherRequest {
     private Long type;
     private String value;
 
-    private Instant validFrom;
-
-    private Instant validTo;
+    private Long validFrom;
+    private Long validTo;
 
     private boolean isActivated;
     private String rule;
