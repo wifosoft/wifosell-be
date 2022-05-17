@@ -1,5 +1,6 @@
 package com.wifosell.zeus.model.voucher;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
@@ -10,6 +11,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -26,11 +28,13 @@ public class Voucher extends BasicEntity {
     @Column(name = "id")
     private Long id;
 
-    private int type;
+    private Long type;
     private String value;
 
-    private Date validFrom;
-    private Date validTo;
+    //@JsonFormat(pattern="MM-dd-yyyy HH:mm:ss")
+    private Instant validFrom;
+    //@JsonFormat(pattern="MM-dd-yyyy HH:mm:ss")
+    private Instant validTo;
 
     private boolean isActivated;
     private String rule;

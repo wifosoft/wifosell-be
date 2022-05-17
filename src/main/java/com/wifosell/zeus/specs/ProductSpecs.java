@@ -20,7 +20,7 @@ public class ProductSpecs {
         return (root, query, criteriaBuilder) -> {
             if (generalManagerId == null)
                 return criteriaBuilder.and();
-            return root.get(Product_.GENERAL_MANAGER).get(User_.ID).in(generalManagerId);
+            return criteriaBuilder.equal(root.get(Product_.GENERAL_MANAGER).get(User_.ID), generalManagerId);
         };
     }
 

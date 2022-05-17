@@ -37,7 +37,6 @@ public class Variant extends BasicEntity {
     @ManyToOne
     private Product product;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "warehouse")
     private List<Stock> stocks = new ArrayList<>();
 }

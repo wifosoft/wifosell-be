@@ -20,7 +20,7 @@ public class SaleChannelSpecs {
         return (root, query, criteriaBuilder) -> {
             if (generalManagerId == null)
                 return criteriaBuilder.and();
-            return root.get(SaleChannel_.GENERAL_MANAGER).get(User_.ID).in(generalManagerId);
+            return criteriaBuilder.equal(root.get(SaleChannel_.GENERAL_MANAGER).get(User_.ID), generalManagerId);
         };
     }
 

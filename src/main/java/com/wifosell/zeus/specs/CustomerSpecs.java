@@ -20,7 +20,7 @@ public class CustomerSpecs {
         return (root, query, criteriaBuilder) -> {
             if (generalManagerId == null)
                 return criteriaBuilder.and();
-            return root.get(Customer_.GENERAL_MANAGER).get(User_.ID).in(generalManagerId);
+            return criteriaBuilder.equal(root.get(Customer_.GENERAL_MANAGER).get(User_.ID), generalManagerId);
         };
     }
 

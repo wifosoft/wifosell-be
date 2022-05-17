@@ -20,7 +20,7 @@ import java.time.Instant;
         value = { "createdAt", "updatedAt" },
         allowGetters = true
 )
-public abstract class BasicEntity {
+public abstract class  BasicEntity {
     @Column(name = "is_active")
     private boolean isActive = true;
 
