@@ -59,7 +59,12 @@ public enum EAppExceptionCode {
     //endregion
 
     //region Supplier
-    SUPPLIER_NOT_FOUND(1200001);
+    SUPPLIER_NOT_FOUND(1200001),
+    //endregion
+
+    //region Stock
+    IMPORT_STOCK_TRANSACTION_NOT_FOUND(1300001),
+    IMPORT_STOCK_TRANSACTION_ITEM_NOT_FOUND(1300002);
     //endregion
 
     private final int value;

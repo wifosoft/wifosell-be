@@ -1,5 +1,6 @@
 package com.wifosell.zeus.model.stock;
 
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.supplier.Supplier;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImportStockTransaction {
+public class ImportStockTransaction extends BasicEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
