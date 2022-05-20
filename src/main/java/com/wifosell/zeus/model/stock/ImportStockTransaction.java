@@ -23,6 +23,9 @@ public class ImportStockTransaction extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    private String excelFile;
+
     @ManyToOne
     private Warehouse warehouse;
 
@@ -41,10 +44,9 @@ public class ImportStockTransaction extends BasicEntity {
     @Column(columnDefinition="LONGTEXT")
     private String processingNote;
 
-    @OneToMany(mappedBy = "transaction", orphanRemoval = true)
+    @OneToMany(mappedBy = "transaction", cascade = {CascadeType.ALL})
     private List<ImportStockTransactionItem> items = new ArrayList<>();
 
-    private String excelFile;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -25,4 +25,9 @@ public interface VariantRepository extends SoftRepository<Variant, Long> {
                 () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
         );
     }
+
+    default Variant getBySKUNoThrow(String sku) {
+        Optional<Variant> optional = this.findBySku(sku);
+        return optional.orElse(null);
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ public class ImportStockServiceImpl {
                         importStockRow.setQuantity((int) currentCell.getNumericCellValue());
                         break;
                     case 2:
-                        importStockRow.setUnitCost((int) currentCell.getNumericCellValue());
+                        importStockRow.setUnitCost(BigDecimal.valueOf(currentCell.getNumericCellValue()));
                         break;
                 }
             }

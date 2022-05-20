@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class ImportStockRow {
     public String sku;
     public Integer quantity;
-    public Integer unitCost;
+    public BigDecimal unitCost;
 }

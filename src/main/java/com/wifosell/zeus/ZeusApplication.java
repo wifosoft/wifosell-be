@@ -48,17 +48,17 @@ public class ZeusApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(ZeusApplication.class, args);
     }
-
-    @Bean
-    public JobScheduler initJobRunr(DataSource dataSource, JobActivator jobActivator) {
-        return JobRunr.configure()
-                .useJobActivator(jobActivator)
-                .useStorageProvider(SqlStorageProviderFactory
-                        .using(dataSource))
-                .useBackgroundJobServer()
-                .useDashboard()
-                .initialize().getJobScheduler();
-    }
+//
+//    @Bean
+//    public JobScheduler initJobRunr(DataSource dataSource, JobActivator jobActivator) {
+//        return JobRunr.configure()
+//                .useJobActivator(jobActivator)
+//                .useStorageProvider(SqlStorageProviderFactory
+//                        .using(dataSource))
+//                .useBackgroundJobServer()
+//                .useDashboard()
+//                .initialize().getJobScheduler();
+//    }
     @PostConstruct
     void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
