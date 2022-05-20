@@ -1,14 +1,20 @@
 package com.wifosell.zeus.database.seeder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.request.customer.CustomerRequest;
+import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 public class CustomerSeeder extends BaseSeeder implements ISeeder {
     private CustomerRepository customerRepository;
@@ -24,46 +30,35 @@ public class CustomerSeeder extends BaseSeeder implements ISeeder {
     @Override
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
-        Customer customer1 = Customer.builder()
-                .fullName("Kieu Cong Hau")
-                .phone("0987654321")
-                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
-                .email("hau@gmail.com")
-                .city("HCM")
-                .ward("1")
-                .district("1")
-                .addressDetail("1 Le Duan")
-                .sex(Customer.Sex.MALE)
-                .generalManager(gm)
-                .build();
-        customerRepository.save(customer1);
 
-        Customer customer2 = Customer.builder()
-                .fullName("Kieu Cong Hau")
-                .phone("0987654321")
-                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
-                .email("hau@gmail.com")
-                .city("HCM")
-                .ward("1")
-                .district("1")
-                .addressDetail("1 Le Duan")
-                .sex(Customer.Sex.MALE)
-                .generalManager(gm)
-                .build();
-        customerRepository.save(customer2);
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File("src/main/java/com/wifosell/zeus/database/data/customer.json");
 
-        Customer customer3 = Customer.builder()
-                .fullName("Kieu Cong Hau")
-                .phone("0987654321")
-                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
-                .email("hau@gmail.com")
-                .city("HCM")
-                .ward("1")
-                .district("1")
-                .addressDetail("1 Le Duan")
-                .sex(Customer.Sex.MALE)
-                .generalManager(gm)
-                .build();
-        customerRepository.save(customer3);
+        try {
+            CustomerRequest[] requests = mapper.readValue(file, CustomerRequest[].class);
+            for (CustomerRequest request : requests) {
+                this.updateCustomerByRequest(request, gm);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateCustomerByRequest(CustomerRequest request, User gm) {
+        Customer customer = new Customer();
+        Optional.ofNullable(request.getFullName()).ifPresent(customer::setFullName);
+        Optional.ofNullable(request.getDob()).ifPresent(customer::setDob);
+        Optional.ofNullable(request.getSex()).ifPresent(customer::setSex);
+        Optional.ofNullable(request.getPhone()).ifPresent(customer::setPhone);
+        Optional.ofNullable(request.getEmail()).ifPresent(customer::setEmail);
+        Optional.ofNullable(request.getCin()).ifPresent(customer::setCin);
+        Optional.ofNullable(request.getNation()).ifPresent(customer::setNation);
+        Optional.ofNullable(request.getCity()).ifPresent(customer::setCity);
+        Optional.ofNullable(request.getDistrict()).ifPresent(customer::setDistrict);
+        Optional.ofNullable(request.getWard()).ifPresent(customer::setWard);
+        Optional.ofNullable(request.getAddressDetail()).ifPresent(customer::setAddressDetail);
+        Optional.ofNullable(request.getIsActive()).ifPresent(customer::setIsActive);
+        customer.setGeneralManager(gm);
+        customerRepository.save(customer);
     }
 }

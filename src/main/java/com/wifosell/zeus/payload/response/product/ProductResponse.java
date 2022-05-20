@@ -7,6 +7,8 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.stock.Stock;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import lombok.Getter;
@@ -88,6 +90,7 @@ public class ProductResponse extends BasicEntityResponse {
         private String sku;
         private String barcode;
         private List<String> options;
+        private final List<StockResponse> stocks;
 
         public VariantResponse(Variant variant) {
             super(variant);
@@ -97,6 +100,21 @@ public class ProductResponse extends BasicEntityResponse {
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
                     .map(OptionValue::getValue).collect(Collectors.toList());
+            this.stocks = variant.getStocks().stream().map(StockResponse::new).collect(Collectors.toList());
+        }
+
+        @Getter
+        private static class StockResponse extends BasicEntityResponse {
+            private final Warehouse warehouse;
+            private final Integer actualQuantity;
+            private final Integer quantity;
+
+            public StockResponse(Stock stock) {
+                super(stock);
+                this.warehouse = stock.getWarehouse();
+                this.actualQuantity = stock.getActualQuantity();
+                this.quantity = stock.getQuantity();
+            }
         }
     }
 }

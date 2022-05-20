@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.stock;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Stock {
+public class Stock extends BasicEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

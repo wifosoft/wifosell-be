@@ -12,8 +12,11 @@ import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.StockService;
+import com.wifosell.zeus.specs.ImportStockTransactionSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,7 +36,7 @@ public class StockServiceImpl implements StockService {
     private final ImportStockTransactionItemRepository importStockTransactionItemRepository;
 
     @Override
-    public void importStocks(@NonNull Long userId, ImportStocksRequest request) {
+    public ImportStockTransaction importStocks(@NonNull Long userId, ImportStocksRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getWarehouseId());
         Supplier supplier = supplierRepository.getByIdWithGm(gm.getId(), request.getSupplierId());
@@ -42,6 +45,8 @@ public class StockServiceImpl implements StockService {
         ImportStockTransaction transaction = ImportStockTransaction.builder()
                 .warehouse(warehouse)
                 .supplier(supplier)
+                .type(ImportStockTransaction.TYPE.MANUAL)
+                .generalManager(gm)
                 .build();
 
         request.getItems().forEach(item -> {
@@ -71,11 +76,75 @@ public class StockServiceImpl implements StockService {
 
         transaction.setItems(importStockTransactionItemRepository.saveAll(transactionItems));
         importStockTransactionRepository.save(transaction);
+
+        return transaction;
     }
 
     @Override
-    public void importStocksFromExcel(@NonNull Long userId, ImportStocksFromExcelRequest request) {
-        // TODO haukc
+    public ImportStockTransaction importStocksFromExcel(@NonNull Long userId, ImportStocksFromExcelRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getWarehouseId());
+        Supplier supplier = supplierRepository.getByIdWithGm(gm.getId(), request.getSupplierId());
+
+        List<ImportStockTransactionItem> transactionItems = new ArrayList<>();
+        ImportStockTransaction transaction = ImportStockTransaction.builder()
+                .warehouse(warehouse)
+                .supplier(supplier)
+                .type(ImportStockTransaction.TYPE.EXCEL)
+                .generalManager(gm)
+                .build();
+
+        request.getItems().forEach(item -> {
+            Variant variant = variantRepository.getBySKU(item.getVariantSKU());
+            Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
+            if (stock != null) {
+                stock.setActualQuantity(stock.getActualQuantity() + item.getQuantity());
+                stock.setQuantity(stock.getQuantity() + item.getQuantity());
+            } else {
+                stock = Stock.builder()
+                        .warehouse(warehouse)
+                        .variant(variant)
+                        .actualQuantity(item.getQuantity())
+                        .quantity(item.getQuantity())
+                        .build();
+            }
+            stockRepository.save(stock);
+
+            ImportStockTransactionItem transactionItem = ImportStockTransactionItem.builder()
+                    .variant(variant)
+                    .quantity(item.getQuantity())
+                    .unitCost(item.getUnitCost())
+                    .transaction(transaction)
+                    .build();
+            transactionItems.add(transactionItem);
+        });
+
+        transaction.setItems(importStockTransactionItemRepository.saveAll(transactionItems));
+        importStockTransactionRepository.save(transaction);
+
+        return transaction;
+    }
+
+    @Override
+    public Page<ImportStockTransaction> getImportStockTransactions(
+            Long userId, List<ImportStockTransaction.TYPE> types, List<Boolean> isActives,
+            Integer offset, Integer limit, String sortBy, String orderBy) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return importStockTransactionRepository.findAll(
+                ImportStockTransactionSpecs.hasGeneralManager(gmId)
+                        .and(ImportStockTransactionSpecs.inTypes(types))
+                        .and(ImportStockTransactionSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
+    }
+
+    @Override
+    public ImportStockTransaction getImportStockTransaction(Long userId, @NonNull Long importStockTransactionId) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return importStockTransactionRepository.getOne(
+                ImportStockTransactionSpecs.hasGeneralManager(gmId)
+                        .and(ImportStockTransactionSpecs.hasId(importStockTransactionId))
+        );
     }
 
     @Override

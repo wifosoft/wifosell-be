@@ -1,7 +1,9 @@
 package com.wifosell.zeus.model.stock;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.supplier.Supplier;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
@@ -27,6 +29,19 @@ public class ImportStockTransaction extends BasicEntity {
     @ManyToOne
     private Supplier supplier;
 
+    @Enumerated(EnumType.STRING)
+    private TYPE type;
+
     @OneToMany(mappedBy = "transaction", orphanRemoval = true)
     private List<ImportStockTransactionItem> items = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
+    private User generalManager;
+
+    public enum TYPE {
+        MANUAL,
+        EXCEL
+    }
 }
