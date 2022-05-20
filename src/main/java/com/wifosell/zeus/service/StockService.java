@@ -13,7 +13,7 @@ import java.util.List;
 public interface StockService {
     ImportStockTransaction importStocks(@NonNull Long userId, @Valid ImportStocksRequest request);
 
-    void importStocksFromExcel(@NonNull Long userId, @Valid ImportStocksFromExcelRequest request);
+    ImportStockTransaction importStocksFromExcel(@NonNull Long userId, @Valid ImportStocksFromExcelRequest request);
 
     Page<ImportStockTransaction> getImportStockTransactions(Long userId, List<ImportStockTransaction.TYPE> types, List<Boolean> isActives,
                                                             Integer offset, Integer limit, String sortBy, String orderBy);

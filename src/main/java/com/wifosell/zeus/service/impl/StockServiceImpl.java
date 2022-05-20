@@ -81,8 +81,48 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void importStocksFromExcel(@NonNull Long userId, ImportStocksFromExcelRequest request) {
-        // TODO haukc
+    public ImportStockTransaction importStocksFromExcel(@NonNull Long userId, ImportStocksFromExcelRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getWarehouseId());
+        Supplier supplier = supplierRepository.getByIdWithGm(gm.getId(), request.getSupplierId());
+
+        List<ImportStockTransactionItem> transactionItems = new ArrayList<>();
+        ImportStockTransaction transaction = ImportStockTransaction.builder()
+                .warehouse(warehouse)
+                .supplier(supplier)
+                .type(ImportStockTransaction.TYPE.EXCEL)
+                .generalManager(gm)
+                .build();
+
+        request.getItems().forEach(item -> {
+            Variant variant = variantRepository.getBySKU(item.getVariantSKU());
+            Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
+            if (stock != null) {
+                stock.setActualQuantity(stock.getActualQuantity() + item.getQuantity());
+                stock.setQuantity(stock.getQuantity() + item.getQuantity());
+            } else {
+                stock = Stock.builder()
+                        .warehouse(warehouse)
+                        .variant(variant)
+                        .actualQuantity(item.getQuantity())
+                        .quantity(item.getQuantity())
+                        .build();
+            }
+            stockRepository.save(stock);
+
+            ImportStockTransactionItem transactionItem = ImportStockTransactionItem.builder()
+                    .variant(variant)
+                    .quantity(item.getQuantity())
+                    .unitCost(item.getUnitCost())
+                    .transaction(transaction)
+                    .build();
+            transactionItems.add(transactionItem);
+        });
+
+        transaction.setItems(importStockTransactionItemRepository.saveAll(transactionItems));
+        importStockTransactionRepository.save(transaction);
+
+        return transaction;
     }
 
     @Override
