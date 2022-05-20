@@ -45,6 +45,7 @@ public class StockServiceImpl implements StockService {
         ImportStockTransaction transaction = ImportStockTransaction.builder()
                 .warehouse(warehouse)
                 .supplier(supplier)
+                .type(ImportStockTransaction.TYPE.MANUAL)
                 .generalManager(gm)
                 .build();
 
@@ -86,11 +87,12 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public Page<ImportStockTransaction> getImportStockTransactions(
-            Long userId, List<Boolean> isActives,
+            Long userId, List<ImportStockTransaction.TYPE> types, List<Boolean> isActives,
             Integer offset, Integer limit, String sortBy, String orderBy) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return importStockTransactionRepository.findAll(
                 ImportStockTransactionSpecs.hasGeneralManager(gmId)
+                        .and(ImportStockTransactionSpecs.inTypes(types))
                         .and(ImportStockTransactionSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );

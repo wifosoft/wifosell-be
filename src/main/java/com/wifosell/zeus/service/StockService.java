@@ -15,7 +15,7 @@ public interface StockService {
 
     void importStocksFromExcel(@NonNull Long userId, @Valid ImportStocksFromExcelRequest request);
 
-    Page<ImportStockTransaction> getImportStockTransactions(Long userId, List<Boolean> isActives,
+    Page<ImportStockTransaction> getImportStockTransactions(Long userId, List<ImportStockTransaction.TYPE> types, List<Boolean> isActives,
                                                             Integer offset, Integer limit, String sortBy, String orderBy);
 
     ImportStockTransaction getImportStockTransaction(Long userId, @NonNull Long importStockTransactionId);

@@ -32,8 +32,16 @@ public class ImportStockTransaction extends BasicEntity {
     @OneToMany(mappedBy = "transaction", orphanRemoval = true)
     private List<ImportStockTransactionItem> items = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private TYPE type;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
+
+    public enum TYPE {
+        MANUAL,
+        EXCEL
+    }
 }

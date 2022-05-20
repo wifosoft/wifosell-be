@@ -46,6 +46,7 @@ public class StockController {
     @GetMapping("/import/transactions")
     public ResponseEntity<GApiResponse<Page<ImportStockTransaction>>> getImportStockTransactions(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "type", required = false) List<ImportStockTransaction.TYPE> types,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
@@ -53,7 +54,7 @@ public class StockController {
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
         Page<ImportStockTransaction> transactions = stockService.getImportStockTransactions(
-                userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
+                userPrincipal.getId(), types, isActives, offset, limit, sortBy, orderBy);
         return ResponseEntity.ok(GApiResponse.success(transactions));
     }
 

@@ -39,4 +39,12 @@ public class ImportStockTransactionSpecs {
             return criteriaBuilder.equal(root.get(ImportStockTransaction_.IS_ACTIVE), isActive);
         });
     }
+
+    public static Specification<ImportStockTransaction> inTypes(List<ImportStockTransaction.TYPE> types) {
+        return ((root, query, criteriaBuilder) -> {
+            if (types == null || types.isEmpty())
+                return criteriaBuilder.and();
+            return root.get(ImportStockTransaction_.TYPE).in(types);
+        });
+    }
 }

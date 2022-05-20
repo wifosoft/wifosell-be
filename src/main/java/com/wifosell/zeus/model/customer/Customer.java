@@ -24,7 +24,7 @@ public class Customer extends BasicEntity {
 
     private Date dob;   // Date of birth
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private String phone;
