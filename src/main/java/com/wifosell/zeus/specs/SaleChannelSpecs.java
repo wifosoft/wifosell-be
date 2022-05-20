@@ -2,6 +2,9 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.sale_channel.SaleChannel_;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation_;
+import com.wifosell.zeus.model.shop.Shop_;
 import com.wifosell.zeus.model.user.User_;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -37,6 +40,14 @@ public class SaleChannelSpecs {
             if (isActive == null)
                 return criteriaBuilder.and();
             return criteriaBuilder.equal(root.get(SaleChannel_.IS_ACTIVE), isActive);
+        });
+    }
+
+    public static Specification<SaleChannel> inShops(List<Long> shopIds) {
+        return ((root, query, criteriaBuilder) -> {
+            if (shopIds == null || shopIds.isEmpty())
+                return criteriaBuilder.and();
+            return root.join(SaleChannel_.SALE_CHANNEL_SHOP_RELATIONS).get(SaleChannelShopRelation_.SHOP).get(Shop_.ID).in(shopIds);
         });
     }
 }
