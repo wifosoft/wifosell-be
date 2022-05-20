@@ -27,6 +27,7 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(ProductSeeder.class);
         seederTask.add(VoucherSeeder.class);
         seederTask.add(CustomerSeeder.class);
+        seederTask.add(SupplierSeeder.class);
 //        seederTask.add(OrderSeeder.class);    // TODO haukc: link shop to sales channel
     }
 

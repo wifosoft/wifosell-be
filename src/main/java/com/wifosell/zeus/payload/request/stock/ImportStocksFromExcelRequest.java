@@ -21,18 +21,21 @@ public class ImportStocksFromExcelRequest {
     Long supplierId;
 
     @NotEmpty
-    List<Item> items;
+    String excelFile;
 
-    @Getter
-    @Setter
-    public static class Item {
-        @NotNull
-        String variantSKU;
-
-        @Positive
-        Integer quantity;
-
-        @NotBlank
-        BigDecimal unitCost;
-    }
+//    @NotEmpty
+//    List<Item> items;
+//
+//    @Getter
+//    @Setter
+//    public static class Item {
+//        @NotNull
+//        String variantSKU;
+//
+//        @Positive
+//        Integer quantity;
+//
+//        @NotBlank
+//        BigDecimal unitCost;
+//    }
 }

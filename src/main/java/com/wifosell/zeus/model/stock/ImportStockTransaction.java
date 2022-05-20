@@ -32,13 +32,31 @@ public class ImportStockTransaction extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private TYPE type;
 
+    @Enumerated(EnumType.STRING)
+    private PROCESSING_STATUS processingStatus = PROCESSING_STATUS.PROCESSED; // default processed
+
+    @Lob
+    private String description;
+
+    @Column(columnDefinition="LONGTEXT")
+    private String processingNote;
+
     @OneToMany(mappedBy = "transaction", orphanRemoval = true)
     private List<ImportStockTransactionItem> items = new ArrayList<>();
+
+    private String excelFile;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
+
+    public enum PROCESSING_STATUS{
+        DRAFT,
+        QUEUED,
+        PROCESSING,
+        PROCESSED
+    }
 
     public enum TYPE {
         MANUAL,

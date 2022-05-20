@@ -99,7 +99,7 @@ public class ZeusApplication implements CommandLineRunner {
         //EntityManagerFactory emf = Persistence.createEntityManagerFactory("seederManager");
         //EntityManager em = emf.createEntityManager();
         String enableMigration = env.getProperty("app.migration");
-        if(enableMigration == null || enableMigration == "true"){
+        if(enableMigration == null || enableMigration.equals("true")){
             DatabaseSeeder databaseSeeder = new DatabaseSeeder(entityManager);
             databaseSeeder.prepare();
             databaseSeeder.run();

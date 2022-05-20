@@ -35,14 +35,15 @@ public class StockController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/importFromExcel")
-    public ResponseEntity<GApiResponse<Boolean>> importStocksFromExcel(
+    @PostMapping("/createImportStockTransactionExcel")
+    public ResponseEntity<GApiResponse<ImportStockTransaction>> createImportStockTransactionExcel(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ImportStocksFromExcelRequest request
     ) {
-        stockService.importStocksFromExcel(userPrincipal.getId(), request);
-        return ResponseEntity.ok(GApiResponse.success(true));
+        ImportStockTransaction transaction = stockService.createImportStockTransactionExcel(userPrincipal.getId(), request);
+        return ResponseEntity.ok(GApiResponse.success(transaction));
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/import/transactions")
