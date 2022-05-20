@@ -1,4 +1,4 @@
-package com.wifosell.zeus.service;
+package com.wifosell.zeus.service.impl.batch_process.product;
 
 import org.springframework.stereotype.Service;
 
