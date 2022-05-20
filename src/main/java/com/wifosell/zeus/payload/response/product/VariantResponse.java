@@ -7,6 +7,8 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.stock.Stock;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import lombok.Getter;
@@ -21,6 +23,7 @@ public class VariantResponse extends BasicEntityResponse {
     private final String barcode;
     private final List<OptionValueResponse> options;
     private final ProductResponse product;
+    private final List<StockResponse> stocks;
 
     public VariantResponse(Variant variant) {
         super(variant);
@@ -31,6 +34,7 @@ public class VariantResponse extends BasicEntityResponse {
                 .map(VariantValue::getOptionValue)
                 .map(OptionValueResponse::new).collect(Collectors.toList());
         this.product = new ProductResponse(variant.getProduct());
+        this.stocks = variant.getStocks().stream().map(StockResponse::new).collect(Collectors.toList());
     }
 
     @Getter
@@ -102,6 +106,20 @@ public class VariantResponse extends BasicEntityResponse {
                     this.value = optionValue.getValue();
                 }
             }
+        }
+    }
+
+    @Getter
+    private static class StockResponse extends BasicEntityResponse {
+        private final Warehouse warehouse;
+        private final Integer actualQuantity;
+        private final Integer quantity;
+
+        public StockResponse(Stock stock) {
+            super(stock);
+            this.warehouse = stock.getWarehouse();
+            this.actualQuantity = stock.getActualQuantity();
+            this.quantity = stock.getQuantity();
         }
     }
 }
