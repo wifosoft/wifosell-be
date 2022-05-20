@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.stock.Stock;
+import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,4 +40,8 @@ public class Variant extends BasicEntity {
 
     @OneToMany(mappedBy = "variant")
     private List<Stock> stocks = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User generalManager;
 }
