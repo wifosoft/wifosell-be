@@ -5,6 +5,7 @@ import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.stock.ImportStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
+import com.wifosell.zeus.payload.response.stock.ImportStockTransactionResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.StockService;
@@ -24,12 +25,13 @@ public class StockController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/import")
-    public ResponseEntity<GApiResponse<ImportStockTransaction>> importStocks(
+    public ResponseEntity<GApiResponse<ImportStockTransactionResponse>> importStocks(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ImportStocksRequest request
     ) {
         ImportStockTransaction transaction = stockService.importStocks(userPrincipal.getId(), request);
-        return ResponseEntity.ok(GApiResponse.success(transaction));
+        ImportStockTransactionResponse response = new ImportStockTransactionResponse(transaction);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -44,7 +46,7 @@ public class StockController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/import/transactions")
-    public ResponseEntity<GApiResponse<Page<ImportStockTransaction>>> getImportStockTransactions(
+    public ResponseEntity<GApiResponse<Page<ImportStockTransactionResponse>>> getImportStockTransactions(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "type", required = false) List<ImportStockTransaction.TYPE> types,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
@@ -55,18 +57,20 @@ public class StockController {
     ) {
         Page<ImportStockTransaction> transactions = stockService.getImportStockTransactions(
                 userPrincipal.getId(), types, isActives, offset, limit, sortBy, orderBy);
-        return ResponseEntity.ok(GApiResponse.success(transactions));
+        Page<ImportStockTransactionResponse> responses = transactions.map(ImportStockTransactionResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/import/transactions/{importTransactionId}")
-    public ResponseEntity<GApiResponse<ImportStockTransaction>> getImportStockTransaction(
+    public ResponseEntity<GApiResponse<ImportStockTransactionResponse>> getImportStockTransaction(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "importTransactionId") Long importTransactionId
     ) {
         ImportStockTransaction transaction = stockService.getImportStockTransaction(
                 userPrincipal.getId(), importTransactionId);
-        return ResponseEntity.ok(GApiResponse.success(transaction));
+        ImportStockTransactionResponse response = new ImportStockTransactionResponse(transaction);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -29,11 +29,11 @@ public class ImportStockTransaction extends BasicEntity {
     @ManyToOne
     private Supplier supplier;
 
-    @OneToMany(mappedBy = "transaction", orphanRemoval = true)
-    private List<ImportStockTransactionItem> items = new ArrayList<>();
-
     @Enumerated(EnumType.STRING)
     private TYPE type;
+
+    @OneToMany(mappedBy = "transaction", orphanRemoval = true)
+    private List<ImportStockTransactionItem> items = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
