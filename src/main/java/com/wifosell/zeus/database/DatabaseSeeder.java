@@ -1,6 +1,8 @@
 package com.wifosell.zeus.database;
 
 import com.wifosell.zeus.database.seeder.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ public class DatabaseSeeder extends Seeder {
     }
 
     public void prepare() {
+
         seederTask.clear();
         seederTask.add(RoleSeeder.class);
         seederTask.add(UserSeeder.class);

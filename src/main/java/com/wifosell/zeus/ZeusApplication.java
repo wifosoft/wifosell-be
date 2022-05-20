@@ -1,5 +1,6 @@
 package com.wifosell.zeus;
 
+import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.database.DatabaseSeeder;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import com.wifosell.zeus.service.impl.storage.StorageProperties;
@@ -9,12 +10,14 @@ import org.jobrunr.server.JobActivator;
 import org.jobrunr.spring.autoconfigure.JobRunrProperties;
 import org.jobrunr.storage.sql.common.SqlStorageProviderFactory;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,10 +37,13 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EntityScan(basePackageClasses = {ZeusApplication.class, Jsr310Converters.class})
 @Transactional
-@EnableConfigurationProperties(StorageProperties.class)
+@EnableConfigurationProperties({StorageProperties.class, AppProperties.class})
 public class ZeusApplication implements CommandLineRunner {
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    private Environment env;
 
     public static void main(String[] args) {
         SpringApplication.run(ZeusApplication.class, args);
@@ -92,9 +98,11 @@ public class ZeusApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         //EntityManagerFactory emf = Persistence.createEntityManagerFactory("seederManager");
         //EntityManager em = emf.createEntityManager();
-
-        DatabaseSeeder databaseSeeder = new DatabaseSeeder(entityManager);
-        databaseSeeder.prepare();
-        databaseSeeder.run();
+        String enableMigration = env.getProperty("app.migration");
+        if(enableMigration == null || enableMigration == "true"){
+            DatabaseSeeder databaseSeeder = new DatabaseSeeder(entityManager);
+            databaseSeeder.prepare();
+            databaseSeeder.run();
+        }
     }
 }
