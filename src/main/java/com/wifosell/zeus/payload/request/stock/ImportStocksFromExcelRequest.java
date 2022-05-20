@@ -20,4 +20,5 @@ public class ImportStocksFromExcelRequest {
     @NotEmpty
     String excelFile;
 
+
 }
