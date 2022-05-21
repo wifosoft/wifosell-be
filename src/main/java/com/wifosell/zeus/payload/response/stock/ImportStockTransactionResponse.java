@@ -8,8 +8,6 @@ import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
 import lombok.Getter;
 
-import javax.mail.event.MailEvent;
-import javax.print.attribute.standard.MediaSize;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +29,7 @@ public class ImportStockTransactionResponse extends BasicEntityResponse {
         this.type = transaction.getType();
         this.excelFile = transaction.getExcelFile();
         this.processingStatus = transaction.getProcessingStatus();
-        this.processingNote  = transaction.getProcessingNote();
+        this.processingNote = transaction.getProcessingNote();
         this.items = transaction.getItems().stream().map(ImportStockTransactionItemResponse::new).collect(Collectors.toList());
     }
 

@@ -5,8 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.validation.constraints.Size;
-import java.time.Instant;
-import java.util.Date;
 
 @Getter
 @Setter

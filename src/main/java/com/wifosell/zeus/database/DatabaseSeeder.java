@@ -1,8 +1,6 @@
 package com.wifosell.zeus.database;
 
 import com.wifosell.zeus.database.seeder.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;

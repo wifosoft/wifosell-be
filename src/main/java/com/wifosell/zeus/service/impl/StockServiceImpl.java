@@ -1,6 +1,5 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.controller.FileUploadController;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.stock.ImportStockTransaction;
 import com.wifosell.zeus.model.stock.ImportStockTransactionItem;
@@ -13,7 +12,6 @@ import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.StockService;
-import com.wifosell.zeus.service.impl.batch_process.product.BatchProductExcelService;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockRow;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockServiceImpl;
 import com.wifosell.zeus.service.impl.storage.FileSystemStorageService;
@@ -27,7 +25,6 @@ import org.jobrunr.scheduling.JobScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -181,8 +178,9 @@ public class StockServiceImpl implements StockService {
                 transactionItems.add(transactionItem);
 
                 importStockTransaction.setItems(importStockTransactionItemRepository.saveAll(transactionItems));
-                successRecord+=1;
-            };
+                successRecord += 1;
+            }
+            ;
             importStockTransaction.setProcessingStatus(ImportStockTransaction.PROCESSING_STATUS.PROCESSED);
             importStockTransaction.setProcessingNote(String.format("Đã xử lý, thành công %d sản phẩm - không thành công %d sản phẩm.", successRecord, errorRecord));
             importStockTransactionRepository.save(importStockTransaction);
