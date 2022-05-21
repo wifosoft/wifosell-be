@@ -4,10 +4,10 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
+import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
-import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/warehouses")
@@ -28,7 +29,7 @@ public class WarehouseController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<Page<Warehouse>>> getAllWarehouses(
+    public ResponseEntity<GApiResponse<Page<WarehouseResponse>>> getAllWarehouses(
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
@@ -36,12 +37,13 @@ public class WarehouseController {
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
         Page<Warehouse> warehouses = warehouseService.getWarehouses(null, isActives, offset, limit, sortBy, orderBy);
-        return ResponseEntity.ok(GApiResponse.success(warehouses));
+        Page<WarehouseResponse> responses = warehouses.map(WarehouseResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<Page<Warehouse>>> getWarehouses(
+    public ResponseEntity<GApiResponse<Page<WarehouseResponse>>> getWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
@@ -50,77 +52,85 @@ public class WarehouseController {
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
         Page<Warehouse> warehouses = warehouseService.getWarehouses(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
-        return ResponseEntity.ok(GApiResponse.success(warehouses));
+        Page<WarehouseResponse> responses = warehouses.map(WarehouseResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{warehouseId}")
-    public ResponseEntity<GApiResponse<Warehouse>> getWarehouse(
+    public ResponseEntity<GApiResponse<WarehouseResponse>> getWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "warehouseId") Long warehouseId
     ) {
         Warehouse warehouse = warehouseService.getWarehouse(userPrincipal.getId(), warehouseId);
-        return ResponseEntity.ok(GApiResponse.success(warehouse));
+        WarehouseResponse response = new WarehouseResponse(warehouse);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse<Warehouse>> addWarehouse(
+    public ResponseEntity<GApiResponse<WarehouseResponse>> addWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody WarehouseRequest request
     ) {
         Warehouse warehouse = warehouseService.addWarehouse(userPrincipal.getId(), request);
-        return ResponseEntity.ok(GApiResponse.success(warehouse));
+        WarehouseResponse response = new WarehouseResponse(warehouse);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{warehouseId}/update")
-    public ResponseEntity<GApiResponse<Warehouse>> updateWarehouse(
+    public ResponseEntity<GApiResponse<WarehouseResponse>> updateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "warehouseId") Long warehouseId,
             @RequestBody WarehouseRequest request
     ) {
         Warehouse warehouse = warehouseService.updateWarehouse(userPrincipal.getId(), warehouseId, request);
-        return ResponseEntity.ok(GApiResponse.success(warehouse));
+        WarehouseResponse response = new WarehouseResponse(warehouse);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{warehouseId}/activate")
-    public ResponseEntity<GApiResponse<Warehouse>> activateWarehouse(
+    public ResponseEntity<GApiResponse<WarehouseResponse>> activateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "warehouseId") Long warehouseId
     ) {
         Warehouse warehouse = warehouseService.activateWarehouse(userPrincipal.getId(), warehouseId);
-        return ResponseEntity.ok(GApiResponse.success(warehouse));
+        WarehouseResponse response = new WarehouseResponse(warehouse);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{warehouseId}/deActivate")
-    public ResponseEntity<GApiResponse<Warehouse>> deactiveWarehouse(
+    public ResponseEntity<GApiResponse<WarehouseResponse>> deactivateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "warehouseId") Long warehouseId
     ) {
         Warehouse warehouse = warehouseService.deactivateWarehouse(userPrincipal.getId(), warehouseId);
-        return ResponseEntity.ok(GApiResponse.success(warehouse));
+        WarehouseResponse response = new WarehouseResponse(warehouse);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/activate")
-    public ResponseEntity<GApiResponse<List<Warehouse>>> activateWarehouses(
+    public ResponseEntity<GApiResponse<List<WarehouseResponse>>> activateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ListIdRequest request) {
         List<Warehouse> warehouses = warehouseService.activateWarehouses(userPrincipal.getId(), request.getIds());
-        return ResponseEntity.ok(GApiResponse.success(warehouses));
+        List<WarehouseResponse> responses = warehouses.stream().map(WarehouseResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
-    public ResponseEntity<GApiResponse<List<Warehouse>>> deactivateWarehouses(
+    public ResponseEntity<GApiResponse<List<WarehouseResponse>>> deactivateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ListIdRequest request) {
         List<Warehouse> warehouses = warehouseService.deactivateWarehouses(userPrincipal.getId(), request.getIds());
-        return ResponseEntity.ok(GApiResponse.success(warehouses));
+        List<WarehouseResponse> responses = warehouses.stream().map(WarehouseResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 }
