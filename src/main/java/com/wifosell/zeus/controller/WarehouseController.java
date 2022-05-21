@@ -9,6 +9,7 @@ import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
 import com.wifosell.zeus.utils.Preprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,22 +28,28 @@ public class WarehouseController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<List<Warehouse>>> getAllWarehouses(
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives
+    public ResponseEntity<GApiResponse<Page<Warehouse>>> getAllWarehouses(
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<Warehouse> warehouses = warehouseService.getAllWarehouses(isActive);
+        Page<Warehouse> warehouses = warehouseService.getWarehouses(null, isActives, offset, limit, sortBy, orderBy);
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<Warehouse>>> getWarehouses(
+    public ResponseEntity<GApiResponse<Page<Warehouse>>> getWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<Warehouse> warehouses = warehouseService.getWarehouses(userPrincipal.getId(), isActive);
+        Page<Warehouse> warehouses = warehouseService.getWarehouses(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
         return ResponseEntity.ok(GApiResponse.success(warehouses));
     }
 
