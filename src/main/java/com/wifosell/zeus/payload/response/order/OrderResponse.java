@@ -20,6 +20,11 @@ public class OrderResponse extends BasicEntityResponse {
     private final SaleChannelResponse saleChannel;
     private final CustomerResponse customer;
     private final BigDecimal subtotal;
+    private final OrderModel.STATUS status;
+    private final OrderModel.PAYMENT_METHOD paymentMethod;
+    private final OrderModel.PAYMENT_STATUS paymentStatus;
+    private final String paymentInfo;
+    private final Long invoiceId;
 
     public OrderResponse(OrderModel order) {
         super(order);
@@ -28,6 +33,11 @@ public class OrderResponse extends BasicEntityResponse {
         this.saleChannel = new SaleChannelResponse(order.getSaleChannel());
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
+        this.status = order.getStatus();
+        this.paymentMethod = order.getPaymentMethod();
+        this.paymentStatus = order.getPaymentStatus();
+        this.paymentInfo = order.getPaymentInfo();
+        this.invoiceId = order.getInvoice() == null ? null : order.getInvoice().getId();
     }
 
     @Getter

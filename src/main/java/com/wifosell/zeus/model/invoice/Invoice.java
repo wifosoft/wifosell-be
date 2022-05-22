@@ -1,9 +1,10 @@
-package com.wifosell.zeus.model.order;
+package com.wifosell.zeus.model.invoice;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,22 +17,21 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class OrderItem extends BasicEntity {
+public class Invoice extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "variant_id")
-    private Variant variant;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private OrderModel order;
+    
+    private BigDecimal total;
 
-    private BigDecimal price;
-
-    private Integer quantity;
-
-    private String note;
+    @Lob
+    private String description;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    private OrderModel order;
+    private User generalManager;
 }

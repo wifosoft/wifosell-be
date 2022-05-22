@@ -11,7 +11,6 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
-import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
@@ -77,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderModel addOrder(Long userId, AddOrderRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         OrderModel order = new OrderModel();
-        return this.updateOrderByRequest(order, request, gm);
+        return this.addOrderByRequest(order, request, gm);
     }
 
     @Override
@@ -111,14 +110,14 @@ public class OrderServiceImpl implements OrderService {
         return orderIds.stream().map(id -> this.deactivateOrder(userId, id)).collect(Collectors.toList());
     }
 
-    private OrderModel updateOrderByRequest(OrderModel order, IOrderRequest request, User gm) {
+    private OrderModel addOrderByRequest(OrderModel order, AddOrderRequest request, User gm) {
         // Order items
         Optional.ofNullable(request.getOrderItems()).ifPresent(orderItemRequests -> {
             orderItemRepository.deleteAllByOrderId(order.getId());
             order.getOrderItems().clear();
 
             List<OrderItem> orderItems = new ArrayList<>();
-            for (IOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
+            for (AddOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
                 Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
                 OrderItem orderItem = OrderItem.builder()
                         .variant(variant)
@@ -136,8 +135,8 @@ public class OrderServiceImpl implements OrderService {
         });
 
         // Sale Channel & Shop
-        Optional.ofNullable(request.getShopId()).ifPresent(shopId -> {
-            Optional.ofNullable(request.getSaleChannelId()).ifPresent(saleChannelId -> {
+        Optional.of(request.getShopId()).ifPresent(shopId -> {
+            Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
                 if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
                     Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
                     order.setShop(shop);
@@ -154,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
         });
 
         // Customer
-        Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
+        Optional.of(request.getCustomerId()).ifPresent(customerId -> {
             Customer customer = customerRepository.getOne(
                     CustomerSpecs.hasGeneralManager(gm.getId())
                             .and(CustomerSpecs.hasId(customerId))
@@ -172,6 +171,17 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal subtotal = order.calcSubTotal();
         order.setSubtotal(subtotal);
 
+        // Payment
+        order.setPaymentMethod(request.getPaymentMethod());
+        order.setPaymentStatus(request.getPaymentStatus());
+        order.setPaymentInfo(request.getPaymentInfo());
+
+        return orderRepository.save(order);
+    }
+
+    private OrderModel updateOrderByRequest(OrderModel order, UpdateOrderRequest request, User gm) {
+        Optional.ofNullable(request.getStatus()).ifPresent(order::setStatus);
+        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
         return orderRepository.save(order);
     }
 }

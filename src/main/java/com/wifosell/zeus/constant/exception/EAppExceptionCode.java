@@ -64,7 +64,16 @@ public enum EAppExceptionCode {
 
     //region Stock
     IMPORT_STOCK_TRANSACTION_NOT_FOUND(1300001),
-    IMPORT_STOCK_TRANSACTION_ITEM_NOT_FOUND(1300002);
+    IMPORT_STOCK_TRANSACTION_ITEM_NOT_FOUND(1300002),
+    //endregion
+
+    //region Invoice
+    INVOICE_NOT_FOUND(1400001),
+    INVOICE_EXISTING(1400002),
+    //endregion
+
+    //region Payment
+    PAYMENT_NOT_FOUND(1500001);
     //endregion
 
     private final int value;

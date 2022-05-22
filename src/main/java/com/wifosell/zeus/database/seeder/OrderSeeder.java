@@ -14,7 +14,6 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
-import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
@@ -64,7 +63,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         }
     }
 
-    private void updateOrderByRequest(IOrderRequest request, User gm) {
+    private void updateOrderByRequest(AddOrderRequest request, User gm) {
         OrderModel order = new OrderModel();
 
         // Order items
@@ -73,7 +72,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
             order.getOrderItems().clear();
 
             List<OrderItem> orderItems = new ArrayList<>();
-            for (IOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
+            for (AddOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
                 Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
                 OrderItem orderItem = OrderItem.builder()
                         .variant(variant)
@@ -91,8 +90,8 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         });
 
         // Sale Channel & Shop
-        Optional.ofNullable(request.getShopId()).ifPresent(shopId -> {
-            Optional.ofNullable(request.getSaleChannelId()).ifPresent(saleChannelId -> {
+        Optional.of(request.getShopId()).ifPresent(shopId -> {
+            Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
                 if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
                     Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
                     order.setShop(shop);
@@ -109,7 +108,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         });
 
         // Customer
-        Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
+        Optional.of(request.getCustomerId()).ifPresent(customerId -> {
             Customer customer = customerRepository.getOne(
                     CustomerSpecs.hasGeneralManager(gm.getId())
                             .and(CustomerSpecs.hasId(customerId))
@@ -126,6 +125,11 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         // Subtotal
         BigDecimal subtotal = order.calcSubTotal();
         order.setSubtotal(subtotal);
+
+        // Payment
+        order.setPaymentMethod(request.getPaymentMethod());
+        order.setPaymentStatus(request.getPaymentStatus());
+        order.setPaymentInfo(request.getPaymentInfo());
 
         orderRepository.save(order);
     }

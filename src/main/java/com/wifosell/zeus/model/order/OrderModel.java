@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.invoice.Invoice;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
@@ -43,6 +44,23 @@ public class OrderModel extends BasicEntity {
 
     private BigDecimal subtotal;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private STATUS status = STATUS.CREATED;
+
+    @Enumerated(EnumType.STRING)
+    private PAYMENT_METHOD paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PAYMENT_STATUS paymentStatus;
+
+    @Lob
+    private String paymentInfo;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "order")
+    private Invoice invoice;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
@@ -54,5 +72,29 @@ public class OrderModel extends BasicEntity {
             subtotal = subtotal.add(orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
         }
         return subtotal;
+    }
+
+    public enum STATUS {
+        CREATED,
+        TO_CONFIRM,
+        TO_PACK,
+        SHIPPING,
+        SHIPPED,
+        RETURNING,
+        RETURNED,
+        CANCELED,
+        SUCCESSFUL
+    }
+
+    public enum PAYMENT_METHOD {
+        COD,
+        BANKING,
+        E_WALLET
+    }
+
+    public enum PAYMENT_STATUS {
+        UNPAID,
+        PAID,
+        REFUNDED
     }
 }

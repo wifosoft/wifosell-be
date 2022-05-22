@@ -1,20 +1,13 @@
 package com.wifosell.zeus.payload.request.order;
 
+import com.wifosell.zeus.model.order.OrderModel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class UpdateOrderRequest implements IOrderRequest {
-    private List<OrderItem> orderItems;
-
-    private Long shopId;
-
-    private Long saleChannelId;
-
-    private Long customerId;
+public class UpdateOrderRequest {
+    private OrderModel.STATUS status;
 
     private Boolean isActive;
 }
