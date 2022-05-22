@@ -6,7 +6,6 @@ import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
-import com.wifosell.zeus.model.shop.VoucherSaleChannelShopRelation;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
@@ -37,8 +36,6 @@ public class ShopServiceImpl implements ShopService {
     private final UserShopRelationRepository userShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
-    private final VoucherRepository voucherRepository;
-    private final VoucherSaleChannelShopRelationRepository voucherSaleChannelShopRelationRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -169,24 +166,6 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public List<Shop> deactivateShops(List<Long> shopIds) {
         return shopIds.stream().map(this::deActivateShop).collect(Collectors.toList());
-    }
-
-    @Override
-    public void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId) {
-        if (voucherSaleChannelShopRelationRepository.existsVoucherSaleChannelShopRelation(voucherId, saleChannelId, shopId)) {
-            //existed
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        voucherSaleChannelShopRelationRepository.save(
-                VoucherSaleChannelShopRelation.builder().shop(
-                        shopRepository.getById(shopId)
-                ).saleChannel(
-                        saleChannelRepository.getById(saleChannelId)
-                ).voucher(
-                        voucherRepository.getById(voucherId)
-                ).build()
-        );
     }
 
     /**
