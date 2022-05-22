@@ -4,6 +4,7 @@ import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.sale_channel.SaleChannelRequest;
+import com.wifosell.zeus.payload.response.sale_channel.SaleChannelResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.SaleChannelService;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/saleChannels")
@@ -27,7 +29,7 @@ public class SaleChannelController {
 
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<GApiResponse<Page<SaleChannel>>> getAllSaleChannels(
+    public ResponseEntity<GApiResponse<Page<SaleChannelResponse>>> getAllSaleChannels(
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
@@ -37,12 +39,13 @@ public class SaleChannelController {
     ) {
         Page<SaleChannel> saleChannels = saleChannelService.getSaleChannels(
                 null, shopIds, isActives, offset, limit, sortBy, orderBy);
-        return ResponseEntity.ok(GApiResponse.success(saleChannels));
+        Page<SaleChannelResponse> responses = saleChannels.map(SaleChannelResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<Page<SaleChannel>>> getSaleChannels(
+    public ResponseEntity<GApiResponse<Page<SaleChannelResponse>>> getSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
@@ -54,75 +57,83 @@ public class SaleChannelController {
         Page<SaleChannel> saleChannels = saleChannelService.getSaleChannels(
                 userPrincipal.getId(), shopIds, isActives, offset, limit, sortBy, orderBy
         );
-        return ResponseEntity.ok(GApiResponse.success(saleChannels));
+        Page<SaleChannelResponse> responses = saleChannels.map(SaleChannelResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{saleChannelId}")
-    public ResponseEntity<GApiResponse<SaleChannel>> getSaleChannel(
+    public ResponseEntity<GApiResponse<SaleChannelResponse>> getSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "saleChannelId") Long saleChannelId
     ) {
         SaleChannel saleChannel = saleChannelService.getSaleChannel(userPrincipal.getId(), saleChannelId);
-        return ResponseEntity.ok(GApiResponse.success(saleChannel));
+        SaleChannelResponse response = new SaleChannelResponse(saleChannel);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse<SaleChannel>> addSaleChannel(
+    public ResponseEntity<GApiResponse<SaleChannelResponse>> addSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody SaleChannelRequest request
     ) {
         SaleChannel saleChannel = saleChannelService.addSaleChannel(userPrincipal.getId(), request);
-        return ResponseEntity.ok(GApiResponse.success(saleChannel));
+        SaleChannelResponse response = new SaleChannelResponse(saleChannel);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{saleChannelId}/update")
-    public ResponseEntity<GApiResponse<SaleChannel>> addSaleChannel(
+    public ResponseEntity<GApiResponse<SaleChannelResponse>> addSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "saleChannelId") Long saleChannelId,
             @RequestBody SaleChannelRequest request
     ) {
         SaleChannel saleChannel = saleChannelService.updateSaleChannel(userPrincipal.getId(), saleChannelId, request);
-        return ResponseEntity.ok(GApiResponse.success(saleChannel));
+        SaleChannelResponse response = new SaleChannelResponse(saleChannel);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{saleChannelId}/activate")
-    public ResponseEntity<GApiResponse<SaleChannel>> activateSaleChannel(
+    public ResponseEntity<GApiResponse<SaleChannelResponse>> activateSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "saleChannelId") Long saleChannelId
     ) {
         SaleChannel saleChannel = saleChannelService.activateSaleChannel(userPrincipal.getId(), saleChannelId);
-        return ResponseEntity.ok(GApiResponse.success(saleChannel));
+        SaleChannelResponse response = new SaleChannelResponse(saleChannel);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{saleChannelId}/deactivate")
-    public ResponseEntity<GApiResponse<SaleChannel>> deactivateSaleChannel(
+    public ResponseEntity<GApiResponse<SaleChannelResponse>> deactivateSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "saleChannelId") Long saleChannelId
     ) {
         SaleChannel saleChannel = saleChannelService.deactivateSaleChannel(userPrincipal.getId(), saleChannelId);
-        return ResponseEntity.ok(GApiResponse.success(saleChannel));
+        SaleChannelResponse response = new SaleChannelResponse(saleChannel);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/activate")
-    public ResponseEntity<GApiResponse<List<SaleChannel>>> activateSaleChannels(
+    public ResponseEntity<GApiResponse<List<SaleChannelResponse>>> activateSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ListIdRequest request) {
         List<SaleChannel> saleChannels = saleChannelService.activateSaleChannels(userPrincipal.getId(), request.getIds());
-        return ResponseEntity.ok(GApiResponse.success(saleChannels));
+        List<SaleChannelResponse> responses = saleChannels.stream().map(SaleChannelResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
-    public ResponseEntity<GApiResponse<List<SaleChannel>>> deactivateSaleChannels(
+    public ResponseEntity<GApiResponse<List<SaleChannelResponse>>> deactivateSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody ListIdRequest request) {
         List<SaleChannel> saleChannels = saleChannelService.deactivateSaleChannels(userPrincipal.getId(), request.getIds());
-        return ResponseEntity.ok(GApiResponse.success(saleChannels));
+        List<SaleChannelResponse> responses = saleChannels.stream().map(SaleChannelResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 }

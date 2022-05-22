@@ -33,6 +33,7 @@ public class SaleChannel extends BasicEntity {
     @Size(max = 50)
     private String shortName;
 
+    @Lob
     private String description;
 
     @JsonIgnore
