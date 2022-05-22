@@ -31,7 +31,7 @@ public class WarehouseSeeder extends BaseSeeder implements ISeeder {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
         ObjectMapper mapper = new ObjectMapper();
-        File file = new File("src/main/java/com/wifosell/zeus/database/data/warehouses.json");
+        File file = new File("src/main/java/com/wifosell/zeus/database/data/warehouse.json");
 
         try {
             WarehouseRequest[] requests = mapper.readValue(file, WarehouseRequest[].class);
