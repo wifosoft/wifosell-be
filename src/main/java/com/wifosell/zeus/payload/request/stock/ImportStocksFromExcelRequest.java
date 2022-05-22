@@ -18,7 +18,7 @@ public class ImportStocksFromExcelRequest {
     Long supplierId;
 
     @NotEmpty
-    String excelFile;
+    String source;
 
 
 }

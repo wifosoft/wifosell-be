@@ -57,12 +57,12 @@ public class StockController {
 
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping(value = "/importStockTransactionExcelFormData",  consumes = {"multipart/form-data"},  produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/importStockTransactionExcelFormData", consumes = {"multipart/form-data"}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<GApiResponse<ImportStockTransaction>> importStockTransactionExcelFormData(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam ("warehouseId") @NotNull Long warehouseId,
-            @RequestParam ("supplierId")  @NonNull Long supplierId,
+            @RequestParam("warehouseId") @NotNull Long warehouseId,
+            @RequestParam("supplierId") @NonNull Long supplierId,
             @RequestParam(value = "file", required = true) MultipartFile file
     ) {
         String fileName = fileStorageService.storeFile(file);
@@ -79,7 +79,7 @@ public class StockController {
         ImportStocksFromExcelRequest importStocksFromExcelRequest = new ImportStocksFromExcelRequest();
         importStocksFromExcelRequest.setWarehouseId(warehouseId);
         importStocksFromExcelRequest.setSupplierId(supplierId);
-        importStocksFromExcelRequest.setExcelFile(uploadFileResponse.getFileName());
+        importStocksFromExcelRequest.setSource(uploadFileResponse.getFileName());
 
         ImportStockTransaction transaction = stockService.createImportStockTransactionExcel(userPrincipal.getId(), importStocksFromExcelRequest);
         return ResponseEntity.ok(GApiResponse.success(transaction));

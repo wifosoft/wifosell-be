@@ -67,6 +67,9 @@ public class StockServiceImpl implements StockService {
                 .warehouse(warehouse)
                 .supplier(supplier)
                 .type(ImportStockTransaction.TYPE.MANUAL)
+                .source("")
+                .processingStatus(ImportStockTransaction.PROCESSING_STATUS.PROCESSED)
+                .processingNote("")
                 .generalManager(gm)
                 .build();
 
@@ -111,10 +114,10 @@ public class StockServiceImpl implements StockService {
                 .warehouse(warehouse)
                 .supplier(supplier)
                 .type(ImportStockTransaction.TYPE.EXCEL)
-                .generalManager(gm)
-                .excelFile(request.getExcelFile())
+                .source(request.getSource())
                 .processingStatus(ImportStockTransaction.PROCESSING_STATUS.QUEUED)
                 .processingNote("Tạo phiếu nhập kho thành công. File sẽ được xử lý trong hàng đợi")
+                .generalManager(gm)
                 .build();
         importStockTransactionRepository.save(transaction);
 
@@ -139,7 +142,7 @@ public class StockServiceImpl implements StockService {
         Warehouse warehouse = importStockTransaction.getWarehouse();
         Supplier supplier = importStockTransaction.getSupplier();
 
-        String filePathImportWarehouseStock = importStockTransaction.getExcelFile();
+        String filePathImportWarehouseStock = importStockTransaction.getSource();
         List<ImportStockTransactionItem> transactionItems = new ArrayList<>();
 
         Resource resource = fileStorageService.loadFileAsResource(filePathImportWarehouseStock);

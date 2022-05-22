@@ -18,7 +18,7 @@ public class ImportStockTransactionResponse extends BasicEntityResponse {
     private final Supplier supplier;
     private final ImportStockTransaction.TYPE type;
     private final ImportStockTransaction.PROCESSING_STATUS processingStatus;
-    private final String excelFile;
+    private final String source;
     private final String processingNote;
     private final List<ImportStockTransactionItemResponse> items;
 
@@ -27,7 +27,7 @@ public class ImportStockTransactionResponse extends BasicEntityResponse {
         this.warehouse = transaction.getWarehouse();
         this.supplier = transaction.getSupplier();
         this.type = transaction.getType();
-        this.excelFile = transaction.getExcelFile();
+        this.source = transaction.getSource();
         this.processingStatus = transaction.getProcessingStatus();
         this.processingNote = transaction.getProcessingNote();
         this.items = transaction.getItems().stream().map(ImportStockTransactionItemResponse::new).collect(Collectors.toList());
