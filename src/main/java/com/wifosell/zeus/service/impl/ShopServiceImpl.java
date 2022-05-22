@@ -3,16 +3,18 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.*;
+import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
+import com.wifosell.zeus.model.shop.VoucherSaleChannelShopRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ShopService;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -26,14 +28,13 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service("ShopService")
+@RequiredArgsConstructor
 public class ShopServiceImpl implements ShopService {
     Logger logger = Logger.getLogger(ShopServiceImpl.class.getName());
 
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
     private final UserShopRelationRepository userShopRelationRepository;
-    private final WarehouseRepository warehouseRepository;
-    private final WarehouseShopRelationRepository warehouseShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
     private final VoucherRepository voucherRepository;
@@ -41,25 +42,6 @@ public class ShopServiceImpl implements ShopService {
 
     @PersistenceContext
     private EntityManager em;
-
-    @Autowired
-    public ShopServiceImpl(ShopRepository shopRepository,
-                           UserRepository userRepository,
-                           UserShopRelationRepository userShopRelationRepository,
-                           WarehouseRepository warehouseRepository,
-                           WarehouseShopRelationRepository warehouseShopRelationRepository,
-                           SaleChannelRepository saleChannelRepository,
-                           SaleChannelShopRelationRepository saleChannelShopRelationRepository, VoucherRepository voucherRepository, VoucherSaleChannelShopRelationRepository voucherSaleChannelShopRelationRepository) {
-        this.shopRepository = shopRepository;
-        this.userRepository = userRepository;
-        this.userShopRelationRepository = userShopRelationRepository;
-        this.warehouseRepository = warehouseRepository;
-        this.warehouseShopRelationRepository = warehouseShopRelationRepository;
-        this.saleChannelRepository = saleChannelRepository;
-        this.saleChannelShopRelationRepository = saleChannelShopRelationRepository;
-        this.voucherRepository = voucherRepository;
-        this.voucherSaleChannelShopRelationRepository = voucherSaleChannelShopRelationRepository;
-    }
 
     @Override
     public List<Shop> getCreatedShop(Long userId) {
@@ -190,65 +172,6 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public void linkWarehouseToShop(Long warehouseId, Long shopId) {
-
-        if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
-            //existed
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        warehouseShopRelationRepository.save(
-                WarehouseShopRelation.builder().shop(
-                        shopRepository.getById(shopId)
-                ).warehouse(
-                        warehouseRepository.getById(warehouseId)
-                ).build()
-        );
-
-    }
-
-    @Override
-    public void linkWarehouseToShop(Long currentUserId, Long warehouseId, Long shopId) {
-        User gm = userRepository.getUserById(currentUserId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
-        Shop shop = shopRepository.getById(shopId);
-
-        if (!warehouse.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
-        }
-        if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
-            //existed
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        warehouseShopRelationRepository.save(
-                WarehouseShopRelation.builder().shop(shop).warehouse(warehouse).build()
-        );
-    }
-
-    @Override
-    public void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId) {
-        User gm = userRepository.getUserById(currentUserId).getGeneralManager();
-        SaleChannel saleChannel = saleChannelRepository.getOne(
-                SaleChannelSpecs.hasGeneralManager(gm.getId())
-                        .and(SaleChannelSpecs.hasId(saleChannelId))
-        );
-        Shop shop = shopRepository.getById(shopId);
-
-        if (!saleChannel.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
-        }
-
-        if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        saleChannelShopRelationRepository.save(
-                SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build()
-        );
-    }
-
-    @Override
     public void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId) {
         if (voucherSaleChannelShopRelationRepository.existsVoucherSaleChannelShopRelation(voucherId, saleChannelId, shopId)) {
             //existed
@@ -324,6 +247,6 @@ public class ShopServiceImpl implements ShopService {
             });
         });
 
-        return shop;
+        return shopRepository.save(shop);
     }
 }

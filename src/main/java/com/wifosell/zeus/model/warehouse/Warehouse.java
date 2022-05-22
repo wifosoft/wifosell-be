@@ -3,7 +3,6 @@ package com.wifosell.zeus.model.warehouse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.shop.WarehouseShopRelation;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
@@ -39,10 +38,6 @@ public class Warehouse extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "warehouse")
-    private List<WarehouseShopRelation> warehouseShopRelations = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "warehouse")

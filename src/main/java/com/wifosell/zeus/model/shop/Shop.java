@@ -54,10 +54,6 @@ public class Shop extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private List<WarehouseShopRelation> warehouseShopRelations = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<SaleChannelShopRelation> saleChannelShopRelations = new ArrayList<>();
 
     @JsonIgnore
