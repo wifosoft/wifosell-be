@@ -1,6 +1,6 @@
 package com.wifosell.zeus.payload.request.order;
 
-import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.Payment;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -26,13 +26,7 @@ public class AddOrderRequest {
     private Long customerId;
 
     @NonNull
-    private OrderModel.PAYMENT_METHOD paymentMethod;
-
-    @NonNull
-    private OrderModel.PAYMENT_STATUS paymentStatus;
-
-    @NonNull
-    private String paymentInfo;
+    private PaymentRequest payment;
 
     private Boolean isActive;
 
@@ -47,5 +41,18 @@ public class AddOrderRequest {
 
         @Size(max = 1000)
         private String note;
+    }
+
+    @Getter
+    @Setter
+    public static class PaymentRequest {
+        @NonNull
+        private Payment.METHOD method;
+
+        @NonNull
+        private Payment.STATUS status;
+
+        @NonNull
+        private String info;
     }
 }

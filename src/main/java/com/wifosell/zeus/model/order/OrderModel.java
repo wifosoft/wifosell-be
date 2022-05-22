@@ -48,14 +48,9 @@ public class OrderModel extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private STATUS status = STATUS.CREATED;
 
-    @Enumerated(EnumType.STRING)
-    private PAYMENT_METHOD paymentMethod;
-
-    @Enumerated(EnumType.STRING)
-    private PAYMENT_STATUS paymentStatus;
-
-    @Lob
-    private String paymentInfo;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    private Payment payment;
 
     @JsonIgnore
     @OneToOne(mappedBy = "order")
@@ -84,17 +79,5 @@ public class OrderModel extends BasicEntity {
         RETURNED,
         CANCELED,
         SUCCESSFUL
-    }
-
-    public enum PAYMENT_METHOD {
-        COD,
-        BANKING,
-        E_WALLET
-    }
-
-    public enum PAYMENT_STATUS {
-        UNPAID,
-        PAID,
-        REFUNDED
     }
 }

@@ -3,6 +3,7 @@ package com.wifosell.zeus.payload.response.order;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
@@ -21,9 +22,7 @@ public class OrderResponse extends BasicEntityResponse {
     private final CustomerResponse customer;
     private final BigDecimal subtotal;
     private final OrderModel.STATUS status;
-    private final OrderModel.PAYMENT_METHOD paymentMethod;
-    private final OrderModel.PAYMENT_STATUS paymentStatus;
-    private final String paymentInfo;
+    private final PaymentResponse payment;
     private final Long invoiceId;
 
     public OrderResponse(OrderModel order) {
@@ -34,9 +33,7 @@ public class OrderResponse extends BasicEntityResponse {
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
         this.status = order.getStatus();
-        this.paymentMethod = order.getPaymentMethod();
-        this.paymentStatus = order.getPaymentStatus();
-        this.paymentInfo = order.getPaymentInfo();
+        this.payment = new PaymentResponse(order.getPayment());
         this.invoiceId = order.getInvoice() == null ? null : order.getInvoice().getId();
     }
 
@@ -105,6 +102,20 @@ public class OrderResponse extends BasicEntityResponse {
             this.district = customer.getDistrict();
             this.ward = customer.getWard();
             this.addressDetail = customer.getAddressDetail();
+        }
+    }
+
+    @Getter
+    private static class PaymentResponse extends BasicEntityResponse {
+        private final Payment.METHOD method;
+        private final Payment.STATUS status;
+        private final String info;
+
+        public PaymentResponse(Payment payment) {
+            super(payment);
+            this.method = payment.getMethod();
+            this.status = payment.getStatus();
+            this.info = payment.getInfo();
         }
     }
 }

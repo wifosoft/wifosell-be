@@ -8,6 +8,7 @@ import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
@@ -34,6 +35,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     private SaleChannelShopRelationRepository saleChannelShopRelationRepository;
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
+    private PaymentRepository paymentRepository;
 
     @Override
     public void prepareJpaRepository() {
@@ -45,6 +47,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         this.saleChannelShopRelationRepository = this.factory.getRepository(SaleChannelShopRelationRepository.class);
         this.customerRepository = this.factory.getRepository(CustomerRepository.class);
         this.userRepository = this.factory.getRepository(UserRepository.class);
+        this.paymentRepository = this.factory.getRepository(PaymentRepository.class);
     }
 
     @Override
@@ -127,9 +130,12 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         order.setSubtotal(subtotal);
 
         // Payment
-        order.setPaymentMethod(request.getPaymentMethod());
-        order.setPaymentStatus(request.getPaymentStatus());
-        order.setPaymentInfo(request.getPaymentInfo());
+        Payment payment = Payment.builder()
+                .method(request.getPayment().getMethod())
+                .status(request.getPayment().getStatus())
+                .info(request.getPayment().getInfo())
+                .build();
+        order.setPayment(paymentRepository.save(payment));
 
         orderRepository.save(order);
     }
