@@ -25,4 +25,6 @@ public interface CustomerService {
     List<Customer> activateCustomers(Long userId, @NonNull List<Long> customerIds);
 
     List<Customer> deactivateCustomers(Long userId, @NonNull List<Long> customerIds);
+
+    List<Customer> searchCustomers(String text);
 }

@@ -1,6 +1,7 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
@@ -10,9 +11,19 @@ import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.lucene.search.Query;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.search.query.engine.spi.FacetManager;
+import org.hibernate.search.query.facet.Facet;
+import org.hibernate.search.query.facet.FacetSortOrder;
+import org.hibernate.search.query.facet.FacetingRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
@@ -25,6 +36,7 @@ import java.util.stream.Collectors;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Page<Customer> getCustomers(
@@ -109,5 +121,39 @@ public class CustomerServiceImpl implements CustomerService {
         Optional.ofNullable(request.getIsActive()).ifPresent(customer::setIsActive);
         customer.setGeneralManager(gm);
         return customerRepository.save(customer);
+    }
+
+    public List<Customer> searchCustomers(String text) {
+        text = text.toLowerCase();
+        FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+
+        QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory()
+                .buildQueryBuilder()
+                .forEntity(Customer.class)
+                .get();
+
+        Query query = queryBuilder
+                .keyword().wildcard()
+                .onFields(Customer_.FULL_NAME)
+                .matching(text)
+                .createQuery();
+
+        FacetingRequest labelFacetingRequest = queryBuilder.facet()
+                .name( "cityFaceting" )
+                .onField( Customer_.CITY)
+                .discrete()
+                .orderedBy( FacetSortOrder.COUNT_DESC )
+                .includeZeroCounts( false )
+                .maxFacetCount(10)
+                .createFacetingRequest();
+
+        FullTextQuery jpaQuery = fullTextEntityManager.createFullTextQuery(query, Customer.class);
+
+        FacetManager facetManager = jpaQuery.getFacetManager();
+        facetManager.enableFaceting( labelFacetingRequest );
+
+        List<Facet> facets = facetManager.getFacets( "cityFaceting" );
+        System.out.println("From Customer Service: " + facets);
+        return jpaQuery.getResultList();
     }
 }
