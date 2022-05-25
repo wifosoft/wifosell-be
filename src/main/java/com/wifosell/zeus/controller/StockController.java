@@ -5,6 +5,7 @@ import com.wifosell.zeus.model.stock.TransferStockTransaction;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.stock.ImportStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
+import com.wifosell.zeus.payload.request.stock.TransferStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.payload.response.stock.ImportStockTransactionResponse;
 import com.wifosell.zeus.payload.response.stock.TransferStockTransactionResponse;
@@ -15,7 +16,6 @@ import com.wifosell.zeus.service.impl.storage.FileSystemStorageService;
 import com.wifosell.zeus.service.impl.storage.UploadFileResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +59,7 @@ public class StockController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/importStockTransactionExcelFormData", consumes = {"multipart/form-data"}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<GApiResponse<ImportStockTransaction>> importStockTransactionExcelFormData(
+    public ResponseEntity<GApiResponse<ImportStockTransactionResponse>> importStockTransactionExcelFormData(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam("warehouseId") @NotNull Long warehouseId,
             @RequestParam("supplierId") @NonNull Long supplierId,
@@ -75,16 +75,16 @@ public class StockController {
         UploadFileResponse uploadFileResponse = new UploadFileResponse(fileName, fileDownloadUri,
                 file.getContentType(), file.getSize());
 
-
-        ImportStocksFromExcelRequest importStocksFromExcelRequest = new ImportStocksFromExcelRequest();
-        importStocksFromExcelRequest.setWarehouseId(warehouseId);
-        importStocksFromExcelRequest.setSupplierId(supplierId);
-        importStocksFromExcelRequest.setSource(uploadFileResponse.getFileName());
+        ImportStocksFromExcelRequest importStocksFromExcelRequest = ImportStocksFromExcelRequest.builder()
+                .warehouseId(warehouseId)
+                .supplierId(supplierId)
+                .source(uploadFileResponse.getFileName())
+                .build();
 
         ImportStockTransaction transaction = stockService.createImportStockTransactionExcel(userPrincipal.getId(), importStocksFromExcelRequest);
-        return ResponseEntity.ok(GApiResponse.success(transaction));
+        ImportStockTransactionResponse response = new ImportStockTransactionResponse(transaction);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
-
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/import/transactions")
@@ -123,6 +123,35 @@ public class StockController {
             @RequestBody TransferStocksRequest request
     ) {
         TransferStockTransaction transaction = stockService.transferStocks(userPrincipal.getId(), request);
+        TransferStockTransactionResponse response = new TransferStockTransactionResponse(transaction);
+        return ResponseEntity.ok(GApiResponse.success(response));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(value = "/transferFromExcel", consumes = {"multipart/form-data"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GApiResponse<TransferStockTransactionResponse>> transferStocksFromExcel(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam("fromWarehouseId") @NotNull Long fromWarehouseId,
+            @RequestParam("toWarehouseId") @NonNull Long toWarehouseId,
+            @RequestParam(value = "file") MultipartFile file
+    ) {
+        String fileName = fileStorageService.storeFile(file);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("api/upload/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        UploadFileResponse uploadFileResponse = new UploadFileResponse(fileName, fileDownloadUri,
+                file.getContentType(), file.getSize());
+
+        TransferStocksFromExcelRequest transferStocksFromExcelRequest = TransferStocksFromExcelRequest.builder()
+                .fromWarehouseId(fromWarehouseId)
+                .toWarehouseId(toWarehouseId)
+                .source(uploadFileResponse.getFileName())
+                .build();
+
+        TransferStockTransaction transaction = stockService.createTransferStockTransactionExcel(userPrincipal.getId(), transferStocksFromExcelRequest);
         TransferStockTransactionResponse response = new TransferStockTransactionResponse(transaction);
         return ResponseEntity.ok(GApiResponse.success(response));
     }

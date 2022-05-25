@@ -11,12 +11,12 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Builder
-public class ImportStocksFromExcelRequest {
+public class TransferStocksFromExcelRequest {
     @NotNull
-    Long warehouseId;
+    Long fromWarehouseId;
 
     @NonNull
-    Long supplierId;
+    Long toWarehouseId;
 
     @NotEmpty
     String source;

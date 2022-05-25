@@ -43,6 +43,7 @@ public class ImportStockTransaction extends BasicEntity {
     @Lob
     private String description;
 
+    @Builder.Default
     @OneToMany(mappedBy = "transaction", cascade = {CascadeType.ALL})
     private List<ImportStockTransactionItem> items = new ArrayList<>();
 

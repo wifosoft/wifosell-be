@@ -10,11 +10,14 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.stock.ImportStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
+import com.wifosell.zeus.payload.request.stock.TransferStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.StockService;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockRow;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockServiceImpl;
+import com.wifosell.zeus.service.impl.batch_process.warehouse.TransferStockRow;
+import com.wifosell.zeus.service.impl.batch_process.warehouse.TransferStockServiceImpl;
 import com.wifosell.zeus.service.impl.storage.FileSystemStorageService;
 import com.wifosell.zeus.specs.ImportStockTransactionSpecs;
 import com.wifosell.zeus.specs.TransferStockTransactionSpecs;
@@ -125,14 +128,13 @@ public class StockServiceImpl implements StockService {
                 Instant.now().plusSeconds(5),
                 () -> importStocksFromExcel(userId, transaction.getId())
         );
-        logger.info("Job scheduled import stock transaction : " + scheduledJobIdEmail);
-
+        logger.info("Job scheduled import stocks transaction : " + scheduledJobIdEmail);
 
         return transaction;
     }
 
     @Override
-    public ImportStockTransaction importStocksFromExcel(@NonNull Long userId, @NonNull Long transactionId) {
+    public void importStocksFromExcel(@NonNull Long userId, @NonNull Long transactionId) {
         ImportStockTransaction importStockTransaction = importStockTransactionRepository.getById(transactionId);
         importStockTransaction.setProcessingStatus(ImportStockTransaction.PROCESSING_STATUS.PROCESSING);
         importStockTransaction.setProcessingNote("Đang thực thi xử lý");
@@ -193,8 +195,6 @@ public class StockServiceImpl implements StockService {
             importStockTransaction.setProcessingNote("Có lỗi xảy ra trong quá trình xử lý");
             importStockTransactionRepository.save(importStockTransaction);
         }
-
-        return importStockTransaction;
     }
 
     @Override
@@ -290,6 +290,113 @@ public class StockServiceImpl implements StockService {
         transferStockTransactionRepository.save(transaction);
 
         return transaction;
+    }
+
+    @Override
+    public TransferStockTransaction createTransferStockTransactionExcel(@NonNull Long userId, TransferStocksFromExcelRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse fromWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getFromWarehouseId());
+        Warehouse toWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getToWarehouseId());
+
+        TransferStockTransaction transaction = TransferStockTransaction.builder()
+                .fromWarehouse(fromWarehouse)
+                .toWarehouse(toWarehouse)
+                .type(TransferStockTransaction.TYPE.EXCEL)
+                .source(request.getSource())
+                .processingStatus(TransferStockTransaction.PROCESSING_STATUS.QUEUED)
+                .processingNote("Tạo phiếu chuyển kho thành công. File sẽ được xử lý trong hàng đợi.")
+                .generalManager(gm)
+                .build();
+        transferStockTransactionRepository.save(transaction);
+
+        JobId scheduledJobIdEmail = jobScheduler.schedule(
+                Instant.now().plusSeconds(5),
+                () -> transferStocksFromExcel(userId, transaction.getId())
+        );
+        logger.info("Job scheduled transfer stocks transaction : " + scheduledJobIdEmail);
+
+        return transaction;
+    }
+
+    @Override
+    public void transferStocksFromExcel(@NonNull Long userId, @NonNull Long transactionId) {
+        TransferStockTransaction transaction = transferStockTransactionRepository.getById(transactionId);
+        transaction.setProcessingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSING);
+        transaction.setProcessingNote("Đang thực thi xử lý.");
+        transferStockTransactionRepository.save(transaction);
+
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse fromWarehouse = transaction.getFromWarehouse();
+        Warehouse toWarehouse = transaction.getToWarehouse();
+
+        String filePathImportWarehouseStock = transaction.getSource();
+        List<TransferStockTransactionItem> transactionItems = new ArrayList<>();
+
+        Resource resource = fileStorageService.loadFileAsResource(filePathImportWarehouseStock);
+        TransferStockServiceImpl transferStockService = new TransferStockServiceImpl();
+        int successRecord = 0;
+        int errorRecord = 0;
+        try {
+            File f = new File(resource.getURI());
+            List<TransferStockRow> listRow = transferStockService.transferStocks(f);
+            for (TransferStockRow item : listRow) {
+                Variant variant = variantRepository.getBySKUNoThrow(item.getSku());
+                if (variant == null) {
+                    errorRecord += 1;
+                    continue;
+                }
+
+                // From
+                Stock fromStock = stockRepository.getStockByWarehouseIdAndVariantId(fromWarehouse.getId(), variant.getId());
+
+                if (fromStock == null || fromStock.getQuantity() < item.getQuantity() || fromStock.getActualQuantity() < item.getQuantity()) {
+                    errorRecord += 1;
+                    continue;
+                }
+
+                fromStock.setActualQuantity(fromStock.getActualQuantity() - item.getQuantity());
+                fromStock.setQuantity(fromStock.getQuantity() - item.getQuantity());
+
+                stockRepository.save(fromStock);
+
+                // To
+                Stock toStock = stockRepository.getStockByWarehouseIdAndVariantId(toWarehouse.getId(), variant.getId());
+
+                if (toStock != null) {
+                    toStock.setActualQuantity(toStock.getActualQuantity() + item.getQuantity());
+                    toStock.setQuantity(toStock.getQuantity() + item.getQuantity());
+                } else {
+                    toStock = Stock.builder()
+                            .warehouse(toWarehouse)
+                            .variant(variant)
+                            .actualQuantity(item.getQuantity())
+                            .quantity(item.getQuantity())
+                            .build();
+                }
+
+                stockRepository.save(toStock);
+
+                // Transaction
+                TransferStockTransactionItem transactionItem = TransferStockTransactionItem.builder()
+                        .variant(variant)
+                        .quantity(item.getQuantity())
+                        .transaction(transaction)
+                        .build();
+                transactionItems.add(transactionItem);
+
+                transaction.setItems(transferStockTransactionItemRepository.saveAll(transactionItems));
+                successRecord += 1;
+            }
+
+            transaction.setProcessingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSED);
+            transaction.setProcessingNote(String.format("Đã xử lý, thành công %d sản phẩm - không thành công %d sản phẩm.", successRecord, errorRecord));
+            transferStockTransactionRepository.save(transaction);
+        } catch (InvalidFormatException | IOException e) {
+            e.printStackTrace();
+            transaction.setProcessingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSED);
+            transaction.setProcessingNote("Có lỗi xảy ra trong quá trình xử lý");
+            transferStockTransactionRepository.save(transaction);
+        }
     }
 
     @Override

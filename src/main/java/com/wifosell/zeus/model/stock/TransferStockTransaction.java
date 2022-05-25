@@ -42,6 +42,7 @@ public class TransferStockTransaction extends BasicEntity {
     @Lob
     private String description;
 
+    @Builder.Default
     @OneToMany(mappedBy = "transaction", cascade = {CascadeType.ALL})
     private List<TransferStockTransactionItem> items = new ArrayList<>();
 
