@@ -1,11 +1,13 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.stock.ImportStockTransaction;
+import com.wifosell.zeus.model.stock.TransferStockTransaction;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.stock.ImportStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.payload.response.stock.ImportStockTransactionResponse;
+import com.wifosell.zeus.payload.response.stock.TransferStockTransactionResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.StockService;
@@ -30,9 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StockController {
     private final StockService stockService;
-
-    @Autowired
-    private FileSystemStorageService fileStorageService;
+    private final FileSystemStorageService fileStorageService;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/import")
@@ -118,30 +118,42 @@ public class StockController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/transfer")
-    public ResponseEntity<GApiResponse<Boolean>> transferStocks(
+    public ResponseEntity<GApiResponse<TransferStockTransactionResponse>> transferStocks(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody TransferStocksRequest request
     ) {
-        stockService.transferStocks(userPrincipal.getId(), request);
-        return ResponseEntity.ok(GApiResponse.success(true));
+        TransferStockTransaction transaction = stockService.transferStocks(userPrincipal.getId(), request);
+        TransferStockTransactionResponse response = new TransferStockTransactionResponse(transaction);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/transfer/transactions")
-    public ResponseEntity<GApiResponse<Boolean>> getTransferStockTransactions(
-            @CurrentUser UserPrincipal userPrincipal
+    public ResponseEntity<GApiResponse<Page<TransferStockTransactionResponse>>> getTransferStockTransactions(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "type", required = false) List<TransferStockTransaction.TYPE> types,
+            @RequestParam(name = "processingStatus", required = false) List<TransferStockTransaction.PROCESSING_STATUS> statuses,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        // TODO haukc
-        return ResponseEntity.ok(GApiResponse.success(true));
+        Page<TransferStockTransaction> transactions = stockService.getTransferStockTransactions(
+                userPrincipal.getId(), types, statuses, isActives, offset, limit, sortBy, orderBy);
+        Page<TransferStockTransactionResponse> responses = transactions.map(TransferStockTransactionResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/transfer/transactions/{transferTransactionId}")
-    public ResponseEntity<GApiResponse<Boolean>> getTransferStockTransactions(
+    public ResponseEntity<GApiResponse<TransferStockTransactionResponse>> getTransferStockTransactions(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "transferTransactionId") Long transferTransactionId
     ) {
-        // TODO haukc
-        return ResponseEntity.ok(GApiResponse.success(true));
+        TransferStockTransaction transaction = stockService.getTransferStockTransaction(
+                userPrincipal.getId(), transferTransactionId);
+        TransferStockTransactionResponse response = new TransferStockTransactionResponse(transaction);
+        return ResponseEntity.ok(GApiResponse.success(response));
     }
 }

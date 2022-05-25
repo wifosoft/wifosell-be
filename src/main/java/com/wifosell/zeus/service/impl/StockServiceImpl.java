@@ -1,12 +1,13 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.stock.ImportStockTransaction;
-import com.wifosell.zeus.model.stock.ImportStockTransactionItem;
-import com.wifosell.zeus.model.stock.Stock;
+import com.wifosell.zeus.model.stock.*;
 import com.wifosell.zeus.model.supplier.Supplier;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.stock.ImportStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
@@ -16,6 +17,7 @@ import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockRow;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockServiceImpl;
 import com.wifosell.zeus.service.impl.storage.FileSystemStorageService;
 import com.wifosell.zeus.specs.ImportStockTransactionSpecs;
+import com.wifosell.zeus.specs.TransferStockTransactionSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,6 @@ import org.jobrunr.jobs.JobId;
 import org.jobrunr.scheduling.JobScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -47,14 +48,13 @@ public class StockServiceImpl implements StockService {
     private final VariantRepository variantRepository;
     private final ImportStockTransactionRepository importStockTransactionRepository;
     private final ImportStockTransactionItemRepository importStockTransactionItemRepository;
+    private final TransferStockTransactionRepository transferStockTransactionRepository;
+    private final TransferStockTransactionItemRepository transferStockTransactionItemRepository;
 
     private final JobScheduler jobScheduler;
     private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
 
-
-    @Autowired
-    private FileSystemStorageService fileStorageService;
-
+    private final FileSystemStorageService fileStorageService;
 
     @Override
     public ImportStockTransaction importStocks(@NonNull Long userId, ImportStocksRequest request) {
@@ -224,7 +224,92 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void transferStocks(@NonNull Long userId, TransferStocksRequest request) {
-        // TODO haukc
+    public TransferStockTransaction transferStocks(@NonNull Long userId, TransferStocksRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Warehouse fromWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getFromWarehouseId());
+        Warehouse toWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getToWarehouseId());
+
+        List<TransferStockTransactionItem> transactionItems = new ArrayList<>();
+        TransferStockTransaction transaction = TransferStockTransaction.builder()
+                .fromWarehouse(fromWarehouse)
+                .toWarehouse(toWarehouse)
+                .type(TransferStockTransaction.TYPE.MANUAL)
+                .source("")
+                .processingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSED)
+                .processingNote("")
+                .generalManager(gm)
+                .build();
+
+        request.getItems().forEach(item -> {
+            Variant variant = variantRepository.getById(item.getVariantId());
+
+            // From
+            Stock fromStock = stockRepository.getStockByWarehouseIdAndVariantId(fromWarehouse.getId(), variant.getId());
+
+            if (fromStock == null)
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.STOCK_NOT_FOUND));
+
+            if (fromStock.getQuantity() < item.getQuantity())
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.STOCK_QUANTITY_NOT_ENOUGH));
+
+            if (fromStock.getActualQuantity() < item.getQuantity())
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.STOCK_ACTUAL_QUANTITY_NOT_ENOUGH));
+
+            fromStock.setActualQuantity(fromStock.getActualQuantity() - item.getQuantity());
+            fromStock.setQuantity(fromStock.getQuantity() - item.getQuantity());
+
+            stockRepository.save(fromStock);
+
+            // To
+            Stock toStock = stockRepository.getStockByWarehouseIdAndVariantId(toWarehouse.getId(), variant.getId());
+
+            if (toStock != null) {
+                toStock.setActualQuantity(toStock.getActualQuantity() + item.getQuantity());
+                toStock.setQuantity(toStock.getQuantity() + item.getQuantity());
+            } else {
+                toStock = Stock.builder()
+                        .warehouse(toWarehouse)
+                        .variant(variant)
+                        .actualQuantity(item.getQuantity())
+                        .quantity(item.getQuantity())
+                        .build();
+            }
+
+            stockRepository.save(toStock);
+
+            // Transaction
+            TransferStockTransactionItem transactionItem = TransferStockTransactionItem.builder()
+                    .variant(variant)
+                    .quantity(item.getQuantity())
+                    .transaction(transaction)
+                    .build();
+            transactionItems.add(transactionItem);
+        });
+
+        transaction.setItems(transferStockTransactionItemRepository.saveAll(transactionItems));
+        transferStockTransactionRepository.save(transaction);
+
+        return transaction;
+    }
+
+    @Override
+    public Page<TransferStockTransaction> getTransferStockTransactions(Long userId, List<TransferStockTransaction.TYPE> types, List<TransferStockTransaction.PROCESSING_STATUS> statuses, List<Boolean> isActives, Integer offset, Integer limit, String sortBy, String orderBy) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return transferStockTransactionRepository.findAll(
+                TransferStockTransactionSpecs.hasGeneralManager(gmId)
+                        .and(TransferStockTransactionSpecs.inTypes(types))
+                        .and(TransferStockTransactionSpecs.inProcessingStatuses(statuses))
+                        .and(TransferStockTransactionSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
+    }
+
+    @Override
+    public TransferStockTransaction getTransferStockTransaction(Long userId, @NonNull Long transferStockTransactionId) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return transferStockTransactionRepository.getOne(
+                TransferStockTransactionSpecs.hasGeneralManager(gmId)
+                        .and(TransferStockTransactionSpecs.hasId(transferStockTransactionId))
+        );
     }
 }
