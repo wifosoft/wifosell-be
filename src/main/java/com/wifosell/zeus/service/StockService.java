@@ -14,11 +14,16 @@ public interface StockService {
     ImportStockTransaction importStocks(@NonNull Long userId, @Valid ImportStocksRequest request);
 
 
-    ImportStockTransaction createImportStockTransactionExcel(@NonNull Long userId, @Valid ImportStocksFromExcelRequest  request);
+    ImportStockTransaction createImportStockTransactionExcel(@NonNull Long userId, @Valid ImportStocksFromExcelRequest request);
+
     ImportStockTransaction importStocksFromExcel(@NonNull Long userId, @NonNull Long transactionId);
 
-    Page<ImportStockTransaction> getImportStockTransactions(Long userId, List<ImportStockTransaction.TYPE> types, List<Boolean> isActives,
-                                                            Integer offset, Integer limit, String sortBy, String orderBy);
+    Page<ImportStockTransaction> getImportStockTransactions(
+            Long userId,
+            List<ImportStockTransaction.TYPE> types,
+            List<ImportStockTransaction.PROCESSING_STATUS> statuses,
+            List<Boolean> isActives,
+            Integer offset, Integer limit, String sortBy, String orderBy);
 
     ImportStockTransaction getImportStockTransaction(Long userId, @NonNull Long importStockTransactionId);
 
