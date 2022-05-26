@@ -2,6 +2,8 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
+import com.wifosell.zeus.model.order.Payment;
+import com.wifosell.zeus.model.order.Payment_;
 import com.wifosell.zeus.model.sale_channel.SaleChannel_;
 import com.wifosell.zeus.model.shop.Shop_;
 import com.wifosell.zeus.model.user.User_;
@@ -39,6 +41,30 @@ public class OrderSpecs {
             if (saleChannelIds == null || saleChannelIds.isEmpty())
                 return criteriaBuilder.and();
             return root.get(OrderModel_.SALE_CHANNEL).get(SaleChannel_.ID).in(saleChannelIds);
+        });
+    }
+
+    public static Specification<OrderModel> inStatuses(List<OrderModel.STATUS> statuses) {
+        return ((root, query, criteriaBuilder) -> {
+            if (statuses == null || statuses.isEmpty())
+                return criteriaBuilder.and();
+            return root.get(OrderModel_.STATUS).in(statuses);
+        });
+    }
+
+    public static Specification<OrderModel> inPaymentMethods(List<Payment.METHOD> methods) {
+        return ((root, query, criteriaBuilder) -> {
+            if (methods == null || methods.isEmpty())
+                return criteriaBuilder.and();
+            return root.get(OrderModel_.PAYMENT).get(Payment_.METHOD).in(methods);
+        });
+    }
+
+    public static Specification<OrderModel> inPaymentStatuses(List<Payment.STATUS> statuses) {
+        return ((root, query, criteriaBuilder) -> {
+            if (statuses == null || statuses.isEmpty())
+                return criteriaBuilder.and();
+            return root.get(OrderModel_.PAYMENT).get(Payment_.STATUS).in(statuses);
         });
     }
 

@@ -1,6 +1,7 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
@@ -29,6 +30,9 @@ public class OrderController {
     public ResponseEntity<GApiResponse<Page<OrderResponse>>> getAllOrders(
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
             @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+            @RequestParam(name = "status", required = false) List<OrderModel.STATUS> statuses,
+            @RequestParam(name = "paymentMethod", required = false) List<Payment.METHOD> paymentMethods,
+            @RequestParam(name = "paymentStatus", required = false) List<Payment.STATUS> paymentStatues,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
@@ -36,7 +40,9 @@ public class OrderController {
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
         Page<OrderModel> orders = orderService.getOrders(
-                null, shopIds, saleChannelIds, isActives, offset, limit, sortBy, orderBy);
+                null, shopIds, saleChannelIds,
+                statuses, paymentMethods, paymentStatues,
+                isActives, offset, limit, sortBy, orderBy);
         Page<OrderResponse> responses = orders.map(OrderResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
@@ -47,6 +53,9 @@ public class OrderController {
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "shopId", required = false) List<Long> shopIds,
             @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+            @RequestParam(name = "status", required = false) List<OrderModel.STATUS> statuses,
+            @RequestParam(name = "paymentMethod", required = false) List<Payment.METHOD> paymentMethods,
+            @RequestParam(name = "paymentStatus", required = false) List<Payment.STATUS> paymentStatues,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
@@ -54,7 +63,9 @@ public class OrderController {
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
         Page<OrderModel> orders = orderService.getOrders(
-                userPrincipal.getId(), shopIds, saleChannelIds, isActives, offset, limit, sortBy, orderBy);
+                userPrincipal.getId(), shopIds, saleChannelIds,
+                statuses, paymentMethods, paymentStatues,
+                isActives, offset, limit, sortBy, orderBy);
         Page<OrderResponse> responses = orders.map(OrderResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }

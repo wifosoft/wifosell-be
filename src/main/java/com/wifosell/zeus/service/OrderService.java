@@ -1,6 +1,7 @@
 package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
 import org.springframework.data.domain.Page;
@@ -9,8 +10,19 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface OrderService {
-    Page<OrderModel> getOrders(Long userId, List<Long> shopIds, List<Long> saleChannelIds, List<Boolean> isActives,
-                               Integer offset, Integer limit, String sortBy, String orderBy);
+    Page<OrderModel> getOrders(
+            Long userId,
+            List<Long> shopIds,
+            List<Long> saleChannelIds,
+            List<OrderModel.STATUS> statuses,
+            List<Payment.METHOD> paymentMethods,
+            List<Payment.STATUS> paymentStatuses,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit,
+            String sortBy,
+            String orderBy
+    );
 
     OrderModel getOrder(Long userId, Long orderId);
 

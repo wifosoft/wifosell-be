@@ -20,7 +20,6 @@ import com.wifosell.zeus.specs.OrderSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
             Long userId,
             List<Long> shopIds,
             List<Long> saleChannelIds,
+            List<OrderModel.STATUS> statuses,
+            List<Payment.METHOD> paymentMethods,
+            List<Payment.STATUS> paymentStatuses,
             List<Boolean> isActives,
             Integer offset,
             Integer limit,
@@ -61,6 +63,9 @@ public class OrderServiceImpl implements OrderService {
                 OrderSpecs.hasGeneralManager(gmId)
                         .and(OrderSpecs.inShops(shopIds))
                         .and(OrderSpecs.inSaleChannels(saleChannelIds))
+                        .and(OrderSpecs.inStatuses(statuses))
+                        .and(OrderSpecs.inPaymentMethods(paymentMethods))
+                        .and(OrderSpecs.inPaymentStatuses(paymentStatuses))
                         .and(OrderSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
