@@ -20,6 +20,7 @@ import com.wifosell.zeus.specs.OrderSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -85,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderModel updateOrder(Long userId, Long orderId, UpdateOrderRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         OrderModel order = getOrder(userId, orderId);
-        return this.updateOrderByRequest(order, request, gm);
+        return this.updateOrderByRequest(order, request);
     }
 
     @Override
@@ -184,9 +185,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
-    private OrderModel updateOrderByRequest(OrderModel order, UpdateOrderRequest request, User gm) {
+    private OrderModel updateOrderByRequest(OrderModel order, UpdateOrderRequest request) {
         Optional.ofNullable(request.getStatus()).ifPresent(order::setStatus);
         Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
+        Optional.ofNullable(request.getPayment()).flatMap(payment -> Optional.ofNullable(payment.getStatus())).ifPresent(status -> {
+            order.getPayment().setStatus(status);
+            paymentRepository.save(order.getPayment());
+        });
         return orderRepository.save(order);
     }
 }

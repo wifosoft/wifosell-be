@@ -83,7 +83,7 @@ public class OrderController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{orderId}/update")
-    public ResponseEntity<GApiResponse<OrderResponse>> updateProduct(
+    public ResponseEntity<GApiResponse<OrderResponse>> updateOrder(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "orderId") Long orderId,
             @RequestBody UpdateOrderRequest request
