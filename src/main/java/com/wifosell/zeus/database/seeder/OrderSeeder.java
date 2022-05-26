@@ -8,6 +8,7 @@ import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.OrderStep;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
@@ -36,6 +37,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
     private PaymentRepository paymentRepository;
+    private OrderStepRepository orderStepRepository;
 
     @Override
     public void prepareJpaRepository() {
@@ -48,6 +50,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         this.customerRepository = this.factory.getRepository(CustomerRepository.class);
         this.userRepository = this.factory.getRepository(UserRepository.class);
         this.paymentRepository = this.factory.getRepository(PaymentRepository.class);
+        this.orderStepRepository = this.factory.getRepository(OrderStepRepository.class);
     }
 
     @Override
@@ -67,7 +70,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     }
 
     private void updateOrderByRequest(AddOrderRequest request, User gm) {
-        OrderModel order = new OrderModel();
+        OrderModel order = OrderModel.builder().build();
 
         // Order items
         Optional.ofNullable(request.getOrderItems()).ifPresent(orderItemRequests -> {
@@ -119,15 +122,21 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
             order.setCustomer(customer);
         });
 
-        // Active
-        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
-
-        // General manager
-        order.setGeneralManager(gm);
-
         // Subtotal
         BigDecimal subtotal = order.calcSubTotal();
         order.setSubtotal(subtotal);
+
+        // Cur step
+        order.setStatus(OrderModel.STATUS.CREATED);
+
+        // Steps
+        OrderStep step = OrderStep.builder()
+                .status(OrderModel.STATUS.CREATED)
+                .note("")
+                .order(order)
+                .build();
+        List<OrderStep> steps = new ArrayList<>(List.of(step));
+        order.setSteps(orderStepRepository.saveAll(steps));
 
         // Payment
         Payment payment = Payment.builder()
@@ -136,6 +145,12 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
                 .info(request.getPayment().getInfo())
                 .build();
         order.setPayment(paymentRepository.save(payment));
+
+        // General manager
+        order.setGeneralManager(gm);
+
+        // Active
+        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
         orderRepository.save(order);
     }

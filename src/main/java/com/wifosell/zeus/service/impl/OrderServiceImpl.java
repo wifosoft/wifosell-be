@@ -5,6 +5,7 @@ import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.OrderStep;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
@@ -43,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
+    private final OrderStepRepository orderStepRepository;
 
     @Override
     public Page<OrderModel> getOrders(
@@ -83,8 +85,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderModel addOrder(Long userId, AddOrderRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        OrderModel order = new OrderModel();
-        return this.addOrderByRequest(order, request, gm);
+        return this.addOrderByRequest(request, gm);
     }
 
     @Override
@@ -118,7 +119,9 @@ public class OrderServiceImpl implements OrderService {
         return orderIds.stream().map(id -> this.deactivateOrder(userId, id)).collect(Collectors.toList());
     }
 
-    private OrderModel addOrderByRequest(OrderModel order, AddOrderRequest request, User gm) {
+    private OrderModel addOrderByRequest(AddOrderRequest request, User gm) {
+        OrderModel order = OrderModel.builder().build();
+
         // Order items
         Optional.ofNullable(request.getOrderItems()).ifPresent(orderItemRequests -> {
             orderItemRepository.deleteAllByOrderId(order.getId());
@@ -169,15 +172,21 @@ public class OrderServiceImpl implements OrderService {
             order.setCustomer(customer);
         });
 
-        // Active
-        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
-
-        // General manager
-        order.setGeneralManager(gm);
-
         // Subtotal
         BigDecimal subtotal = order.calcSubTotal();
         order.setSubtotal(subtotal);
+
+        // Cur step
+        order.setStatus(OrderModel.STATUS.CREATED);
+
+        // Steps
+        OrderStep step = OrderStep.builder()
+                .status(OrderModel.STATUS.CREATED)
+                .note("")
+                .order(order)
+                .build();
+        List<OrderStep> steps = new ArrayList<>(List.of(step));
+        order.setSteps(orderStepRepository.saveAll(steps));
 
         // Payment
         Payment payment = Payment.builder()
@@ -186,6 +195,12 @@ public class OrderServiceImpl implements OrderService {
                 .info(request.getPayment().getInfo())
                 .build();
         order.setPayment(paymentRepository.save(payment));
+
+        // General manager
+        order.setGeneralManager(gm);
+
+        // Active
+        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
         return orderRepository.save(order);
     }

@@ -27,6 +27,7 @@ public class OrderModel extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -44,9 +45,12 @@ public class OrderModel extends BasicEntity {
 
     private BigDecimal subtotal;
 
-    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private STATUS status = STATUS.CREATED;
+    private STATUS status;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
+    private List<OrderStep> steps = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id", referencedColumnName = "id")
@@ -54,6 +58,7 @@ public class OrderModel extends BasicEntity {
 
     @JsonIgnore
     @OneToOne(mappedBy = "order")
+    @JoinColumn(name = "invoice_id", referencedColumnName = "id")
     private Invoice invoice;
 
     @JsonIgnore
@@ -71,13 +76,15 @@ public class OrderModel extends BasicEntity {
 
     public enum STATUS {
         CREATED,
-        TO_CONFIRM,
-        TO_PACK,
+        SELLER_CONFIRMED,
+        SELLER_CANCELED,
+        SELLER_PACKED,
         SHIPPING,
         SHIPPED,
+        BUYER_CONFIRMED,
+        BUYER_CANCELED,
         RETURNING,
         RETURNED,
-        CANCELED,
-        SUCCESSFUL
+        COMPLETED,
     }
 }

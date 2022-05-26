@@ -3,6 +3,7 @@ package com.wifosell.zeus.payload.response.order;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.OrderStep;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
@@ -22,6 +23,7 @@ public class OrderResponse extends BasicEntityResponse {
     private final CustomerResponse customer;
     private final BigDecimal subtotal;
     private final OrderModel.STATUS status;
+    private final List<OrderStepResponse> steps;
     private final PaymentResponse payment;
     private final Long invoiceId;
 
@@ -33,6 +35,7 @@ public class OrderResponse extends BasicEntityResponse {
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
         this.status = order.getStatus();
+        this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
         this.payment = new PaymentResponse(order.getPayment());
         this.invoiceId = order.getInvoice() == null ? null : order.getInvoice().getId();
     }
@@ -102,6 +105,18 @@ public class OrderResponse extends BasicEntityResponse {
             this.district = customer.getDistrict();
             this.ward = customer.getWard();
             this.addressDetail = customer.getAddressDetail();
+        }
+    }
+
+    @Getter
+    private static class OrderStepResponse extends BasicEntityResponse {
+        private final OrderModel.STATUS status;
+        private final String note;
+
+        public OrderStepResponse(OrderStep step) {
+            super(step);
+            this.status = step.getStatus();
+            this.note = step.getNote();
         }
     }
 

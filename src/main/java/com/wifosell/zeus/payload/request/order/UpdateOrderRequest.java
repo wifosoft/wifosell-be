@@ -3,7 +3,6 @@ package com.wifosell.zeus.payload.request.order;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.Payment;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
