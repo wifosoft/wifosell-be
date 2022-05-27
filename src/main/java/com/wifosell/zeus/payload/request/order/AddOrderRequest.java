@@ -1,8 +1,8 @@
 package com.wifosell.zeus.payload.request.order;
 
+import com.sun.istack.NotNull;
 import com.wifosell.zeus.model.order.Payment;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
@@ -16,16 +16,16 @@ public class AddOrderRequest {
     @NotEmpty
     private List<OrderItem> orderItems;
 
-    @NonNull
+    @NotNull
     private Long shopId;
 
-    @NonNull
+    @NotNull
     private Long saleChannelId;
 
-    @NonNull
+    @NotNull
     private Long customerId;
 
-    @NonNull
+    @NotNull
     private PaymentRequest payment;
 
     private Boolean isActive;
@@ -33,7 +33,7 @@ public class AddOrderRequest {
     @Getter
     @Setter
     public static class OrderItem {
-        @NonNull
+        @NotNull
         private Long variantId;
 
         @Positive
@@ -46,13 +46,13 @@ public class AddOrderRequest {
     @Getter
     @Setter
     public static class PaymentRequest {
-        @NonNull
+        @NotNull
         private Payment.METHOD method;
 
-        @NonNull
+        @NotNull
         private Payment.STATUS status;
 
-        @NonNull
+        @NotNull
         private String info;
     }
 }

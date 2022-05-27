@@ -13,7 +13,9 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
+import com.wifosell.zeus.payload.request.order.UpdateOrderPaymentStatusRequest;
 import com.wifosell.zeus.payload.request.order.UpdateOrderRequest;
+import com.wifosell.zeus.payload.request.order.UpdateOrderStatusRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.OrderService;
 import com.wifosell.zeus.specs.CustomerSpecs;
@@ -25,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderModel getOrder(Long userId, Long orderId) {
+    public OrderModel getOrder(Long userId, @NotNull Long orderId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return orderRepository.getOne(
                 OrderSpecs.hasGeneralManager(gmId).
@@ -89,33 +92,44 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderModel updateOrder(Long userId, Long orderId, UpdateOrderRequest request) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        OrderModel order = getOrder(userId, orderId);
+    public OrderModel updateOrder(Long userId, @NotNull Long orderId, UpdateOrderRequest request) {
+        OrderModel order = this.getOrder(userId, orderId);
         return this.updateOrderByRequest(order, request);
     }
 
     @Override
-    public OrderModel activateOrder(Long userId, Long orderId) {
-        OrderModel order = getOrder(userId, orderId);
+    public OrderModel updateOrderStatus(Long userId, @NotNull Long orderId, UpdateOrderStatusRequest request) {
+        OrderModel order = this.getOrder(userId, orderId);
+        return this.updateOrderStatusByRequest(order, request);
+    }
+
+    @Override
+    public OrderModel updateOrderPaymentStatus(Long userId, Long orderId, UpdateOrderPaymentStatusRequest request) {
+        OrderModel order = this.getOrder(userId, orderId);
+        return this.updateOrderPaymentStatus(order, request);
+    }
+
+    @Override
+    public OrderModel activateOrder(Long userId, @NotNull Long orderId) {
+        OrderModel order = this.getOrder(userId, orderId);
         order.setIsActive(true);
         return orderRepository.save(order);
     }
 
     @Override
-    public OrderModel deactivateOrder(Long userId, Long orderId) {
-        OrderModel order = getOrder(userId, orderId);
+    public OrderModel deactivateOrder(Long userId, @NotNull Long orderId) {
+        OrderModel order = this.getOrder(userId, orderId);
         order.setIsActive(false);
         return orderRepository.save(order);
     }
 
     @Override
-    public List<OrderModel> activateOrders(Long userId, List<Long> orderIds) {
+    public List<OrderModel> activateOrders(Long userId, @NotNull List<Long> orderIds) {
         return orderIds.stream().map(id -> this.activateOrder(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderModel> deactivateOrders(Long userId, List<Long> orderIds) {
+    public List<OrderModel> deactivateOrders(Long userId, @NotNull List<Long> orderIds) {
         return orderIds.stream().map(id -> this.deactivateOrder(userId, id)).collect(Collectors.toList());
     }
 
@@ -206,12 +220,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderModel updateOrderByRequest(OrderModel order, UpdateOrderRequest request) {
-        Optional.ofNullable(request.getStatus()).ifPresent(order::setStatus);
         Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
-        Optional.ofNullable(request.getPayment()).flatMap(payment -> Optional.ofNullable(payment.getStatus())).ifPresent(status -> {
-            order.getPayment().setStatus(status);
-            paymentRepository.save(order.getPayment());
-        });
+        return orderRepository.save(order);
+    }
+
+    private OrderModel updateOrderStatusByRequest(OrderModel order, UpdateOrderStatusRequest request) {
+        if (request.getStatus() != order.getStatus()) {
+            order.setStatus(request.getStatus());
+            OrderStep step = OrderStep.builder()
+                    .status(order.getStatus())
+                    .note(request.getNote())
+                    .order(order)
+                    .build();
+            order.getSteps().add(orderStepRepository.save(step));
+        }
+        return orderRepository.save(order);
+    }
+
+    private OrderModel updateOrderPaymentStatus(OrderModel order, UpdateOrderPaymentStatusRequest request) {
+        order.getPayment().setStatus(request.getStatus());
+        paymentRepository.save(order.getPayment());
         return orderRepository.save(order);
     }
 }
