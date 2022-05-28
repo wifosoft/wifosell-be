@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 @Transactional
 @Service("WarehouseService")
 @RequiredArgsConstructor
@@ -68,16 +67,14 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Warehouse activateWarehouse(Long userId, @NonNull Long warehouseId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
+        Warehouse warehouse = this.getWarehouse(userId, warehouseId);
         warehouse.setIsActive(true);
         return warehouseRepository.save(warehouse);
     }
 
     @Override
     public Warehouse deactivateWarehouse(Long userId, @NonNull Long warehouseId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
+        Warehouse warehouse = this.getWarehouse(userId, warehouseId);
         warehouse.setIsActive(false);
         return warehouseRepository.save(warehouse);
     }
