@@ -14,30 +14,38 @@ public interface UserService {
     User getUserInfo(Long userId);
 
     User updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
+
     void changePassword(Long userId, ChangePasswordRequest changePasswordRequest, boolean flagOld);
 
-    User deActivateUser(Long userId);
+    User deactivateUser(Long userId);
+
     User activateUser(Long userId);
 
-    List<User> deActivateListUser(List<Long> userList);
+    List<User> deactivateListUser(List<Long> userList);
+
     List<User> activateListUser(List<Long> userList);
 
 
     User changeRole(Long userId, List<String> roles);
+
     User changePermission(Long userId, List<String> permission);
 
     User addChildAccount(Long parentId, RegisterRequest registerRequest);
 
     boolean hasAccessGeneralManagerToShop(UserPrincipal currentUser, Long shopId);
-    boolean hasAccessToShop(UserPrincipal currentUser, Long shopId);
-    boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId);
-    boolean hasAccessToUser( UserPrincipal currentUser, Long userId);
 
-   List<User> getAllChildAccounts(UserPrincipal currentUser);
+    boolean hasAccessToShop(UserPrincipal currentUser, Long shopId);
+
+    boolean hasAccessToRelevantShop(UserPrincipal currentUser, Long shopId);
+
+    boolean hasAccessToUser(UserPrincipal currentUser, Long userId);
+
+    List<User> getAllChildAccounts(UserPrincipal currentUser);
 
     List<Shop> getListShopManage(UserPrincipal userPrincipal);
 
     AvailableResourceResponse checkEmailAvailable(String email);
+
     AvailableResourceResponse checkUsernameAvailable(String username);
 
     User addUser(User user);

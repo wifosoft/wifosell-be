@@ -8,7 +8,7 @@ import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.WarehouseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,13 +19,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/warehouses")
+@RequiredArgsConstructor
 public class WarehouseController {
     private final WarehouseService warehouseService;
-
-    @Autowired
-    public WarehouseController(WarehouseService warehouseService) {
-        this.warehouseService = warehouseService;
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
@@ -104,7 +100,7 @@ public class WarehouseController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{warehouseId}/deActivate")
+    @GetMapping("/{warehouseId}/deactivate")
     public ResponseEntity<GApiResponse<WarehouseResponse>> deactivateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "warehouseId") Long warehouseId

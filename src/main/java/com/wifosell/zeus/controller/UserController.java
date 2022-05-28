@@ -148,7 +148,7 @@ public class UserController {
                 .map(User::getId)
                 .filter(id -> (request.getIds().contains(id)))
                 .collect(Collectors.toList());
-        List<User> affectedUser = userService.deActivateListUser(filterListAccount);
+        List<User> affectedUser = userService.deactivateListUser(filterListAccount);
         return ResponseEntity.ok(GApiResponse.success(affectedUser));
     }
 
@@ -178,7 +178,7 @@ public class UserController {
     @PreAuthorizeAccessToUser
     @GetMapping("/{id}/deactivate")
     public ResponseEntity<GApiResponse<User>> deActiveUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
-        User user = userService.deActivateUser(userId);
+        User user = userService.deactivateUser(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
 
