@@ -11,11 +11,9 @@ import com.wifosell.zeus.payload.request.user.ChangeRoleRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
 import com.wifosell.zeus.payload.response.AvailableResourceResponse;
 import com.wifosell.zeus.security.CurrentUser;
-import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;
-import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,106 +26,51 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-
-    @Autowired
-    private SecurityCheck securityCheck;
-
-    /**
-     * Lấy thông tin tài khoản đã đăng nhập bằng Token truyền lên=
-     *
-     * @param currentUser
-     * @return Thông tin tài khoản
-     */
+    // Lấy thông tin cá nhân tài khoản dã đăng nhập
     @PreAuthorize("isAuthenticated()")
-    @ApiOperation(value = "getMeInfo", notes = "Lấy thông tin cá nhân")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
-                    required = true, dataType = "string", paramType = "header")})
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Lấy thông tin thành công", response = User.class),
-            @ApiResponse(code = 404, message = "Schema not found"),
-            @ApiResponse(code = 400, message = "Missing or invalid request body"),
-            @ApiResponse(code = 500, message = "Internal error")
-    })
-
-    /**
-     * Lấy thông tin cá nhân tài khoản dã đăng nhập
-     */
     @GetMapping("/me")
     public ResponseEntity<GApiResponse<User>> getMeInfo(@ApiIgnore @CurrentUser UserPrincipal currentUser) {
         User me = userService.getUserInfo(currentUser.getId());
         return ResponseEntity.ok(GApiResponse.success(me));
     }
 
-    /**
-     * Cập nhật thông tin cá nhân
-     *
-     * @param userPrincipal
-     * @param updateUserRequest
-     * @return Thông tin tài khoản đã chỉnh sửa
-     */
+    // Cập nhật thông tin cá nhân
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/me/update")
-    public ResponseEntity<GApiResponse> editMeInfo(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<GApiResponse<User>> editMeInfo(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         User userChanged = userService.updateUserInfo(userPrincipal.getId(), updateUserRequest);
-        return new ResponseEntity(GApiResponse.success(userChanged), HttpStatus.OK);
+        return ResponseEntity.ok(GApiResponse.success(userChanged));
     }
 
-    /**
-     * Thay đổi mật khẩu cá nhân
-     *
-     * @param userPrincipal
-     * @param changePasswordRequest
-     * @return Thay đổi mật khẩu thnàh công
-     */
+    // Thay đổi mật khẩu cá nhân
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/me/changePassword")
-    public ResponseEntity<GApiResponse> changeMePassword(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<GApiResponse<String>> changeMePassword(@CurrentUser UserPrincipal userPrincipal, @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         userService.changePassword(userPrincipal.getId(), changePasswordRequest, true);
-        return new ResponseEntity(GApiResponse.success("Change password successfully!"), HttpStatus.OK);
+        return ResponseEntity.ok(GApiResponse.success("Change password successfully!"));
     }
 
-
-    /**
-     * Cập nhật thông tin của tài khoản nhân viên của mình
-     *
-     * @param userPrincipal
-     * @param userId
-     * @param updateUserRequest
-     * @return Thông tin tài khoản đã chỉnh sửa
-     */
+    // Cập nhật thông tin của tài khoản nhân viên của mình
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/update")
-    public ResponseEntity<GApiResponse> updateUserInfo(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<GApiResponse<User>> updateUserInfo(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         User userChanged = userService.updateUserInfo(userId, updateUserRequest);
-        return new ResponseEntity<>(GApiResponse.success(userChanged), HttpStatus.OK);
+        return ResponseEntity.ok(GApiResponse.success(userChanged));
     }
 
-    /***
-     * Reset mật khẩu tài khoản nhân viên
-     * @param userPrincipal
-     * @param userId
-     * @param changePasswordRequest
-     * @return Thành công
-     */
+    // Reset mật khẩu tài khoản nhân viên
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/resetPassword")
-    public ResponseEntity<GApiResponse> changeUserPassword(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<GApiResponse<String>> changeUserPassword(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         userService.changePassword(userId, changePasswordRequest, false);
-        return new ResponseEntity(GApiResponse.success("Change password successfully!"), HttpStatus.OK);
+        return ResponseEntity.ok(GApiResponse.success("Change password successfully!"));
     }
 
-    /**
-     * Lấy thông tin tài khoản con
-     *
-     * @param userPrincipal
-     * @param userId
-     * @return
-     */
+    // Lấy thông tin tài khoản con
     @PreAuthorizeAccessToUser
     //@PreAuthorize("isAuthenticated() and @userService.hasAccessToUser(#userPrincipal, #id)")
     @GetMapping("/{id}")
@@ -135,7 +78,6 @@ public class UserController {
         User user = userService.getUserInfo(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
-
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
@@ -167,36 +109,20 @@ public class UserController {
         return ResponseEntity.ok(GApiResponse.success(affectedUser));
     }
 
-
-    /**
-     * Ngừng hoạt động tài khoản theo soft delete
-     *
-     * @param userPrincipal
-     * @param userId
-     * @return
-     */
     @PreAuthorizeAccessToUser
     @GetMapping("/{id}/deactivate")
-    public ResponseEntity<GApiResponse<User>> deActiveUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
+    public ResponseEntity<GApiResponse<User>> deactivateUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
         User user = userService.deactivateUser(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
 
-
-    /**
-     * Kích hoạt lại tài khoản theo soft delete
-     *
-     * @param userPrincipal
-     * @param userId
-     * @return
-     */
+    // Kích hoạt lại tài khoản theo soft delete
     @PreAuthorizeAccessToUser
     @GetMapping("/{id}/activate")
-    public ResponseEntity<GApiResponse<User>> activeUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
+    public ResponseEntity<GApiResponse<User>> activateUser(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId) {
         User user = userService.activateUser(userId);
         return ResponseEntity.ok(GApiResponse.success(user));
     }
-
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/addChildAccount")
@@ -206,13 +132,7 @@ public class UserController {
         return new ResponseEntity<>(GApiResponse.success(childAccount), HttpStatus.OK);
     }
 
-
-    /**
-     * Lấy danh sách tài khoản con
-     * P: Cần là tài khoản GENERAL_MANAGER
-     *
-     * @return
-     */
+    // Lấy danh sách tài khoản con (cần là tài khoản GENERAL_MANAGER)
     @PreAuthorize("hasRole('GENERAL_MANAGER')")
     @GetMapping("/listChildAccount")
     public ResponseEntity<GApiResponse<List<User>>> getListChildAccounts(@CurrentUser UserPrincipal userPrincipal) {
@@ -222,18 +142,17 @@ public class UserController {
 
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/changeRoleAccount")
-    public ResponseEntity<GApiResponse> changeRoleAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody @Valid ChangeRoleRequest changeRoleRequest) {
+    public ResponseEntity<GApiResponse<User>> changeRoleAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody @Valid ChangeRoleRequest changeRoleRequest) {
         User user = userService.changeRole(userId, changeRoleRequest.getListRoleString());
-        return new ResponseEntity<>(GApiResponse.success(user), HttpStatus.OK);
+        return ResponseEntity.ok(GApiResponse.success(user));
     }
 
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/changePermissionAccount")
-    public ResponseEntity<GApiResponse> changePermissionAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody @Valid ChangeRoleRequest changeRoleRequest) {
+    public ResponseEntity<GApiResponse<User>> changePermissionAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody @Valid ChangeRoleRequest changeRoleRequest) {
         User user = userService.changePermission(userId, changeRoleRequest.getListRoleString());
-        return new ResponseEntity<>(GApiResponse.success(user), HttpStatus.OK);
+        return ResponseEntity.ok(GApiResponse.success(user));
     }
-
 
     //TODO Refractor and move to shop entrypoint
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
@@ -260,6 +179,4 @@ public class UserController {
         User newUser = userService.addUser(user);
         return new ResponseEntity<User>(newUser, HttpStatus.OK);
     }
-
-
 }
