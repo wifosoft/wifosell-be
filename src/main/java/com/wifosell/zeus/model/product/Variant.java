@@ -38,6 +38,7 @@ public class Variant extends BasicEntity {
     @ManyToOne
     private Product product;
 
+    @Builder.Default
     @OneToMany(mappedBy = "variant")
     private List<Stock> stocks = new ArrayList<>();
 
