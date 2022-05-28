@@ -25,7 +25,6 @@ public class OrderResponse extends BasicEntityResponse {
     private final OrderModel.STATUS status;
     private final List<OrderStepResponse> steps;
     private final PaymentResponse payment;
-    private final Long invoiceId;
 
     public OrderResponse(OrderModel order) {
         super(order);
@@ -37,7 +36,6 @@ public class OrderResponse extends BasicEntityResponse {
         this.status = order.getStatus();
         this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
         this.payment = new PaymentResponse(order.getPayment());
-        this.invoiceId = order.getInvoice() == null ? null : order.getInvoice().getId();
     }
 
     @Getter

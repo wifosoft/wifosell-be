@@ -11,15 +11,14 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class ImportStockTest {
     static final String filePathImportWarehouseStock = "warehouse_import.xlsx";
-    
+
     @Autowired
     private FileSystemStorageService fileStorageService;
 
@@ -29,11 +28,11 @@ public class ImportStockTest {
         File f = new File(resource.getURI());
         ImportStockServiceImpl importStockService = new ImportStockServiceImpl();
         try {
-            List<ImportStockRow> listRow  =importStockService.importStock(f);
-            assertEquals(5, listRow.size() , "Size of file excel");
+            List<ImportStockRow> listRow = importStockService.importStock(f);
+            assertEquals(5, listRow.size(), "Size of file excel");
         } catch (InvalidFormatException e) {
             e.printStackTrace();
         }
-        assertEquals(1,1, "Thanh cong");
+        assertEquals(1, 1, "Thanh cong");
     }
 }

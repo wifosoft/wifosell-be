@@ -1,10 +1,10 @@
 package com.wifosell.zeus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumingThat;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @SpringBootTest
 class ZeusApplicationTests {
@@ -17,6 +17,7 @@ class ZeusApplicationTests {
                 () -> assertEquals(2 + 2, 4)
         );
     }
+
     @Test
     void testSubtract() {
         String someString = "Just a testSubtract";

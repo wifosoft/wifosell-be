@@ -4,22 +4,18 @@ import com.wifosell.zeus.model.role.Role;
 import com.wifosell.zeus.model.role.RoleName;
 import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.UserRepository;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.*;
-import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @SpringBootTest
 public class UserRole {
@@ -51,7 +47,7 @@ public class UserRole {
     }
 
     @Test
-    void testSaveRole(){
+    void testSaveRole() {
         Role role_admin = new Role(RoleName.ROLE_ADMIN);
         roleRepository.save(role_admin);
         Role role_user = new Role(RoleName.ROLE_GENERAL_MANAGER);
