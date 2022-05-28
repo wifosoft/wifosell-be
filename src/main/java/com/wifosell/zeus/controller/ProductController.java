@@ -117,7 +117,7 @@ public class ProductController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<Product>>> activateProducts(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Product> products = productService.activateProducts(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(products));
@@ -127,7 +127,7 @@ public class ProductController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<Product>>> deactivateProducts(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Product> products = productService.deactivateProducts(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(products));

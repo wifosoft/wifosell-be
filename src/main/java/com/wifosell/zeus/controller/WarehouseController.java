@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,7 @@ public class WarehouseController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<WarehouseResponse>> addWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody WarehouseRequest request
+            @RequestBody @Valid WarehouseRequest request
     ) {
         Warehouse warehouse = warehouseService.addWarehouse(userPrincipal.getId(), request);
         WarehouseResponse response = new WarehouseResponse(warehouse);
@@ -80,7 +81,7 @@ public class WarehouseController {
     public ResponseEntity<GApiResponse<WarehouseResponse>> updateWarehouse(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "warehouseId") Long warehouseId,
-            @RequestBody WarehouseRequest request
+            @RequestBody @Valid WarehouseRequest request
     ) {
         Warehouse warehouse = warehouseService.updateWarehouse(userPrincipal.getId(), warehouseId, request);
         WarehouseResponse response = new WarehouseResponse(warehouse);
@@ -114,7 +115,7 @@ public class WarehouseController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<WarehouseResponse>>> activateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<Warehouse> warehouses = warehouseService.activateWarehouses(userPrincipal.getId(), request.getIds());
         List<WarehouseResponse> responses = warehouses.stream().map(WarehouseResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
@@ -124,7 +125,7 @@ public class WarehouseController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<WarehouseResponse>>> deactivateWarehouses(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<Warehouse> warehouses = warehouseService.deactivateWarehouses(userPrincipal.getId(), request.getIds());
         List<WarehouseResponse> responses = warehouses.stream().map(WarehouseResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));

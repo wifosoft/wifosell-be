@@ -31,12 +31,4 @@ public class SupplierSpecs {
             return root.get(Supplier_.IS_ACTIVE).in(isActives);
         });
     }
-
-    public static Specification<Supplier> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Supplier_.IS_ACTIVE), isActive);
-        });
-    }
 }

@@ -34,14 +34,6 @@ public class SaleChannelSpecs {
         });
     }
 
-    public static Specification<SaleChannel> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(SaleChannel_.IS_ACTIVE), isActive);
-        });
-    }
-
     public static Specification<SaleChannel> inShops(List<Long> shopIds) {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);

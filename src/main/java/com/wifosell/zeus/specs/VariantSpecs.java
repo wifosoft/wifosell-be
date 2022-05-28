@@ -34,14 +34,6 @@ public class VariantSpecs {
         });
     }
 
-    public static Specification<Variant> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Variant_.IS_ACTIVE), isActive);
-        });
-    }
-
     public static Specification<Variant> inWarehouses(List<Long> warehouseIds) {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);

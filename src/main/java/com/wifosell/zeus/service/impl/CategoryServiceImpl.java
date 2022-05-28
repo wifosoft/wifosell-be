@@ -9,8 +9,7 @@ import com.wifosell.zeus.payload.request.category.CategoryRequest;
 import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CategoryService;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,53 +19,48 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service("CategoryService")
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
-    @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository) {
-        this.categoryRepository = categoryRepository;
-        this.userRepository = userRepository;
-    }
-
     @Override
     public List<Category> getAllRootCategories(Boolean isActive) {
         if (isActive == null)
-            return categoryRepository.findAllRoots();
+            isActive = true;
         return categoryRepository.findAllRootsWithActive(isActive);
     }
 
     @Override
-    public List<Category> getRootCategories(@NonNull Long userId, Boolean isActive) {
+    public List<Category> getRootCategories(Long userId, Boolean isActive) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         if (isActive == null)
-            return categoryRepository.findAllRootsWithGm(gm.getId());
+            isActive = true;
         return categoryRepository.findAllRootsWithGmAndActive(gm.getId(), isActive);
     }
 
     @Override
-    public Category getCategory(@NonNull Long userId, @NonNull Long categoryId) {
+    public Category getCategory(Long userId, Long categoryId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         return categoryRepository.getByIdWithGm(gm.getId(), categoryId);
     }
 
     @Override
-    public Category addCategory(@NonNull Long userId, @NonNull CategoryRequest categoryRequest) {
+    public Category addCategory(Long userId, CategoryRequest categoryRequest) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Category category = new Category();
         return this.updateCategoryByRequest(category, categoryRequest, gm);
     }
 
     @Override
-    public Category updateCategory(@NonNull Long userId, @NonNull Long categoryId, @NonNull CategoryRequest categoryRequest) {
+    public Category updateCategory(Long userId, Long categoryId, CategoryRequest categoryRequest) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Category category = this.getCategory(userId, categoryId);
         return this.updateCategoryByRequest(category, categoryRequest, gm);
     }
 
     @Override
-    public Category activateCategory(@NonNull Long userId, @NonNull Long categoryId) {
+    public Category activateCategory(Long userId, Long categoryId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Category category = categoryRepository.getByIdWithGm(gm.getId(), categoryId);
         category.setIsActive(true);
@@ -74,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category deactivateCategory(@NonNull Long userId, @NonNull Long categoryId) {
+    public Category deactivateCategory(Long userId, Long categoryId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Category category = categoryRepository.getByIdWithGm(gm.getId(), categoryId);
         category.setIsActive(false);
@@ -82,16 +76,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> activateCategories(@NonNull Long userId, @NonNull List<Long> categoryIds) {
+    public List<Category> activateCategories(Long userId, List<Long> categoryIds) {
         return categoryIds.stream().map(id -> this.activateCategory(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Category> deactivateCategories(@NonNull Long userId, @NonNull List<Long> categoryIds) {
+    public List<Category> deactivateCategories(Long userId, List<Long> categoryIds) {
         return categoryIds.stream().map(id -> this.deactivateCategory(userId, id)).collect(Collectors.toList());
     }
 
-    private Category updateCategoryByRequest(@NonNull Category category, @NonNull CategoryRequest categoryRequest, @NonNull User gm) {
+    private Category updateCategoryByRequest(Category category, CategoryRequest categoryRequest, User gm) {
         Optional.ofNullable(categoryRequest.getName()).ifPresent(category::setName);
         Optional.ofNullable(categoryRequest.getDescription()).ifPresent(category::setDescription);
         Optional.ofNullable(categoryRequest.getShortName()).ifPresent(category::setShortName);

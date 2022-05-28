@@ -75,12 +75,4 @@ public class OrderSpecs {
             return root.get(OrderModel_.IS_ACTIVE).in(isActives);
         });
     }
-
-    public static Specification<OrderModel> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(OrderModel_.IS_ACTIVE), isActive);
-        });
-    }
 }

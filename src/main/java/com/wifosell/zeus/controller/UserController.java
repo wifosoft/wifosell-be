@@ -141,7 +141,7 @@ public class UserController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<User>>> deactivateUsers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
         List<Long> filterListAccount = childAccounts.stream()
@@ -156,7 +156,7 @@ public class UserController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<User>>> activateUsers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<User> childAccounts = userService.getAllChildAccounts(userPrincipal);
         List<Long> filterListAccount = childAccounts.stream()
@@ -222,14 +222,14 @@ public class UserController {
 
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/changeRoleAccount")
-    public ResponseEntity<GApiResponse> changeRoleAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody ChangeRoleRequest changeRoleRequest) {
+    public ResponseEntity<GApiResponse> changeRoleAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody @Valid ChangeRoleRequest changeRoleRequest) {
         User user = userService.changeRole(userId, changeRoleRequest.getListRoleString());
         return new ResponseEntity<>(GApiResponse.success(user), HttpStatus.OK);
     }
 
     @PreAuthorizeAccessToUser
     @PostMapping("/{id}/changePermissionAccount")
-    public ResponseEntity<GApiResponse> changePermissionAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody ChangeRoleRequest changeRoleRequest) {
+    public ResponseEntity<GApiResponse> changePermissionAccount(@CurrentUser UserPrincipal userPrincipal, @PathVariable(value = "id") Long userId, @RequestBody @Valid ChangeRoleRequest changeRoleRequest) {
         User user = userService.changePermission(userId, changeRoleRequest.getListRoleString());
         return new ResponseEntity<>(GApiResponse.success(user), HttpStatus.OK);
     }

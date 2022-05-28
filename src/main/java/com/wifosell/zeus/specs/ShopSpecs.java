@@ -31,12 +31,4 @@ public class ShopSpecs {
             return root.get(Shop_.IS_ACTIVE).in(isActives);
         });
     }
-
-    public static Specification<Shop> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Shop_.IS_ACTIVE), isActive);
-        });
-    }
 }

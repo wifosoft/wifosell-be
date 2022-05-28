@@ -32,14 +32,6 @@ public class ImportStockTransactionSpecs {
         });
     }
 
-    public static Specification<ImportStockTransaction> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(ImportStockTransaction_.IS_ACTIVE), isActive);
-        });
-    }
-
     public static Specification<ImportStockTransaction> inTypes(List<ImportStockTransaction.TYPE> types) {
         return ((root, query, criteriaBuilder) -> {
             if (types == null || types.isEmpty())

@@ -31,12 +31,4 @@ public class WarehouseSpecs {
             return root.get(Warehouse_.IS_ACTIVE).in(isActives);
         });
     }
-
-    public static Specification<Warehouse> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Warehouse_.IS_ACTIVE), isActive);
-        });
-    }
 }

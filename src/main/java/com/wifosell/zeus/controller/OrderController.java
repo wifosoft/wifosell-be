@@ -157,7 +157,7 @@ public class OrderController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<OrderResponse>>> activateOrders(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<OrderModel> orders = orderService.activateOrders(userPrincipal.getId(), request.getIds());
         List<OrderResponse> responses = orders.stream().map(OrderResponse::new).collect(Collectors.toList());
@@ -168,7 +168,7 @@ public class OrderController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<OrderResponse>>> deactivateOrders(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<OrderModel> orders = orderService.deactivateOrders(userPrincipal.getId(), request.getIds());
         List<OrderResponse> responses = orders.stream().map(OrderResponse::new).collect(Collectors.toList());

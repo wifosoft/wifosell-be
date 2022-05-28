@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,7 @@ public class SaleChannelController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<SaleChannelResponse>> addSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody SaleChannelRequest request
+            @RequestBody @Valid SaleChannelRequest request
     ) {
         SaleChannel saleChannel = saleChannelService.addSaleChannel(userPrincipal.getId(), request);
         SaleChannelResponse response = new SaleChannelResponse(saleChannel);
@@ -88,7 +89,7 @@ public class SaleChannelController {
     public ResponseEntity<GApiResponse<SaleChannelResponse>> addSaleChannel(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "saleChannelId") Long saleChannelId,
-            @RequestBody SaleChannelRequest request
+            @RequestBody @Valid SaleChannelRequest request
     ) {
         SaleChannel saleChannel = saleChannelService.updateSaleChannel(userPrincipal.getId(), saleChannelId, request);
         SaleChannelResponse response = new SaleChannelResponse(saleChannel);
@@ -121,7 +122,7 @@ public class SaleChannelController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<SaleChannelResponse>>> activateSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<SaleChannel> saleChannels = saleChannelService.activateSaleChannels(userPrincipal.getId(), request.getIds());
         List<SaleChannelResponse> responses = saleChannels.stream().map(SaleChannelResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
@@ -131,7 +132,7 @@ public class SaleChannelController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<SaleChannelResponse>>> deactivateSaleChannels(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<SaleChannel> saleChannels = saleChannelService.deactivateSaleChannels(userPrincipal.getId(), request.getIds());
         List<SaleChannelResponse> responses = saleChannels.stream().map(SaleChannelResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));

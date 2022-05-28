@@ -32,14 +32,6 @@ public class TransferStockTransactionSpecs {
         });
     }
 
-    public static Specification<TransferStockTransaction> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(TransferStockTransaction_.IS_ACTIVE), isActive);
-        });
-    }
-
     public static Specification<TransferStockTransaction> inTypes(List<TransferStockTransaction.TYPE> types) {
         return ((root, query, criteriaBuilder) -> {
             if (types == null || types.isEmpty())

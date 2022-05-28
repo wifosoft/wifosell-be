@@ -122,7 +122,7 @@ public class ShopController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<ShopResponse>>> activateShops(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Shop> shops = shop2Service.activateShops(userPrincipal.getId(), request.getIds());
         List<ShopResponse> responses = shops.stream().map(ShopResponse::new).collect(Collectors.toList());
@@ -133,7 +133,7 @@ public class ShopController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<ShopResponse>>> deactivateShops(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Shop> shops = shop2Service.deactivateShops(userPrincipal.getId(), request.getIds());
         List<ShopResponse> responses = shops.stream().map(ShopResponse::new).collect(Collectors.toList());

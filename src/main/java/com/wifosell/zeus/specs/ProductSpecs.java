@@ -35,14 +35,6 @@ public class ProductSpecs {
         });
     }
 
-    public static Specification<Product> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Product_.IS_ACTIVE), isActive);
-        });
-    }
-
     public static Specification<Product> inWarehouses(List<Long> warehouseIds) {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);
