@@ -56,21 +56,22 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void run() {
-        User gm = userRepository.getUserByName("manager1").getGeneralManager();
+        User user = userRepository.getUserByName("manager1");
         ObjectMapper mapper = new ObjectMapper();
         File file = new File("src/main/java/com/wifosell/zeus/database/data/order.json");
 
         try {
             AddOrderRequest[] requests = mapper.readValue(file, AddOrderRequest[].class);
             for (AddOrderRequest request : requests) {
-                this.updateOrderByRequest(request, gm);
+                this.updateOrderByRequest(user, request);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void updateOrderByRequest(AddOrderRequest request, User gm) {
+    private void updateOrderByRequest(User user, AddOrderRequest request) {
+        User gm = user.getGeneralManager();
         OrderModel order = OrderModel.builder().build();
 
         // Order items
@@ -138,6 +139,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
                 .status(OrderModel.STATUS.CREATED)
                 .note("")
                 .order(order)
+                .updatedBy(user)
                 .build();
         List<OrderStep> steps = new ArrayList<>(List.of(step));
         order.setSteps(orderStepRepository.saveAll(steps));
@@ -149,6 +151,9 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
                 .info(request.getPayment().getInfo())
                 .build();
         order.setPayment(paymentRepository.save(payment));
+
+        // Complete
+        order.setComplete(false);
 
         // General manager
         order.setGeneralManager(gm);

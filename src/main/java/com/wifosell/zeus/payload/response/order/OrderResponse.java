@@ -7,6 +7,7 @@ import com.wifosell.zeus.model.order.OrderStep;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class OrderResponse extends BasicEntityResponse {
     private final OrderModel.STATUS status;
     private final List<OrderStepResponse> steps;
     private final PaymentResponse payment;
+    private final boolean isComplete;
 
     public OrderResponse(OrderModel order) {
         super(order);
@@ -36,6 +38,11 @@ public class OrderResponse extends BasicEntityResponse {
         this.status = order.getStatus();
         this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
         this.payment = new PaymentResponse(order.getPayment());
+        this.isComplete = order.getIsComplete();
+    }
+
+    public boolean getIsComplete() {
+        return isComplete;
     }
 
     @Getter
@@ -110,11 +117,13 @@ public class OrderResponse extends BasicEntityResponse {
     private static class OrderStepResponse extends BasicEntityResponse {
         private final OrderModel.STATUS status;
         private final String note;
+        private final User updatedBy;
 
         public OrderStepResponse(OrderStep step) {
             super(step);
             this.status = step.getStatus();
             this.note = step.getNote();
+            this.updatedBy = step.getUpdatedBy();
         }
     }
 
