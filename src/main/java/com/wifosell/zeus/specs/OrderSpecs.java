@@ -1,5 +1,6 @@
 package com.wifosell.zeus.specs;
 
+import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
 import com.wifosell.zeus.model.order.Payment;
@@ -71,7 +72,7 @@ public class OrderSpecs {
     public static Specification<OrderModel> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(OrderModel_.IS_ACTIVE), true);
             return root.get(OrderModel_.IS_ACTIVE).in(isActives);
         });
     }

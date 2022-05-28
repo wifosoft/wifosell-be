@@ -27,7 +27,7 @@ public class WarehouseSpecs {
     public static Specification<Warehouse> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(Warehouse_.IS_ACTIVE), true);
             return root.get(Warehouse_.IS_ACTIVE).in(isActives);
         });
     }

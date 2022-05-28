@@ -27,7 +27,7 @@ public class SupplierSpecs {
     public static Specification<Supplier> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(Supplier_.IS_ACTIVE), true);
             return root.get(Supplier_.IS_ACTIVE).in(isActives);
         });
     }

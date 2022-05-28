@@ -29,7 +29,7 @@ public class SaleChannelSpecs {
     public static Specification<SaleChannel> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(SaleChannel_.IS_ACTIVE), true);
             return root.get(SaleChannel_.IS_ACTIVE).in(isActives);
         });
     }

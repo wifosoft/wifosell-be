@@ -1,5 +1,6 @@
 package com.wifosell.zeus.specs;
 
+import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Product_;
 import com.wifosell.zeus.model.user.User_;
@@ -27,7 +28,7 @@ public class ProductSpecs {
     public static Specification<Product> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(Product_.IS_ACTIVE), true);
             return root.get(Product_.IS_ACTIVE).in(isActives);
         });
     }
