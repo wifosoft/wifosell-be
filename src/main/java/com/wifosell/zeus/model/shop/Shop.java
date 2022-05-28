@@ -57,10 +57,6 @@ public class Shop extends BasicEntity {
     private List<SaleChannelShopRelation> saleChannelShopRelations = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private List<ProductShopRelation> productShopRelations = new ArrayList<>();
-
-    @JsonIgnore
     @OneToMany(mappedBy = "shop")
     private List<OrderModel> orders = new ArrayList<>();
 
@@ -68,12 +64,4 @@ public class Shop extends BasicEntity {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
-
-    /*
-    @JsonIgnore
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "shops")
-    List<User> staffOfShop;
-    */
 }

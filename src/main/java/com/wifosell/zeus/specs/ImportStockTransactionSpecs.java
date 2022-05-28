@@ -1,6 +1,5 @@
 package com.wifosell.zeus.specs;
 
-import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.model.stock.ImportStockTransaction;
 import com.wifosell.zeus.model.stock.ImportStockTransaction_;
 import com.wifosell.zeus.model.user.User_;
