@@ -34,15 +34,5 @@ public interface ShopService {
 
     List<Shop> deactivateShops(List<Long> shopIds);
 
-    void linkWarehouseToShop(Long warehouseId, Long shopId);
-
-    void linkWarehouseToShop(Long currentUserId, Long warehouseId, Long shopId);
-
-    void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId);
-
-    void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId);
-
     List<User> getListStaffOfShop(Long shopId);
-
-
 }

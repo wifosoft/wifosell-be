@@ -47,4 +47,12 @@ public class ImportStockTransactionSpecs {
             return root.get(ImportStockTransaction_.TYPE).in(types);
         });
     }
+
+    public static Specification<ImportStockTransaction> inProcessingStatuses(List<ImportStockTransaction.PROCESSING_STATUS> statuses) {
+        return ((root, query, criteriaBuilder) -> {
+            if (statuses == null || statuses.isEmpty())
+                return criteriaBuilder.and();
+            return root.get(ImportStockTransaction_.PROCESSING_STATUS).in(statuses);
+        });
+    }
 }

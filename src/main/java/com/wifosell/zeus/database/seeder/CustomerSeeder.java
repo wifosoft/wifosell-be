@@ -6,14 +6,11 @@ import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
-import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Optional;
 
 public class CustomerSeeder extends BaseSeeder implements ISeeder {

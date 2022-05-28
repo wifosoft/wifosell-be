@@ -8,13 +8,14 @@ import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.OrderStep;
+import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
-import com.wifosell.zeus.payload.request.order.IOrderRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
@@ -35,6 +36,8 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     private SaleChannelShopRelationRepository saleChannelShopRelationRepository;
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
+    private PaymentRepository paymentRepository;
+    private OrderStepRepository orderStepRepository;
 
     @Override
     public void prepareJpaRepository() {
@@ -46,6 +49,8 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         this.saleChannelShopRelationRepository = this.factory.getRepository(SaleChannelShopRelationRepository.class);
         this.customerRepository = this.factory.getRepository(CustomerRepository.class);
         this.userRepository = this.factory.getRepository(UserRepository.class);
+        this.paymentRepository = this.factory.getRepository(PaymentRepository.class);
+        this.orderStepRepository = this.factory.getRepository(OrderStepRepository.class);
     }
 
     @Override
@@ -64,8 +69,8 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         }
     }
 
-    private void updateOrderByRequest(IOrderRequest request, User gm) {
-        OrderModel order = new OrderModel();
+    private void updateOrderByRequest(AddOrderRequest request, User gm) {
+        OrderModel order = OrderModel.builder().build();
 
         // Order items
         Optional.ofNullable(request.getOrderItems()).ifPresent(orderItemRequests -> {
@@ -73,7 +78,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
             order.getOrderItems().clear();
 
             List<OrderItem> orderItems = new ArrayList<>();
-            for (IOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
+            for (AddOrderRequest.OrderItem orderItemRequest : orderItemRequests) {
                 Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
                 OrderItem orderItem = OrderItem.builder()
                         .variant(variant)
@@ -91,8 +96,8 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         });
 
         // Sale Channel & Shop
-        Optional.ofNullable(request.getShopId()).ifPresent(shopId -> {
-            Optional.ofNullable(request.getSaleChannelId()).ifPresent(saleChannelId -> {
+        Optional.of(request.getShopId()).ifPresent(shopId -> {
+            Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
                 if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
                     Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
                     order.setShop(shop);
@@ -109,7 +114,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         });
 
         // Customer
-        Optional.ofNullable(request.getCustomerId()).ifPresent(customerId -> {
+        Optional.of(request.getCustomerId()).ifPresent(customerId -> {
             Customer customer = customerRepository.getOne(
                     CustomerSpecs.hasGeneralManager(gm.getId())
                             .and(CustomerSpecs.hasId(customerId))
@@ -117,15 +122,35 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
             order.setCustomer(customer);
         });
 
-        // Active
-        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
+        // Subtotal
+        BigDecimal subtotal = order.calcSubTotal();
+        order.setSubtotal(subtotal);
+
+        // Cur step
+        order.setStatus(OrderModel.STATUS.CREATED);
+
+        // Steps
+        OrderStep step = OrderStep.builder()
+                .status(OrderModel.STATUS.CREATED)
+                .note("")
+                .order(order)
+                .build();
+        List<OrderStep> steps = new ArrayList<>(List.of(step));
+        order.setSteps(orderStepRepository.saveAll(steps));
+
+        // Payment
+        Payment payment = Payment.builder()
+                .method(request.getPayment().getMethod())
+                .status(request.getPayment().getStatus())
+                .info(request.getPayment().getInfo())
+                .build();
+        order.setPayment(paymentRepository.save(payment));
 
         // General manager
         order.setGeneralManager(gm);
 
-        // Subtotal
-        BigDecimal subtotal = order.calcSubTotal();
-        order.setSubtotal(subtotal);
+        // Active
+        Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
         orderRepository.save(order);
     }

@@ -23,9 +23,6 @@ public class ImportStockTransaction extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    private String excelFile;
-
     @ManyToOne
     private Warehouse warehouse;
 
@@ -35,25 +32,27 @@ public class ImportStockTransaction extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private TYPE type;
 
+    private String source;
+
     @Enumerated(EnumType.STRING)
-    private PROCESSING_STATUS processingStatus = PROCESSING_STATUS.PROCESSED; // default processed
+    private PROCESSING_STATUS processingStatus;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String processingNote;
 
     @Lob
     private String description;
 
-    @Column(columnDefinition="LONGTEXT")
-    private String processingNote;
-
+    @Builder.Default
     @OneToMany(mappedBy = "transaction", cascade = {CascadeType.ALL})
     private List<ImportStockTransactionItem> items = new ArrayList<>();
-
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
     private User generalManager;
 
-    public enum PROCESSING_STATUS{
+    public enum PROCESSING_STATUS {
         DRAFT,
         QUEUED,
         PROCESSING,

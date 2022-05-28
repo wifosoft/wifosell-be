@@ -4,11 +4,6 @@ import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.database.DatabaseSeeder;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import com.wifosell.zeus.service.impl.storage.StorageProperties;
-import org.jobrunr.configuration.JobRunr;
-import org.jobrunr.scheduling.JobScheduler;
-import org.jobrunr.server.JobActivator;
-import org.jobrunr.spring.autoconfigure.JobRunrProperties;
-import org.jobrunr.storage.sql.common.SqlStorageProviderFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +24,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.sql.DataSource;
 import javax.transaction.Transactional;
 import java.util.TimeZone;
 
@@ -48,7 +42,8 @@ public class ZeusApplication implements CommandLineRunner {
     public static void main(String[] args) {
         SpringApplication.run(ZeusApplication.class, args);
     }
-//
+
+    //
 //    @Bean
 //    public JobScheduler initJobRunr(DataSource dataSource, JobActivator jobActivator) {
 //        return JobRunr.configure()
@@ -99,7 +94,7 @@ public class ZeusApplication implements CommandLineRunner {
         //EntityManagerFactory emf = Persistence.createEntityManagerFactory("seederManager");
         //EntityManager em = emf.createEntityManager();
         String enableMigration = env.getProperty("app.migration");
-        if(enableMigration == null || enableMigration.equals("true")){
+        if (enableMigration == null || enableMigration.equals("true")) {
             DatabaseSeeder databaseSeeder = new DatabaseSeeder(entityManager);
             databaseSeeder.prepare();
             databaseSeeder.run();

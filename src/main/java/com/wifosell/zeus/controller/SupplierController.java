@@ -9,8 +9,8 @@ import com.wifosell.zeus.payload.response.supplier.SupplierResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.SupplierService;
-import com.wifosell.zeus.utils.Preprocessor;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +25,33 @@ public class SupplierController {
     private final SupplierService supplierService;
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("")
-    public ResponseEntity<GApiResponse<List<SupplierResponse>>> getSuppliers(
-            @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "isActive", required = false) List<Boolean> actives
+    @GetMapping("/all")
+    public ResponseEntity<GApiResponse<Page<SupplierResponse>>> getSuppliers(
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Boolean isActive = Preprocessor.convertToIsActive(actives);
-        List<Supplier> suppliers = supplierService.getSuppliers(userPrincipal.getId(), isActive);
-        List<SupplierResponse> responses = suppliers.stream().map(SupplierResponse::new).collect(Collectors.toList());
+        Page<Supplier> suppliers = supplierService.getSuppliers(
+                null, isActives, offset, limit, sortBy, orderBy);
+        Page<SupplierResponse> responses = suppliers.map(SupplierResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("")
+    public ResponseEntity<GApiResponse<Page<SupplierResponse>>> getSuppliers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "orderBy", required = false) String orderBy
+    ) {
+        Page<Supplier> suppliers = supplierService.getSuppliers(
+                userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
+        Page<SupplierResponse> responses = suppliers.map(SupplierResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

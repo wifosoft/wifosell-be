@@ -178,23 +178,6 @@ public class ShopController {
         return ResponseEntity.ok(GApiResponse.success(listStaff));
     }
 
-
-    @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{shopId}/linkWarehouse")
-    public ResponseEntity<GApiResponse<Boolean>> linkWarehouseToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal, @PathVariable(name = "shopId") Long shopId, @RequestParam(name = "warehouseId") Long warehouseId) {
-        shopService.linkWarehouseToShop(userPrincipal.getId(), warehouseId, shopId);
-        return ResponseEntity.ok(GApiResponse.success(true));
-    }
-
-    @PreAuthorizeAccessGeneralManagerToShop
-    @GetMapping("/{shopId}/linkSaleChannel")
-    public ResponseEntity<GApiResponse<Boolean>> linkSaleChannelToShop(@ApiIgnore @CurrentUser UserPrincipal userPrincipal,
-                                                                       @PathVariable(name = "shopId") Long shopId,
-                                                                       @RequestParam(name = "saleChannelId") Long saleChannelId) {
-        shopService.linkSaleChannelToShop(userPrincipal.getId(), saleChannelId, shopId);
-        return ResponseEntity.ok(GApiResponse.success(true));
-    }
-
     //End API
 
     /*

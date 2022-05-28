@@ -2,14 +2,12 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.Variant_;
-import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.stock.Stock_;
 import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class VariantSpecs {
     public static Specification<Variant> hasId(Long id) {
