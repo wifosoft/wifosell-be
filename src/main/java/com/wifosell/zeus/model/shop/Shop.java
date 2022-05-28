@@ -8,7 +8,6 @@ import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,21 +27,20 @@ public class Shop extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(max = 255)
-    @NotBlank
+    @Size(max = 200)
     private String name;
 
     @Size(max = 50)
     @Column(name = "short_name")
     private String shortName;
 
-    @Size(max = 255)
+    @Size(max = 300)
     private String address;
 
     @Size(max = 20)
     private String phone;
 
-    @Size(max = 255)
+    @Size(max = 1000)
     private String description;
 
     @Size(max = 50)

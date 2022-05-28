@@ -16,8 +16,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
@@ -36,9 +34,6 @@ public class ShopServiceImpl implements ShopService {
     private final UserShopRelationRepository userShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Override
     public List<Shop> getCreatedShop(Long userId) {
@@ -140,7 +135,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Shop updateShop(@NonNull Long userId, @NonNull Long shopId, @Valid ShopRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+        Shop shop = shopRepository.getById(shopId);
         return this.updateShopByRequest(shop, request, gm);
     }
 

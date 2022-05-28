@@ -14,7 +14,7 @@ import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ShopService;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +25,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/shops")
+@RequiredArgsConstructor
 public class ShopController {
     private final ShopService shopService;
-
-    @Autowired
-    public ShopController(ShopService shopService) {
-        this.shopService = shopService;
-    }
 
     //Begin API
 
