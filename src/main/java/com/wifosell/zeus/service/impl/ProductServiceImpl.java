@@ -42,12 +42,12 @@ public class ProductServiceImpl implements ProductService {
     private final VariantRepository variantRepository;
     private final VariantValueRepository variantValueRepository;
     private final UserRepository userRepository;
-    private final ShopRepository shopRepository;
     private final ProductImageRepository productImageRepository;
 
     @Override
     public Page<Product> getProducts(
             Long userId,
+            List<Long> warehouseIds,
             List<Boolean> isActives,
             int offset,
             int limit,
@@ -57,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return productRepository.findAll(
                 ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.inWarehouses(warehouseIds))
                         .and(ProductSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );

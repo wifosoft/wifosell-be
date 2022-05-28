@@ -19,6 +19,7 @@ import com.wifosell.zeus.payload.request.order.AddOrderRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
+import com.wifosell.zeus.specs.ShopSpecs;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,7 +100,10 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         Optional.of(request.getShopId()).ifPresent(shopId -> {
             Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
                 if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
-                    Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+                    Shop shop = shopRepository.getOne(
+                            ShopSpecs.hasGeneralManager(gm.getId())
+                                    .and(ShopSpecs.hasId(shopId))
+                    );
                     order.setShop(shop);
 
                     SaleChannel saleChannel = saleChannelRepository.getOne(

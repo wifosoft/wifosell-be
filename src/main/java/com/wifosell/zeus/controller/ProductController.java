@@ -30,14 +30,15 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
+            @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<Product> products = productService.getProducts(null, isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(ProductResponse::new);
+        Page<Product> products = productService.getProducts(null, warehouseIds, isActives, offset, limit, sortBy, orderBy);
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -45,14 +46,15 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<Product> products = productService.getProducts(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(ProductResponse::new);
+        Page<Product> products = productService.getProducts(userPrincipal.getId(), warehouseIds, isActives, offset, limit, sortBy, orderBy);
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

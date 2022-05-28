@@ -2,7 +2,10 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Product_;
+import com.wifosell.zeus.model.product.Variant_;
+import com.wifosell.zeus.model.stock.Stock_;
 import com.wifosell.zeus.model.user.User_;
+import com.wifosell.zeus.model.warehouse.Warehouse_;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -37,6 +40,15 @@ public class ProductSpecs {
             if (isActive == null)
                 return criteriaBuilder.and();
             return criteriaBuilder.equal(root.get(Product_.IS_ACTIVE), isActive);
+        });
+    }
+
+    public static Specification<Product> inWarehouses(List<Long> warehouseIds) {
+        return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            if (warehouseIds == null || warehouseIds.isEmpty())
+                return criteriaBuilder.and();
+            return root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.WAREHOUSE).get(Warehouse_.ID).in(warehouseIds);
         });
     }
 }

@@ -44,6 +44,7 @@ public class SaleChannelSpecs {
 
     public static Specification<SaleChannel> inShops(List<Long> shopIds) {
         return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
             if (shopIds == null || shopIds.isEmpty())
                 return criteriaBuilder.and();
             return root.join(SaleChannel_.SALE_CHANNEL_SHOP_RELATIONS).get(SaleChannelShopRelation_.SHOP).get(Shop_.ID).in(shopIds);

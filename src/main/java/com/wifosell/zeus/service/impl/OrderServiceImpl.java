@@ -21,6 +21,7 @@ import com.wifosell.zeus.service.OrderService;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.OrderSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
+import com.wifosell.zeus.specs.ShopSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -163,7 +164,10 @@ public class OrderServiceImpl implements OrderService {
         Optional.of(request.getShopId()).ifPresent(shopId -> {
             Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
                 if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
-                    Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+                    Shop shop = shopRepository.getOne(
+                            ShopSpecs.hasGeneralManager(gm.getId())
+                                    .and(ShopSpecs.hasId(shopId))
+                    );
                     order.setShop(shop);
 
                     SaleChannel saleChannel = saleChannelRepository.getOne(

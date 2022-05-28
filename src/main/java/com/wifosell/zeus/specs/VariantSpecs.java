@@ -44,6 +44,7 @@ public class VariantSpecs {
 
     public static Specification<Variant> inWarehouses(List<Long> warehouseIds) {
         return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
             if (warehouseIds == null || warehouseIds.isEmpty())
                 return criteriaBuilder.and();
             return root.join(Variant_.STOCKS).get(Stock_.WAREHOUSE).get(Warehouse_.ID).in(warehouseIds);
