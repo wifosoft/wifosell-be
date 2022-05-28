@@ -57,11 +57,6 @@ public class OrderModel extends BasicEntity {
     private Payment payment;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "order")
-    @JoinColumn(name = "invoice_id", referencedColumnName = "id")
-    private Invoice invoice;
-
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
 
