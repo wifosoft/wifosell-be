@@ -54,32 +54,40 @@ public class Shop2ServiceImpl implements Shop2Service {
 
     @Override
     public Shop addShop(Long userId, AddShopRequest request) {
-        return null;
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Shop shop = new Shop();
+        return this.updateShopByRequest(gm, shop, request);
     }
 
     @Override
     public Shop updateShop(Long userId, Long shopId, UpdateShopRequest request) {
-        return null;
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Shop shop = this.getShop(userId, shopId);
+        return this.updateShopByRequest(gm, shop, request);
     }
 
     @Override
     public Shop activateShop(Long userId, Long shopId) {
-        return null;
+        Shop shop = this.getShop(userId, shopId);
+        shop.setIsActive(true);
+        return shopRepository.save(shop);
     }
 
     @Override
     public Shop deactivateShop(Long userId, Long shopId) {
-        return null;
+        Shop shop = this.getShop(userId, shopId);
+        shop.setIsActive(false);
+        return shopRepository.save(shop);
     }
 
     @Override
     public List<Shop> activateShops(Long userId, List<Long> shopIds) {
-        return null;
+        return shopIds.stream().map(id -> this.activateShop(userId, id)).collect(Collectors.toList());
     }
 
     @Override
     public List<Shop> deactivateShops(Long userId, List<Long> shopIds) {
-        return null;
+        return shopIds.stream().map(id -> this.deactivateShop(userId, id)).collect(Collectors.toList());
     }
 
     private Shop updateShopByRequest(User gm, Shop shop, IShopRequest request) {
