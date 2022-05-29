@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ShopRepository shopRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private final SaleChannelShopRepository saleChannelShopRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
@@ -165,7 +165,7 @@ public class OrderServiceImpl implements OrderService {
         // Sale Channel & Shop
         Optional.of(request.getShopId()).ifPresent(shopId -> {
             Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
-                if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+                if (saleChannelShopRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
                     Shop shop = shopRepository.getOne(
                             ShopSpecs.hasGeneralManager(gm.getId())
                                     .and(ShopSpecs.hasId(shopId))

@@ -47,14 +47,17 @@ public class Shop extends BasicEntity {
     private String businessLine;
 
     @JsonIgnore
+    @Builder.Default
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<UserShopRelation> userShopRelations = new ArrayList<>();
 
     @JsonIgnore
+    @Builder.Default
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private List<SaleChannelShopRelation> saleChannelShopRelations = new ArrayList<>();
+    private List<SaleChannelShop> saleChannelShops = new ArrayList<>();
 
     @JsonIgnore
+    @Builder.Default
     @OneToMany(mappedBy = "shop")
     private List<OrderModel> orders = new ArrayList<>();
 

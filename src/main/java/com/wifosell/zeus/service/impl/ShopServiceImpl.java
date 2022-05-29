@@ -25,7 +25,7 @@ public class ShopServiceImpl implements ShopService {
     private final UserRepository userRepository;
     private final UserShopRelationRepository userShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private final SaleChannelShopRepository saleChannelShopRepository;
 
     @Override
     public List<Shop> getCreatedShop(Long userId) {

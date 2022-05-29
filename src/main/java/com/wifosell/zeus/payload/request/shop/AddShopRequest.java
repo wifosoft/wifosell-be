@@ -34,7 +34,7 @@ public class AddShopRequest implements IShopRequest {
     @Size(max = 50)
     private String businessLine;
 
-    private List<Long> saleChannelIds;
+    private List<Relation> relations;
 
     private Boolean isActive;
 }

@@ -34,7 +34,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     private OrderItemRepository orderItemRepository;
     private ShopRepository shopRepository;
     private SaleChannelRepository saleChannelRepository;
-    private SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private SaleChannelShopRepository saleChannelShopRepository;
     private CustomerRepository customerRepository;
     private UserRepository userRepository;
     private PaymentRepository paymentRepository;
@@ -47,7 +47,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         this.orderItemRepository = this.factory.getRepository(OrderItemRepository.class);
         this.shopRepository = this.factory.getRepository(ShopRepository.class);
         this.saleChannelRepository = this.factory.getRepository(SaleChannelRepository.class);
-        this.saleChannelShopRelationRepository = this.factory.getRepository(SaleChannelShopRelationRepository.class);
+        this.saleChannelShopRepository = this.factory.getRepository(SaleChannelShopRepository.class);
         this.customerRepository = this.factory.getRepository(CustomerRepository.class);
         this.userRepository = this.factory.getRepository(UserRepository.class);
         this.paymentRepository = this.factory.getRepository(PaymentRepository.class);
@@ -100,7 +100,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         // Sale Channel & Shop
         Optional.of(request.getShopId()).ifPresent(shopId -> {
             Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
-                if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+                if (saleChannelShopRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
                     Shop shop = shopRepository.getOne(
                             ShopSpecs.hasGeneralManager(gm.getId())
                                     .and(ShopSpecs.hasId(shopId))
