@@ -171,15 +171,18 @@
                 <filtering>true</filtering>
                 <excludes>
                     <exclude>**/*.xlsx</exclude>
+                    <exclude>**/*.p12</exclude>
+                    <exclude>**/*.xlsx</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>false</filtering>
                 <includes>
-                    <include>**/*.xlsx</include>
+                    <include>**/*.p12</include>
                 </includes>
+                <filtering>false</filtering>
             </resource>
+
         </resources>
         <plugins>
             <plugin>
@@ -194,6 +197,15 @@
                                     <artifactId>lombok</artifactId>
                                 </exclude>
                             </excludes>
+
+                            <nonFilteredFileExtensions>
+
+                                <nonFilteredFileExtension>pem</nonFilteredFileExtension>
+
+                                <nonFilteredFileExtension>pfx</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>p12</nonFilteredFileExtension>
+
+                            </nonFilteredFileExtensions>
                         </configuration>
                     </execution>
                 </executions>
