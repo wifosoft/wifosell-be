@@ -17,7 +17,7 @@ public class LazadaClient {
     public static <T> T executeMappingModel(LazopRequest request,  Class<T> responseBodyType) throws ApiException {
         T contentData = null;
         LazopResponse response = getClient().execute(request);
-        contentData = (T) (new Gson()).fromJson(response.getBody(), responseBodyType.getClass());
+        contentData = (T) (new Gson()).fromJson(response.getBody(), responseBodyType);
         return contentData;
     }
 }

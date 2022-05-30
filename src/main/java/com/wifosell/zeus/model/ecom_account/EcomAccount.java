@@ -1,9 +1,11 @@
 package com.wifosell.zeus.model.ecom_account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import lombok.*;
 
 import javax.persistence.*;
@@ -66,5 +68,18 @@ public class EcomAccount extends BasicEntity {
         AUTH,
         EXPIRED,
         BLOCKED
+    }
+
+    public EcomAccountLazadaCallbackPayload parseLazadaAuthPayload(){
+        return (new Gson()).fromJson(this.getAuthResponse(), EcomAccountLazadaCallbackPayload.class);
+    }
+
+    public String getAccessToken() {
+        switch(this.getEcomName()){
+            case LAZADA:
+                EcomAccountLazadaCallbackPayload payload = this.parseLazadaAuthPayload();
+                return payload.getTokenAuthResponse().getAccess_token();
+        }
+        return null;
     }
 }

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 
 @Builder
-public class EcomAccountLazadaCallbackPayloadRequest {
+public class EcomAccountLazadaCallbackPayload {
     public Long userId;
     public String signature;
     public String code;

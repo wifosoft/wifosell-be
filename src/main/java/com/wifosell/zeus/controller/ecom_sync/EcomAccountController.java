@@ -2,9 +2,7 @@ package com.wifosell.zeus.controller.ecom_sync;
 
 
 import com.google.gson.Gson;
-import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
-import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
@@ -12,7 +10,7 @@ import com.wifosell.zeus.model.ecom_account.EcomAccount;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
-import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayloadRequest;
+import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
@@ -52,8 +50,8 @@ public class EcomAccountController {
         String customSign = DigestUtils
                 .md5Hex(userPrincipal.getUsername() + userPrincipal.getId());
 
-        EcomAccountLazadaCallbackPayloadRequest callbackPayloadRequest =
-                EcomAccountLazadaCallbackPayloadRequest.builder()
+        EcomAccountLazadaCallbackPayload callbackPayloadRequest =
+                EcomAccountLazadaCallbackPayload.builder()
                         .userId(userPrincipal.getId())
                         .signature(customSign)
                         .feCallback(LazadaEcomSyncConst.FE_RETURN_URL)
@@ -71,7 +69,7 @@ public class EcomAccountController {
     ) throws ApiException {
         byte[] decodedBytes = Base64.getDecoder().decode(data);
         String decodedString = new String(decodedBytes);
-        EcomAccountLazadaCallbackPayloadRequest payload = (new Gson()).fromJson(decodedString, EcomAccountLazadaCallbackPayloadRequest.class);
+        EcomAccountLazadaCallbackPayload payload = (new Gson()).fromJson(decodedString, EcomAccountLazadaCallbackPayload.class);
         payload.setCode(code);
 
         Long userID = payload.getUserId();
@@ -87,7 +85,12 @@ public class EcomAccountController {
         request.addApiParameter("code", payload.getCode());
         ResponseTokenPayload responseTokenPayload = LazadaClient.executeMappingModel(request, ResponseTokenPayload.class);
 
+        if(responseTokenPayload.getAccess_token() == null ){
+            throw new ZeusGlobalException(HttpStatus.OK, "Vui lòng đăng nhập lại thông qua lazada");
+        }
         payload.setTokenAuthResponse(responseTokenPayload);
-        return ResponseEntity.ok(GApiResponse.success(payload));
+
+        EcomAccount ecomAccount  = ecomService.addEcomAccountLazadaFromCallback(payload);
+        return ResponseEntity.ok(GApiResponse.success(ecomAccount));
     }
 }
