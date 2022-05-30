@@ -1,6 +1,9 @@
 package com.wifosell.zeus.model.stock;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.supplier.Supplier;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
@@ -14,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImportStockTransaction {
+public class ImportStockTransaction extends BasicEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +29,38 @@ public class ImportStockTransaction {
     @ManyToOne
     private Supplier supplier;
 
-    @OneToMany(mappedBy = "transaction", orphanRemoval = true)
+    @Enumerated(EnumType.STRING)
+    private TYPE type;
+
+    private String source;
+
+    @Enumerated(EnumType.STRING)
+    private PROCESSING_STATUS processingStatus;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String processingNote;
+
+    @Lob
+    private String description;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "transaction", cascade = {CascadeType.ALL})
     private List<ImportStockTransactionItem> items = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
+    private User generalManager;
+
+    public enum PROCESSING_STATUS {
+        DRAFT,
+        QUEUED,
+        PROCESSING,
+        PROCESSED
+    }
+
+    public enum TYPE {
+        MANUAL,
+        EXCEL
+    }
 }

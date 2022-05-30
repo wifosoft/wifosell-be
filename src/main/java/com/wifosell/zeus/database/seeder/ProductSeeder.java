@@ -152,7 +152,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
         Optional.ofNullable(request.getVariants()).ifPresent(variantRequests -> {
             variantRepository.deleteAllByProductId(product.getId());
             product.getVariants().clear();
-            this.genVariants(product, product.getOptions(), variantRequests);
+            this.genVariants(gm, product, product.getOptions(), variantRequests);
             productRepository.save(product);
         });
 
@@ -162,20 +162,22 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
         productRepository.save(product);
     }
 
-    private void genVariants(Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests) {
+    private void genVariants(User gm, Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests) {
         List<OptionValue> combination = Arrays.asList(new OptionValue[options.size()]);
         int i = 0, j = 0, k = 0;
-        this.genVariants(product, options, variantRequests, combination, i, j, k);
+        this.genVariants(gm, product, options, variantRequests, combination, i, j, k);
     }
 
-    private int genVariants(Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
+    private int genVariants(User gm, Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
         if (i == options.size()) {
             IProductRequest.VariantRequest variantRequest = variantRequests.get(j);
             Variant variant = Variant.builder()
                     .cost(new BigDecimal(variantRequest.getCost()))
                     .sku(variantRequest.getSku())
                     .barcode(variantRequest.getBarcode())
-                    .product(product).build();
+                    .product(product)
+                    .generalManager(gm)
+                    .build();
 
             List<VariantValue> variantValues = new ArrayList<>();
             for (OptionValue optionValue : combination) {
@@ -195,7 +197,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
         for (OptionValue optionValue : options.get(i).getOptionValues()) {
             combination.set(k, optionValue);
-            j = genVariants(product, options, variantRequests, combination, i + 1, j, k + 1);
+            j = genVariants(gm, product, options, variantRequests, combination, i + 1, j, k + 1);
         }
 
         return j;

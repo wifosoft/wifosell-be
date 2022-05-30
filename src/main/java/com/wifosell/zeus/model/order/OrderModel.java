@@ -26,6 +26,7 @@ public class OrderModel extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -43,6 +44,20 @@ public class OrderModel extends BasicEntity {
 
     private BigDecimal subtotal;
 
+    @Enumerated(EnumType.STRING)
+    private STATUS status;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
+    private List<OrderStep> steps = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    private Payment payment;
+
+    @Column(name = "is_complete")
+    private boolean isComplete;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
@@ -54,5 +69,19 @@ public class OrderModel extends BasicEntity {
             subtotal = subtotal.add(orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
         }
         return subtotal;
+    }
+
+    public boolean getIsComplete() {
+        return this.isComplete;
+    }
+
+    public enum STATUS {
+        CREATED,
+        CONFIRMED,
+        PACKED,
+        SHIPPING,
+        SHIPPED,
+        COMPLETE,
+        CANCELED
     }
 }

@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Variant;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImportStockTransactionItem {
+public class ImportStockTransactionItem extends BasicEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

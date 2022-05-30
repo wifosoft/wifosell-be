@@ -1,6 +1,5 @@
 package com.wifosell.zeus.model.voucher;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
@@ -12,7 +11,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 @Getter

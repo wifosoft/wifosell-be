@@ -7,6 +7,8 @@ import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.stock.Stock;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import lombok.Getter;
@@ -30,6 +32,10 @@ public class ProductResponse extends BasicEntityResponse {
     private final List<VariantResponse> variants;
 
     public ProductResponse(Product product) {
+        this(product, null);
+    }
+
+    public ProductResponse(Product product, List<Long> warehouseIds) {
         super(product);
         this.name = product.getName();
         this.description = product.getDescription();
@@ -41,7 +47,13 @@ public class ProductResponse extends BasicEntityResponse {
         this.images = product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
         this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
         this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
-        this.variants = product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList());
+        this.variants = warehouseIds == null || warehouseIds.isEmpty() ?
+                product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList()) :
+                product.getVariants().stream()
+                        .filter(variant -> variant.getStocks().stream()
+                                .map(stock -> stock.getWarehouse().getId())
+                                .anyMatch(warehouseIds::contains))
+                        .map(VariantResponse::new).collect(Collectors.toList());
     }
 
     @Getter
@@ -88,6 +100,7 @@ public class ProductResponse extends BasicEntityResponse {
         private String sku;
         private String barcode;
         private List<String> options;
+        private final List<StockResponse> stocks;
 
         public VariantResponse(Variant variant) {
             super(variant);
@@ -97,6 +110,21 @@ public class ProductResponse extends BasicEntityResponse {
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
                     .map(OptionValue::getValue).collect(Collectors.toList());
+            this.stocks = variant.getStocks().stream().map(StockResponse::new).collect(Collectors.toList());
+        }
+
+        @Getter
+        private static class StockResponse extends BasicEntityResponse {
+            private final Warehouse warehouse;
+            private final Integer actualQuantity;
+            private final Integer quantity;
+
+            public StockResponse(Stock stock) {
+                super(stock);
+                this.warehouse = stock.getWarehouse();
+                this.actualQuantity = stock.getActualQuantity();
+                this.quantity = stock.getQuantity();
+            }
         }
     }
 }

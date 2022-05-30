@@ -4,24 +4,26 @@ import com.wifosell.zeus.model.supplier.Supplier;
 import com.wifosell.zeus.payload.request.supplier.AddSupplierRequest;
 import com.wifosell.zeus.payload.request.supplier.UpdateSupplierRequest;
 import lombok.NonNull;
+import org.springframework.data.domain.Page;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface SupplierService {
-    List<Supplier> getSuppliers(@NonNull Long userId, Boolean isActive);
+    Page<Supplier> getSuppliers(Long userId, List<Boolean> isActives,
+                                Integer offset, Integer limit, String sortBy, String orderBy);
 
-    Supplier getSupplier(@NonNull Long userId, @NonNull Long supplierId);
+    Supplier getSupplier(Long userId, @NonNull Long supplierId);
 
-    Supplier addSupplier(@NonNull Long userId, @Valid AddSupplierRequest request);
+    Supplier addSupplier(Long userId, @Valid AddSupplierRequest request);
 
-    Supplier updateSupplier(@NonNull Long userId, @NonNull Long supplierId, @Valid UpdateSupplierRequest request);
+    Supplier updateSupplier(Long userId, @NonNull Long supplierId, @Valid UpdateSupplierRequest request);
 
-    Supplier activateSupplier(@NonNull Long userId, @NonNull Long supplierId);
+    Supplier activateSupplier(Long userId, @NonNull Long supplierId);
 
-    Supplier deactivateSupplier(@NonNull Long userId, @NonNull Long supplierId);
+    Supplier deactivateSupplier(Long userId, @NonNull Long supplierId);
 
-    List<Supplier> activateSuppliers(@NonNull Long userId, @NonNull List<Long> supplierIds);
+    List<Supplier> activateSuppliers(Long userId, @NonNull List<Long> supplierIds);
 
-    List<Supplier> deactivateSuppliers(@NonNull Long userId, @NonNull List<Long> supplierIds);
+    List<Supplier> deactivateSuppliers(Long userId, @NonNull List<Long> supplierIds);
 }

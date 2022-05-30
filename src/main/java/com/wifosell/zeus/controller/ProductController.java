@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,14 +31,18 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+            @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<Product> products = productService.getProducts(null, isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(ProductResponse::new);
+        Page<Product> products = productService.getProducts(
+                null, shopIds, saleChannelIds, warehouseIds, isActives, offset, limit, sortBy, orderBy);
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -45,14 +50,18 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+            @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<Product> products = productService.getProducts(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(ProductResponse::new);
+        Page<Product> products = productService.getProducts(
+                userPrincipal.getId(), shopIds, saleChannelIds, warehouseIds, isActives, offset, limit, sortBy, orderBy);
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -71,7 +80,7 @@ public class ProductController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<ProductResponse>> addProduct(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody AddProductRequest request
+            @RequestBody @Valid AddProductRequest request
     ) {
         Product product = productService.addProduct(userPrincipal.getId(), request);
         ProductResponse response = new ProductResponse(product);
@@ -83,7 +92,7 @@ public class ProductController {
     public ResponseEntity<GApiResponse<ProductResponse>> updateProduct(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "productId") Long productId,
-            @RequestBody UpdateProductRequest request
+            @RequestBody @Valid UpdateProductRequest request
     ) {
         Product product = productService.updateProduct(userPrincipal.getId(), productId, request);
         ProductResponse response = new ProductResponse(product);
@@ -114,7 +123,7 @@ public class ProductController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<Product>>> activateProducts(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Product> products = productService.activateProducts(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(products));
@@ -124,7 +133,7 @@ public class ProductController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<Product>>> deactivateProducts(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Product> products = productService.deactivateProducts(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(products));

@@ -8,8 +8,11 @@ import com.wifosell.zeus.payload.request.supplier.UpdateSupplierRequest;
 import com.wifosell.zeus.repository.SupplierRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.SupplierService;
+import com.wifosell.zeus.specs.SupplierSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,57 +28,66 @@ public class SupplierServiceImpl implements SupplierService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Supplier> getSuppliers(@NonNull Long userId, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return supplierRepository.findAllWithGm(gm.getId());
-        return supplierRepository.findAllWithGmAndActive(gm.getId(), isActive);
+    public Page<Supplier> getSuppliers(
+            Long userId,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit,
+            String sortBy,
+            String orderBy
+    ) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return supplierRepository.findAll(
+                SupplierSpecs.hasGeneralManager(gmId)
+                        .and(SupplierSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 
     @Override
-    public Supplier getSupplier(@NonNull Long userId, @NonNull Long supplierId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return supplierRepository.getByIdWithGm(gm.getId(), supplierId);
+    public Supplier getSupplier(Long userId, @NonNull Long supplierId) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return supplierRepository.getOne(
+                SupplierSpecs.hasGeneralManager(gmId)
+                        .and(SupplierSpecs.hasId(supplierId))
+        );
     }
 
     @Override
-    public Supplier addSupplier(@NonNull Long userId, AddSupplierRequest request) {
+    public Supplier addSupplier(Long userId, AddSupplierRequest request) {
         User gm = userRepository.getUserById(userId);
         Supplier warehouse = new Supplier();
         return this.updateSupplierByRequest(warehouse, request, gm);
     }
 
     @Override
-    public Supplier updateSupplier(@NonNull Long userId, @NonNull Long supplierId, UpdateSupplierRequest request) {
+    public Supplier updateSupplier(Long userId, @NonNull Long supplierId, UpdateSupplierRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Supplier warehouse = supplierRepository.getByIdWithGm(gm.getId(), supplierId);
-        this.updateSupplierByRequest(warehouse, request, gm);
-        return supplierRepository.save(warehouse);
+        Supplier warehouse = this.getSupplier(userId, supplierId);
+        return this.updateSupplierByRequest(warehouse, request, gm);
     }
 
     @Override
-    public Supplier activateSupplier(@NonNull Long userId, @NonNull Long supplierId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Supplier warehouse = supplierRepository.getByIdWithGm(gm.getId(), supplierId);
+    public Supplier activateSupplier(Long userId, @NonNull Long supplierId) {
+        Supplier warehouse = this.getSupplier(userId, supplierId);
         warehouse.setIsActive(true);
         return supplierRepository.save(warehouse);
     }
 
     @Override
-    public Supplier deactivateSupplier(@NonNull Long userId, @NonNull Long supplierId) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Supplier warehouse = supplierRepository.getByIdWithGm(gm.getId(), supplierId);
+    public Supplier deactivateSupplier(Long userId, @NonNull Long supplierId) {
+        Supplier warehouse = this.getSupplier(userId, supplierId);
         warehouse.setIsActive(false);
         return supplierRepository.save(warehouse);
     }
 
     @Override
-    public List<Supplier> activateSuppliers(@NonNull Long userId, @NonNull List<Long> supplierIds) {
+    public List<Supplier> activateSuppliers(Long userId, @NonNull List<Long> supplierIds) {
         return supplierIds.stream().map(id -> this.activateSupplier(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Supplier> deactivateSuppliers(@NonNull Long userId, @NonNull List<Long> supplierIds) {
+    public List<Supplier> deactivateSuppliers(Long userId, @NonNull List<Long> supplierIds) {
         return supplierIds.stream().map(id -> this.deactivateSupplier(userId, id)).collect(Collectors.toList());
     }
 

@@ -23,47 +23,26 @@ import com.wifosell.zeus.security.SecurityCheck;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ShopService;
 import com.wifosell.zeus.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.util.*;
 
 @Transactional(rollbackFor = ZeusGlobalException.class)
-@Service("userService")
+@Service("UserService")
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private TransactionTemplate template;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private ShopService shopService;
-
-
-    @Autowired
-    private UserRoleRelationRepository userRoleRelationRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
-    private ShopRepository shopRepository;
-    @Autowired
-    private SecurityCheck securityCheck;
-
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final UserRoleRelationRepository userRoleRelationRepository;
+    private final ShopRepository shopRepository;
+    private final SecurityCheck securityCheck;
+    private final ShopService shopService;
 
     //    @PreAuthorize("@securityCheck.check(authentication, #id)")
     @Override
@@ -118,7 +97,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User deActivateUser(Long userId) {
+    public User deactivateUser(Long userId) {
         User user = userRepository.getUserById(userId);
         if (user.getIsActive()) {
             userRepository.delete(user);
@@ -136,10 +115,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> deActivateListUser(List<Long> userList) {
+    public List<User> deactivateListUser(List<Long> userList) {
         List<User> affectedUser = new ArrayList<>();
         for (Long user : userList) {
-            affectedUser.add(this.deActivateUser(user));
+            affectedUser.add(this.deactivateUser(user));
         }
         return affectedUser;
     }

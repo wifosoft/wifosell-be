@@ -51,7 +51,8 @@ public enum EAppExceptionCode {
 
     //region Order
     ORDER_NOT_FOUND(1000001),
-    ORDER_ITEM_NOT_FOUND(1001001),
+    ORDER_ITEM_NOT_FOUND(1000002),
+    ORDER_STEP_NOT_FOUND(1000003),
     //endregion
 
     //region Customer
@@ -59,7 +60,26 @@ public enum EAppExceptionCode {
     //endregion
 
     //region Supplier
-    SUPPLIER_NOT_FOUND(1200001);
+    SUPPLIER_NOT_FOUND(1200001),
+    //endregion
+
+    //region Stock
+    IMPORT_STOCK_TRANSACTION_NOT_FOUND(1300001),
+    IMPORT_STOCK_TRANSACTION_ITEM_NOT_FOUND(1300002),
+    TRANSFER_STOCK_TRANSACTION_NOT_FOUND(1300003),
+    TRANSFER_STOCK_TRANSACTION_ITEM_NOT_FOUND(1300004),
+    STOCK_NOT_FOUND(1300005),
+    STOCK_QUANTITY_NOT_ENOUGH(1300006),
+    STOCK_ACTUAL_QUANTITY_NOT_ENOUGH(1300007),
+    //endregion
+
+    //region Invoice
+    INVOICE_NOT_FOUND(1400001),
+    INVOICE_EXISTING(1400002),
+    //endregion
+
+    //region Payment
+    PAYMENT_NOT_FOUND(1500001);
     //endregion
 
     private final int value;

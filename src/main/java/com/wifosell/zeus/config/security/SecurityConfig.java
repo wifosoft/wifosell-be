@@ -80,6 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/upload/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/upload/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/status").permitAll()
                 .anyRequest().authenticated();

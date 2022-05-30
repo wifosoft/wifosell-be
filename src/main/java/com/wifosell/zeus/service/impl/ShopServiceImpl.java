@@ -2,64 +2,30 @@ package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.*;
+import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.shop.UserShopRelation;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiErrorBody;
-import com.wifosell.zeus.payload.request.shop.ShopRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ShopService;
-import com.wifosell.zeus.specs.SaleChannelSpecs;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service("ShopService")
+@RequiredArgsConstructor
 public class ShopServiceImpl implements ShopService {
     Logger logger = Logger.getLogger(ShopServiceImpl.class.getName());
 
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
     private final UserShopRelationRepository userShopRelationRepository;
-    private final WarehouseRepository warehouseRepository;
-    private final WarehouseShopRelationRepository warehouseShopRelationRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
-    private final VoucherRepository voucherRepository;
-    private final VoucherSaleChannelShopRelationRepository voucherSaleChannelShopRelationRepository;
-
-    @PersistenceContext
-    private EntityManager em;
-
-    @Autowired
-    public ShopServiceImpl(ShopRepository shopRepository,
-                           UserRepository userRepository,
-                           UserShopRelationRepository userShopRelationRepository,
-                           WarehouseRepository warehouseRepository,
-                           WarehouseShopRelationRepository warehouseShopRelationRepository,
-                           SaleChannelRepository saleChannelRepository,
-                           SaleChannelShopRelationRepository saleChannelShopRelationRepository, VoucherRepository voucherRepository, VoucherSaleChannelShopRelationRepository voucherSaleChannelShopRelationRepository) {
-        this.shopRepository = shopRepository;
-        this.userRepository = userRepository;
-        this.userShopRelationRepository = userShopRelationRepository;
-        this.warehouseRepository = warehouseRepository;
-        this.warehouseShopRelationRepository = warehouseShopRelationRepository;
-        this.saleChannelRepository = saleChannelRepository;
-        this.saleChannelShopRelationRepository = saleChannelShopRelationRepository;
-        this.voucherRepository = voucherRepository;
-        this.voucherSaleChannelShopRelationRepository = voucherSaleChannelShopRelationRepository;
-    }
+    private final SaleChannelShopRepository saleChannelShopRepository;
 
     @Override
     public List<Shop> getCreatedShop(Long userId) {
@@ -138,192 +104,5 @@ public class ShopServiceImpl implements ShopService {
         userShopRelation.setUser(userNeedToAdd);
         userShopRelation.setShop(shopNeedToAssign);
         userShopRelationRepository.save(userShopRelation);
-    }
-
-    /**
-     * API lấy thông tin cửa hàng
-     *
-     * @param shopId
-     * @return
-     */
-    @Override
-    public Shop getShopInfo(Long shopId) {
-        return shopRepository.getById(shopId);
-    }
-
-    @Override
-    public Shop addShop(@NonNull Long userId, @Valid ShopRequest request) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Shop shop = new Shop();
-        return this.updateShopByRequest(shop, request, gm);
-    }
-
-    @Override
-    public Shop updateShop(@NonNull Long userId, @NonNull Long shopId, @Valid ShopRequest request) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
-        return this.updateShopByRequest(shop, request, gm);
-    }
-
-    @Override
-    public Shop deActivateShop(Long shopId) {
-        Shop shop = shopRepository.getById(shopId);
-        shop.setIsActive(false);
-        return shopRepository.save(shop);
-    }
-
-    @Override
-    public Shop activateShop(Long shopId) {
-        Shop shop = shopRepository.getById(shopId);
-        shop.setIsActive(true);
-        return shopRepository.save(shop);
-    }
-
-    @Override
-    public List<Shop> activateShops(List<Long> shopIds) {
-        return shopIds.stream().map(this::activateShop).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Shop> deactivateShops(List<Long> shopIds) {
-        return shopIds.stream().map(this::deActivateShop).collect(Collectors.toList());
-    }
-
-    @Override
-    public void linkWarehouseToShop(Long warehouseId, Long shopId) {
-
-        if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
-            //existed
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        warehouseShopRelationRepository.save(
-                WarehouseShopRelation.builder().shop(
-                        shopRepository.getById(shopId)
-                ).warehouse(
-                        warehouseRepository.getById(warehouseId)
-                ).build()
-        );
-
-    }
-
-    @Override
-    public void linkWarehouseToShop(Long currentUserId, Long warehouseId, Long shopId) {
-        User gm = userRepository.getUserById(currentUserId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), warehouseId);
-        Shop shop = shopRepository.getById(shopId);
-
-        if (!warehouse.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
-        }
-        if (warehouseShopRelationRepository.existsWarehouseShopRelationByShopAndWarehouse(shopId, warehouseId)) {
-            //existed
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        warehouseShopRelationRepository.save(
-                WarehouseShopRelation.builder().shop(shop).warehouse(warehouse).build()
-        );
-    }
-
-    @Override
-    public void linkSaleChannelToShop(Long currentUserId, Long saleChannelId, Long shopId) {
-        User gm = userRepository.getUserById(currentUserId).getGeneralManager();
-        SaleChannel saleChannel = saleChannelRepository.getOne(
-                SaleChannelSpecs.hasGeneralManager(gm.getId())
-                        .and(SaleChannelSpecs.hasId(saleChannelId))
-        );
-        Shop shop = shopRepository.getById(shopId);
-
-        if (!saleChannel.getGeneralManager().getId().equals(currentUserId) || !shop.getGeneralManager().getId().equals(currentUserId)) {
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PERMISSION_DENIED));
-        }
-
-        if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        saleChannelShopRelationRepository.save(
-                SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build()
-        );
-    }
-
-    @Override
-    public void linkVoucherToShop(Long voucherId, Long saleChannelId, Long shopId) {
-        if (voucherSaleChannelShopRelationRepository.existsVoucherSaleChannelShopRelation(voucherId, saleChannelId, shopId)) {
-            //existed
-            throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.RECORD_EXISTED));
-        }
-
-        voucherSaleChannelShopRelationRepository.save(
-                VoucherSaleChannelShopRelation.builder().shop(
-                        shopRepository.getById(shopId)
-                ).saleChannel(
-                        saleChannelRepository.getById(saleChannelId)
-                ).voucher(
-                        voucherRepository.getById(voucherId)
-                ).build()
-        );
-    }
-
-    /**
-     * Lấy danh sách nhân viên có quyền truy cập vào có có id: shopId
-     *
-     * @param shopId
-     * @return
-     */
-
-    @Override
-    public List<User> getListStaffOfShop(Long shopId) {
-        Shop shop = shopRepository.getById(shopId);
-        List<UserShopRelation> userRelation = shop.getUserShopRelations();
-        return userRelation.stream().map(UserShopRelation::getUser).collect(Collectors.toList());
-    }
-
-    private Shop updateShopByRequest(Shop shop, ShopRequest request, User gm) {
-        // Create or update Shop
-        Optional.ofNullable(request.getName()).ifPresent(shop::setName);
-        Optional.ofNullable(request.getShortName()).ifPresent(shop::setShortName);
-        Optional.ofNullable(request.getAddress()).ifPresent(shop::setAddress);
-        Optional.ofNullable(request.getPhone()).ifPresent(shop::setPhone);
-        Optional.ofNullable(request.getDescription()).ifPresent(shop::setDescription);
-        Optional.ofNullable(request.getBusinessLine()).ifPresent(shop::setBusinessLine);
-        Optional.ofNullable(request.getIsActive()).ifPresent(shop::setIsActive);
-        shop.setGeneralManager(gm);
-        shopRepository.save(shop);
-
-        // Link Sale Channels with Shop
-        Optional.ofNullable(request.getSaleChannelIds()).ifPresent(requestSaleChannelIds -> {
-            List<Long> curSaleChannelIds = shop.getSaleChannelShopRelations().stream()
-                    .map(SaleChannelShopRelation::getSaleChannel)
-                    .map(SaleChannel::getId)
-                    .collect(Collectors.toList());
-
-            // Remove relations
-            curSaleChannelIds.forEach(curSaleChannelId -> {
-                if (!requestSaleChannelIds.contains(curSaleChannelId)) {
-                    saleChannelShopRelationRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
-                    Optional<SaleChannelShopRelation> relationOptional = shop.getSaleChannelShopRelations().stream()
-                            .filter(relation -> relation.getSaleChannel().getId().equals(curSaleChannelId))
-                            .findFirst();
-                    relationOptional.ifPresent(relation -> shop.getSaleChannelShopRelations().remove(relation));
-                }
-            });
-
-            // Add new relations
-            requestSaleChannelIds.forEach(requestSaleChannelId -> {
-                if (!curSaleChannelIds.contains(requestSaleChannelId)) {
-                    SaleChannel saleChannel = saleChannelRepository.getOne(
-                            SaleChannelSpecs.hasGeneralManager(gm.getId())
-                                    .and(SaleChannelSpecs.hasId(requestSaleChannelId))
-                    );
-                    SaleChannelShopRelation relation = SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build();
-                    saleChannelShopRelationRepository.save(relation);
-                    shop.getSaleChannelShopRelations().add(relation);
-                }
-            });
-        });
-
-        return shop;
     }
 }

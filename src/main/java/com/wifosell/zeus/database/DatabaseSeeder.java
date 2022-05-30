@@ -14,17 +14,19 @@ public class DatabaseSeeder extends Seeder {
     }
 
     public void prepare() {
+
         seederTask.clear();
         seederTask.add(RoleSeeder.class);
         seederTask.add(UserSeeder.class);
-        seederTask.add(ShopSeeder.class);
-        seederTask.add(SaleChannelSeeder.class);
-        seederTask.add(WarehouseSeeder.class);
         seederTask.add(CategorySeeder.class);
         seederTask.add(ProductSeeder.class);
         seederTask.add(VoucherSeeder.class);
         seederTask.add(CustomerSeeder.class);
-//        seederTask.add(OrderSeeder.class);    // TODO haukc: link shop to sales channel
+        seederTask.add(SupplierSeeder.class);
+        seederTask.add(WarehouseSeeder.class);
+        seederTask.add(SaleChannelSeeder.class);
+        seederTask.add(ShopSeeder.class);
+        seederTask.add(OrderSeeder.class);
     }
 
     public void run() {

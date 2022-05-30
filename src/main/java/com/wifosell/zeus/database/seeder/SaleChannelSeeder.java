@@ -1,11 +1,18 @@
 package com.wifosell.zeus.database.seeder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.request.sale_channel.SaleChannelRequest;
 import com.wifosell.zeus.repository.SaleChannelRepository;
 import com.wifosell.zeus.repository.UserRepository;
+import lombok.NonNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 
 public class SaleChannelSeeder extends BaseSeeder implements ISeeder {
     private SaleChannelRepository saleChannelRepository;
@@ -21,28 +28,26 @@ public class SaleChannelSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        SaleChannel saleChannel1 = SaleChannel.builder()
-                .name("Shopee")
-                .shortName("Shopee")
-                .description("Shopee pi pi pi pi pi")
-                .generalManager(gm)
-                .build();
-        saleChannelRepository.save(saleChannel1);
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File("src/main/java/com/wifosell/zeus/database/data/sale_channel.json");
 
-        SaleChannel saleChannel2 = SaleChannel.builder()
-                .name("Lazada")
-                .shortName("Lazada")
-                .description("Lazada da da da da da")
-                .generalManager(gm)
-                .build();
-        saleChannelRepository.save(saleChannel2);
+        try {
+            SaleChannelRequest[] requests = mapper.readValue(file, SaleChannelRequest[].class);
+            for (SaleChannelRequest request : requests) {
+                this.addSaleChannelByRequest(request, gm);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        SaleChannel saleChannel3 = SaleChannel.builder()
-                .name("Tiki")
-                .shortName("Tiki")
-                .description("Tiki ki ki ki ki ki")
-                .generalManager(gm)
-                .build();
-        saleChannelRepository.save(saleChannel3);
+    private void addSaleChannelByRequest(@NonNull SaleChannelRequest saleChannelRequest, @NonNull User gm) {
+        SaleChannel saleChannel = new SaleChannel();
+        Optional.ofNullable(saleChannelRequest.getName()).ifPresent(saleChannel::setName);
+        Optional.ofNullable(saleChannelRequest.getShortName()).ifPresent(saleChannel::setShortName);
+        Optional.ofNullable(saleChannelRequest.getDescription()).ifPresent(saleChannel::setDescription);
+        Optional.ofNullable(saleChannelRequest.getIsActive()).ifPresent(saleChannel::setIsActive);
+        saleChannel.setGeneralManager(gm);
+        saleChannelRepository.save(saleChannel);
     }
 }
