@@ -31,6 +31,8 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
             @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
@@ -38,7 +40,8 @@ public class ProductController {
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<Product> products = productService.getProducts(null, warehouseIds, isActives, offset, limit, sortBy, orderBy);
+        Page<Product> products = productService.getProducts(
+                null, shopIds, saleChannelIds, warehouseIds, isActives, offset, limit, sortBy, orderBy);
         Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
@@ -47,6 +50,8 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
             @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
@@ -54,7 +59,8 @@ public class ProductController {
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<Product> products = productService.getProducts(userPrincipal.getId(), warehouseIds, isActives, offset, limit, sortBy, orderBy);
+        Page<Product> products = productService.getProducts(
+                userPrincipal.getId(), shopIds, saleChannelIds, warehouseIds, isActives, offset, limit, sortBy, orderBy);
         Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }

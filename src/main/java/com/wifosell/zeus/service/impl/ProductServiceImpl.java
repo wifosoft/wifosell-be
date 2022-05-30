@@ -47,6 +47,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> getProducts(
             Long userId,
+            List<Long> shopIds,
+            List<Long> saleChannelIds,
             List<Long> warehouseIds,
             List<Boolean> isActives,
             int offset,
@@ -57,6 +59,8 @@ public class ProductServiceImpl implements ProductService {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return productRepository.findAll(
                 ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.inShops(shopIds))
+                        .and(ProductSpecs.inSaleChannels(saleChannelIds))
                         .and(ProductSpecs.inWarehouses(warehouseIds))
                         .and(ProductSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
