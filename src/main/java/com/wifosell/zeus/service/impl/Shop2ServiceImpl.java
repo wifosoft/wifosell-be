@@ -9,7 +9,6 @@ import com.wifosell.zeus.payload.request.shop.AddShopRequest;
 import com.wifosell.zeus.payload.request.shop.IShopRequest;
 import com.wifosell.zeus.payload.request.shop.UpdateShopRequest;
 import com.wifosell.zeus.repository.*;
-import com.wifosell.zeus.service.SaleChannelService;
 import com.wifosell.zeus.service.Shop2Service;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.ShopSpecs;
@@ -127,14 +126,22 @@ public class Shop2ServiceImpl implements Shop2Service {
 
             // Add new relations
             requestRelations.forEach(requestRelation -> {
-                if (!curSaleChannelIds.contains(requestRelation.getSaleChannelId())) {
+                Warehouse warehouse = warehouseRepository.getOne(
+                        WarehouseSpecs.hasGeneralManager(gm.getId())
+                                .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
+                );
+
+                if (curSaleChannelIds.contains(requestRelation.getSaleChannelId())) {
+                    SaleChannelShop relation = saleChannelShopRepository.getByShopIdAndSaleChannelId(
+                            shop.getId(), requestRelation.getSaleChannelId());
+                    if (relation != null) {
+                        relation.setWarehouse(warehouse);
+                        saleChannelShopRepository.save(relation);
+                    }
+                } else {
                     SaleChannel saleChannel = saleChannelRepository.getOne(
                             SaleChannelSpecs.hasGeneralManager(gm.getId())
                                     .and(SaleChannelSpecs.hasId(requestRelation.getSaleChannelId()))
-                    );
-                    Warehouse warehouse = warehouseRepository.getOne(
-                            WarehouseSpecs.hasGeneralManager(gm.getId())
-                                    .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
                     );
                     SaleChannelShop relation = SaleChannelShop.builder()
                             .shop(shop)

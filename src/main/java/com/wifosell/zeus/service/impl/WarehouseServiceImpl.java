@@ -43,6 +43,14 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    public List<Warehouse> getWarehousesByShopIdsAndSaleChannelIds(List<Long> shopIds, List<Long> saleChannelIds) {
+        return warehouseRepository.findAll(
+                WarehouseSpecs.hasShops(shopIds)
+                        .and(WarehouseSpecs.hasSaleChannels(saleChannelIds))
+        );
+    }
+
+    @Override
     public Warehouse getWarehouse(Long userId, @NonNull Long warehouseId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return warehouseRepository.getOne(

@@ -15,4 +15,6 @@ public interface SaleChannelShopRepository extends JpaRepository<SaleChannelShop
 
     @Transactional
     void deleteByShopIdAndSaleChannelId(Long shopId, Long saleChannelId);
+
+    SaleChannelShop getByShopIdAndSaleChannelId(Long shopId, Long saleChannelId);
 }
