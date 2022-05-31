@@ -43,7 +43,7 @@ public class EcomAccountController {
     public ResponseEntity<GApiResponse> getListAccount() {
         @Getter
         @Setter
-        class EnumTypeConst  {
+        class EnumTypeConst {
             public String[] ecomName = ConvertorType.getNames(EcomAccount.EcomName.class);
             public String[] accountStatus = ConvertorType.getNames(EcomAccount.AccountStatus.class);
         }
@@ -128,7 +128,7 @@ public class EcomAccountController {
         LazopRequest request = new LazopRequest();
         request.setApiName("/seller/get");
         request.setHttpMethod("GET");
-        ResponseSellerInfoPayload responseTokenPayload = LazadaClient.executeMappingModel( request, ResponseSellerInfoPayload.class, ecomAccount.getAccessToken());
+        ResponseSellerInfoPayload responseTokenPayload = LazadaClient.executeMappingModel(request, ResponseSellerInfoPayload.class, ecomAccount.getAccessToken());
 
         return ResponseEntity.ok(GApiResponse.success(responseTokenPayload));
     }
@@ -137,11 +137,21 @@ public class EcomAccountController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<GApiResponse> getProductsFromEcommerce(
             @CurrentUser UserPrincipal userPrincipal,
-            @PathVariable(name = "ecomId") Long ecomId
+            @PathVariable(name = "ecomId") Long ecomId,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "50") int limit
     ) throws ApiException {
-        return ResponseEntity.ok(GApiResponse.success(ecomService.getProductsFromEcommerce(ecomId)));
+        return ResponseEntity.ok(GApiResponse.success(ecomService.getProductsFromEcommerce(ecomId, offset, limit)));
     }
 
-    
+    @GetMapping("/lazada/{ecomId}/getAllProductsFromEcommerce")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<GApiResponse> getAllProductsFromEcommerce(
+            @CurrentUser UserPrincipal userPrincipal,
+            @PathVariable(name = "ecomId") Long ecomId
+    ) throws ApiException {
+        return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId ,1)));
+    }
+
 
 }
