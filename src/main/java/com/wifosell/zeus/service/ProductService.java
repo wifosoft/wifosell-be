@@ -10,8 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface ProductService {
-    Page<Product> getProducts(Long userId,
-                              List<Long> shopIds, List<Long> saleChannelIds, List<Long> warehouseIds,
+    Page<Product> getProducts(Long userId, List<Long> warehouseIds, Integer minQuantity, Integer maxQuantity,
                               List<Boolean> isActives, int offset, int limit, String sortBy, String orderBy);
 
     Product getProduct(Long userId, @NonNull Long productId);

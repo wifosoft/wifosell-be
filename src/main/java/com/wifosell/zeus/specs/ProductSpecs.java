@@ -11,6 +11,7 @@ import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Path;
 import java.util.List;
 
 public class ProductSpecs {
@@ -78,6 +79,22 @@ public class ProductSpecs {
                     .get(Stock_.WAREHOUSE)
                     .get(Warehouse_.ID)
                     .in(warehouseIds);
+        });
+    }
+
+    public static Specification<Product> hasQuantityBetween(Integer minQuantity, Integer maxQuantity) {
+        return ((root, query, criteriaBuilder) -> {
+            if (minQuantity == null && maxQuantity == null)
+                return criteriaBuilder.and();
+
+            Integer finalMinQuantity = minQuantity != null ? minQuantity : 0;
+
+            Path<Integer> quantity = root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY);
+            query.distinct(true);
+
+            return maxQuantity != null ?
+                    criteriaBuilder.between(quantity, finalMinQuantity, maxQuantity) :
+                    criteriaBuilder.greaterThanOrEqualTo(quantity, finalMinQuantity);
         });
     }
 }

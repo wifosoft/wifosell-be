@@ -35,7 +35,7 @@ public class WarehouseSpecs {
         });
     }
 
-    public static Specification<Warehouse> hasShops(List<Long> shopIds) {
+    public static Specification<Warehouse> inShops(List<Long> shopIds) {
         return ((root, query, criteriaBuilder) -> {
             if (shopIds == null || shopIds.isEmpty())
                 return criteriaBuilder.and();
@@ -46,10 +46,11 @@ public class WarehouseSpecs {
         });
     }
 
-    public static Specification<Warehouse> hasSaleChannels(List<Long> saleChannelIds) {
+    public static Specification<Warehouse> inSaleChannels(List<Long> saleChannelIds) {
         return ((root, query, criteriaBuilder) -> {
             if (saleChannelIds == null || saleChannelIds.isEmpty())
                 return criteriaBuilder.and();
+            query.distinct(true);
             return root.join(Warehouse_.SALE_CHANNEL_SHOPS)
                     .get(SaleChannelShop_.SALE_CHANNEL)
                     .get(SaleChannel_.ID)

@@ -45,8 +45,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public List<Warehouse> getWarehousesByShopIdsAndSaleChannelIds(List<Long> shopIds, List<Long> saleChannelIds) {
         return warehouseRepository.findAll(
-                WarehouseSpecs.hasShops(shopIds)
-                        .and(WarehouseSpecs.hasSaleChannels(saleChannelIds))
+                WarehouseSpecs.inShops(shopIds)
+                        .and(WarehouseSpecs.inSaleChannels(saleChannelIds))
         );
     }
 
