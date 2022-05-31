@@ -50,7 +50,7 @@ public class ProductController {
 //        }
         Page<Product> products = productService.getProducts(
                 null, warehouseIds, minQuantity, maxQuantity, isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds, minQuantity, maxQuantity));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -78,7 +78,7 @@ public class ProductController {
 //        }
         Page<Product> products = productService.getProducts(
                 userPrincipal.getId(), warehouseIds, minQuantity, maxQuantity, isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds, minQuantity, maxQuantity));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

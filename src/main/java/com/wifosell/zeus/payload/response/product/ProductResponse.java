@@ -32,10 +32,10 @@ public class ProductResponse extends BasicEntityResponse {
     private final List<VariantResponse> variants;
 
     public ProductResponse(Product product) {
-        this(product, null);
+        this(product, null, null, null);
     }
 
-    public ProductResponse(Product product, List<Long> warehouseIds) {
+    public ProductResponse(Product product, List<Long> warehouseIds, Integer minQuantity, Integer maxQuantity) {
         super(product);
         this.name = product.getName();
         this.description = product.getDescription();
@@ -51,8 +51,12 @@ public class ProductResponse extends BasicEntityResponse {
                 product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList()) :
                 product.getVariants().stream()
                         .filter(variant -> variant.getStocks().stream()
-                                .map(stock -> stock.getWarehouse().getId())
-                                .anyMatch(warehouseIds::contains))
+                                .anyMatch(stock -> {
+                                    boolean inWarehouse = warehouseIds.contains(stock.getWarehouse().getId());
+                                    boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
+                                            && (maxQuantity == null || stock.getQuantity() <= maxQuantity);
+                                    return inWarehouse && betweenQuantity;
+                                }))
                         .map(VariantResponse::new).collect(Collectors.toList());
     }
 
