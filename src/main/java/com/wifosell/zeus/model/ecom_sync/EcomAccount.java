@@ -10,6 +10,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -47,6 +48,10 @@ public class EcomAccount extends BasicEntity {
     private String description;
 
     private String note;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "ecomAccount", fetch = FetchType.LAZY)
+    private List<LazadaProduct> lazadaProduct;
 
 
     @JsonIgnore

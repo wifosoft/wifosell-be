@@ -45,4 +45,7 @@ public class LazadaProduct extends BasicEntity {
     @OneToMany(mappedBy = "lazadaProduct")
     private List<LazadaVariant> lazadaVariants;
 
+    @ManyToOne
+    @JoinColumn(name = "ecom_account_id", nullable = true)
+    private EcomAccount ecomAccount;
 }

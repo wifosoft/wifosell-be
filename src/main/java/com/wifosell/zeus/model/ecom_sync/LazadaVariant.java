@@ -21,8 +21,6 @@ public class LazadaVariant extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
     @Column(name = "seller_sku")
     private String sellerSku;
 
