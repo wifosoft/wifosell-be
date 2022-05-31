@@ -2,9 +2,8 @@ package com.wifosell.zeus.database.seeder;
 
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
-import com.wifosell.zeus.model.ecom_account.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
 

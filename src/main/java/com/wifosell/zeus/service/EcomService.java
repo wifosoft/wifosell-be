@@ -1,9 +1,7 @@
 package com.wifosell.zeus.service;
 
 import com.lazada.lazop.util.ApiException;
-import com.wifosell.zeus.model.ecom_account.EcomAccount;
-import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.request.RegisterRequest;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +20,7 @@ public interface EcomService {
     EcomAccount getEcomAccount(Long ecomId);
 
     boolean deleteEcomAccount(Long ecomId);
+
+    Object getProductsFromEcommerce(Long ecomId) throws ApiException;
     
 }

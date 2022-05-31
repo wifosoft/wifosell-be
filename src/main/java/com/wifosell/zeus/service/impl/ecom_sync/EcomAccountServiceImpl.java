@@ -5,9 +5,9 @@ import com.google.gson.Gson;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
-import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.ecom_account.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.repository.UserRepository;
@@ -31,6 +31,7 @@ public class EcomAccountServiceImpl implements EcomService {
     @Autowired
     UserRepository userRepository;
 
+
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
@@ -46,6 +47,27 @@ public class EcomAccountServiceImpl implements EcomService {
         }
         ecomAccountRepository.deleteById(ecomAccountId);
         return true;
+    }
+
+    @Override
+    public Object getProductsFromEcommerce(Long ecomId) throws ApiException {
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        String token = ecomAccount.getAccessToken();
+
+        LazopRequest request = new LazopRequest();
+        request.setApiName("/products/get");
+        request.setHttpMethod("GET");
+        request.addApiParameter("filter", "live");
+        request.addApiParameter("update_before", "");
+        request.addApiParameter("create_before", "");
+        request.addApiParameter("offset", "0");
+        request.addApiParameter("create_after", "");
+        request.addApiParameter("update_after", "");
+        request.addApiParameter("limit", "50");
+        request.addApiParameter("options", "1");
+        request.addApiParameter("sku_seller_list", "");
+
+        return LazadaClient.executeMappingModel(request, ResponseListProductPayload.class, token);
     }
 
 
@@ -95,6 +117,7 @@ public class EcomAccountServiceImpl implements EcomService {
     public EcomAccount getEcomAccount(Long id) {
         return ecomAccountRepository.getEcomAccountById(id);
     }
+
 
 
 }

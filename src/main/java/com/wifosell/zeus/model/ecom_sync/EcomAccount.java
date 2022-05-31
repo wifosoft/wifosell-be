@@ -1,9 +1,8 @@
-package com.wifosell.zeus.model.ecom_account;
+package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
@@ -11,7 +10,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter

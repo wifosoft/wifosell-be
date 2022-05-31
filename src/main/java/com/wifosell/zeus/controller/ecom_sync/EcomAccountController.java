@@ -6,19 +6,20 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
-import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.ecom_account.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
-import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import com.wifosell.zeus.utils.ConvertorType;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,17 @@ public class EcomAccountController {
 
     @Autowired
     UserService userService;
+
+    @GetMapping("enum_const")
+    public ResponseEntity<GApiResponse> getListAccount() {
+        @Getter
+        @Setter
+        class EnumTypeConst  {
+            public String[] ecomName = ConvertorType.getNames(EcomAccount.EcomName.class);
+            public String[] accountStatus = ConvertorType.getNames(EcomAccount.AccountStatus.class);
+        }
+        return ResponseEntity.ok(GApiResponse.success(new EnumTypeConst()));
+    }
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
@@ -121,7 +133,13 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success(responseTokenPayload));
     }
 
-
-
+    @GetMapping("/lazada/{ecomId}/getProductsFromEcommerce")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<GApiResponse> getProductsFromEcommerce(
+            @CurrentUser UserPrincipal userPrincipal,
+            @PathVariable(name = "ecomId") Long ecomId
+    ) throws ApiException {
+        return ResponseEntity.ok(GApiResponse.success(ecomService.getProductsFromEcommerce(ecomId)));
+    }
 
 }

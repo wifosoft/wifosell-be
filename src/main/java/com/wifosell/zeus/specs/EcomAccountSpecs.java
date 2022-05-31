@@ -1,12 +1,9 @@
 package com.wifosell.zeus.specs;
 
-import com.wifosell.zeus.model.ecom_account.EcomAccount;
-import com.wifosell.zeus.model.ecom_account.EcomAccount_;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount_;
 import com.wifosell.zeus.model.user.User_;
-import com.wifosell.zeus.model.customer.Customer_;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.util.List;
 
 public class EcomAccountSpecs {
     public static Specification<EcomAccount> hasId(Long id) {

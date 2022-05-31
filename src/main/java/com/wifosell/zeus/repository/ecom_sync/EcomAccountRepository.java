@@ -1,12 +1,10 @@
 package com.wifosell.zeus.repository.ecom_sync;
 
 
-import com.wifosell.framework.repository.PGMSoftRepository;
 import com.wifosell.framework.repository.SoftRepository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
-import com.wifosell.zeus.model.ecom_account.EcomAccount;
-import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import org.springframework.stereotype.Repository;
 
