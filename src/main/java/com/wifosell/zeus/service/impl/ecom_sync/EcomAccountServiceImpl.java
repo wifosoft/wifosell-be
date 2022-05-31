@@ -6,30 +6,46 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
+import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
+import com.wifosell.zeus.repository.ecom_sync.LazadaProductRepository;
+import com.wifosell.zeus.repository.ecom_sync.LazadaVariantRepository;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service()
+@Transactional
 public class EcomAccountServiceImpl implements EcomService {
+    Logger logger = LoggerFactory.getLogger(EcomAccountServiceImpl.class);
+
     @Autowired
     EcomAccountRepository ecomAccountRepository;
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    LazadaVariantRepository lazadaVariantRepository;
+
+    @Autowired
+    LazadaProductRepository lazadaProductRepository;
 
 
     @Override
@@ -51,6 +67,7 @@ public class EcomAccountServiceImpl implements EcomService {
 
     @Override
     public Object getProductsFromEcommerce(Long ecomId) throws ApiException {
+        Gson gson = (new Gson());
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
         String token = ecomAccount.getAccessToken();
 
@@ -67,7 +84,38 @@ public class EcomAccountServiceImpl implements EcomService {
         request.addApiParameter("options", "1");
         request.addApiParameter("sku_seller_list", "");
 
-        return LazadaClient.executeMappingModel(request, ResponseListProductPayload.class, token);
+        ResponseListProductPayload responseListProductPayload = LazadaClient.executeMappingModel(request, ResponseListProductPayload.class, token);
+        ResponseListProductPayload.Data responseListProductData = responseListProductPayload.getData();
+        List<ResponseListProductPayload.Product> listLazadaProducts = responseListProductData.products;
+
+        listLazadaProducts.forEach(e -> {
+            //kiem tra lzproduct ton tai khong
+            LazadaProduct lzProduct = lazadaProductRepository.findByItemId(e.getItem_id());
+            if (lzProduct == null) {
+                lzProduct = new LazadaProduct(e, ecomAccount);
+            }
+            else {
+                lzProduct.withDataByProductAPI(e).setEcomAccount(ecomAccount);
+            }
+            lazadaProductRepository.save(lzProduct);
+
+            //xu ly sku
+            List<ResponseListProductPayload.Sku> listSkus = e.getSkus();
+            LazadaProduct finalLzProduct = lzProduct;
+            listSkus.forEach(s -> {
+                LazadaVariant lzVariant = lazadaVariantRepository.findBySkuId(s.getSkuId());
+                if (lzVariant == null) {
+                    //tao moi variant link voi lazadaProduct
+                    lzVariant = new LazadaVariant(s, finalLzProduct);
+                } else {
+                    lzVariant.withDataBySkuAPI(s);
+                }
+                lazadaVariantRepository.save(lzVariant);
+            });
+
+        });
+
+        return responseListProductPayload;
     }
 
 
@@ -117,7 +165,6 @@ public class EcomAccountServiceImpl implements EcomService {
     public EcomAccount getEcomAccount(Long id) {
         return ecomAccountRepository.getEcomAccountById(id);
     }
-
 
 
 }

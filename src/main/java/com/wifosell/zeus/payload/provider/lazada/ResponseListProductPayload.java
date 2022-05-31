@@ -12,24 +12,24 @@ import java.util.ArrayList;
 public class ResponseListProductPayload {
     @Getter
     @Setter
-    public class Attributes{
+    public class Attributes {
         public String name;
         public String description;
         public String brand;
-        public String clothing_material;
-        public String source;
+        //public String clothing_material;
+        // public String source;
     }
 
     @Getter
     @Setter
-    public class Data{
+    public class Data {
         public int total_products;
         public ArrayList<Product> products;
     }
 
     @Getter
     @Setter
-    public class MultiWarehouseInventory{
+    public class MultiWarehouseInventory {
         public int occupyQuantity;
         public int quantity;
         public int totalQuantity;
@@ -39,14 +39,14 @@ public class ResponseListProductPayload {
     }
 
     @Getter
-    public class Product{
+    public class Product {
         public boolean trialProduct;
         public String created_time;
         public String updated_time;
         public ArrayList<String> images;
         public ArrayList<Sku> skus;
-        public int item_id;
-        public int primary_category;
+        public Long item_id;
+        public Long primary_category;
         public ArrayList<Object> marketImages;
         public Attributes attributes;
         public String status;
@@ -54,7 +54,7 @@ public class ResponseListProductPayload {
 
     @Getter
 
-    public class Sku{
+    public class Sku {
         @SerializedName("Status")
         @JsonProperty("Status")
         public String status;
@@ -82,8 +82,8 @@ public class ResponseListProductPayload {
         public String package_width;
         public String package_height;
         public ArrayList<Object> fblWarehouseInventories;
-        public double special_price;
-        public double price;
+        public Long special_price;
+        public Long price;
         @SerializedName("Variation1")
         @JsonProperty("Variation1")
         public String variation1;

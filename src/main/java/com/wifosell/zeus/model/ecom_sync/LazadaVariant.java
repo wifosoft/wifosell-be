@@ -2,9 +2,10 @@ package com.wifosell.zeus.model.ecom_sync;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import lombok.*;
-import org.hibernate.validator.constraints.CodePointLength;
 
 import javax.persistence.*;
 
@@ -12,7 +13,6 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "lazada_variants")
@@ -61,5 +61,32 @@ public class LazadaVariant extends BasicEntity {
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = true)
     private LazadaProduct lazadaProduct;
+
+    public LazadaVariant() {}
+
+    public LazadaVariant(ResponseListProductPayload.Sku  s) {
+        this.withDataBySkuAPI(s);
+    }
+    public LazadaVariant(ResponseListProductPayload.Sku s, LazadaProduct lazadaProduct) {
+        this.withDataBySkuAPI(s);
+        this.setLazadaProduct(lazadaProduct);
+    }
+
+    public LazadaVariant withDataBySkuAPI(ResponseListProductPayload.Sku s) {
+        Gson gson = new Gson();
+        this.sellerSku = s.getSellerSku();
+        this.shopSku = s.getShopSku();
+        this.status = s.getStatus();
+        this.url = s.getUrl();
+        this.specialPrice = s.getSpecial_price();
+        this.price = s.getPrice();
+        this.skuId = s.getSkuId();
+        this.images = gson.toJson(s.getImages());
+        this.quantity = s.getQuantity();
+        this.sellableStock = s.getSellableStock();
+        this.rawData = gson.toJson(s);
+        this.reserved = "";
+        return this;
+    }
 
 }
