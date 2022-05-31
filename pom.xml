@@ -201,10 +201,8 @@
                             <nonFilteredFileExtensions>
 
                                 <nonFilteredFileExtension>pem</nonFilteredFileExtension>
-
                                 <nonFilteredFileExtension>pfx</nonFilteredFileExtension>
                                 <nonFilteredFileExtension>p12</nonFilteredFileExtension>
-
                             </nonFilteredFileExtensions>
                         </configuration>
                     </execution>

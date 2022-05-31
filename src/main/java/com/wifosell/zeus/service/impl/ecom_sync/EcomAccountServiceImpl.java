@@ -2,14 +2,19 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 
 
 import com.google.gson.Gson;
+import com.lazada.lazop.api.LazopRequest;
+import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
+import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.ecom_account.EcomAccount;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
+import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,26 +34,39 @@ public class EcomAccountServiceImpl implements EcomService {
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
-        List<EcomAccount> listEcomUser = ecomAccountRepository.findAll(
+        return ecomAccountRepository.findAll(
                 EcomAccountSpecs.hasGeneralManager(gmId)
         );
-        return listEcomUser;
     }
+
+
+    public boolean deleteEcomAccount(Long ecomAccountId) {
+        if (!ecomAccountRepository.existsById(ecomAccountId)) {
+            throw new ZeusGlobalException(HttpStatus.OK, "ID không tồn tại");
+        }
+        ecomAccountRepository.deleteById(ecomAccountId);
+        return true;
+    }
+
 
     @Override
     public EcomAccount addEcomAccountLazada(Long userId, EcomAccount account) {
         User user = userRepository.getUserById(userId);
         Optional<EcomAccount> checkExisted = ecomAccountRepository.findByAccountNameAndEcomName(account.getAccountName(), EcomAccount.EcomName.LAZADA);
-        if(checkExisted.isPresent()){
-            throw new ZeusGlobalException(HttpStatus.OK, "Tài khoản đã tồn tại");
-        }
+        //update
+        //throw new ZeusGlobalException(HttpStatus.OK, "Tài khoản đã tồn tại");
+        checkExisted.ifPresent(ecomAccount -> {
+                    account.setId(ecomAccount.getId());
+                    account.setNote("Đã cập nhật token tài khoản đã tồn tại");
+                }
+        );
         account.setGeneralManager(user);
         ecomAccountRepository.save(account);
         return account;
     }
 
 
-    public EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback){
+    public EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException {
         User user = userRepository.getUserById(payloadCallback.getUserId());
 
         EcomAccount ecomAccount = new EcomAccount();
@@ -65,7 +83,17 @@ public class EcomAccountServiceImpl implements EcomService {
         ecomAccount.setIsActive(true);
         ecomAccount.setAccountStatus(EcomAccount.AccountStatus.AUTH);
         ecomAccount.setEcomName(EcomAccount.EcomName.LAZADA);
+
+        LazopRequest request = new LazopRequest();
+        request.setApiName("/seller/get");
+        request.setHttpMethod("GET");
+        ResponseSellerInfoPayload responseTokenPayload = LazadaClient.executeMappingModel(request, ResponseSellerInfoPayload.class, ecomAccount.getAccessToken());
+        ecomAccount.setAccountInfo((new Gson()).toJson(responseTokenPayload));
         return this.addEcomAccountLazada(payloadCallback.getUserId(), ecomAccount);
+    }
+
+    public EcomAccount getEcomAccount(Long id) {
+        return ecomAccountRepository.getEcomAccountById(id);
     }
 
 

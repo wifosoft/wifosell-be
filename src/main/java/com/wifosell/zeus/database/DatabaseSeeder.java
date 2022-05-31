@@ -1,6 +1,7 @@
 package com.wifosell.zeus.database;
 
 import com.wifosell.zeus.database.seeder.*;
+import com.wifosell.zeus.model.ecom_account.EcomAccount;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(SaleChannelSeeder.class);
         seederTask.add(ShopSeeder.class);
         seederTask.add(OrderSeeder.class);
+        seederTask.add(EcomAccountSeeder.class);
     }
 
     public void run() {

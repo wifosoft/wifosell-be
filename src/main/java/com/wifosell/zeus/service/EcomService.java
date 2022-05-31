@@ -1,5 +1,6 @@
 package com.wifosell.zeus.service;
 
+import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.model.ecom_account.EcomAccount;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.RegisterRequest;
@@ -16,5 +17,10 @@ public interface EcomService {
 
     EcomAccount addEcomAccountLazada(Long userId, EcomAccount account);
 
-    EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback);
+    EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException;
+
+    EcomAccount getEcomAccount(Long ecomId);
+
+    boolean deleteEcomAccount(Long ecomId);
+    
 }
