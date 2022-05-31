@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
@@ -58,9 +59,14 @@ public class LazadaVariant extends BasicEntity {
     @Column(columnDefinition = "TEXT", name = "reserved")
     private String reserved;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = true)
     private LazadaProduct lazadaProduct;
+
+    @Column(name = "item_id", insertable = false, updatable = false)
+    private Long lazadaProductId;
+
 
     public LazadaVariant() {}
 
