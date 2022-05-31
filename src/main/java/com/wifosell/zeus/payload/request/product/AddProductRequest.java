@@ -14,31 +14,23 @@ public class AddProductRequest implements IProductRequest {
     @NotBlank
     private String name;
 
-    @NotBlank
     private String description;
 
     @NotNull
     private Long categoryId;
 
-    @NotNull
     private Integer weight;
 
-    @NotBlank
     private String dimension;
 
-    @NotNull
     private Integer state;
 
-    @NotNull
     private Integer status;
 
-    @NotNull
     private List<String> images;
-
-    @NotNull
+    
     private List<AttributeRequest> attributes;
 
-    @NotNull
     private List<OptionRequest> options;
 
     @NonNull

@@ -61,9 +61,6 @@ public interface IProductRequest {
     @Getter
     @Setter
     class VariantRequest {
-        @PositiveOrZero
-        Long stock;
-
         @NotBlank
         @Size(max = 50)
         String cost;
