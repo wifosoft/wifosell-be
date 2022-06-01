@@ -151,8 +151,25 @@ public class ProductServiceImpl implements ProductService {
 
         // Attributes
         Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
+            // Delete
+            List<Long> requestAttributeIds = attributeRequests.stream()
+                    .map(IProductRequest.AttributeRequest::getId).collect(Collectors.toList());
+            List<Attribute> deletedAttributes = new ArrayList<>();
+            product.getAttributes().forEach(attribute -> {
+                if (!requestAttributeIds.contains(attribute.getId())) {
+                    deletedAttributes.add(attribute);
+                }
+            });
+            deletedAttributes.forEach(attribute -> {
+                product.getAttributes().remove(attribute);
+                attributeRepository.delete(attribute);
+            });
+            productRepository.save(product);
+
+            // Add or update
             for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
-                Optional<Attribute> optionalAttribute = attributeRepository.findById(attributeRequest.getId());
+                Optional<Attribute> optionalAttribute = attributeRequest.getId() != null ?
+                        attributeRepository.findById(attributeRequest.getId()) : Optional.empty();
                 Attribute attribute;
                 if (optionalAttribute.isPresent()) {
                     attribute = optionalAttribute.get();
@@ -164,6 +181,7 @@ public class ProductServiceImpl implements ProductService {
                             .value(attributeRequest.getValue())
                             .product(product)
                             .build();
+                    product.getAttributes().add(attribute);
                 }
                 attributeRepository.save(attribute);
             }
