@@ -132,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
         // Images
-        Optional.ofNullable(request.getImages()).ifPresent(urls -> {
+        Optional.ofNullable(request.getImages()).ifPresent(urls -> {    // TODO haukc
             productImageRepository.deleteAllByProductId(product.getId());
             product.getImages().clear();
 
@@ -151,40 +151,41 @@ public class ProductServiceImpl implements ProductService {
 
         // Attributes
         Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
-            // Delete
-            List<Long> requestAttributeIds = attributeRequests.stream()
-                    .map(IProductRequest.AttributeRequest::getId).collect(Collectors.toList());
             List<Attribute> deletedAttributes = new ArrayList<>();
+
             product.getAttributes().forEach(attribute -> {
-                if (!requestAttributeIds.contains(attribute.getId())) {
+                IProductRequest.AttributeRequest existingAttributeRequest = null;
+                for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+                    if (attribute.getId().equals(attributeRequest.getId())) {
+                        attribute.setName(attributeRequest.getName());
+                        attribute.setValue(attributeRequest.getValue());
+                        attributeRepository.save(attribute);
+                        existingAttributeRequest = attributeRequest;
+                        break;
+                    }
+                }
+                if (existingAttributeRequest == null) {
                     deletedAttributes.add(attribute);
+                } else {
+                    attributeRequests.remove(existingAttributeRequest);
                 }
             });
+
             deletedAttributes.forEach(attribute -> {
                 product.getAttributes().remove(attribute);
                 attributeRepository.delete(attribute);
             });
-            productRepository.save(product);
 
-            // Add or update
             for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
-                Optional<Attribute> optionalAttribute = attributeRequest.getId() != null ?
-                        attributeRepository.findById(attributeRequest.getId()) : Optional.empty();
-                Attribute attribute;
-                if (optionalAttribute.isPresent()) {
-                    attribute = optionalAttribute.get();
-                    attribute.setName(attributeRequest.getName());
-                    attribute.setValue(attributeRequest.getValue());
-                } else {
-                    attribute = Attribute.builder()
-                            .name(attributeRequest.getName())
-                            .value(attributeRequest.getValue())
-                            .product(product)
-                            .build();
-                    product.getAttributes().add(attribute);
-                }
+                Attribute attribute = Attribute.builder()
+                        .name(attributeRequest.getName())
+                        .value(attributeRequest.getValue())
+                        .product(product)
+                        .build();
                 attributeRepository.save(attribute);
+                product.getAttributes().add(attribute);
             }
+
             productRepository.save(product);
         });
 
