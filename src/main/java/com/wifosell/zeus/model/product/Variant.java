@@ -26,7 +26,7 @@ public class Variant extends BasicEntity {
 
     private BigDecimal cost;
 
-    @Column(unique = true)
+    //    @Column(unique = true)
     private String sku;
 
     private String barcode;

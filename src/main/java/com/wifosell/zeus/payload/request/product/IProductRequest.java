@@ -38,6 +38,8 @@ public interface IProductRequest {
     @Getter
     @Setter
     class AttributeRequest {
+        Long id;
+
         @NotBlank
         @Size(max = 100)
         String name;
@@ -50,6 +52,8 @@ public interface IProductRequest {
     @Getter
     @Setter
     class OptionRequest {
+        Long id;
+        
         @NotBlank
         @Size(max = 100)
         String name;
