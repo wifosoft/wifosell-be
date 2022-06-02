@@ -67,6 +67,15 @@ public interface IProductRequest {
 
     @Getter
     @Setter
+    class OptionValueRequest {
+        Long id;
+
+        @NotBlank
+        String value;
+    }
+
+    @Getter
+    @Setter
     class VariantRequest {
         @NotBlank
         @Size(max = 50)

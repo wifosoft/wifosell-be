@@ -1,7 +1,5 @@
 package com.wifosell.zeus.payload.response.product;
 
-import com.wifosell.zeus.model.attribute.Attribute;
-import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
@@ -10,7 +8,9 @@ import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
+import com.wifosell.zeus.payload.response.attribute.AttributeResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
+import com.wifosell.zeus.payload.response.option.OptionResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,43 +62,6 @@ public class ProductResponse extends BasicEntityResponse {
 
     @Getter
     @Setter
-    private static class AttributeResponse extends BasicEntityResponse {
-        private String name;
-        private String value;
-
-        public AttributeResponse(Attribute attribute) {
-            super(attribute);
-            this.name = attribute.getName();
-            this.value = attribute.getValue();
-        }
-    }
-
-    @Getter
-    @Setter
-    private static class OptionResponse extends BasicEntityResponse {
-        private String name;
-        private List<OptionValueResponse> values;
-
-        OptionResponse(OptionModel option) {
-            super(option);
-            this.name = option.getName();
-            this.values = option.getOptionValues().stream().map(OptionValueResponse::new).collect(Collectors.toList());
-        }
-
-        @Getter
-        @Setter
-        private static class OptionValueResponse extends BasicEntityResponse {
-            private String value;
-
-            public OptionValueResponse(OptionValue optionValue) {
-                super(optionValue);
-                this.value = optionValue.getValue();
-            }
-        }
-    }
-
-    @Getter
-    @Setter
     private static class VariantResponse extends BasicEntityResponse {
         private String cost;
         private String sku;
@@ -113,7 +76,7 @@ public class ProductResponse extends BasicEntityResponse {
             this.barcode = variant.getBarcode();
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
-                    .map(OptionValue::getValue).collect(Collectors.toList());
+                    .map(OptionValue::getName).collect(Collectors.toList());
             this.stocks = variant.getStocks().stream().map(StockResponse::new).collect(Collectors.toList());
         }
 

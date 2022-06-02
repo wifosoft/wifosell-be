@@ -43,7 +43,7 @@ public class VariantResponse extends BasicEntityResponse {
 
         public OptionValueResponse(OptionValue optionValue) {
             super(optionValue);
-            this.value = optionValue.getValue();
+            this.value = optionValue.getName();
         }
     }
 
@@ -103,7 +103,7 @@ public class VariantResponse extends BasicEntityResponse {
 
                 public OptionValueResponse(OptionValue optionValue) {
                     super(optionValue);
-                    this.value = optionValue.getValue();
+                    this.value = optionValue.getName();
                 }
             }
         }

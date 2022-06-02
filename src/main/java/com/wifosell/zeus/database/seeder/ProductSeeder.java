@@ -68,117 +68,117 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
     private void updateProductByRequest(IProductRequest request, User gm) {
         Product product = new Product();
 
-        Optional.ofNullable(request.getName()).ifPresent(product::setName);
-        Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
-        Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
-            Category category = categoryRepository.getById(categoryId);
-            product.setCategory(category);
-        });
-        Optional.ofNullable(request.getWeight()).ifPresent(product::setWeight);
-        Optional.ofNullable(request.getDimension()).ifPresent(product::setDimension);
-        Optional.ofNullable(request.getState()).ifPresent(product::setState);
-        Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
-
-        // Images
-        Optional.ofNullable(request.getImages()).ifPresent(urls -> {
-            productImageRepository.deleteAllByProductId(product.getId());
-            product.getImages().clear();
-
-            List<ProductImage> images = new ArrayList<>();
-            for (String url : urls) {
-                ProductImage image = ProductImage.builder()
-                        .url(url)
-                        .product(product).build();
-                images.add(image);
-            }
-            product.getImages().addAll(images);
-
-            productImageRepository.saveAll(images);
-            productRepository.save(product);
-        });
-
-        // Attributes
-        Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
-            List<Attribute> deletedAttributes = new ArrayList<>();
-
-            product.getAttributes().forEach(attribute -> {
-                IProductRequest.AttributeRequest existingAttributeRequest = null;
-                for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
-                    if (attribute.getId().equals(attributeRequest.getId())) {
-                        attribute.setName(attributeRequest.getName());
-                        attribute.setValue(attributeRequest.getValue());
-                        attributeRepository.save(attribute);
-                        existingAttributeRequest = attributeRequest;
-                        break;
-                    }
-                }
-                if (existingAttributeRequest == null) {
-                    deletedAttributes.add(attribute);
-                } else {
-                    attributeRequests.remove(existingAttributeRequest);
-                }
-            });
-
-            deletedAttributes.forEach(attribute -> {
-                product.getAttributes().remove(attribute);
-                attributeRepository.delete(attribute);
-            });
-
-            for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
-                Attribute attribute = Attribute.builder()
-                        .name(attributeRequest.getName())
-                        .value(attributeRequest.getValue())
-                        .product(product)
-                        .build();
-                attributeRepository.save(attribute);
-                product.getAttributes().add(attribute);
-            }
-
-            productRepository.save(product);
-        });
-
-        // Options & Variants
-        Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
-            Optional.ofNullable(request.getVariants()).ifPresent(variantRequests -> {
-                // Options
-                optionRepository.deleteAllByProductId(product.getId());
-                product.getOptions().clear();
-
-                List<OptionModel> optionModels = new ArrayList<>();
-                for (IProductRequest.OptionRequest optionRequest : optionRequests) {
-                    OptionModel optionModel = OptionModel.builder()
-                            .name(optionRequest.getName())
-                            .product(product)
-                            .generalManager(gm)
-                            .build();
-                    List<OptionValue> optionValues = new ArrayList<>();
-                    for (String value : optionRequest.getValues()) {
-                        OptionValue optionValue = OptionValue.builder()
-                                .value(value)
-                                .option(optionModel).build();
-                        optionValues.add(optionValue);
-                    }
-                    optionModel.setOptionValues(optionValues);
-
-                    optionModels.add(optionModel);
-
-                    optionValueRepository.saveAll(optionValues);
-                    optionRepository.save(optionModel);
-                }
-                product.getOptions().addAll(optionModels);
-
-                productRepository.save(product);
-
-                // Variants
-                variantRepository.deleteAllByProductId(product.getId());
-                product.getVariants().clear();
-                this.genVariants(gm, product, product.getOptions(), variantRequests);
-                productRepository.save(product);
-            });
-        });
-
-        Optional.ofNullable(request.getIsActive()).ifPresent(product::setIsActive);
-        product.setGeneralManager(gm);
+//        Optional.ofNullable(request.getName()).ifPresent(product::setName);
+//        Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
+//        Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
+//            Category category = categoryRepository.getById(categoryId);
+//            product.setCategory(category);
+//        });
+//        Optional.ofNullable(request.getWeight()).ifPresent(product::setWeight);
+//        Optional.ofNullable(request.getDimension()).ifPresent(product::setDimension);
+//        Optional.ofNullable(request.getState()).ifPresent(product::setState);
+//        Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
+//
+//        // Images
+//        Optional.ofNullable(request.getImages()).ifPresent(urls -> {
+//            productImageRepository.deleteAllByProductId(product.getId());
+//            product.getImages().clear();
+//
+//            List<ProductImage> images = new ArrayList<>();
+//            for (String url : urls) {
+//                ProductImage image = ProductImage.builder()
+//                        .url(url)
+//                        .product(product).build();
+//                images.add(image);
+//            }
+//            product.getImages().addAll(images);
+//
+//            productImageRepository.saveAll(images);
+//            productRepository.save(product);
+//        });
+//
+//        // Attributes
+//        Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
+//            List<Attribute> deletedAttributes = new ArrayList<>();
+//
+//            product.getAttributes().forEach(attribute -> {
+//                IProductRequest.AttributeRequest existingAttributeRequest = null;
+//                for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+//                    if (attribute.getId().equals(attributeRequest.getId())) {
+//                        attribute.setName(attributeRequest.getName());
+//                        attribute.setValue(attributeRequest.getValue());
+//                        attributeRepository.save(attribute);
+//                        existingAttributeRequest = attributeRequest;
+//                        break;
+//                    }
+//                }
+//                if (existingAttributeRequest == null) {
+//                    deletedAttributes.add(attribute);
+//                } else {
+//                    attributeRequests.remove(existingAttributeRequest);
+//                }
+//            });
+//
+//            deletedAttributes.forEach(attribute -> {
+//                product.getAttributes().remove(attribute);
+//                attributeRepository.delete(attribute);
+//            });
+//
+//            for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+//                Attribute attribute = Attribute.builder()
+//                        .name(attributeRequest.getName())
+//                        .value(attributeRequest.getValue())
+//                        .product(product)
+//                        .build();
+//                attributeRepository.save(attribute);
+//                product.getAttributes().add(attribute);
+//            }
+//
+//            productRepository.save(product);
+//        });
+//
+//        // Options & Variants
+//        Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
+//            Optional.ofNullable(request.getVariants()).ifPresent(variantRequests -> {
+//                // Options
+//                optionRepository.deleteAllByProductId(product.getId());
+//                product.getOptions().clear();
+//
+//                List<OptionModel> optionModels = new ArrayList<>();
+//                for (IProductRequest.OptionRequest optionRequest : optionRequests) {
+//                    OptionModel optionModel = OptionModel.builder()
+//                            .name(optionRequest.getName())
+//                            .product(product)
+//                            .generalManager(gm)
+//                            .build();
+//                    List<OptionValue> optionValues = new ArrayList<>();
+//                    for (String value : optionRequest.getValues()) {
+//                        OptionValue optionValue = OptionValue.builder()
+//                                .value(value)
+//                                .option(optionModel).build();
+//                        optionValues.add(optionValue);
+//                    }
+//                    optionModel.setOptionValues(optionValues);
+//
+//                    optionModels.add(optionModel);
+//
+//                    optionValueRepository.saveAll(optionValues);
+//                    optionRepository.save(optionModel);
+//                }
+//                product.getOptions().addAll(optionModels);
+//
+//                productRepository.save(product);
+//
+//                // Variants
+//                variantRepository.deleteAllByProductId(product.getId());
+//                product.getVariants().clear();
+//                this.genVariants(gm, product, product.getOptions(), variantRequests);
+//                productRepository.save(product);
+//            });
+//        });
+//
+//        Optional.ofNullable(request.getIsActive()).ifPresent(product::setIsActive);
+//        product.setGeneralManager(gm);
 
         productRepository.save(product);
     }
