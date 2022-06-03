@@ -3,6 +3,9 @@ package com.wifosell.zeus.repository;
 import com.wifosell.framework.repository.SoftRepository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.model.order.OrderModel;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -20,5 +23,9 @@ public interface OrderRepository extends SoftRepository<OrderModel, Long> {
 
     @Transactional
     Long countAllByShopIdAndCreatedAtBetween(Long shopId, Instant dateForm, Instant dateTo);
+
+    @Query (value = "SELECT sum(subtotal) FROM OrderModel")
+    Long sumTotalOrder(@Nullable Specification var1);
+
 
 }

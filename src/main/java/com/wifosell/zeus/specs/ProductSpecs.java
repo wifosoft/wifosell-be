@@ -5,6 +5,7 @@ import com.wifosell.zeus.model.product.Product_;
 import com.wifosell.zeus.model.user.User_;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.Instant;
 import java.util.List;
 
 public class ProductSpecs {
@@ -39,4 +40,13 @@ public class ProductSpecs {
             return criteriaBuilder.equal(root.get(Product_.IS_ACTIVE), isActive);
         });
     }
+
+    public static Specification<Product> betweenTwoDates (Instant from, Instant to) {
+        return ((root, query, criteriaBuilder) -> {
+            if (from == null || to == null)
+                return criteriaBuilder.and();
+            return criteriaBuilder.between(root.get(Product_.CREATED_AT), from, to);
+        });
+    }
+
 }
