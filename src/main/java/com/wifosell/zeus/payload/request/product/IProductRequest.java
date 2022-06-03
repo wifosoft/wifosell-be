@@ -62,7 +62,7 @@ public interface IProductRequest {
         String name;
 
         @NotEmpty
-        List<String> values;
+        List<OptionValueRequest> values;
     }
 
     @Getter
@@ -71,12 +71,14 @@ public interface IProductRequest {
         Long id;
 
         @NotBlank
-        String value;
+        String name;
     }
 
     @Getter
     @Setter
     class VariantRequest {
+        Long id;
+        
         @NotBlank
         @Size(max = 50)
         String cost;

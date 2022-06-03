@@ -19,6 +19,7 @@ import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -193,8 +194,27 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
             Optional.ofNullable(request.getVariants()).ifPresent(variantRequests -> {
                 // Options
-                optionRepository.deleteAllByProductId(product.getId());
-                product.getOptions().clear();
+                List<OptionModel> deletedOptions = new ArrayList<>();
+
+                product.getOptions().forEach(option -> {
+                    IProductRequest.OptionRequest existingOptionRequest = null;
+                    for (IProductRequest.OptionRequest optionRequest : optionRequests) {
+                        if (option.getId().equals(optionRequest.getId())) {
+                            List<OptionValue> deletedOptionValues = new ArrayList<>();
+
+                            option.getOptionValues().forEach(optionValue -> {
+                                IProductRequest.OptionValueRequest existingOptionValueRequest = null;
+                                for (IProductRequest.OptionValueRequest optionValueRequest : optionRequest.getValues()) {
+
+                                }
+                            });
+
+                            option.setName(optionRequest.getName());
+                            existingOptionRequest = optionRequest;
+                            break;
+                        }
+                    }
+                });
 
                 List<OptionModel> optionModels = new ArrayList<>();
                 for (IProductRequest.OptionRequest optionRequest : optionRequests) {
@@ -204,12 +224,12 @@ public class ProductServiceImpl implements ProductService {
                             .generalManager(gm)
                             .build();
                     List<OptionValue> optionValues = new ArrayList<>();
-                    for (String value : optionRequest.getValues()) {
-                        OptionValue optionValue = OptionValue.builder()
-                                .value(value)
-                                .option(optionModel).build();
-                        optionValues.add(optionValue);
-                    }
+//                    for (String value : optionRequest.getValues()) {
+//                        OptionValue optionValue = OptionValue.builder()
+//                                .name(value)
+//                                .option(optionModel).build();
+//                        optionValues.add(optionValue);
+//                    }
                     optionModel.setOptionValues(optionValues);
 
                     optionModels.add(optionModel);
