@@ -74,7 +74,7 @@ public class OrderSpecs {
     public static Specification<OrderModel> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(OrderModel_.IS_ACTIVE), true);
             return root.get(OrderModel_.IS_ACTIVE).in(isActives);
         });
     }

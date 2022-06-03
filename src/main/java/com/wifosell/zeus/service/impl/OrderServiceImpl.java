@@ -21,6 +21,7 @@ import com.wifosell.zeus.service.OrderService;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.OrderSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
+import com.wifosell.zeus.specs.ShopSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ShopRepository shopRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private final SaleChannelShopRepository saleChannelShopRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
@@ -87,8 +88,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderModel addOrder(Long userId, AddOrderRequest request) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        return this.addOrderByRequest(request, gm);
+        User user = userRepository.getUserById(userId);
+        return this.addOrderByRequest(user, request);
     }
 
     @Override
@@ -99,8 +100,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderModel updateOrderStatus(Long userId, @NotNull Long orderId, UpdateOrderStatusRequest request) {
+        User user = userRepository.getUserById(userId);
         OrderModel order = this.getOrder(userId, orderId);
-        return this.updateOrderStatusByRequest(order, request);
+        return this.updateOrderStatusByRequest(user, order, request);
     }
 
     @Override
@@ -133,7 +135,8 @@ public class OrderServiceImpl implements OrderService {
         return orderIds.stream().map(id -> this.deactivateOrder(userId, id)).collect(Collectors.toList());
     }
 
-    private OrderModel addOrderByRequest(AddOrderRequest request, User gm) {
+    private OrderModel addOrderByRequest(User user, AddOrderRequest request) {
+        User gm = user.getGeneralManager();
         OrderModel order = OrderModel.builder().build();
 
         // Order items
@@ -162,8 +165,11 @@ public class OrderServiceImpl implements OrderService {
         // Sale Channel & Shop
         Optional.of(request.getShopId()).ifPresent(shopId -> {
             Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
-                if (saleChannelShopRelationRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
-                    Shop shop = shopRepository.getByIdWithGm(gm.getId(), shopId);
+                if (saleChannelShopRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+                    Shop shop = shopRepository.getOne(
+                            ShopSpecs.hasGeneralManager(gm.getId())
+                                    .and(ShopSpecs.hasId(shopId))
+                    );
                     order.setShop(shop);
 
                     SaleChannel saleChannel = saleChannelRepository.getOne(
@@ -198,6 +204,7 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderModel.STATUS.CREATED)
                 .note("")
                 .order(order)
+                .updatedBy(user)
                 .build();
         List<OrderStep> steps = new ArrayList<>(List.of(step));
         order.setSteps(orderStepRepository.saveAll(steps));
@@ -209,6 +216,9 @@ public class OrderServiceImpl implements OrderService {
                 .info(request.getPayment().getInfo())
                 .build();
         order.setPayment(paymentRepository.save(payment));
+
+        // Complete
+        order.setComplete(false);
 
         // General manager
         order.setGeneralManager(gm);
@@ -224,15 +234,19 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
-    private OrderModel updateOrderStatusByRequest(OrderModel order, UpdateOrderStatusRequest request) {
+    private OrderModel updateOrderStatusByRequest(User user, OrderModel order, UpdateOrderStatusRequest request) {
         if (request.getStatus() != order.getStatus()) {
             order.setStatus(request.getStatus());
             OrderStep step = OrderStep.builder()
                     .status(order.getStatus())
                     .note(request.getNote())
                     .order(order)
+                    .updatedBy(user)
                     .build();
             order.getSteps().add(orderStepRepository.save(step));
+
+            boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
+            order.setComplete(isComplete);
         }
         return orderRepository.save(order);
     }
@@ -240,6 +254,10 @@ public class OrderServiceImpl implements OrderService {
     private OrderModel updateOrderPaymentStatus(OrderModel order, UpdateOrderPaymentStatusRequest request) {
         order.getPayment().setStatus(request.getStatus());
         paymentRepository.save(order.getPayment());
+
+        boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
+        order.setComplete(isComplete);
+
         return orderRepository.save(order);
     }
 }

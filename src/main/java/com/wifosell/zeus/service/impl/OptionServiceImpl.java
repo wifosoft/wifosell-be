@@ -1,12 +1,13 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.option.OptionModel;
-import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.OptionRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.OptionService;
-import lombok.NonNull;
+import com.wifosell.zeus.specs.OptionSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,17 +21,12 @@ public class OptionServiceImpl implements OptionService {
     private final UserRepository userRepository;
 
     @Override
-    public List<OptionModel> getAllOptions(Boolean isActive) {
-        if (isActive == null)
-            return optionRepository.findAll();
-        return optionRepository.findAllWithActive(isActive);
-    }
-
-    @Override
-    public List<OptionModel> getOptions(@NonNull Long userId, Boolean isActive) {
-        User gm = userRepository.getUserById(userId).getGeneralManager();
-        if (isActive == null)
-            return optionRepository.findAllWithGm(gm.getId());
-        return optionRepository.findAllWithGmAndActive(gm.getId(), isActive);
+    public Page<OptionModel> getOptions(Long userId, List<Boolean> isActives, Integer offset, Integer limit, String sortBy, String orderBy) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return optionRepository.findAll(
+                OptionSpecs.hasGeneralManager(gmId)
+                        .and(OptionSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
     }
 }

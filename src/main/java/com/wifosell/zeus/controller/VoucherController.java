@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -57,7 +58,7 @@ public class VoucherController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
     public ResponseEntity<GApiResponse<Voucher>> addVoucher(@CurrentUser UserPrincipal userPrincipal,
-                                                            @RequestBody VoucherRequest voucherRequest) {
+                                                            @RequestBody @Valid VoucherRequest voucherRequest) {
         Voucher voucher = voucherService.addVoucher(userPrincipal.getId(), voucherRequest);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
@@ -66,7 +67,7 @@ public class VoucherController {
     @PostMapping("/{voucherId}/update")
     public ResponseEntity<GApiResponse<Voucher>> addVoucher(@CurrentUser UserPrincipal userPrincipal,
                                                             @PathVariable(name = "voucherId") Long voucherId,
-                                                            @RequestBody VoucherRequest voucherRequest) {
+                                                            @RequestBody @Valid VoucherRequest voucherRequest) {
         Voucher voucher = voucherService.updateVoucher(voucherId, voucherRequest);
         return ResponseEntity.ok(GApiResponse.success(voucher));
     }
@@ -91,7 +92,7 @@ public class VoucherController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<Voucher>>> activateVouchers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Voucher> vouchers = voucherService.activateVouchers(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(vouchers));
@@ -101,7 +102,7 @@ public class VoucherController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<Voucher>>> deactivateCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Voucher> customers = voucherService.deactivateVouchers(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(customers));

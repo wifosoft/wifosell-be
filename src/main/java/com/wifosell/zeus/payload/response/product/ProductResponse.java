@@ -32,6 +32,10 @@ public class ProductResponse extends BasicEntityResponse {
     private final List<VariantResponse> variants;
 
     public ProductResponse(Product product) {
+        this(product, null, null, null);
+    }
+
+    public ProductResponse(Product product, List<Long> warehouseIds, Integer minQuantity, Integer maxQuantity) {
         super(product);
         this.name = product.getName();
         this.description = product.getDescription();
@@ -43,7 +47,17 @@ public class ProductResponse extends BasicEntityResponse {
         this.images = product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
         this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
         this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
-        this.variants = product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList());
+        this.variants = warehouseIds == null || warehouseIds.isEmpty() ?
+                product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList()) :
+                product.getVariants().stream()
+                        .filter(variant -> variant.getStocks().stream()
+                                .anyMatch(stock -> {
+                                    boolean inWarehouse = warehouseIds.contains(stock.getWarehouse().getId());
+                                    boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
+                                            && (maxQuantity == null || stock.getQuantity() <= maxQuantity);
+                                    return inWarehouse && betweenQuantity;
+                                }))
+                        .map(VariantResponse::new).collect(Collectors.toList());
     }
 
     @Getter

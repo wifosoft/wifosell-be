@@ -12,6 +12,8 @@ public interface WarehouseService {
     Page<Warehouse> getWarehouses(Long userId, List<Boolean> isActives,
                                   Integer offset, Integer limit, String sortBy, String orderBy);
 
+    List<Warehouse> getWarehousesByShopIdsAndSaleChannelIds(List<Long> shopIds, List<Long> saleChannelIds);
+
     Warehouse getWarehouse(Long userId, @NonNull Long warehouseId);
 
     Warehouse addWarehouse(Long userId, @NonNull WarehouseRequest warehouseRequest);

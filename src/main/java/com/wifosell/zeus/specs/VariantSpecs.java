@@ -29,21 +29,14 @@ public class VariantSpecs {
     public static Specification<Variant> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(Variant_.IS_ACTIVE), true);
             return root.get(Variant_.IS_ACTIVE).in(isActives);
-        });
-    }
-
-    public static Specification<Variant> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Variant_.IS_ACTIVE), isActive);
         });
     }
 
     public static Specification<Variant> inWarehouses(List<Long> warehouseIds) {
         return ((root, query, criteriaBuilder) -> {
+            query.distinct(true);
             if (warehouseIds == null || warehouseIds.isEmpty())
                 return criteriaBuilder.and();
             return root.join(Variant_.STOCKS).get(Stock_.WAREHOUSE).get(Warehouse_.ID).in(warehouseIds);

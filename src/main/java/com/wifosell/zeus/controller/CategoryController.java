@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class CategoryController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<CategoryResponse>> addCategory(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody CategoryRequest categoryRequest) {
+            @RequestBody @Valid CategoryRequest categoryRequest) {
         Category category = categoryService.addCategory(userPrincipal.getId(), categoryRequest);
         CategoryResponse response = new CategoryResponse(category);
         return ResponseEntity.ok(GApiResponse.success(response));
@@ -81,7 +82,7 @@ public class CategoryController {
     public ResponseEntity<GApiResponse<CategoryResponse>> updateCategory(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "categoryId") Long categoryId,
-            @RequestBody CategoryRequest categoryRequest) {
+            @RequestBody @Valid CategoryRequest categoryRequest) {
         Category category = categoryService.updateCategory(userPrincipal.getId(), categoryId, categoryRequest);
         CategoryResponse response = new CategoryResponse(category);
         return ResponseEntity.ok(GApiResponse.success(response));
@@ -111,7 +112,7 @@ public class CategoryController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> activateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<Category> categoryList = categoryService.activateCategories(userPrincipal.getId(), request.getIds());
         List<CategoryResponse> response = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());
@@ -122,7 +123,7 @@ public class CategoryController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> deactivateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<Category> categoryList = categoryService.deactivateCategories(userPrincipal.getId(), request.getIds());
         List<CategoryResponse> response = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());

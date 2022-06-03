@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class StockController {
     @PostMapping("/import")
     public ResponseEntity<GApiResponse<ImportStockTransactionResponse>> importStocks(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ImportStocksRequest request
+            @RequestBody @Valid ImportStocksRequest request
     ) {
         ImportStockTransaction transaction = stockService.importStocks(userPrincipal.getId(), request);
         ImportStockTransactionResponse response = new ImportStockTransactionResponse(transaction);
@@ -49,7 +50,7 @@ public class StockController {
     @PostMapping("/createImportStockTransactionExcel")
     public ResponseEntity<GApiResponse<ImportStockTransaction>> createImportStockTransactionExcel(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ImportStocksFromExcelRequest request
+            @RequestBody @Valid ImportStocksFromExcelRequest request
     ) {
         ImportStockTransaction transaction = stockService.createImportStockTransactionExcel(userPrincipal.getId(), request);
         return ResponseEntity.ok(GApiResponse.success(transaction));
@@ -120,7 +121,7 @@ public class StockController {
     @PostMapping("/transfer")
     public ResponseEntity<GApiResponse<TransferStockTransactionResponse>> transferStocks(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody TransferStocksRequest request
+            @RequestBody @Valid TransferStocksRequest request
     ) {
         TransferStockTransaction transaction = stockService.transferStocks(userPrincipal.getId(), request);
         TransferStockTransactionResponse response = new TransferStockTransactionResponse(transaction);

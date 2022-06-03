@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,4 +29,8 @@ public class OrderStep extends BasicEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderModel order;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
+    private User updatedBy;
 }

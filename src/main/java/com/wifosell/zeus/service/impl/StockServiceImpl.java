@@ -14,6 +14,9 @@ import com.wifosell.zeus.payload.request.stock.TransferStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.StockService;
+import com.wifosell.zeus.service.SupplierService;
+import com.wifosell.zeus.service.VariantService;
+import com.wifosell.zeus.service.WarehouseService;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockRow;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockServiceImpl;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.TransferStockRow;
@@ -22,7 +25,6 @@ import com.wifosell.zeus.service.impl.storage.FileSystemStorageService;
 import com.wifosell.zeus.specs.ImportStockTransactionSpecs;
 import com.wifosell.zeus.specs.TransferStockTransactionSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jobrunr.jobs.JobId;
@@ -44,8 +46,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class StockServiceImpl implements StockService {
-    private final WarehouseRepository warehouseRepository;
-    private final SupplierRepository supplierRepository;
     private final UserRepository userRepository;
     private final StockRepository stockRepository;
     private final VariantRepository variantRepository;
@@ -53,6 +53,9 @@ public class StockServiceImpl implements StockService {
     private final ImportStockTransactionItemRepository importStockTransactionItemRepository;
     private final TransferStockTransactionRepository transferStockTransactionRepository;
     private final TransferStockTransactionItemRepository transferStockTransactionItemRepository;
+    private final WarehouseService warehouseService;
+    private final SupplierService supplierService;
+    private final VariantService variantService;
 
     private final JobScheduler jobScheduler;
     private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
@@ -60,10 +63,10 @@ public class StockServiceImpl implements StockService {
     private final FileSystemStorageService fileStorageService;
 
     @Override
-    public ImportStockTransaction importStocks(@NonNull Long userId, ImportStocksRequest request) {
+    public ImportStockTransaction importStocks(Long userId, ImportStocksRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getWarehouseId());
-        Supplier supplier = supplierRepository.getByIdWithGm(gm.getId(), request.getSupplierId());
+        Warehouse warehouse = warehouseService.getWarehouse(userId, request.getWarehouseId());
+        Supplier supplier = supplierService.getSupplier(userId, request.getSupplierId());
 
         List<ImportStockTransactionItem> transactionItems = new ArrayList<>();
         ImportStockTransaction transaction = ImportStockTransaction.builder()
@@ -77,7 +80,7 @@ public class StockServiceImpl implements StockService {
                 .build();
 
         request.getItems().forEach(item -> {
-            Variant variant = variantRepository.getById(item.getVariantId());
+            Variant variant = variantService.getVariant(userId, item.getVariantId());
             Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
             if (stock != null) {
                 stock.setActualQuantity(stock.getActualQuantity() + item.getQuantity());
@@ -108,10 +111,10 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public ImportStockTransaction createImportStockTransactionExcel(@NonNull Long userId, ImportStocksFromExcelRequest request) {
+    public ImportStockTransaction createImportStockTransactionExcel(Long userId, ImportStocksFromExcelRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse warehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getWarehouseId());
-        Supplier supplier = supplierRepository.getByIdWithGm(gm.getId(), request.getSupplierId());
+        Warehouse warehouse = warehouseService.getWarehouse(userId, request.getWarehouseId());
+        Supplier supplier = supplierService.getSupplier(userId, request.getSupplierId());
 
         ImportStockTransaction transaction = ImportStockTransaction.builder()
                 .warehouse(warehouse)
@@ -134,7 +137,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void importStocksFromExcel(@NonNull Long userId, @NonNull Long transactionId) {
+    public void importStocksFromExcel(Long userId, Long transactionId) {
         ImportStockTransaction importStockTransaction = importStockTransactionRepository.getById(transactionId);
         importStockTransaction.setProcessingStatus(ImportStockTransaction.PROCESSING_STATUS.PROCESSING);
         importStockTransaction.setProcessingNote("Đang thực thi xử lý");
@@ -142,7 +145,6 @@ public class StockServiceImpl implements StockService {
 
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Warehouse warehouse = importStockTransaction.getWarehouse();
-        Supplier supplier = importStockTransaction.getSupplier();
 
         String filePathImportWarehouseStock = importStockTransaction.getSource();
         List<ImportStockTransactionItem> transactionItems = new ArrayList<>();
@@ -155,7 +157,7 @@ public class StockServiceImpl implements StockService {
             File f = new File(resource.getURI());
             List<ImportStockRow> listRow = importStockService.importStock(f);
             for (ImportStockRow item : listRow) {
-                Variant variant = variantRepository.getBySKUNoThrow(item.getSku());
+                Variant variant = variantRepository.getBySKUNoThrow(item.getSku(), gm.getId());
                 if (variant == null) {
                     errorRecord += 1;
                     continue;
@@ -215,7 +217,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public ImportStockTransaction getImportStockTransaction(Long userId, @NonNull Long importStockTransactionId) {
+    public ImportStockTransaction getImportStockTransaction(Long userId, Long importStockTransactionId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return importStockTransactionRepository.getOne(
                 ImportStockTransactionSpecs.hasGeneralManager(gmId)
@@ -224,10 +226,10 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public TransferStockTransaction transferStocks(@NonNull Long userId, TransferStocksRequest request) {
+    public TransferStockTransaction transferStocks(Long userId, TransferStocksRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse fromWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getFromWarehouseId());
-        Warehouse toWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getToWarehouseId());
+        Warehouse fromWarehouse = warehouseService.getWarehouse(userId, request.getFromWarehouseId());
+        Warehouse toWarehouse = warehouseService.getWarehouse(userId, request.getToWarehouseId());
 
         List<TransferStockTransactionItem> transactionItems = new ArrayList<>();
         TransferStockTransaction transaction = TransferStockTransaction.builder()
@@ -241,7 +243,7 @@ public class StockServiceImpl implements StockService {
                 .build();
 
         request.getItems().forEach(item -> {
-            Variant variant = variantRepository.getById(item.getVariantId());
+            Variant variant = variantService.getVariant(userId, item.getVariantId());
 
             // From
             Stock fromStock = stockRepository.getStockByWarehouseIdAndVariantId(fromWarehouse.getId(), variant.getId());
@@ -293,10 +295,10 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public TransferStockTransaction createTransferStockTransactionExcel(@NonNull Long userId, TransferStocksFromExcelRequest request) {
+    public TransferStockTransaction createTransferStockTransactionExcel(Long userId, TransferStocksFromExcelRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Warehouse fromWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getFromWarehouseId());
-        Warehouse toWarehouse = warehouseRepository.getByIdWithGm(gm.getId(), request.getToWarehouseId());
+        Warehouse fromWarehouse = warehouseService.getWarehouse(userId, request.getFromWarehouseId());
+        Warehouse toWarehouse = warehouseService.getWarehouse(userId, request.getToWarehouseId());
 
         TransferStockTransaction transaction = TransferStockTransaction.builder()
                 .fromWarehouse(fromWarehouse)
@@ -319,7 +321,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void transferStocksFromExcel(@NonNull Long userId, @NonNull Long transactionId) {
+    public void transferStocksFromExcel(Long userId, Long transactionId) {
         TransferStockTransaction transaction = transferStockTransactionRepository.getById(transactionId);
         transaction.setProcessingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSING);
         transaction.setProcessingNote("Đang thực thi xử lý.");
@@ -340,7 +342,7 @@ public class StockServiceImpl implements StockService {
             File f = new File(resource.getURI());
             List<TransferStockRow> listRow = transferStockService.transferStocks(f);
             for (TransferStockRow item : listRow) {
-                Variant variant = variantRepository.getBySKUNoThrow(item.getSku());
+                Variant variant = variantRepository.getBySKUNoThrow(item.getSku(), gm.getId());
                 if (variant == null) {
                     errorRecord += 1;
                     continue;
@@ -412,7 +414,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public TransferStockTransaction getTransferStockTransaction(Long userId, @NonNull Long transferStockTransactionId) {
+    public TransferStockTransaction getTransferStockTransaction(Long userId, Long transferStockTransactionId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return transferStockTransactionRepository.getOne(
                 TransferStockTransactionSpecs.hasGeneralManager(gmId)

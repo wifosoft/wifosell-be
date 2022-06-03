@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -71,7 +72,7 @@ public class VariantController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<VariantResponse>> addVariant(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody AddVariantRequest request
+            @RequestBody @Valid AddVariantRequest request
     ) {
         Variant variant = variantService.addVariant(userPrincipal.getId(), request);
         VariantResponse response = new VariantResponse(variant);
@@ -83,7 +84,7 @@ public class VariantController {
     public ResponseEntity<GApiResponse<VariantResponse>> updateVariant(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "variantId") Long variantId,
-            @RequestBody UpdateVariantRequest request
+            @RequestBody @Valid UpdateVariantRequest request
     ) {
         Variant variant = variantService.updateVariant(userPrincipal.getId(), variantId, request);
         VariantResponse response = new VariantResponse(variant);
@@ -114,7 +115,7 @@ public class VariantController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<Variant>>> activateVariants(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Variant> variants = variantService.activateVariants(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(variants));
@@ -124,7 +125,7 @@ public class VariantController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<Variant>>> deactivateVariants(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Variant> variants = variantService.deactivateVariants(userPrincipal.getId(), request.getIds());
         return ResponseEntity.ok(GApiResponse.success(variants));

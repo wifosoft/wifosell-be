@@ -4,15 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.payload.request.shop.ShopRequest;
-import com.wifosell.zeus.repository.SaleChannelRepository;
-import com.wifosell.zeus.repository.SaleChannelShopRelationRepository;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.payload.request.shop.AddShopRequest;
+import com.wifosell.zeus.payload.request.shop.IShopRequest;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
+import com.wifosell.zeus.specs.WarehouseSpecs;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,14 +24,16 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
     private UserRepository userRepository;
     private ShopRepository shopRepository;
     private SaleChannelRepository saleChannelRepository;
-    private SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private SaleChannelShopRepository saleChannelShopRepository;
+    private WarehouseRepository warehouseRepository;
 
     @Override
     public void prepareJpaRepository() {
         userRepository = factory.getRepository(UserRepository.class);
         shopRepository = factory.getRepository(ShopRepository.class);
         saleChannelRepository = factory.getRepository(SaleChannelRepository.class);
-        saleChannelShopRelationRepository = factory.getRepository(SaleChannelShopRelationRepository.class);
+        saleChannelShopRepository = factory.getRepository(SaleChannelShopRepository.class);
+        warehouseRepository = factory.getRepository(WarehouseRepository.class);
     }
 
     @Override
@@ -42,8 +44,8 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
         File file = new File("src/main/java/com/wifosell/zeus/database/data/shop.json");
 
         try {
-            ShopRequest[] requests = mapper.readValue(file, ShopRequest[].class);
-            for (ShopRequest request : requests) {
+            AddShopRequest[] requests = mapper.readValue(file, AddShopRequest[].class);
+            for (AddShopRequest request : requests) {
                 this.addShopByRequest(request, gm);
             }
         } catch (IOException e) {
@@ -51,7 +53,7 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
         }
     }
 
-    private void addShopByRequest(ShopRequest request, User gm) {
+    private void addShopByRequest(AddShopRequest request, User gm) {
         Shop shop = new Shop();
 
         // Create or update Shop
@@ -65,34 +67,46 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
         shop.setGeneralManager(gm);
         shopRepository.save(shop);
 
-        // Link Sale Channels with Shop
-        Optional.ofNullable(request.getSaleChannelIds()).ifPresent(requestSaleChannelIds -> {
-            List<Long> curSaleChannelIds = shop.getSaleChannelShopRelations().stream()
-                    .map(SaleChannelShopRelation::getSaleChannel)
+        // Link with Sale Channels & Warehouses
+        Optional.ofNullable(request.getRelations()).ifPresent(requestRelations -> {
+            List<Long> requestSaleChannelIds = requestRelations.stream()
+                    .map(IShopRequest.Relation::getSaleChannelId)
+                    .collect(Collectors.toList());
+
+            List<Long> curSaleChannelIds = shop.getSaleChannelShops().stream()
+                    .map(SaleChannelShop::getSaleChannel)
                     .map(SaleChannel::getId)
                     .collect(Collectors.toList());
 
             // Remove relations
             curSaleChannelIds.forEach(curSaleChannelId -> {
                 if (!requestSaleChannelIds.contains(curSaleChannelId)) {
-                    saleChannelShopRelationRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
-                    Optional<SaleChannelShopRelation> relationOptional = shop.getSaleChannelShopRelations().stream()
+                    saleChannelShopRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
+                    Optional<SaleChannelShop> relationOptional = shop.getSaleChannelShops().stream()
                             .filter(relation -> relation.getSaleChannel().getId().equals(curSaleChannelId))
                             .findFirst();
-                    relationOptional.ifPresent(relation -> shop.getSaleChannelShopRelations().remove(relation));
+                    relationOptional.ifPresent(relation -> shop.getSaleChannelShops().remove(relation));
                 }
             });
 
             // Add new relations
-            requestSaleChannelIds.forEach(requestSaleChannelId -> {
-                if (!curSaleChannelIds.contains(requestSaleChannelId)) {
+            requestRelations.forEach(requestRelation -> {
+                if (!curSaleChannelIds.contains(requestRelation.getSaleChannelId())) {
                     SaleChannel saleChannel = saleChannelRepository.getOne(
                             SaleChannelSpecs.hasGeneralManager(gm.getId())
-                                    .and(SaleChannelSpecs.hasId(requestSaleChannelId))
+                                    .and(SaleChannelSpecs.hasId(requestRelation.getSaleChannelId()))
                     );
-                    SaleChannelShopRelation relation = SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build();
-                    saleChannelShopRelationRepository.save(relation);
-                    shop.getSaleChannelShopRelations().add(relation);
+                    Warehouse warehouse = warehouseRepository.getOne(
+                            WarehouseSpecs.hasGeneralManager(gm.getId())
+                                    .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
+                    );
+                    SaleChannelShop relation = SaleChannelShop.builder()
+                            .shop(shop)
+                            .saleChannel(saleChannel)
+                            .warehouse(warehouse)
+                            .build();
+                    saleChannelShopRepository.save(relation);
+                    shop.getSaleChannelShops().add(relation);
                 }
             });
         });

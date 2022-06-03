@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -77,7 +78,7 @@ public class CustomerController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<CustomerResponse>> addCustomer(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody CustomerRequest request
+            @RequestBody @Valid CustomerRequest request
     ) {
         Customer customer = customerService.addCustomer(userPrincipal.getId(), request);
         CustomerResponse response = new CustomerResponse(customer);
@@ -89,7 +90,7 @@ public class CustomerController {
     public ResponseEntity<GApiResponse<CustomerResponse>> updateCustomer(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "customerId") Long customerId,
-            @RequestBody CustomerRequest request
+            @RequestBody @Valid CustomerRequest request
     ) {
         Customer customer = customerService.updateCustomer(userPrincipal.getId(), customerId, request);
         CustomerResponse response = new CustomerResponse(customer);
@@ -122,7 +123,7 @@ public class CustomerController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> activateCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Customer> customers = customerService.activateCustomers(userPrincipal.getId(), request.getIds());
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
@@ -133,7 +134,7 @@ public class CustomerController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> deactivateCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Customer> customers = customerService.deactivateCustomers(userPrincipal.getId(), request.getIds());
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());

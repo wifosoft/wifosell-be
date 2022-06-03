@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class SupplierController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<SupplierResponse>> addSupplier(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody AddSupplierRequest request
+            @RequestBody @Valid AddSupplierRequest request
     ) {
         Supplier supplier = supplierService.addSupplier(userPrincipal.getId(), request);
         SupplierResponse response = new SupplierResponse(supplier);
@@ -82,7 +83,7 @@ public class SupplierController {
     public ResponseEntity<GApiResponse<SupplierResponse>> updateSupplier(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "supplierId") Long supplierId,
-            @RequestBody UpdateSupplierRequest request
+            @RequestBody @Valid UpdateSupplierRequest request
     ) {
         Supplier supplier = supplierService.updateSupplier(userPrincipal.getId(), supplierId, request);
         SupplierResponse response = new SupplierResponse(supplier);
@@ -115,7 +116,7 @@ public class SupplierController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<SupplierResponse>>> activateSuppliers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Supplier> suppliers = supplierService.activateSuppliers(userPrincipal.getId(), request.getIds());
         List<SupplierResponse> responses = suppliers.stream().map(SupplierResponse::new).collect(Collectors.toList());
@@ -126,7 +127,7 @@ public class SupplierController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<SupplierResponse>>> deactivateSuppliers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Supplier> suppliers = supplierService.deactivateSuppliers(userPrincipal.getId(), request.getIds());
         List<SupplierResponse> responses = suppliers.stream().map(SupplierResponse::new).collect(Collectors.toList());

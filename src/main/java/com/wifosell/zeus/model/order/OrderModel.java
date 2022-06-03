@@ -55,6 +55,9 @@ public class OrderModel extends BasicEntity {
     @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private Payment payment;
 
+    @Column(name = "is_complete")
+    private boolean isComplete;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
@@ -68,17 +71,17 @@ public class OrderModel extends BasicEntity {
         return subtotal;
     }
 
+    public boolean getIsComplete() {
+        return this.isComplete;
+    }
+
     public enum STATUS {
         CREATED,
-        SELLER_CONFIRMED,
-        SELLER_CANCELED,
-        SELLER_PACKED,
+        CONFIRMED,
+        PACKED,
         SHIPPING,
         SHIPPED,
-        BUYER_CONFIRMED,
-        BUYER_CANCELED,
-        RETURNING,
-        RETURNED,
-        COMPLETED,
+        COMPLETE,
+        CANCELED
     }
 }

@@ -8,7 +8,6 @@ import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,39 +27,37 @@ public class Shop extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(max = 255)
-    @NotBlank
+    @Size(max = 200)
     private String name;
 
     @Size(max = 50)
     @Column(name = "short_name")
     private String shortName;
 
-    @Size(max = 255)
+    @Size(max = 300)
     private String address;
 
     @Size(max = 20)
     private String phone;
 
-    @Size(max = 255)
+    @Size(max = 1000)
     private String description;
 
     @Size(max = 50)
     private String businessLine;
 
     @JsonIgnore
+    @Builder.Default
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<UserShopRelation> userShopRelations = new ArrayList<>();
 
     @JsonIgnore
+    @Builder.Default
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private List<SaleChannelShopRelation> saleChannelShopRelations = new ArrayList<>();
+    private List<SaleChannelShop> saleChannelShops = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private List<ProductShopRelation> productShopRelations = new ArrayList<>();
-
-    @JsonIgnore
+    @Builder.Default
     @OneToMany(mappedBy = "shop")
     private List<OrderModel> orders = new ArrayList<>();
 
@@ -68,12 +65,4 @@ public class Shop extends BasicEntity {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
-
-    /*
-    @JsonIgnore
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "shops")
-    List<User> staffOfShop;
-    */
 }

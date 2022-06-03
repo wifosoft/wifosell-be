@@ -26,9 +26,9 @@ public class Variant extends BasicEntity {
 
     private BigDecimal cost;
 
+    //    @Column(unique = true)
     private String sku;
 
-    //    @Column(unique = true)    // TODO haukc
     private String barcode;
 
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
@@ -38,6 +38,7 @@ public class Variant extends BasicEntity {
     @ManyToOne
     private Product product;
 
+    @Builder.Default
     @OneToMany(mappedBy = "variant")
     private List<Stock> stocks = new ArrayList<>();
 

@@ -27,16 +27,8 @@ public class ImportStockTransactionSpecs {
     public static Specification<ImportStockTransaction> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(ImportStockTransaction_.IS_ACTIVE), true);
             return root.get(ImportStockTransaction_.IS_ACTIVE).in(isActives);
-        });
-    }
-
-    public static Specification<ImportStockTransaction> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(ImportStockTransaction_.IS_ACTIVE), isActive);
         });
     }
 

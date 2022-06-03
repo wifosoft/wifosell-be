@@ -1,6 +1,5 @@
 package com.wifosell.zeus.payload.request.shop;
 
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,27 +9,32 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ShopRequest {
+public class AddShopRequest implements IShopRequest {
     @NotBlank
-    @Size(max = 255)
+    @Size(max = 200)
     private String name;
 
+    @NotBlank
     @Size(max = 50)
     private String shortName;
 
-    @Size(max = 255)
+    @NotBlank
+    @Size(max = 300)
     private String address;
 
+    @NotBlank
     @Size(max = 20)
     private String phone;
 
-    @Size(max = 255)
+    @NotBlank
+    @Size(max = 1000)
     private String description;
 
+    @NotBlank
     @Size(max = 50)
     private String businessLine;
 
-    private Boolean isActive;
+    private List<Relation> relations;
 
-    private List<Long> saleChannelIds;
+    private Boolean isActive;
 }

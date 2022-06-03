@@ -3,7 +3,10 @@ package com.wifosell.zeus.payload.request.product;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 public interface IProductRequest {
@@ -38,6 +41,8 @@ public interface IProductRequest {
     @Getter
     @Setter
     class AttributeRequest {
+        Long id;
+
         @NotBlank
         @Size(max = 100)
         String name;
@@ -50,6 +55,8 @@ public interface IProductRequest {
     @Getter
     @Setter
     class OptionRequest {
+        Long id;
+
         @NotBlank
         @Size(max = 100)
         String name;
@@ -61,9 +68,6 @@ public interface IProductRequest {
     @Getter
     @Setter
     class VariantRequest {
-        @PositiveOrZero
-        Long stock;
-
         @NotBlank
         @Size(max = 50)
         String cost;
