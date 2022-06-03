@@ -3,6 +3,7 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderItem_;
 import com.wifosell.zeus.model.order.OrderModel;
+import com.wifosell.zeus.model.order.OrderModel_;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.payload.response.statistic.TopSellerProductResponse;
@@ -30,18 +31,16 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public List<Product> topSeller(Instant dateFrom, Instant dateTo) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery criteriaQuery = criteriaBuilder.createQuery();
-        Root<OrderItem> orderItemRoot = criteriaQuery.from(OrderItem.class);
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
         Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
-        Root<Variant> variantRoot = criteriaQuery.from(Variant.class);
-        Join<Variant, OrderItem> typeJoin = orderItemRoot.join(OrderItem_.VARIANT);
+        Join<OrderModel, Variant> typeJoin = orderModelRoot.join(OrderModel_.ORDER_ITEMS);
+        Expression<Number> total = criteriaBuilder.sum(criteriaBuilder.prod(typeJoin.get(OrderItem_.PRICE), typeJoin.get(OrderItem_.QUANTITY)));
 
-        Expression<Number> total = criteriaBuilder.sum(orderModelRoot.get("subtotal"));
-
-        criteriaQuery.multiselect(
-                orderItemRoot.get("variant"),
-                total
-        ).groupBy(orderItemRoot.get("variant")).orderBy(criteriaBuilder.desc(total));
+        criteriaQuery
+                .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
+                .where(criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false))
+                .groupBy(typeJoin.get(OrderItem_.VARIANT))
+                .orderBy(criteriaBuilder.desc(total));
         Query query = entityManager.createQuery(criteriaQuery);
         List<Object[]> result = query.getResultList();
         List<TopSellerProductResponse> topSeller = new ArrayList<>(result.size());
@@ -50,8 +49,9 @@ public class StatisticServiceImpl implements StatisticService {
                     (Variant) row[0],
                     (BigDecimal) row[1]));
         }
-        System.out.println("from statistic: " + topSeller.get(0).getVariant().getSku());
-        System.out.println("from statistic: " + topSeller.get(0).getTotal());
+        for (TopSellerProductResponse topSellerItem : topSeller) {
+            System.out.println("Item: " + topSellerItem.getVariant().getSku() + ", Total: " +  topSellerItem.getTotal());
+        }
         return null;
     }
 
