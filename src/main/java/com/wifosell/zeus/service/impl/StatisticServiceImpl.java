@@ -29,7 +29,7 @@ public class StatisticServiceImpl implements StatisticService {
     private final EntityManager entityManager;
 
     @Override
-    public List<TopSellerProductResponse> topSeller(Instant dateFrom, Instant dateTo, int limit, int offset, int top) {
+    public List<TopSellerProductResponse> topSeller(Instant dateFrom, Instant dateTo, Integer limit, Integer offset, Integer top) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
         Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
@@ -56,7 +56,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<Product> topSellerByShopId(Long shopId, Instant dateFrom, Instant dateTo, int limit, int offset, int top) {
+    public List<TopSellerProductResponse> topSellerByShopId(Long shopId, Instant dateFrom, Instant dateTo, Integer limit, Integer offset, Integer top) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
         Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
@@ -80,7 +80,7 @@ public class StatisticServiceImpl implements StatisticService {
                     (Variant) row[0],
                     (BigDecimal) row[1]));
         }
-        return null;
+        return topSeller;
     }
 
     @Override
@@ -96,13 +96,26 @@ public class StatisticServiceImpl implements StatisticService {
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
                 ));
         Query query = entityManager.createQuery(criteriaQuery);
-        List<Long> result = query.getResultList();
-        return result.get(0);
+        List<BigDecimal> result = query.getResultList();
+        return result.get(0).longValue();
     }
 
     @Override
-    public Long grossRevenueByShopId(Long shopId, Date from, Date to) {
-        return null;
+    public Long grossRevenueByShopId(Long shopId, Instant dateFrom, Instant dateTo) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+        Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
+
+        criteriaQuery
+                .multiselect(criteriaBuilder.sum(orderModelRoot.get(OrderModel_.SUBTOTAL)))
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.SHOP), shopId)
+                ));
+        Query query = entityManager.createQuery(criteriaQuery);
+        List<BigDecimal> result = query.getResultList();
+        return result.get(0).longValue();
     }
 
     @Override
