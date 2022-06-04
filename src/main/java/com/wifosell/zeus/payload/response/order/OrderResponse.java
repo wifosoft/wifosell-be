@@ -27,6 +27,7 @@ public class OrderResponse extends BasicEntityResponse {
     private final List<OrderStepResponse> steps;
     private final PaymentResponse payment;
     private final boolean isComplete;
+    private final UserResponse createdBy;
 
     public OrderResponse(OrderModel order) {
         super(order);
@@ -39,6 +40,7 @@ public class OrderResponse extends BasicEntityResponse {
         this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
         this.payment = new PaymentResponse(order.getPayment());
         this.isComplete = order.getIsComplete();
+        this.createdBy = order.getCreatedBy() != null ? new UserResponse(order.getCreatedBy()) : null;
     }
 
     public boolean getIsComplete() {
@@ -138,6 +140,22 @@ public class OrderResponse extends BasicEntityResponse {
             this.method = payment.getMethod();
             this.status = payment.getStatus();
             this.info = payment.getInfo();
+        }
+    }
+
+    @Getter
+    private static class UserResponse extends BasicEntityResponse {
+        private final String firstName;
+        private final String lastName;
+        private final String username;
+        private final String avatar;
+
+        public UserResponse(User user) {
+            super(user);
+            this.firstName = user.getFirstName();
+            this.lastName = user.getLastName();
+            this.username = user.getUsername();
+            this.avatar = user.getAvatar();
         }
     }
 }

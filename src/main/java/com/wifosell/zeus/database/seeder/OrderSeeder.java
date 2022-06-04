@@ -155,6 +155,9 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         // Complete
         order.setComplete(false);
 
+        // Created by
+        order.setCreatedBy(user);
+
         // General manager
         order.setGeneralManager(gm);
 

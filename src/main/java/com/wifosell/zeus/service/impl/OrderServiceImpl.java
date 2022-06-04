@@ -220,6 +220,9 @@ public class OrderServiceImpl implements OrderService {
         // Complete
         order.setComplete(false);
 
+        // Created by
+        order.setCreatedBy(user);
+
         // General manager
         order.setGeneralManager(gm);
 
