@@ -29,7 +29,7 @@ public class StatisticServiceImpl implements StatisticService {
     private final EntityManager entityManager;
 
     @Override
-    public List<Product> topSeller(Instant dateFrom, Instant dateTo) {
+    public List<TopSellerProductResponse> topSeller(Instant dateFrom, Instant dateTo, int limit, int offset, int top) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
         Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
@@ -38,31 +38,66 @@ public class StatisticServiceImpl implements StatisticService {
 
         criteriaQuery
                 .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
-                .where(criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false))
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
+                ))
                 .groupBy(typeJoin.get(OrderItem_.VARIANT))
                 .orderBy(criteriaBuilder.desc(total));
-        Query query = entityManager.createQuery(criteriaQuery);
-        List<Object[]> result = query.getResultList();
+        Query query = entityManager.createQuery(criteriaQuery).setMaxResults(top);
+        List<Object[]> result = query.setFirstResult(offset).setMaxResults(limit).getResultList();
         List<TopSellerProductResponse> topSeller = new ArrayList<>(result.size());
         for (Object[] row : result) {
             topSeller.add(new TopSellerProductResponse(
                     (Variant) row[0],
                     (BigDecimal) row[1]));
         }
-        for (TopSellerProductResponse topSellerItem : topSeller) {
-            System.out.println("Item: " + topSellerItem.getVariant().getSku() + ", Total: " +  topSellerItem.getTotal());
+        return topSeller;
+    }
+
+    @Override
+    public List<Product> topSellerByShopId(Long shopId, Instant dateFrom, Instant dateTo, int limit, int offset, int top) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+        Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
+        Join<OrderModel, Variant> typeJoin = orderModelRoot.join(OrderModel_.ORDER_ITEMS);
+        Expression<Number> total = criteriaBuilder.sum(criteriaBuilder.prod(typeJoin.get(OrderItem_.PRICE), typeJoin.get(OrderItem_.QUANTITY)));
+
+        criteriaQuery
+                .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.SHOP), shopId)
+                ))
+                .groupBy(typeJoin.get(OrderItem_.VARIANT))
+                .orderBy(criteriaBuilder.desc(total));
+        Query query = entityManager.createQuery(criteriaQuery).setMaxResults(top);
+        List<Object[]> result = query.setFirstResult(offset).setMaxResults(limit).getResultList();
+        List<TopSellerProductResponse> topSeller = new ArrayList<>(result.size());
+        for (Object[] row : result) {
+            topSeller.add(new TopSellerProductResponse(
+                    (Variant) row[0],
+                    (BigDecimal) row[1]));
         }
         return null;
     }
 
     @Override
-    public List<Product> topSellerByShopId(Long shopId, Date from, Date to) {
-        return null;
-    }
-
-    @Override
     public Long grossRevenue(Instant dateFrom, Instant dateTo) {
-        return this.orderRepository.sumTotalOrder(OrderSpecs.isBetweenTwoDates(dateFrom, dateTo));
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+        Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
+
+        criteriaQuery
+                .multiselect(criteriaBuilder.sum(orderModelRoot.get(OrderModel_.SUBTOTAL)))
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
+                ));
+        Query query = entityManager.createQuery(criteriaQuery);
+        List<Long> result = query.getResultList();
+        return result.get(0);
     }
 
     @Override

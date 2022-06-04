@@ -39,7 +39,7 @@ public class StatisticController {
     @PostMapping("/gross-revenue")
     public ResponseEntity<GApiResponse<Long>> getSumTotalOrder(@RequestBody StatisticRequest statisticRequest) {
         Long totalOrder = statisticService.grossRevenue(Instant.ofEpochMilli(statisticRequest.getDateFrom()), Instant.ofEpochMilli(statisticRequest.getDateTo()));
-        statisticService.topSeller(Instant.ofEpochMilli(statisticRequest.getDateFrom()), Instant.ofEpochMilli(statisticRequest.getDateTo()));
+        //statisticService.topSeller(Instant.ofEpochMilli(statisticRequest.getDateFrom()), Instant.ofEpochMilli(statisticRequest.getDateTo()), 1, 0,2);
         return ResponseEntity.ok(GApiResponse.success(totalOrder));
     }
 
