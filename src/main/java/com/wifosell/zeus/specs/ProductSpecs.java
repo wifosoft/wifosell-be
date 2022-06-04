@@ -11,6 +11,7 @@ import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.Instant;
 import javax.persistence.criteria.Path;
 import java.util.List;
 
@@ -97,4 +98,13 @@ public class ProductSpecs {
                     criteriaBuilder.greaterThanOrEqualTo(quantity, finalMinQuantity);
         });
     }
+
+    public static Specification<Product> betweenTwoDates (Instant from, Instant to) {
+        return ((root, query, criteriaBuilder) -> {
+            if (from == null || to == null)
+                return criteriaBuilder.and();
+            return criteriaBuilder.between(root.get(Product_.CREATED_AT), from, to);
+        });
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
@@ -9,13 +10,20 @@ import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
 import lombok.AllArgsConstructor;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import java.util.Collections;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 
@@ -129,6 +137,13 @@ public class CustomerController {
             @RequestBody @Valid ListIdRequest request
     ) {
         List<Customer> customers = customerService.deactivateCustomers(userPrincipal.getId(), request.getIds());
+        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @GetMapping("/search/{text}")
+    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchCustomers(@PathVariable(name = "text") String text) {
+        List<Customer> customers = customerService.searchCustomers(text);
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }

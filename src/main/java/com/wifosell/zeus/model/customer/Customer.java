@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
+import org.hibernate.search.annotations.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -14,12 +15,14 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Indexed
 public class Customer extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
+    @Field(termVector = TermVector.YES, analyze = Analyze.YES, store = Store.NO)
     private String fullName;
 
     private Date dob;   // Date of birth
@@ -35,6 +38,8 @@ public class Customer extends BasicEntity {
 
     private String nation;
 
+    @Field(analyze = Analyze.NO)
+    @Facet
     private String city;
 
     private String district;
