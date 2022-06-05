@@ -44,13 +44,21 @@ public class ProductResponse extends BasicEntityResponse {
         this.state = product.getState();
         this.status = product.getStatus();
         this.category = new CategoryResponse(product.getCategory());
-        this.images = product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
-        this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
-        this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
+        this.images = product.getImages().stream()
+                .filter(productImage -> !productImage.isDeleted())
+                .map(ProductImage::getUrl).collect(Collectors.toList());
+        this.attributes = product.getAttributes().stream()
+                .filter(attribute -> !attribute.isDeleted())
+                .map(AttributeResponse::new).collect(Collectors.toList());
+        this.options = product.getOptions().stream()
+                .filter(option -> !option.isDeleted())
+                .map(OptionResponse::new).collect(Collectors.toList());
         this.variants = warehouseIds == null || warehouseIds.isEmpty() ?
-                product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList()) :
                 product.getVariants().stream()
-                        .filter(variant -> variant.getStocks().stream()
+                        .filter(variant -> !variant.isDeleted())
+                        .map(VariantResponse::new).collect(Collectors.toList()) :
+                product.getVariants().stream()
+                        .filter(variant -> !variant.isDeleted() && variant.getStocks().stream()
                                 .anyMatch(stock -> {
                                     boolean inWarehouse = warehouseIds.contains(stock.getWarehouse().getId());
                                     boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
@@ -77,7 +85,10 @@ public class ProductResponse extends BasicEntityResponse {
             this.options = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
                     .map(OptionValue::getName).collect(Collectors.toList());
-            this.stocks = variant.getStocks().stream().map(StockResponse::new).collect(Collectors.toList());
+            this.stocks = variant.getStocks().stream()
+                    .filter(stock -> !stock.getVariant().isDeleted())
+                    .map(StockResponse::new)
+                    .collect(Collectors.toList());
         }
 
         @Getter

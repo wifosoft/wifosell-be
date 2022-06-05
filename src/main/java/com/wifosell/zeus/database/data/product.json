@@ -14,58 +14,83 @@
     ],
     "attributes": [
       {
+        "id": null,
         "name": "Origin",
         "value": "USA"
       },
       {
+        "id": null,
         "name": "Brand",
         "value": "Apple"
       }
     ],
     "options": [
       {
+        "id": null,
         "name": "Color",
         "values": [
-          "Red",
-          "Blue",
-          "White"
+          {
+            "id": null,
+            "name": "Black"
+          },
+          {
+            "id": null,
+            "name": "Blue"
+          },
+          {
+            "id": null,
+            "name": "White"
+          }
         ]
       },
       {
+        "id": null,
         "name": "RAM",
         "values": [
-          "256GB",
-          "512GB"
+          {
+            "id": null,
+            "name": "256GB"
+          },
+          {
+            "id": null,
+            "name": "512GB"
+          }
         ]
       }
     ],
     "variants": [
       {
+        "id": null,
         "cost": "21000000",
         "sku": "ABC100",
         "barcode": "00000000"
       },
       {
+        "id": null,
         "cost": "22000000",
         "sku": "ABC101",
         "barcode": "00000001"
       },
       {
+        "id": null,
         "cost": "23000000",
         "sku": "ABC102",
         "barcode": "00000002"
       },
       {
+        "id": null,
         "cost": "21500000",
         "sku": "ABC103",
         "barcode": "00000003"
       },
       {
+        "id": null,
         "cost": "21000000",
         "sku": "ABC104",
         "barcode": "00000004"
       },
       {
+        "id": null,
         "cost": "32000000",
         "sku": "ABC105",
         "barcode": "00000005"
@@ -91,74 +116,105 @@
     ],
     "attributes": [
       {
+        "id": null,
         "name": "Xuat xu",
         "value": "Viet Nam"
       },
       {
+        "id": null,
         "name": "Thuong hieu",
         "value": "Gumac"
       }
     ],
     "options": [
       {
+        "id": null,
         "name": "Color",
         "values": [
-          "Red",
-          "Blue",
-          "White"
+          {
+            "id": null,
+            "name": "Green"
+          },
+          {
+            "id": null,
+            "name": "Blue"
+          },
+          {
+            "id": null,
+            "name": "White"
+          }
         ]
       },
       {
+        "id": null,
         "name": "Size",
         "values": [
-          "S",
-          "M",
-          "L"
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
         ]
       }
     ],
     "variants": [
       {
+        "id": null,
         "cost": "150000",
         "sku": "SBC100",
         "barcode": "00000006"
       },
       {
+        "id": null,
         "cost": "175000",
         "sku": "SBC101",
         "barcode": "00000007"
       },
       {
+        "id": null,
         "cost": "200000",
         "sku": "SBC102",
         "barcode": "00000008"
       },
       {
+        "id": null,
         "cost": "1820000",
         "sku": "SBC103",
         "barcode": "00000009"
       },
       {
+        "id": null,
         "cost": "155000",
         "sku": "SBC104",
         "barcode": "00000010"
       },
       {
+        "id": null,
         "cost": "210000",
         "sku": "SBC105",
         "barcode": "00000011"
       },
       {
+        "id": null,
         "cost": "180000",
         "sku": "SBC106",
         "barcode": "00000012"
       },
       {
+        "id": null,
         "cost": "220000",
         "sku": "SBC107",
         "barcode": "00000013"
       },
       {
+        "id": null,
         "cost": "185000",
         "sku": "SBC108",
         "barcode": "00000014"

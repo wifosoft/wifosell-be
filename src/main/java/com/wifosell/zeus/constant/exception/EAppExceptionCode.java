@@ -7,6 +7,7 @@ public enum EAppExceptionCode {
     UNEXPECTED_ERROR(-1),
     RECORD_EXISTED(-2),
     ENTITY_NOT_FOUND(-3),
+    REQUEST_PAYLOAD_FORMAT_ERROR(-4),
 
     //User
     USER_NOT_FOUND(100001),

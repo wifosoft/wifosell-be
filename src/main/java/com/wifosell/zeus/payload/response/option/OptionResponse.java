@@ -16,7 +16,10 @@ public class OptionResponse extends BasicEntityResponse {
     public OptionResponse(OptionModel option) {
         super(option);
         this.name = option.getName();
-        this.values = option.getOptionValues().stream().map(OptionValueResponse::new).collect(Collectors.toList());
+        this.values = option.getOptionValues().stream()
+                .filter(optionValue -> !optionValue.isDeleted())
+                .map(OptionValueResponse::new)
+                .collect(Collectors.toList());
     }
 
     @Getter

@@ -78,7 +78,7 @@ public interface IProductRequest {
     @Setter
     class VariantRequest {
         Long id;
-        
+
         @NotBlank
         @Size(max = 50)
         String cost;

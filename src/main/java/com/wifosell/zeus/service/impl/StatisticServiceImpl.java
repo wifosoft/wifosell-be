@@ -1,6 +1,5 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderItem_;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
@@ -19,7 +18,9 @@ import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Transactional
 @Service("StatisticService")
@@ -38,7 +39,7 @@ public class StatisticServiceImpl implements StatisticService {
 
         criteriaQuery
                 .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
-                .where(criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false))
+                .where(criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false))
                 .groupBy(typeJoin.get(OrderItem_.VARIANT))
                 .orderBy(criteriaBuilder.desc(total));
         Query query = entityManager.createQuery(criteriaQuery);
@@ -50,7 +51,7 @@ public class StatisticServiceImpl implements StatisticService {
                     (BigDecimal) row[1]));
         }
         for (TopSellerProductResponse topSellerItem : topSeller) {
-            System.out.println("Item: " + topSellerItem.getVariant().getSku() + ", Total: " +  topSellerItem.getTotal());
+            System.out.println("Item: " + topSellerItem.getVariant().getSku() + ", Total: " + topSellerItem.getTotal());
         }
         return null;
     }
@@ -80,12 +81,12 @@ public class StatisticServiceImpl implements StatisticService {
         return null;
     }
 
-    public Long totalOrder(Instant dateFrom, Instant dateTo){
+    public Long totalOrder(Instant dateFrom, Instant dateTo) {
         return this.orderRepository.countAllByCreatedAtBetween(dateFrom, dateTo);
     }
 
 
-    public Long totalOrderByShopId(Long shopId, Instant dateFrom, Instant dateTo){
+    public Long totalOrderByShopId(Long shopId, Instant dateFrom, Instant dateTo) {
         return this.orderRepository.countAllByShopIdAndCreatedAtBetween(shopId, dateFrom, dateTo);
     }
 }
