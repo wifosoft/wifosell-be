@@ -74,7 +74,7 @@ public class ProductResponse extends BasicEntityResponse {
         private String cost;
         private String sku;
         private String barcode;
-        private List<String> options;
+        private List<OptionValueResponse> optionValues;
         private final List<StockResponse> stocks;
 
         public VariantResponse(Variant variant) {
@@ -82,13 +82,23 @@ public class ProductResponse extends BasicEntityResponse {
             this.cost = variant.getCost().toString();
             this.sku = variant.getSku();
             this.barcode = variant.getBarcode();
-            this.options = variant.getVariantValues().stream()
+            this.optionValues = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
-                    .map(OptionValue::getName).collect(Collectors.toList());
+                    .map(OptionValueResponse::new).collect(Collectors.toList());
             this.stocks = variant.getStocks().stream()
                     .filter(stock -> !stock.getVariant().isDeleted())
                     .map(StockResponse::new)
                     .collect(Collectors.toList());
+        }
+
+        @Getter
+        private static class OptionValueResponse extends BasicEntityResponse {
+            private final String name;
+
+            public OptionValueResponse(OptionValue optionValue) {
+                super(optionValue);
+                this.name = optionValue.getName();
+            }
         }
 
         @Getter
