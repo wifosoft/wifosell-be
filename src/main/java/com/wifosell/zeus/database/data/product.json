@@ -8,9 +8,18 @@
     "state": 0,
     "status": 0,
     "images": [
-      "https://cf.shopee.vn/file/a4b5339add6e7d19a6be6ab459db91c3",
-      "https://cf.shopee.vn/file/102f1de2b71e74dc947b16cbcc26359b",
-      "https://cf.shopee.vn/file/d68c250de71755c946640c5402f4bcd7"
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/a4b5339add6e7d19a6be6ab459db91c3"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/102f1de2b71e74dc947b16cbcc26359b"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/d68c250de71755c946640c5402f4bcd7"
+      }
     ],
     "attributes": [
       {
@@ -107,12 +116,30 @@
     "state": 0,
     "status": 0,
     "images": [
-      "https://cf.shopee.vn/file/191a95b2ff7821b6bb657fa6ed2c7bdc",
-      "https://cf.shopee.vn/file/8f93afeab9c8825e8e7a60c5cd1b5aa1",
-      "https://cf.shopee.vn/file/7f4e30d61c1ce5c1689d009eb6177706",
-      "https://cf.shopee.vn/file/4a775aa4226fffd577beb5d8e88c0db9",
-      "https://cf.shopee.vn/file/7e767303ceaa695d06e6038c5ff58499",
-      "https://cf.shopee.vn/file/9f8d2e34c1a1378edb367a735cc9287a"
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/191a95b2ff7821b6bb657fa6ed2c7bdc"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/8f93afeab9c8825e8e7a60c5cd1b5aa1"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/7f4e30d61c1ce5c1689d009eb6177706"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/4a775aa4226fffd577beb5d8e88c0db9"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/7e767303ceaa695d06e6038c5ff58499"
+      },
+      {
+        "id": null,
+        "url": "https://cf.shopee.vn/file/9f8d2e34c1a1378edb367a735cc9287a"
+      }
     ],
     "attributes": [
       {

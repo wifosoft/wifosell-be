@@ -83,20 +83,44 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
         // Images
-        Optional.ofNullable(request.getImages()).ifPresent(urls -> {    // TODO haukc
-            productImageRepository.deleteAllByProductId(product.getId());
-            product.getImages().clear();
-
-            List<ProductImage> images = new ArrayList<>();
-            for (String url : urls) {
-                ProductImage image = ProductImage.builder()
-                        .url(url)
-                        .product(product).build();
-                images.add(image);
+        Optional.ofNullable(request.getImages()).ifPresent(imageRequests -> {
+            if (this.haveDuplicatedIds(imageRequests.stream().map(IProductRequest.ImageRequest::getId).collect(Collectors.toList()))) {
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR, "Image id must be unique.", imageRequests));
             }
-            product.getImages().addAll(images);
 
-            productImageRepository.saveAll(images);
+            List<ProductImage> images = product.getImages().stream()
+                    .filter(image -> !image.isDeleted())
+                    .collect(Collectors.toList());
+
+            images.forEach(image -> {
+                IProductRequest.ImageRequest existingImageRequest = null;
+
+                for (IProductRequest.ImageRequest imageRequest : imageRequests) {
+                    if (image.getId().equals(imageRequest.getId())) {
+                        image.setUrl(imageRequest.getUrl());
+                        productImageRepository.save(image);
+                        existingImageRequest = imageRequest;
+                        break;
+                    }
+                }
+
+                if (existingImageRequest == null) {
+                    image.setDeleted(true);
+                    productImageRepository.save(image);
+                } else {
+                    imageRequests.remove(existingImageRequest);
+                }
+            });
+
+            for (IProductRequest.ImageRequest imageRequest : imageRequests) {
+                ProductImage image = ProductImage.builder()
+                        .url(imageRequest.getUrl())
+                        .product(product)
+                        .build();
+                productImageRepository.save(image);
+                product.getImages().add(image);
+            }
+
             productRepository.save(product);
         });
 

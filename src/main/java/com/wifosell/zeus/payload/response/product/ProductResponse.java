@@ -2,7 +2,6 @@ package com.wifosell.zeus.payload.response.product;
 
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.stock.Stock;
@@ -26,7 +25,7 @@ public class ProductResponse extends BasicEntityResponse {
     private final Integer state;
     private final Integer status;
     private final CategoryResponse category;
-    private final List<String> images;
+    private final List<ProductImageResponse> images;
     private final List<AttributeResponse> attributes;
     private final List<OptionResponse> options;
     private final List<VariantResponse> variants;
@@ -46,7 +45,7 @@ public class ProductResponse extends BasicEntityResponse {
         this.category = new CategoryResponse(product.getCategory());
         this.images = product.getImages().stream()
                 .filter(productImage -> !productImage.isDeleted())
-                .map(ProductImage::getUrl).collect(Collectors.toList());
+                .map(ProductImageResponse::new).collect(Collectors.toList());
         this.attributes = product.getAttributes().stream()
                 .filter(attribute -> !attribute.isDeleted())
                 .map(AttributeResponse::new).collect(Collectors.toList());

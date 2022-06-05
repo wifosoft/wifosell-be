@@ -28,7 +28,7 @@ public interface IProductRequest {
 
     Integer getStatus();
 
-    List<String> getImages();
+    List<ImageRequest> getImages();
 
     List<AttributeRequest> getAttributes();
 
@@ -37,6 +37,17 @@ public interface IProductRequest {
     List<VariantRequest> getVariants();
 
     Boolean getIsActive();
+
+    @Getter
+    @Setter
+    class ImageRequest {
+        Long id;
+
+        @NotBlank
+        @Size(max = 1000)
+        String url;
+    }
+
 
     @Getter
     @Setter
