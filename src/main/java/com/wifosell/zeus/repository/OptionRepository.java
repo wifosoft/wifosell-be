@@ -10,6 +10,4 @@ public interface OptionRepository extends SoftRepository<OptionModel, Long> {
     default EAppExceptionCode getExceptionCodeEntityNotFound() {
         return EAppExceptionCode.OPTION_NOT_FOUND;
     }
-
-    void deleteAllByProductId(Long productId);
 }

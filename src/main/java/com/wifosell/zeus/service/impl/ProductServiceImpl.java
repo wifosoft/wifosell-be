@@ -135,7 +135,11 @@ public class ProductServiceImpl implements ProductService {
         // Images
         Optional.ofNullable(request.getImages()).ifPresent(imageRequests -> {
             if (this.haveDuplicatedIds(imageRequests.stream().map(IProductRequest.ImageRequest::getId).collect(Collectors.toList()))) {
-                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR, "Image id must be unique.", imageRequests));
+                throw new AppException(GApiErrorBody.makeErrorBody(
+                        EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR,
+                        "Image id must be unique.",
+                        imageRequests
+                ));
             }
 
             List<ProductImage> images = product.getImages().stream()
