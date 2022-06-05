@@ -282,9 +282,9 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                     .filter(option -> !option.isDeleted())
                     .collect(Collectors.toList());
 
-            int variantNum = 0;
+            int variantNum = 1;
             for (OptionModel option : options) {
-                variantNum += option.getOptionValues().stream().filter(optionValue -> !optionValue.isDeleted()).count();
+                variantNum *= option.getOptionValues().stream().filter(optionValue -> !optionValue.isDeleted()).count();
             }
             if (variantNum != variantRequests.size()) {
                 throw new AppException(GApiErrorBody.makeErrorBody(
