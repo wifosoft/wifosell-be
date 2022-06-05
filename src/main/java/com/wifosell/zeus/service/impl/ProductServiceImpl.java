@@ -344,6 +344,26 @@ public class ProductServiceImpl implements ProductService {
                 );
             }
 
+            List<Variant> variants = product.getVariants().stream()
+                    .filter(variant -> !variant.isDeleted())
+                    .collect(Collectors.toList());
+
+            boolean isValidVariantRequests = variants.stream()
+                    .allMatch(variant -> variantRequests.stream()
+                            .map(IProductRequest.VariantRequest::getId)
+                            .collect(Collectors.toList())
+                            .contains(variant.getId())
+                    );
+
+            if (!isValidVariantRequests) {
+                throw new AppException(GApiErrorBody.makeErrorBody(
+                        EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR,
+                        "The variants updated have wrong id. All updated variants must have ids: " +
+                                variants.stream().map(Variant::getId).collect(Collectors.toList()),
+                        variantRequests)
+                );
+            }
+
             this.genVariants(gm, product, options, variantRequests);
 
             productRepository.save(product);
