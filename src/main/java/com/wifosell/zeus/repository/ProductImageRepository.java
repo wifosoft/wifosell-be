@@ -10,6 +10,4 @@ public interface ProductImageRepository extends SoftRepository<ProductImage, Lon
     default EAppExceptionCode getExceptionCodeEntityNotFound() {
         return EAppExceptionCode.PRODUCT_IMAGE_NOT_FOUND;
     }
-
-    void deleteAllByProductId(Long productId);
 }
