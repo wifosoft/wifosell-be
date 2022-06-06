@@ -3,6 +3,7 @@ package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.statistic.StatisticRequest;
+import com.wifosell.zeus.payload.response.statistic.TopRevenueEmployeeResponse;
 import com.wifosell.zeus.payload.response.statistic.TopSellerProductResponse;
 import com.wifosell.zeus.service.StatisticService;
 import lombok.AllArgsConstructor;
@@ -55,17 +56,11 @@ public class StatisticController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/top-seller")
     public ResponseEntity<GApiResponse<List<TopSellerProductResponse>>> getTopSeller(
-            @RequestBody StatisticRequest statisticRequest,
-            @RequestParam(name = "offset", required = false) Integer offset,
-            @RequestParam(name = "limit", required = false) Integer limit,
-            @RequestParam(name = "top", required = false) Integer top
+            @RequestBody StatisticRequest statisticRequest
     ) {
         List<TopSellerProductResponse> topSeller = statisticService.topSeller(
                 Instant.ofEpochMilli(statisticRequest.getDateFrom()),
-                Instant.ofEpochMilli(statisticRequest.getDateTo()),
-                limit,
-                offset,
-                top
+                Instant.ofEpochMilli(statisticRequest.getDateTo())
         );
         return ResponseEntity.ok(GApiResponse.success(topSeller));
     }
@@ -74,20 +69,70 @@ public class StatisticController {
     @PostMapping("/top-seller/{shopId}")
     public ResponseEntity<GApiResponse<List<TopSellerProductResponse>>> getTopSellerById(
             @RequestBody StatisticRequest statisticRequest,
-            @RequestParam(name = "offset", required = false) Integer offset,
-            @RequestParam(name = "limit", required = false) Integer limit,
-            @RequestParam(name = "top", required = false) Integer top,
             @PathVariable("shopId") Long shopId
     ) {
         List<TopSellerProductResponse> topSellerById = statisticService.topSellerByShopId(
                 shopId,
                 Instant.ofEpochMilli(statisticRequest.getDateFrom()),
-                Instant.ofEpochMilli(statisticRequest.getDateTo()),
-                limit,
-                offset,
-                top
+                Instant.ofEpochMilli(statisticRequest.getDateTo())
         );
         return ResponseEntity.ok(GApiResponse.success(topSellerById));
     }
 
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/employee-revenue/{userId}")
+    public ResponseEntity<GApiResponse<Long>> getRevenuePerEmployee (
+            @RequestBody StatisticRequest statisticRequest,
+            @PathVariable("userId") Long userId
+    ){
+        Long revenue = statisticService.revenuePerEmployee(
+                userId,
+                Instant.ofEpochMilli(statisticRequest.getDateFrom()),
+                Instant.ofEpochMilli(statisticRequest.getDateTo())
+        );
+        return ResponseEntity.ok(GApiResponse.success(revenue));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/employee-revenue/{shopId}/{userId}")
+    public ResponseEntity<GApiResponse<Long>> getRevenuePerEmployeeByShopId (
+            @RequestBody StatisticRequest statisticRequest,
+            @PathVariable("userId") Long userId,
+            @PathVariable("shopId") Long shopId
+    ){
+        Long revenue = statisticService.revenuePerEmployeeByShopId(
+                userId,
+                shopId,
+                Instant.ofEpochMilli(statisticRequest.getDateFrom()),
+                Instant.ofEpochMilli(statisticRequest.getDateTo())
+        );
+        return ResponseEntity.ok(GApiResponse.success(revenue));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/top-employee")
+    public ResponseEntity<GApiResponse<List<TopRevenueEmployeeResponse>>> getTopEmployee(
+            @RequestBody StatisticRequest statisticRequest
+    ) {
+        List<TopRevenueEmployeeResponse> topSeller = statisticService.topEmployee(
+                Instant.ofEpochMilli(statisticRequest.getDateFrom()),
+                Instant.ofEpochMilli(statisticRequest.getDateTo())
+        );
+        return ResponseEntity.ok(GApiResponse.success(topSeller));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/top-employee/{shopId}")
+    public ResponseEntity<GApiResponse<List<TopRevenueEmployeeResponse>>> getTopEmployeeById(
+            @RequestBody StatisticRequest statisticRequest,
+            @PathVariable("shopId") Long shopId
+    ) {
+        List<TopRevenueEmployeeResponse> topSellerById = statisticService.topEmployeeByShopId(
+                shopId,
+                Instant.ofEpochMilli(statisticRequest.getDateFrom()),
+                Instant.ofEpochMilli(statisticRequest.getDateTo())
+        );
+        return ResponseEntity.ok(GApiResponse.success(topSellerById));
+    }
 }
