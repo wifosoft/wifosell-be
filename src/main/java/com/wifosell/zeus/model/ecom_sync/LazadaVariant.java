@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
@@ -18,6 +19,8 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "lazada_variants")
 public class LazadaVariant extends BasicEntity {
+
+    @JsonProperty("variant_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +36,6 @@ public class LazadaVariant extends BasicEntity {
 
     @Column(name = "url")
     private String url;
-
 
     @Column(name = "special_price")
     private Long specialPrice;
@@ -70,7 +72,7 @@ public class LazadaVariant extends BasicEntity {
 
     public LazadaVariant() {}
 
-    public LazadaVariant(ResponseListProductPayload.Sku  s) {
+    public LazadaVariant(ResponseListProductPayload.Sku s) {
         this.withDataBySkuAPI(s);
     }
     public LazadaVariant(ResponseListProductPayload.Sku s, LazadaProduct lazadaProduct) {
