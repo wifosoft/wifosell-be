@@ -26,11 +26,12 @@ public class Variant extends BasicEntity {
 
     private BigDecimal cost;
 
-    @Column(unique = true)
+    //    @Column(unique = true)
     private String sku;
 
     private String barcode;
 
+    @Builder.Default
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
     private List<VariantValue> variantValues = new ArrayList<>();
 

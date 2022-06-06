@@ -3,7 +3,10 @@ package com.wifosell.zeus.payload.request.product;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 public interface IProductRequest {
@@ -25,7 +28,7 @@ public interface IProductRequest {
 
     Integer getStatus();
 
-    List<String> getImages();
+    List<ImageRequest> getImages();
 
     List<AttributeRequest> getAttributes();
 
@@ -37,7 +40,20 @@ public interface IProductRequest {
 
     @Getter
     @Setter
+    class ImageRequest {
+        Long id;
+
+        @NotBlank
+        @Size(max = 1000)
+        String url;
+    }
+
+
+    @Getter
+    @Setter
     class AttributeRequest {
+        Long id;
+
         @NotBlank
         @Size(max = 100)
         String name;
@@ -50,19 +66,29 @@ public interface IProductRequest {
     @Getter
     @Setter
     class OptionRequest {
+        Long id;
+
         @NotBlank
         @Size(max = 100)
         String name;
 
         @NotEmpty
-        List<String> values;
+        List<OptionValueRequest> values;
+    }
+
+    @Getter
+    @Setter
+    class OptionValueRequest {
+        Long id;
+
+        @NotBlank
+        String name;
     }
 
     @Getter
     @Setter
     class VariantRequest {
-        @PositiveOrZero
-        Long stock;
+        Long id;
 
         @NotBlank
         @Size(max = 50)

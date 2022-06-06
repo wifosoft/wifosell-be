@@ -21,7 +21,7 @@ public class OptionValue extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String value;
+    private String name;
 
     @JsonIgnore
     @ManyToOne

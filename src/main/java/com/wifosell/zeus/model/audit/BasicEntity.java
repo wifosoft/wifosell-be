@@ -17,12 +17,15 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(
-        value = { "createdAt", "updatedAt" },
+        value = {"createdAt", "updatedAt"},
         allowGetters = true
 )
-public abstract class  BasicEntity {
+public abstract class BasicEntity {
     @Column(name = "is_active")
     private boolean isActive = true;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 
     public abstract Long getId();
 
@@ -36,7 +39,7 @@ public abstract class  BasicEntity {
     @Column(nullable = false)
     private Instant updatedAt;
 
-    public void setIsActive(boolean flag){
+    public void setIsActive(boolean flag) {
         this.isActive = flag;
     }
 

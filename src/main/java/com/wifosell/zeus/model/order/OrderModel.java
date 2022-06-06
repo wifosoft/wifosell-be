@@ -60,6 +60,10 @@ public class OrderModel extends BasicEntity {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    private User createdBy;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
 
     @JsonIgnore

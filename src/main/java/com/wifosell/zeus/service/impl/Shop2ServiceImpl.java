@@ -1,19 +1,18 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.SaleChannelShopRelation;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.shop.AddShopRequest;
 import com.wifosell.zeus.payload.request.shop.IShopRequest;
 import com.wifosell.zeus.payload.request.shop.UpdateShopRequest;
-import com.wifosell.zeus.repository.SaleChannelRepository;
-import com.wifosell.zeus.repository.SaleChannelShopRelationRepository;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.Shop2Service;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.ShopSpecs;
+import com.wifosell.zeus.specs.WarehouseSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +30,8 @@ public class Shop2ServiceImpl implements Shop2Service {
     private final UserRepository userRepository;
     private final ShopRepository shopRepository;
     private final SaleChannelRepository saleChannelRepository;
-    private final SaleChannelShopRelationRepository saleChannelShopRelationRepository;
+    private final SaleChannelShopRepository saleChannelShopRepository;
+    private final WarehouseRepository warehouseRepository;
 
     @Override
     public Page<Shop> getShops(Long userId, List<Boolean> isActives, Integer offset, Integer limit, String sortBy, String orderBy) {
@@ -102,34 +102,54 @@ public class Shop2ServiceImpl implements Shop2Service {
         shop.setGeneralManager(gm);
         shopRepository.save(shop);
 
-        // Link Sale Channels with Shop
-        Optional.ofNullable(request.getSaleChannelIds()).ifPresent(requestSaleChannelIds -> {
-            List<Long> curSaleChannelIds = shop.getSaleChannelShopRelations().stream()
-                    .map(SaleChannelShopRelation::getSaleChannel)
+        // Link with Sale Channels & Warehouses
+        Optional.ofNullable(request.getRelations()).ifPresent(requestRelations -> {
+            List<Long> requestSaleChannelIds = requestRelations.stream()
+                    .map(IShopRequest.Relation::getSaleChannelId)
+                    .collect(Collectors.toList());
+
+            List<Long> curSaleChannelIds = shop.getSaleChannelShops().stream()
+                    .map(SaleChannelShop::getSaleChannel)
                     .map(SaleChannel::getId)
                     .collect(Collectors.toList());
 
             // Remove relations
             curSaleChannelIds.forEach(curSaleChannelId -> {
                 if (!requestSaleChannelIds.contains(curSaleChannelId)) {
-                    saleChannelShopRelationRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
-                    Optional<SaleChannelShopRelation> relationOptional = shop.getSaleChannelShopRelations().stream()
+                    saleChannelShopRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
+                    Optional<SaleChannelShop> relationOptional = shop.getSaleChannelShops().stream()
                             .filter(relation -> relation.getSaleChannel().getId().equals(curSaleChannelId))
                             .findFirst();
-                    relationOptional.ifPresent(relation -> shop.getSaleChannelShopRelations().remove(relation));
+                    relationOptional.ifPresent(relation -> shop.getSaleChannelShops().remove(relation));
                 }
             });
 
             // Add new relations
-            requestSaleChannelIds.forEach(requestSaleChannelId -> {
-                if (!curSaleChannelIds.contains(requestSaleChannelId)) {
+            requestRelations.forEach(requestRelation -> {
+                Warehouse warehouse = warehouseRepository.getOne(
+                        WarehouseSpecs.hasGeneralManager(gm.getId())
+                                .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
+                );
+
+                if (curSaleChannelIds.contains(requestRelation.getSaleChannelId())) {
+                    SaleChannelShop relation = saleChannelShopRepository.getByShopIdAndSaleChannelId(
+                            shop.getId(), requestRelation.getSaleChannelId());
+                    if (relation != null) {
+                        relation.setWarehouse(warehouse);
+                        saleChannelShopRepository.save(relation);
+                    }
+                } else {
                     SaleChannel saleChannel = saleChannelRepository.getOne(
                             SaleChannelSpecs.hasGeneralManager(gm.getId())
-                                    .and(SaleChannelSpecs.hasId(requestSaleChannelId))
+                                    .and(SaleChannelSpecs.hasId(requestRelation.getSaleChannelId()))
                     );
-                    SaleChannelShopRelation relation = SaleChannelShopRelation.builder().shop(shop).saleChannel(saleChannel).build();
-                    saleChannelShopRelationRepository.save(relation);
-                    shop.getSaleChannelShopRelations().add(relation);
+                    SaleChannelShop relation = SaleChannelShop.builder()
+                            .shop(shop)
+                            .saleChannel(saleChannel)
+                            .warehouse(warehouse)
+                            .build();
+                    saleChannelShopRepository.save(relation);
+                    shop.getSaleChannelShops().add(relation);
                 }
             });
         });

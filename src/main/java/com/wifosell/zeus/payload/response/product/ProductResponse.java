@@ -1,16 +1,15 @@
 package com.wifosell.zeus.payload.response.product;
 
-import com.wifosell.zeus.model.attribute.Attribute;
-import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
+import com.wifosell.zeus.payload.response.attribute.AttributeResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
+import com.wifosell.zeus.payload.response.option.OptionResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,16 +25,16 @@ public class ProductResponse extends BasicEntityResponse {
     private final Integer state;
     private final Integer status;
     private final CategoryResponse category;
-    private final List<String> images;
+    private final List<ProductImageResponse> images;
     private final List<AttributeResponse> attributes;
     private final List<OptionResponse> options;
     private final List<VariantResponse> variants;
 
     public ProductResponse(Product product) {
-        this(product, null);
+        this(product, null, null, null);
     }
 
-    public ProductResponse(Product product, List<Long> warehouseIds) {
+    public ProductResponse(Product product, List<Long> warehouseIds, Integer minQuantity, Integer maxQuantity) {
         super(product);
         this.name = product.getName();
         this.description = product.getDescription();
@@ -44,53 +43,28 @@ public class ProductResponse extends BasicEntityResponse {
         this.state = product.getState();
         this.status = product.getStatus();
         this.category = new CategoryResponse(product.getCategory());
-        this.images = product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
-        this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
-        this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
+        this.images = product.getImages().stream()
+                .filter(productImage -> !productImage.isDeleted())
+                .map(ProductImageResponse::new).collect(Collectors.toList());
+        this.attributes = product.getAttributes().stream()
+                .filter(attribute -> !attribute.isDeleted())
+                .map(AttributeResponse::new).collect(Collectors.toList());
+        this.options = product.getOptions().stream()
+                .filter(option -> !option.isDeleted())
+                .map(OptionResponse::new).collect(Collectors.toList());
         this.variants = warehouseIds == null || warehouseIds.isEmpty() ?
-                product.getVariants().stream().map(VariantResponse::new).collect(Collectors.toList()) :
                 product.getVariants().stream()
-                        .filter(variant -> variant.getStocks().stream()
-                                .map(stock -> stock.getWarehouse().getId())
-                                .anyMatch(warehouseIds::contains))
+                        .filter(variant -> !variant.isDeleted())
+                        .map(VariantResponse::new).collect(Collectors.toList()) :
+                product.getVariants().stream()
+                        .filter(variant -> !variant.isDeleted() && variant.getStocks().stream()
+                                .anyMatch(stock -> {
+                                    boolean inWarehouse = warehouseIds.contains(stock.getWarehouse().getId());
+                                    boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
+                                            && (maxQuantity == null || stock.getQuantity() <= maxQuantity);
+                                    return inWarehouse && betweenQuantity;
+                                }))
                         .map(VariantResponse::new).collect(Collectors.toList());
-    }
-
-    @Getter
-    @Setter
-    private static class AttributeResponse extends BasicEntityResponse {
-        private String name;
-        private String value;
-
-        public AttributeResponse(Attribute attribute) {
-            super(attribute);
-            this.name = attribute.getName();
-            this.value = attribute.getValue();
-        }
-    }
-
-    @Getter
-    @Setter
-    private static class OptionResponse extends BasicEntityResponse {
-        private String name;
-        private List<OptionValueResponse> values;
-
-        OptionResponse(OptionModel option) {
-            super(option);
-            this.name = option.getName();
-            this.values = option.getOptionValues().stream().map(OptionValueResponse::new).collect(Collectors.toList());
-        }
-
-        @Getter
-        @Setter
-        private static class OptionValueResponse extends BasicEntityResponse {
-            private String value;
-
-            public OptionValueResponse(OptionValue optionValue) {
-                super(optionValue);
-                this.value = optionValue.getValue();
-            }
-        }
     }
 
     @Getter
@@ -99,7 +73,7 @@ public class ProductResponse extends BasicEntityResponse {
         private String cost;
         private String sku;
         private String barcode;
-        private List<String> options;
+        private List<OptionValueResponse> optionValues;
         private final List<StockResponse> stocks;
 
         public VariantResponse(Variant variant) {
@@ -107,10 +81,23 @@ public class ProductResponse extends BasicEntityResponse {
             this.cost = variant.getCost().toString();
             this.sku = variant.getSku();
             this.barcode = variant.getBarcode();
-            this.options = variant.getVariantValues().stream()
+            this.optionValues = variant.getVariantValues().stream()
                     .map(VariantValue::getOptionValue)
-                    .map(OptionValue::getValue).collect(Collectors.toList());
-            this.stocks = variant.getStocks().stream().map(StockResponse::new).collect(Collectors.toList());
+                    .map(OptionValueResponse::new).collect(Collectors.toList());
+            this.stocks = variant.getStocks().stream()
+                    .filter(stock -> !stock.getVariant().isDeleted())
+                    .map(StockResponse::new)
+                    .collect(Collectors.toList());
+        }
+
+        @Getter
+        private static class OptionValueResponse extends BasicEntityResponse {
+            private final String name;
+
+            public OptionValueResponse(OptionValue optionValue) {
+                super(optionValue);
+                this.name = optionValue.getName();
+            }
         }
 
         @Getter

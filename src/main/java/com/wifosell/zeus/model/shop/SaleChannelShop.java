@@ -2,6 +2,7 @@ package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,8 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaleChannelShopRelation {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"shop_id", "sale_channel_id"}))
+public class SaleChannelShop {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,9 @@ public class SaleChannelShopRelation {
 
     @ManyToOne
     private SaleChannel saleChannel;
+
+    @ManyToOne
+    private Warehouse warehouse;
 
     @Override
     public int hashCode() {
