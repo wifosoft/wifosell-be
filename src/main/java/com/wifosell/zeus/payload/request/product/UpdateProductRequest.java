@@ -22,7 +22,7 @@ public class UpdateProductRequest implements IProductRequest {
 
     private Integer status;
 
-    private List<String> images;
+    private List<ImageRequest> images;
 
     private List<AttributeRequest> attributes;
 

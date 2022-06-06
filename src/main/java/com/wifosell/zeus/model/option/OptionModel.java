@@ -8,7 +8,6 @@ import com.wifosell.zeus.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class OptionModel extends BasicEntity {
 
     private String name;
 
-    @NotNull
+    @Builder.Default
     @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OptionValue> optionValues = new ArrayList<>();
 

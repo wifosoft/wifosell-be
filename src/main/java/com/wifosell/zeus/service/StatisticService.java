@@ -5,7 +5,8 @@ import com.wifosell.zeus.payload.response.statistic.TopRevenueEmployeeResponse;
 import com.wifosell.zeus.payload.response.statistic.TopSellerProductResponse;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 public interface StatisticService {
 

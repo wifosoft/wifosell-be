@@ -4,8 +4,6 @@ import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.order.Payment_;
-import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.Product_;
 import com.wifosell.zeus.model.sale_channel.SaleChannel_;
 import com.wifosell.zeus.model.shop.Shop_;
 import com.wifosell.zeus.model.user.User_;
@@ -87,7 +85,7 @@ public class OrderSpecs {
         });
     }
 
-    public static Specification<OrderModel> isBetweenTwoDates (Instant from, Instant to) {
+    public static Specification<OrderModel> isBetweenTwoDates(Instant from, Instant to) {
         return ((root, query, criteriaBuilder) -> {
             if (from == null || to == null)
                 return criteriaBuilder.and();

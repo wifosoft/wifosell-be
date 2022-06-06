@@ -31,6 +31,7 @@ public class Variant extends BasicEntity {
 
     private String barcode;
 
+    @Builder.Default
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
     private List<VariantValue> variantValues = new ArrayList<>();
 

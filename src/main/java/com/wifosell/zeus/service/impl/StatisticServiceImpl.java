@@ -1,6 +1,5 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderItem_;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
@@ -22,7 +21,9 @@ import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Transactional
 @Service("StatisticService")
@@ -212,13 +213,12 @@ public class StatisticServiceImpl implements StatisticService {
         return result.get(0).longValue();
     }
 
-    @Override
-    public Long totalOrder(Instant dateFrom, Instant dateTo){
+    public Long totalOrder(Instant dateFrom, Instant dateTo) {
         return this.orderRepository.countAllByCreatedAtBetween(dateFrom, dateTo);
     }
 
-    @Override
-    public Long totalOrderByShopId(Long shopId, Instant dateFrom, Instant dateTo){
+
+    public Long totalOrderByShopId(Long shopId, Instant dateFrom, Instant dateTo) {
         return this.orderRepository.countAllByShopIdAndCreatedAtBetween(shopId, dateFrom, dateTo);
     }
 }
