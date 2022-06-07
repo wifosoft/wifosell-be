@@ -109,6 +109,8 @@ public class StatisticServiceImpl implements StatisticService {
             topSeller.add(new TopRevenueEmployeeResponse(
                     (User) row[0],
                     (BigDecimal) row[1]));
+            System.out.println("test1:" + row[0]);
+            System.out.println("test2:" + row[1]);
         }
         return topSeller;
     }
