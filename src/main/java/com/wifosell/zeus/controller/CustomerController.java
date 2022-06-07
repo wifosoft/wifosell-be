@@ -132,11 +132,4 @@ public class CustomerController {
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
-
-    @GetMapping("/search/{text}")
-    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchCustomers(@PathVariable(name = "text") String text) {
-        List<Customer> customers = customerService.searchCustomers(text);
-        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
-        return ResponseEntity.ok(GApiResponse.success(responses));
-    }
 }
