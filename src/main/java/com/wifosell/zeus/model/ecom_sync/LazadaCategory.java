@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.model.audit.BasicEntity;
@@ -43,6 +44,11 @@ public class LazadaCategory extends BasicEntity {
 
     @OneToMany(mappedBy = "sysLazadaCategoryId" ,cascade = CascadeType.ALL)
     private List<LazadaCategoryAttribute> listCategoryAttribute;
+
+
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL)
+    List<LazadaCategoryAndAttribute> lazadaCategoryAndAttributes;
 
     public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem){
         this.var = categoryTreeItem.isVar();

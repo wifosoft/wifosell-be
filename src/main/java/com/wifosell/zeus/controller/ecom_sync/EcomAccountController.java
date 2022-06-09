@@ -154,15 +154,14 @@ public class EcomAccountController {
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "ecomId") Long ecomId
     ) throws ApiException {
-        return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId ,1)));
+        return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId, 1)));
     }
 
 
     @GetMapping("/lazada/crawlCategoryTree")
     public ResponseEntity<GApiResponse> crawlCategoryTree() throws ApiException {
         ecomService.crawlCategoryTree();
-        return  ResponseEntity.ok(GApiResponse.success(""));
+        return ResponseEntity.ok(GApiResponse.success(""));
     }
-
 
 }

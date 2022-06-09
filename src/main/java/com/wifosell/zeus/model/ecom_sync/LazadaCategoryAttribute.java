@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import lombok.Getter;
@@ -21,19 +22,21 @@ public class LazadaCategoryAttribute extends BasicEntity {
 
     private Long lazadaAttributeOptionId;
 
-    @Column(columnDefinition="tinyint(1) default 1")
+    @Column(columnDefinition="tinyint(1) default 0")
     private boolean isKeyProp;
-    @Column(columnDefinition="tinyint(1) default 1")
+    @Column(columnDefinition="tinyint(1) default 0")
     private boolean isSaleProp;
 
     private String name;
 
     private String inputType;
 
+    private Long lazdaAttributeId;
+
     @Column(columnDefinition = "MEDIUMTEXT", name = "options")
     private String options;
 
-    @Column(columnDefinition="tinyint(1) default 1")
+    @Column(columnDefinition="tinyint(1) default 0")
     private boolean isMandatory;
 
     private String attributeType;
@@ -41,9 +44,8 @@ public class LazadaCategoryAttribute extends BasicEntity {
     private String label;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sys_lazada_category_id", referencedColumnName = "id")
-    LazadaCategory sysLazadaCategoryId;
-
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL)
+    List<LazadaCategoryAndAttribute> lazadaCategoryAndAttributes;
 
 }
