@@ -23,6 +23,7 @@ import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,19 +43,14 @@ public class EcomAccountServiceImpl implements EcomService {
 
     @Autowired
     EcomAccountRepository ecomAccountRepository;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     LazadaVariantRepository lazadaVariantRepository;
-
     @Autowired
     LazadaProductRepository lazadaProductRepository;
-
     @Autowired
     LazadaCategoryAttributeRepository lazadaCategoryAttributeRepository;
-
     @Autowired
     LazadaCategoryRepository lazadaCategoryRepository;
 
@@ -243,4 +239,6 @@ public class EcomAccountServiceImpl implements EcomService {
         String responseJson = (new Gson()).toJson(responseTokenPayload);
         System.out.println(responseJson);
     }
+
+
 }
