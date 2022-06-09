@@ -4,6 +4,8 @@ package com.wifosell.zeus.model.ecom_sync;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
+import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
 import javassist.compiler.ast.CastExpr;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,15 +32,31 @@ public class LazadaCategory extends BasicEntity {
     private String name;
     private boolean leaf;
 
-    private Long parent_category_id;
+    //private Long parent_category_id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
-    LazadaCategory parentCategoryId;
+    LazadaCategory parent;
 
-    @OneToMany(mappedBy =  "parentCategoryId" ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy =  "parent" ,cascade = CascadeType.ALL)
     private List<LazadaCategory> categoryChildren;
 
     @OneToMany(mappedBy = "sysLazadaCategoryId" ,cascade = CascadeType.ALL)
     private List<LazadaCategoryAttribute> listCategoryAttribute;
+
+    public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem){
+        this.var = categoryTreeItem.isVar();
+        this.name = categoryTreeItem.getName();
+        this.leaf  = categoryTreeItem.isLeaf();
+        this.lazadaCategoryId = categoryTreeItem.getCategoryId();
+    }
+
+
+    public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory _parent){
+        this.var = categoryTreeItem.isVar();
+        this.name = categoryTreeItem.getName();
+        this.leaf  = categoryTreeItem.isLeaf();
+        this.lazadaCategoryId = categoryTreeItem.getCategoryId();
+        this.setParent(_parent);
+    }
 }

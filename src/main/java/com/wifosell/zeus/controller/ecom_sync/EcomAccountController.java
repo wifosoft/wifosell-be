@@ -16,6 +16,7 @@ import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
+import com.wifosell.zeus.service.impl.ecom_sync.EcomAccountServiceImpl;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.ConvertorType;
 import lombok.Getter;
@@ -155,6 +156,13 @@ public class EcomAccountController {
             @PathVariable(name = "ecomId") Long ecomId
     ) throws ApiException {
         return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId ,1)));
+    }
+
+
+    @GetMapping("/lazada/crawlCategoryTree")
+    public ResponseEntity<GApiResponse> crawlCategoryTree() throws ApiException {
+        ecomService.crawlCategoryTree();
+        return  ResponseEntity.ok(GApiResponse.success(""));
     }
 
 

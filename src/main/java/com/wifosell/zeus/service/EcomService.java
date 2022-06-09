@@ -28,4 +28,5 @@ public interface EcomService {
 
     GetAllProductReport getAllProductsFromEcommerce(Long ecomId, int limitPerPage) throws ApiException;
 
+     void crawlCategoryTree() throws ApiException;
 }

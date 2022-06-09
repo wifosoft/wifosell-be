@@ -2,22 +2,24 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 
 
 import com.google.gson.Gson;
+import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
+import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.repository.UserRepository;
-import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
-import com.wifosell.zeus.repository.ecom_sync.LazadaProductRepository;
-import com.wifosell.zeus.repository.ecom_sync.LazadaVariantRepository;
+import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
@@ -49,6 +51,12 @@ public class EcomAccountServiceImpl implements EcomService {
 
     @Autowired
     LazadaProductRepository lazadaProductRepository;
+
+    @Autowired
+    LazadaCategoryAttributeRepository lazadaCategoryAttributeRepository;
+
+    @Autowired
+    LazadaCategoryRepository lazadaCategoryRepository;
 
 
     @Override
@@ -208,4 +216,31 @@ public class EcomAccountServiceImpl implements EcomService {
     }
 
 
+    public void saveLazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory parent) {
+        LazadaCategory lazadaCategory = new LazadaCategory(categoryTreeItem, parent);
+        lazadaCategoryRepository.save(lazadaCategory);
+        if (categoryTreeItem.getChildren() != null) {
+            for (ResponseCategoryTreePayload.CategoryTreeItem item : categoryTreeItem.getChildren()) {
+                saveLazadaCategory(item, lazadaCategory);
+            }
+
+        }
+    }
+
+    public void crawlCategoryTree() throws ApiException {
+        LazopClient lazadaClient = LazadaClient.getClient();
+
+        LazopRequest request = new LazopRequest();
+        request.setApiName("/category/tree/get");
+        request.setHttpMethod("GET");
+        request.addApiParameter("language_code", "vi_VN");
+        ResponseCategoryTreePayload responseTokenPayload = LazadaClient.executeMappingModel(request, ResponseCategoryTreePayload.class);
+
+        List<ResponseCategoryTreePayload.CategoryTreeItem> categoryTreeItemList = responseTokenPayload.getData();
+        for (ResponseCategoryTreePayload.CategoryTreeItem item : categoryTreeItemList) {
+            saveLazadaCategory(item, null);
+        }
+        String responseJson = (new Gson()).toJson(responseTokenPayload);
+        System.out.println(responseJson);
+    }
 }
