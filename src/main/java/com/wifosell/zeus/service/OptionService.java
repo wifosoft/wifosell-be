@@ -14,4 +14,12 @@ public interface OptionService {
             String sortBy,
             String orderBy
     );
+
+    List<OptionModel> searchOptions(
+            String keyword,
+            Long userId,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit
+    );
 }

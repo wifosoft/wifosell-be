@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/options")
@@ -51,6 +52,20 @@ public class OptionController {
         Page<OptionModel> options = optionService.getOptions(
                 userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
         Page<OptionResponse> responses = options.map(OptionResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/search")
+    public ResponseEntity<GApiResponse<List<OptionResponse>>> searchOptions(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        List<OptionModel> options = optionService.searchOptions(keyword, userPrincipal.getId(), isActives, offset, limit);
+        List<OptionResponse> responses = options.stream().map(OptionResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 }
