@@ -16,7 +16,6 @@ import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
-import com.wifosell.zeus.service.impl.ecom_sync.EcomAccountServiceImpl;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.ConvertorType;
 import lombok.Getter;

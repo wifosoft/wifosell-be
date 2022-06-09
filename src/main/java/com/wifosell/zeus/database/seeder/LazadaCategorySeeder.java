@@ -4,17 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
-import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
-import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
-import com.wifosell.zeus.service.EcomService;
-import com.wifosell.zeus.service.impl.ecom_sync.EcomAccountServiceImpl;
-import com.wifosell.zeus.taurus.lazada.LazadaClient;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

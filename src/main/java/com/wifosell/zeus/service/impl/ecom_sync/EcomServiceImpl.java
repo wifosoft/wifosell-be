@@ -4,7 +4,6 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 import com.google.gson.Gson;
 import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
-import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
@@ -23,7 +22,6 @@ import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +36,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service()
 @Transactional
-public class EcomAccountServiceImpl implements EcomService {
-    Logger logger = LoggerFactory.getLogger(EcomAccountServiceImpl.class);
+public class EcomServiceImpl implements EcomService {
+    Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
 
     @Autowired
     EcomAccountRepository ecomAccountRepository;
