@@ -86,6 +86,7 @@ public class EcomAccount extends BasicEntity {
         switch(this.getEcomName()){
             case LAZADA:
                 ResponseSellerInfoPayload payload = this.parseLazadaSellerInfoPayload();
+                if(payload == null) return null;
                 return payload.getData().name;
         }
         return null;

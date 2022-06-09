@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/com.wifosell.zeus.model.customer.Customer/

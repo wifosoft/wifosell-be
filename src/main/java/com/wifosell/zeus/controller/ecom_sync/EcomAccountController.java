@@ -27,6 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 
@@ -89,8 +91,10 @@ public class EcomAccountController {
     public ResponseEntity<GApiResponse> callbackLazadaAccount(
             @RequestParam("code") String code,
             @RequestParam("data") String data
-    ) throws ApiException {
-        byte[] decodedBytes = Base64.getDecoder().decode(data);
+    ) throws ApiException, UnsupportedEncodingException {
+        String dataDecode = java.net.URLDecoder.decode(data, StandardCharsets.UTF_8.name());
+
+        byte[] decodedBytes = Base64.getDecoder().decode(dataDecode);
         String decodedString = new String(decodedBytes);
         EcomAccountLazadaCallbackPayload payload = (new Gson()).fromJson(decodedString, EcomAccountLazadaCallbackPayload.class);
         payload.setCode(code);
