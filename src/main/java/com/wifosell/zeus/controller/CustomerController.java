@@ -1,10 +1,13 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
+import com.wifosell.zeus.payload.request.common.SearchRequest;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.payload.response.customer.CustomerResponse;
+import com.wifosell.zeus.payload.response.option.OptionResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
@@ -52,6 +55,20 @@ public class CustomerController {
 
         Page<Customer> customers = customerService.getCustomers(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
         Page<CustomerResponse> responses = customers.map(CustomerResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/search")
+    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchOptions(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody @Valid SearchRequest request,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        List<Customer> customers = customerService.searchCustomers(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
+        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

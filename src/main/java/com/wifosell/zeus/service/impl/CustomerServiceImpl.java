@@ -1,7 +1,9 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
@@ -10,6 +12,8 @@ import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +47,34 @@ public class CustomerServiceImpl implements CustomerService {
                         .and(CustomerSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
+    }
+
+    @Override
+    public List<Customer> searchCustomers(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
+        SearchSession searchSession = Search.session(entityManager);
+
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (limit == null || limit > 100) {
+            limit = 100;
+        }
+
+        return searchSession.search(Customer.class).where(f -> f.bool(b -> {
+            b.must(f.matchAll());
+            if (keyword != null) {
+                b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
+            }
+            if (gmId != null) {
+                b.must(f.match().field(Customer_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
+            }
+            if (isActives == null || isActives.isEmpty()) {
+                b.must(f.match().field(Customer_.IS_ACTIVE).matching(true));
+            } else {
+                b.must(f.terms().field(Customer_.IS_ACTIVE).matchingAny(isActives));
+            }
+        })).fetchHits(offset * limit, limit);
     }
 
     @Override

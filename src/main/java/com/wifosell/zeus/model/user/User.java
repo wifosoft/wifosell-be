@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.permission.UserPermission;
 import com.wifosell.zeus.model.role.UserRoleRelation;
@@ -161,6 +162,10 @@ public class User extends BasicEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "generalManager")
     private List<OptionModel> options;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager")
+    private List<Customer> customers;
 
     public User(String firstName, String lastName, String username, String email, String phone, String password) {
         this.firstName = firstName;

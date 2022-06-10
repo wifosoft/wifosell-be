@@ -2,10 +2,12 @@ package com.wifosell.zeus.model.option;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wifosell.zeus.constant.lucence.LuceneAnalysisName;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
@@ -27,7 +29,7 @@ public class OptionModel extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @FullTextField(analyzer = "vieNGram", searchAnalyzer = "standard")
+    @FullTextField(analyzer = LuceneAnalysisName.VIE_NGRAM, searchAnalyzer = StandardTokenizerFactory.NAME)
     private String name;
 
     @Builder.Default

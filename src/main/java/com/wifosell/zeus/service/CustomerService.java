@@ -12,6 +12,8 @@ public interface CustomerService {
     Page<Customer> getCustomers(Long userId, List<Boolean> isActives,
                                 Integer offset, Integer limit, String sortBy, String orderBy);
 
+    List<Customer> searchCustomers(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit);
+
     Customer getCustomer(Long userId, @NonNull Long customerId);
 
     Customer addCustomer(Long userId, @Valid CustomerRequest request);
