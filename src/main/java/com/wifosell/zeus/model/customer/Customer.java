@@ -19,7 +19,6 @@ import java.util.Date;
 public class Customer extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Field(termVector = TermVector.YES, analyze = Analyze.YES, store = Store.NO)
