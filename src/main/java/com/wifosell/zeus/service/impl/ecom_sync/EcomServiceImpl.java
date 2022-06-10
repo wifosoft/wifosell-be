@@ -5,12 +5,11 @@ import com.google.gson.Gson;
 import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
-import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
-import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
+import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryAttributePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
@@ -22,6 +21,7 @@ import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import org.apache.poi.sl.draw.geom.GuideIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service()
-@Transactional
 public class EcomServiceImpl implements EcomService {
     Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
 
@@ -52,6 +51,8 @@ public class EcomServiceImpl implements EcomService {
     @Autowired
     LazadaCategoryRepository lazadaCategoryRepository;
 
+    @Autowired
+    LazadaCategoryAndAttributeRepository lazadaCategoryAndAttributeRepository;
 
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId) {
@@ -219,6 +220,61 @@ public class EcomServiceImpl implements EcomService {
             }
 
         }
+    }
+
+
+    @Transactional
+    public void crawlSingleCategoryAttributeById(Long lazadaCategoryId) throws ApiException {
+        LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(lazadaCategoryId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại category id"));
+
+        LazopRequest request = new LazopRequest();
+        request.setApiName("/category/attributes/get");
+        request.setHttpMethod("GET");
+        request.addApiParameter("primary_category_id", lazadaCategoryId.toString());
+        request.addApiParameter("language_code", "vi_VN");
+        ResponseCategoryAttributePayload responseTokenPayload = LazadaClient.executeMappingModel(request, ResponseCategoryAttributePayload.class);
+        LazadaCategoryAttribute lazadaCategoryAttribute = null;
+        for (ResponseCategoryAttributePayload.CategoryAttributeItem categoryAttributeItem : responseTokenPayload.getData()) {
+            try {
+                // kiem tra co ton tai attribute lazada id nay khong
+                Optional<LazadaCategoryAttribute> lazadaCategoryAttributeOpt = lazadaCategoryAttributeRepository.findFirstByLazadaAttributeId(categoryAttributeItem.getId());
+                if (lazadaCategoryAttributeOpt.isEmpty()) {
+                    //khong ton tai thi them vao db
+                    lazadaCategoryAttribute = new LazadaCategoryAttribute(categoryAttributeItem);
+                    lazadaCategoryAttributeRepository.save(lazadaCategoryAttribute);
+                } else {
+                    lazadaCategoryAttribute = lazadaCategoryAttributeOpt.get();
+                }
+                LazadaCategoryAndAttribute lazadaCategoryAndAttribute = new LazadaCategoryAndAttribute();
+                lazadaCategoryAndAttribute.setLazadaCategoryAttribute(lazadaCategoryAttribute);
+                lazadaCategoryAndAttribute.setLazadaCategory(lazadaCategory);
+                lazadaCategoryAndAttributeRepository.save(lazadaCategoryAndAttribute);
+            } catch (Exception exception) {
+                logger.info("[+] Error when process categoryId {}", lazadaCategoryId);
+                exception.printStackTrace();
+            }
+        }
+
+        String responseJson = (new Gson()).toJson(responseTokenPayload);
+        System.out.println(responseJson);
+    }
+
+    @Override
+    public void crawlCategoryAttribute() throws ApiException {
+        //crawl by db
+        List<LazadaCategory> listLeafCategories = lazadaCategoryRepository.findAllLeaf();
+        logger.info("Crawl Category Attribute {} items", listLeafCategories.size());
+        for (LazadaCategory lazadaCategory : listLeafCategories) {
+            //crawl the option by API
+            try {
+                crawlSingleCategoryAttributeById(lazadaCategory.getLazadaCategoryId());
+            } catch (Exception ex) {
+                logger.info("[+] Error when process categoryId {}", lazadaCategory.getLazadaCategoryId());
+                ex.printStackTrace();
+            }
+        }
+        logger.info("Crawl completed Category Attribute {} items", listLeafCategories.size());
+
     }
 
     public void crawlCategoryTree() throws ApiException {

@@ -164,4 +164,12 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success(""));
     }
 
+    @GetMapping("/lazada/crawlCategoryAtrribute")
+    public ResponseEntity<GApiResponse> crawlCategoryAttribute() throws ApiException {
+        ecomService.crawlCategoryAttribute();
+        return ResponseEntity.ok(GApiResponse.success("KO"));
+    }
+
+
+
 }

@@ -8,10 +8,7 @@ import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
 import javassist.compiler.ast.CastExpr;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.*;
@@ -22,6 +19,7 @@ import java.util.List;
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "lazada_categories")
+@NoArgsConstructor
 public class LazadaCategory extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,12 +40,9 @@ public class LazadaCategory extends BasicEntity {
     @OneToMany(mappedBy =  "parent" ,cascade = CascadeType.ALL)
     private List<LazadaCategory> categoryChildren;
 
-    @OneToMany(mappedBy = "sysLazadaCategoryId" ,cascade = CascadeType.ALL)
-    private List<LazadaCategoryAttribute> listCategoryAttribute;
-
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     List<LazadaCategoryAndAttribute> lazadaCategoryAndAttributes;
 
     public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem){

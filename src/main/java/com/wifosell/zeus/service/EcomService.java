@@ -33,4 +33,6 @@ public interface EcomService {
     void crawlCategoryTree() throws ApiException;
 
     void saveLazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory parent);
+
+    void crawlCategoryAttribute() throws ApiException;
 }
