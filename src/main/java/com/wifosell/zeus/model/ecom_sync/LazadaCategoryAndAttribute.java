@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "lazada_caa")
-
 public class LazadaCategoryAndAttribute extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

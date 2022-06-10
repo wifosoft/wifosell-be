@@ -42,7 +42,7 @@ public class LazadaCategory extends BasicEntity {
 
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "lazadaCategory")
     List<LazadaCategoryAndAttribute> lazadaCategoryAndAttributes;
 
     public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem){
