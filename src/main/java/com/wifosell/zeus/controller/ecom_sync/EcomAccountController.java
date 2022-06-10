@@ -7,6 +7,7 @@ import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAttribute;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
@@ -18,6 +19,7 @@ import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.ConvertorType;
+import io.swagger.models.Response;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -27,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.PresentationDirection;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -168,6 +171,12 @@ public class EcomAccountController {
     public ResponseEntity<GApiResponse> crawlCategoryAttribute() throws ApiException {
         ecomService.crawlCategoryAttribute();
         return ResponseEntity.ok(GApiResponse.success("KO"));
+    }
+
+    @GetMapping("/lazada/getCategoryAttribute")
+    public ResponseEntity<GApiResponse> getLazadaCategoryAttribute() {
+        List<LazadaCategoryAttribute> lazadaCategoryAttributeList =  ecomService.getListCategoryAttribute();
+        return ResponseEntity.ok(GApiResponse.success(lazadaCategoryAttributeList));
     }
 
 

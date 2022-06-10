@@ -294,5 +294,10 @@ public class EcomServiceImpl implements EcomService {
         System.out.println(responseJson);
     }
 
+    public List<LazadaCategoryAttribute> getListCategoryAttribute() {
+        List<LazadaCategoryAttribute> listCategoryAttribute = lazadaCategoryAttributeRepository.findAll();
+        return listCategoryAttribute;
+    }
+
 
 }

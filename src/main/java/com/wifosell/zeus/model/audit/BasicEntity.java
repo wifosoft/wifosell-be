@@ -1,5 +1,6 @@
 package com.wifosell.zeus.model.audit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,10 +32,12 @@ public abstract class BasicEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    @JsonIgnore
     @LastModifiedDate
     @Column(nullable = false)
     private Instant updatedAt;

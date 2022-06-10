@@ -3,6 +3,7 @@ package com.wifosell.zeus.service;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
+import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAttribute;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
@@ -35,4 +36,6 @@ public interface EcomService {
     void saveLazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory parent);
 
     void crawlCategoryAttribute() throws ApiException;
+
+    List<LazadaCategoryAttribute> getListCategoryAttribute();
 }
