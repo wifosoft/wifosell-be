@@ -37,30 +37,25 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public List<OptionModel> searchOptions(String keyword, Long userId, List<Boolean> isActives, Integer offset, Integer limit) {
+    public List<OptionModel> searchOptions(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
         SearchSession searchSession = Search.session(entityManager);
 
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
-
         if (offset == null) {
             offset = 0;
         }
-
         if (limit == null || limit > 100) {
             limit = 100;
         }
 
         return searchSession.search(OptionModel.class).where(f -> f.bool(b -> {
             b.must(f.matchAll());
-
             if (keyword != null) {
                 b.must(f.match().field(OptionModel_.NAME).matching(keyword));
             }
-
             if (gmId != null) {
                 b.must(f.match().field(OptionModel_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
             }
-
             if (isActives == null || isActives.isEmpty()) {
                 b.must(f.match().field(OptionModel_.IS_ACTIVE).matching(true));
             } else {

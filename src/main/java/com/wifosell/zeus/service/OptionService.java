@@ -16,8 +16,8 @@ public interface OptionService {
     );
 
     List<OptionModel> searchOptions(
-            String keyword,
             Long userId,
+            String keyword,
             List<Boolean> isActives,
             Integer offset,
             Integer limit
