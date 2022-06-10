@@ -27,7 +27,7 @@ public class OptionModel extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @FullTextField
+    @FullTextField(analyzer = "vieNGram", searchAnalyzer = "standard")
     private String name;
 
     @Builder.Default
