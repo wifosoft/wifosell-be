@@ -6,14 +6,13 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAttribute;
-import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
+import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
+import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
@@ -39,6 +38,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/ecom_sync/ecom_account")
 public class EcomAccountController {
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     EcomService ecomService;
 
@@ -201,8 +202,22 @@ public class EcomAccountController {
             @RequestParam("lazadaCategoryId") Long lazadaCategoryId,
             @RequestParam("sysCategoryId") Long sysCategoryId
     ) {
+        User user = userRepository.getUser(userPrincipal);
+        LazadaCategoryAndSysCategory lazadaCategoryAndSysCategory = ecomService.linkLazadaCategoryAndSysCategory(user, lazadaCategoryId, sysCategoryId);
+        return ResponseEntity.ok(GApiResponse.success("Liên kết thành công", lazadaCategoryAndSysCategory));
+    }
 
-        return ResponseEntity.ok(GApiResponse.success(""));
+    //liên kết danh mục hàng variatn và system
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/lazada/linkLazadaVariantAndSysVariant")
+    public ResponseEntity<GApiResponse> linkLazadaVariantAndSysVariant(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam("lazadaVariantId") Long lazadaVariantId,
+            @RequestParam("sysVariantId") Long sysVariantId
+    ) {
+        User user = userRepository.getUser(userPrincipal);
+        LazadaVariantAndSysVariant lazadaVariantAndSysVariant = ecomService.linkLazadaVariantAndSysVariant(user, lazadaVariantId, sysVariantId);
+        return ResponseEntity.ok(GApiResponse.success("Liên kết thành công", lazadaVariantAndSysVariant));
     }
 
 }

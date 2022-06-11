@@ -9,6 +9,7 @@ import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
@@ -27,6 +28,7 @@ import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.CategorySpecs;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
+import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -391,6 +393,7 @@ public class EcomServiceImpl implements EcomService {
 
     public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId) {
         LazadaCategoryAndSysCategory reslt = null;
+
         User gm = user.getGeneralManager();
 
         Category sysCategory = categoryRepository.getOne(
@@ -399,6 +402,9 @@ public class EcomServiceImpl implements EcomService {
         LazadaCategory lazadaCategory = lazadaCategoryRepository.findById(lazadaCategoryId).orElseThrow(
                 () -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazada category")
         );
+        if(!lazadaCategory.isLeaf()){
+            throw new ZeusGlobalException(HttpStatus.OK, "Lazada category cần là category cấp cuối cùng.");
+        }
 
         reslt = new LazadaCategoryAndSysCategory();
         reslt.setLazadaCategory(lazadaCategory);
@@ -407,6 +413,27 @@ public class EcomServiceImpl implements EcomService {
         lazadaCategoryAndSysCategoryRepository.save(reslt);
         return reslt;
     }
+
+    public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId){
+        LazadaVariantAndSysVariant record = null;
+        User gm = user.getGeneralManager();
+
+        LazadaVariant lazadaVariant = lazadaVariantRepository.findById(lazadaVariantId).orElseThrow(
+                ()-> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazadaVariantId")
+        );
+
+        Variant sysVariant = variantRepository.getOne(
+                VariantSpecs.hasGeneralManager(gm.getId()).and(VariantSpecs.hasId(sysVariantId))
+        );
+
+        record = new LazadaVariantAndSysVariant();
+        record.setLazadaVariant(lazadaVariant);
+        record.setVariant(sysVariant);
+        record.setGeneralManager(gm);
+        lazadaVariantAndSysVarirantRepository.save(record);
+        return record;
+    }
+
 
 
 

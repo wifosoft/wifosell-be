@@ -33,11 +33,13 @@ public class LazadaCategory extends BasicEntity {
 
     //private Long parent_category_id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
     LazadaCategory parent;
 
-    @OneToMany(mappedBy =  "parent" ,cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy =  "parent" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LazadaCategory> categoryChildren;
 
 
