@@ -193,5 +193,16 @@ public class EcomAccountController {
     }
 
 
+    //liên kết danh mục hàng category và system
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/lazada/linkLazadaCategoryAndSysCategory")
+    public ResponseEntity<GApiResponse> linkLazadaCategoryAndSysCategory(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam("lazadaCategoryId") Long lazadaCategoryId,
+            @RequestParam("sysCategoryId") Long sysCategoryId
+    ) {
+
+        return ResponseEntity.ok(GApiResponse.success(""));
+    }
 
 }

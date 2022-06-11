@@ -6,6 +6,8 @@ import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
+import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
@@ -22,6 +24,8 @@ import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayl
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
+import com.wifosell.zeus.specs.CategorySpecs;
+import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import org.slf4j.Logger;
@@ -39,6 +43,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service()
 public class EcomServiceImpl implements EcomService {
     Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    VariantRepository variantRepository;
 
     @Autowired
     EcomAccountRepository ecomAccountRepository;
@@ -70,6 +80,14 @@ public class EcomServiceImpl implements EcomService {
 
     @Autowired
     SaleChannelShopRepository saleChannelShopRepository;
+
+    //link lazada varirant, cate
+
+    @Autowired
+    LazadaCategoryAndSysCategoryRepository lazadaCategoryAndSysCategoryRepository;
+
+    @Autowired
+    LazadaVariantAndSysVarirantRepository lazadaVariantAndSysVarirantRepository;
 
 
     @Override
@@ -370,5 +388,28 @@ public class EcomServiceImpl implements EcomService {
         }
         return linkwwAndEcomAccountRecord;
     }
+
+    public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId) {
+        LazadaCategoryAndSysCategory reslt = null;
+        User gm = user.getGeneralManager();
+
+        Category sysCategory = categoryRepository.getOne(
+                CategorySpecs.hasGeneralManager(gm.getId()).and(CategorySpecs.hasId(sysCategoryId)));
+
+        LazadaCategory lazadaCategory = lazadaCategoryRepository.findById(lazadaCategoryId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazada category")
+        );
+
+        reslt = new LazadaCategoryAndSysCategory();
+        reslt.setLazadaCategory(lazadaCategory);
+        reslt.setSysCategory(sysCategory);
+        reslt.setGeneralManager(gm.getGeneralManager());
+        lazadaCategoryAndSysCategoryRepository.save(reslt);
+        return reslt;
+    }
+
+
+
+
 }
 
