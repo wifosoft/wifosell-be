@@ -32,12 +32,10 @@ public abstract class BasicEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @JsonIgnore
     @LastModifiedDate
     @Column(nullable = false)
     private Instant updatedAt;

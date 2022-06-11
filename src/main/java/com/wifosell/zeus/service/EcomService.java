@@ -4,6 +4,7 @@ import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAttribute;
+import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
@@ -38,4 +39,8 @@ public interface EcomService {
     void crawlCategoryAttribute() throws ApiException;
 
     List<LazadaCategoryAttribute> getListCategoryAttribute();
+
+    LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long sswId);
+
+    LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId);
 }

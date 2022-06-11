@@ -40,6 +40,8 @@ public class Product extends BasicEntity {
 
     private Integer weight;
 
+    private String ProductIdentify;
+
     @Size(max = 50)
     private String dimension;
 

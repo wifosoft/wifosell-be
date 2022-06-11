@@ -8,6 +8,7 @@ import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAttribute;
+import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
@@ -175,8 +176,20 @@ public class EcomAccountController {
 
     @GetMapping("/lazada/getCategoryAttribute")
     public ResponseEntity<GApiResponse> getLazadaCategoryAttribute() {
-        List<LazadaCategoryAttribute> lazadaCategoryAttributeList =  ecomService.getListCategoryAttribute();
+        List<LazadaCategoryAttribute> lazadaCategoryAttributeList = ecomService.getListCategoryAttribute();
         return ResponseEntity.ok(GApiResponse.success(lazadaCategoryAttributeList));
+    }
+
+
+    @GetMapping("/linkWithSaleChannelShopWarehouse")
+    public ResponseEntity<GApiResponse> linkEcomAccountSaleChannelShopWarehouse(
+            @RequestParam("ecomId") Long ecomId,
+            @RequestParam("shopId") Long shopId,
+            @RequestParam("warehouseId") Long warehouseId,
+            @RequestParam("saleChannelId") Long saleChannelId
+    ) {
+        LazadaSwwAndEcomAccount link = ecomService.linkEcomAccountToSSW(ecomId, saleChannelId, shopId, warehouseId);
+        return ResponseEntity.ok(GApiResponse.success("Thành công", link));
     }
 
 

@@ -5,10 +5,13 @@ import com.google.gson.Gson;
 import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
+import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryAttributePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
@@ -16,12 +19,11 @@ import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,22 @@ public class EcomServiceImpl implements EcomService {
 
     @Autowired
     LazadaCategoryAndAttributeRepository lazadaCategoryAndAttributeRepository;
+
+
+    @Autowired
+    LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
+
+    @Autowired
+    SaleChannelRepository saleChannelRepository;
+
+    @Autowired
+    WarehouseRepository warehouseRepository;
+    @Autowired
+    ShopRepository shopRepository;
+
+    @Autowired
+    SaleChannelShopRepository saleChannelShopRepository;
+
 
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId) {
@@ -299,5 +317,58 @@ public class EcomServiceImpl implements EcomService {
         return listCategoryAttribute;
     }
 
+    public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long sswId) {
+        EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "Ecom account không tồn tại")
+        );
+        SaleChannelShop ssw = saleChannelShopRepository.findById(sswId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "Salechannel_shop_warehouse không tồn tại")
+        );
+        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+        lazadaSwwAndEcomAccount.setSaleChannelShop(ssw);
+        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+        return lazadaSwwAndEcomAccount;
+    }
 
+    public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId) {
+        EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "Ecom account không tồn tại")
+        );
+
+        SaleChannel saleChannel = saleChannelRepository.findById(saleChannelId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "saleChannelId không tồn tại")
+        );
+
+        Shop shop = shopRepository.findById(shopId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "shopId không tồn tại")
+        );
+
+        Warehouse warehouse = warehouseRepository.findById(warehouseId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "warehouseId không tồn tại")
+        );
+
+        Optional<SaleChannelShop> ssw = saleChannelShopRepository.findRecordBySSWId(shopId, saleChannelId, warehouseId);
+        SaleChannelShop sswRecord = null;
+        if (ssw.isPresent()) {
+            //ton tai
+            sswRecord = ssw.get();
+        } else {
+            sswRecord = SaleChannelShop.builder().saleChannel(saleChannel).shop(shop).warehouse(warehouse).build();
+            saleChannelShopRepository.save(sswRecord);
+        }
+
+        //kiem tra ton tai link khong thi link
+        Optional<LazadaSwwAndEcomAccount> linkSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.getRecordBySswIdAndEcomAccountId(sswRecord.getId(), ecomId);
+        LazadaSwwAndEcomAccount linkwwAndEcomAccountRecord = null;
+        if (linkSwwAndEcomAccount.isPresent()) {
+            //ton tai
+            linkwwAndEcomAccountRecord = linkSwwAndEcomAccount.get();
+        } else {
+            linkwwAndEcomAccountRecord = LazadaSwwAndEcomAccount.builder().ecomAccount(ecomAccount).saleChannelShop(sswRecord).build();
+            lazadaSwwAndEcomAccountRepository.save(linkwwAndEcomAccountRecord);
+        }
+        return linkwwAndEcomAccountRecord;
+    }
 }
+

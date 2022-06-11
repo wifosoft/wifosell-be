@@ -100,6 +100,7 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
                             WarehouseSpecs.hasGeneralManager(gm.getId())
                                     .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
                     );
+
                     SaleChannelShop relation = SaleChannelShop.builder()
                             .shop(shop)
                             .saleChannel(saleChannel)
