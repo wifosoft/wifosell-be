@@ -9,10 +9,12 @@ import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryAttributePayload;
@@ -30,6 +32,7 @@ import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import com.wifosell.zeus.utils.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +40,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,6 +51,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EcomServiceImpl implements EcomService {
     Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
 
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    StockRepository stockRepository;
     @Autowired
     CategoryRepository categoryRepository;
 
@@ -143,8 +152,17 @@ public class EcomServiceImpl implements EcomService {
 
     @Override
     public GetProductPageReport getProductsFromEcommerce(Long ecomId, int offset, int limit) throws ApiException {
+
+        boolean flagModeCreateSysProduct = true;
         Gson gson = (new Gson());
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+
+        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomId).orElseThrow(
+                () -> new ZeusGlobalException(HttpStatus.OK, "Tài khoản chưa liên kết")
+        );
+
+        Warehouse warehouse = lazadaSwwAndEcomAccount.getSaleChannelShop().getWarehouse();
+
         String token = ecomAccount.getAccessToken();
         int totalProduct = 0;
         AtomicInteger totalSku = new AtomicInteger();
@@ -167,7 +185,18 @@ public class EcomServiceImpl implements EcomService {
         List<ResponseListProductPayload.Product> listLazadaProducts = responseListProductData.products;
 
         totalProduct = listLazadaProducts.size();
-        listLazadaProducts.forEach(e -> {
+        for (ResponseListProductPayload.Product e : listLazadaProducts) {
+            LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(e.getPrimary_category()).orElse(null);
+            if (lazadaCategory == null) {
+                continue;
+            }
+            Optional<LazadaCategoryAndSysCategory> lazadaCategoryAndSysCategory = lazadaCategoryAndSysCategoryRepository.findByLazadaCategory(lazadaCategory.getId());
+            Category sysCategory = null;
+            if (lazadaCategoryAndSysCategory.isPresent()) {
+                sysCategory = lazadaCategoryAndSysCategory.get().getSysCategory();
+            } else {
+                sysCategory = null;
+            }
             logger.info("[+] Processed product item_id : {} - Name: {}", e.getItem_id(), e.getAttributes().getName());
             //kiem tra lzproduct ton tai khong
             LazadaProduct lzProduct = lazadaProductRepository.findByItemId(e.getItem_id());
@@ -181,7 +210,10 @@ public class EcomServiceImpl implements EcomService {
             //xu ly sku
             List<ResponseListProductPayload.Sku> listSkus = e.getSkus();
             LazadaProduct finalLzProduct = lzProduct;
-            listSkus.forEach(s -> {
+
+            boolean flagCacheCreatedProduct = false;
+            Product sysProduct = null;
+            for (ResponseListProductPayload.Sku s : listSkus) {
                 LazadaVariant lzVariant = lazadaVariantRepository.findBySkuId(s.getSkuId());
                 if (lzVariant == null) {
                     //tao moi variant link voi lazadaProduct
@@ -190,9 +222,64 @@ public class EcomServiceImpl implements EcomService {
                     lzVariant.withDataBySkuAPI(s);
                 }
                 lazadaVariantRepository.save(lzVariant);
+
+
+                Variant sysVariant = variantRepository.getBySKUNoThrow(lzVariant.getSellerSku(), ecomAccount.getGeneralManager().getId());
+                if (sysVariant != null) {
+                    //nếu tồn tại variant thì sẽ tồn tại product => Cập nhật thông tin product
+                    //cập nhật thông tin variant hiện tại, stock ở warehouse tương ứng
+                    sysVariant.setCost(new BigDecimal(lzVariant.getPrice()));
+                    variantRepository.save(sysVariant);
+                    Optional<Stock> stock_ = stockRepository.findByVariantAndWarehouse(sysVariant.getId(), warehouse.getId());
+                    if (stock_.isPresent()) {
+                        Stock stock = stock_.get();
+                        stock.setQuantity(s.getQuantity());
+                        stock.setActualQuantity(s.getSellableStock());
+                        stockRepository.save(stock);
+                    } else {
+                        //chưa tồn tại stock warehouse thì thêm record
+
+                        Stock stock = new Stock();
+                        stock.setActualQuantity(s.getSellableStock());
+                        stock.setQuantity(s.getQuantity());
+                        stock.setVariant(sysVariant);
+                        stock.setWarehouse(warehouse);
+                        stockRepository.save(stock);
+                    }
+                }
+                else {
+                    //Không tồn tại variant thì có thể có tồn tại product hoặc không
+                    //Thêm product + variant
+                    if (!flagCacheCreatedProduct) {
+                        sysProduct = new Product();
+                        sysProduct.setProductIdentify(s.getSellerSku());
+                        sysProduct.setDescription(e.getAttributes().getDescription());
+                        sysProduct.setDimension(s.getDimensionStr());
+                        sysProduct.setName(e.getAttributes().getName());
+                        sysProduct.setWeight(NumberUtils.tryParseInt(s.getPackage_weight(), 500));
+                        sysProduct.setGeneralManager(ecomAccount.getGeneralManager());
+                        sysProduct.setCategory(sysCategory);
+                        productRepository.save(sysProduct);
+                        flagCacheCreatedProduct = true;
+                    }
+                    Variant variant = new Variant();
+                    variant.setCost(new BigDecimal(lzVariant.getPrice()));
+                    variant.setBarcode(s.getSellerSku());
+                    variant.setSku(s.getSellerSku());
+                    variant.setGeneralManager(ecomAccount.getGeneralManager());
+                    variant.setProduct(sysProduct);
+                    variantRepository.save(variant);
+                    Stock stock = new Stock();
+                    stock.setActualQuantity(s.getSellableStock());
+                    stock.setQuantity(s.getQuantity());
+                    stock.setVariant(variant);
+                    stock.setWarehouse(warehouse);
+                    stockRepository.save(stock);
+                }
                 totalSku.addAndGet(1);
-            });
-        });
+            }
+        }
+
         GetProductPageReport getProductPageReport = new GetProductPageReport(totalProduct, totalSku.intValue());
         getProductPageReport.setResponseListProductPayload(responseListProductPayload);
 
@@ -402,7 +489,7 @@ public class EcomServiceImpl implements EcomService {
         LazadaCategory lazadaCategory = lazadaCategoryRepository.findById(lazadaCategoryId).orElseThrow(
                 () -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazada category")
         );
-        if(!lazadaCategory.isLeaf()){
+        if (!lazadaCategory.isLeaf()) {
             throw new ZeusGlobalException(HttpStatus.OK, "Lazada category cần là category cấp cuối cùng.");
         }
 
@@ -414,12 +501,12 @@ public class EcomServiceImpl implements EcomService {
         return reslt;
     }
 
-    public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId){
+    public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId) {
         LazadaVariantAndSysVariant record = null;
         User gm = user.getGeneralManager();
 
         LazadaVariant lazadaVariant = lazadaVariantRepository.findById(lazadaVariantId).orElseThrow(
-                ()-> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazadaVariantId")
+                () -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazadaVariantId")
         );
 
         Variant sysVariant = variantRepository.getOne(
@@ -433,9 +520,6 @@ public class EcomServiceImpl implements EcomService {
         lazadaVariantAndSysVarirantRepository.save(record);
         return record;
     }
-
-
-
 
 
 }
