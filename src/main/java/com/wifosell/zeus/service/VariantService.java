@@ -10,8 +10,24 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface VariantService {
-    Page<Variant> getVariants(Long userId, List<Long> warehouseIds, List<Boolean> isActives,
-                              int offset, int limit, String sortBy, String orderBy);
+    Page<Variant> getVariants(
+            Long userId,
+            List<Long> warehouseIds,
+            List<Boolean> isActives,
+            int offset,
+            int limit,
+            String sortBy,
+            String orderBy
+    );
+
+    List<Variant> searchVariants(
+            Long userId,
+            String keyword,
+            List<Long> warehouseIds,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit
+    );
 
     Variant getVariant(Long userId, @NonNull Long variantId);
 

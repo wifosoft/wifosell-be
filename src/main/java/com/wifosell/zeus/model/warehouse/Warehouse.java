@@ -7,6 +7,7 @@ import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Warehouse extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GenericField
     private Long id;
 
     private String name;

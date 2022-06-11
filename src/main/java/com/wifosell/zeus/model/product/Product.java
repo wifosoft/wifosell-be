@@ -2,12 +2,15 @@ package com.wifosell.zeus.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wifosell.zeus.constant.lucence.LuceneAnalysisName;
 import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,6 +32,7 @@ public class Product extends BasicEntity {
 
     @NotBlank
     @Size(max = 255)
+    @FullTextField(name = LuceneAnalysisName.VIE_NGRAM, searchAnalyzer = StandardTokenizerFactory.NAME)
     private String name;
 
     @Size(max = 255)

@@ -9,6 +9,7 @@ import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.permission.UserPermission;
+import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
@@ -166,6 +167,10 @@ public class User extends BasicEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "generalManager")
     private List<Customer> customers;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager")
+    private List<Variant> variants;
 
     public User(String firstName, String lastName, String username, String email, String phone, String password) {
         this.firstName = firstName;

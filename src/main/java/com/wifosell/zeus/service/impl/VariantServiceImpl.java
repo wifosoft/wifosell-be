@@ -1,7 +1,12 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.model.product.Product_;
 import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.product.Variant_;
+import com.wifosell.zeus.model.stock.Stock_;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.user.User_;
+import com.wifosell.zeus.model.warehouse.Warehouse_;
 import com.wifosell.zeus.payload.request.variant.AddVariantRequest;
 import com.wifosell.zeus.payload.request.variant.IVariantRequest;
 import com.wifosell.zeus.payload.request.variant.UpdateVariantRequest;
@@ -12,9 +17,12 @@ import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +34,7 @@ import java.util.stream.Collectors;
 public class VariantServiceImpl implements VariantService {
     private final UserRepository userRepository;
     private final VariantRepository variantRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Page<Variant> getVariants(
@@ -44,6 +53,44 @@ public class VariantServiceImpl implements VariantService {
                         .and(VariantSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
+    }
+
+    @Override
+    public List<Variant> searchVariants(
+            Long userId,
+            String keyword,
+            List<Long> warehouseIds,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit
+    ) {
+        SearchSession searchSession = Search.session(entityManager);
+
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (limit == null || limit > 100) {
+            limit = 100;
+        }
+
+        return searchSession.search(Variant.class).where(f -> f.bool(b -> {
+            b.must(f.matchAll());
+            if (gmId != null) {
+                b.must(f.match().field(Variant_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
+            }
+            if (warehouseIds != null && !warehouseIds.isEmpty()) {
+                b.must(f.terms().field(Variant_.STOCKS + "." + Stock_.WAREHOUSE + Warehouse_.ID).matchingAny(warehouseIds));
+            }
+            if (isActives == null || isActives.isEmpty()) {
+                b.must(f.match().field(Variant_.IS_ACTIVE).matching(true));
+            } else {
+                b.must(f.terms().field(Variant_.IS_ACTIVE).matchingAny(isActives));
+            }
+            if (keyword != null) {
+                b.must(f.match().fields(Variant_.SKU, Variant_.PRODUCT + "." + Product_.NAME).matching(keyword));
+            }
+        })).fetchHits(offset * limit, limit);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class Customer extends BasicEntity {
     private Sex sex;
 
     @GenericField
-    private String e;
+    private String phone;
 
     @GenericField
     private String email;

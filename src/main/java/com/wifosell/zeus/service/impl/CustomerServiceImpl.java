@@ -63,9 +63,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         return searchSession.search(Customer.class).where(f -> f.bool(b -> {
             b.must(f.matchAll());
-            if (keyword != null) {
-                b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
-            }
             if (gmId != null) {
                 b.must(f.match().field(Customer_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
             }
@@ -73,6 +70,9 @@ public class CustomerServiceImpl implements CustomerService {
                 b.must(f.match().field(Customer_.IS_ACTIVE).matching(true));
             } else {
                 b.must(f.terms().field(Customer_.IS_ACTIVE).matchingAny(isActives));
+            }
+            if (keyword != null) {
+                b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);
     }

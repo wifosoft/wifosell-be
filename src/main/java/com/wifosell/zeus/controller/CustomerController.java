@@ -60,7 +60,7 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/search")
-    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchOptions(
+    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchCustomers(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid SearchRequest request,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,

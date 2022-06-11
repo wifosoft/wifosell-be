@@ -50,9 +50,6 @@ public class OptionServiceImpl implements OptionService {
 
         return searchSession.search(OptionModel.class).where(f -> f.bool(b -> {
             b.must(f.matchAll());
-            if (keyword != null) {
-                b.must(f.match().field(OptionModel_.NAME).matching(keyword));
-            }
             if (gmId != null) {
                 b.must(f.match().field(OptionModel_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
             }
@@ -60,6 +57,9 @@ public class OptionServiceImpl implements OptionService {
                 b.must(f.match().field(OptionModel_.IS_ACTIVE).matching(true));
             } else {
                 b.must(f.terms().field(OptionModel_.IS_ACTIVE).matchingAny(isActives));
+            }
+            if (keyword != null) {
+                b.must(f.match().field(OptionModel_.NAME).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);
     }
