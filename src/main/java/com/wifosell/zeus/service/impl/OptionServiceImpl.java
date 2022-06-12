@@ -58,7 +58,7 @@ public class OptionServiceImpl implements OptionService {
             } else {
                 b.must(f.terms().field(OptionModel_.IS_ACTIVE).matchingAny(isActives));
             }
-            if (keyword != null) {
+            if (keyword != null && !keyword.isEmpty()) {
                 b.must(f.match().field(OptionModel_.NAME).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);

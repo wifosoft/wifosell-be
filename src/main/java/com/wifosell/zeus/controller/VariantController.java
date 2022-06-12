@@ -1,11 +1,7 @@
 package com.wifosell.zeus.controller;
 
-import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiResponse;
-import com.wifosell.zeus.payload.request.common.SearchRequest;
-import com.wifosell.zeus.payload.response.customer.CustomerResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -16,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/variants")
@@ -56,22 +50,6 @@ public class VariantController {
         Page<Variant> variants = variantService.getVariants(
                 userPrincipal.getId(), warehouseIds, isActives, offset, limit, sortBy, orderBy);
         Page<VariantResponse> responses = variants.map(VariantResponse::new);
-        return ResponseEntity.ok(GApiResponse.success(responses));
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/search")
-    public ResponseEntity<GApiResponse<List<VariantResponse>>> searchVariants(
-            @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody @Valid SearchRequest request,
-            @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
-            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
-            @RequestParam(name = "offset", required = false) Integer offset,
-            @RequestParam(name = "limit", required = false) Integer limit
-    ) {
-        List<Variant> variants = variantService.searchVariants(
-                userPrincipal.getId(), request.getKeyword(), warehouseIds, isActives, offset, limit);
-        List<VariantResponse> responses = variants.stream().map(VariantResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

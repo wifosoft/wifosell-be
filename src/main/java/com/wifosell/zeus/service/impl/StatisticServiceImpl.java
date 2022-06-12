@@ -10,6 +10,7 @@ import com.wifosell.zeus.payload.response.statistic.TopRevenueEmployeeResponse;
 import com.wifosell.zeus.payload.response.statistic.TopSellerProductResponse;
 import com.wifosell.zeus.repository.OrderRepository;
 import com.wifosell.zeus.service.StatisticService;
+import com.wifosell.zeus.specs.OrderSpecs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class StatisticServiceImpl implements StatisticService {
                 .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
                 .where(criteriaBuilder.and(
                         criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
-                        criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
+                        OrderSpecs.isBetweenTwoDates(dateFrom, dateTo).toPredicate(orderModelRoot, criteriaQuery, criteriaBuilder)
                 ))
                 .groupBy(typeJoin.get(OrderItem_.VARIANT))
                 .orderBy(criteriaBuilder.desc(total));

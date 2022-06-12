@@ -6,11 +6,11 @@ import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
-import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductImage;
-import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.product.*;
+import com.wifosell.zeus.model.stock.Stock_;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.user.User_;
+import com.wifosell.zeus.model.warehouse.Warehouse_;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
@@ -21,9 +21,12 @@ import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -44,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     private final UserRepository userRepository;
     private final ProductImageRepository productImageRepository;
     private final StockRepository stockRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Page<Product> getProducts(
@@ -52,8 +56,8 @@ public class ProductServiceImpl implements ProductService {
             Integer minQuantity,
             Integer maxQuantity,
             List<Boolean> isActives,
-            int offset,
-            int limit,
+            Integer offset,
+            Integer limit,
             String sortBy,
             String orderBy
     ) {
@@ -65,6 +69,46 @@ public class ProductServiceImpl implements ProductService {
                         .and(ProductSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
+    }
+
+    @Override
+    public List<Product> searchProducts(
+            Long userId,
+            String keyword,
+            List<Long> warehouseIds,
+            Integer minQuantity,
+            Integer maxQuantity,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit
+    ) {
+        SearchSession searchSession = Search.session(entityManager);
+
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (limit == null || limit > 100) {
+            limit = 100;
+        }
+
+        return searchSession.search(Product.class).where(f -> f.bool(b -> {
+            b.must(f.matchAll());
+            if (gmId != null) {
+                b.must(f.match().field(Product_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
+            }
+            if (warehouseIds != null && !warehouseIds.isEmpty()) {
+                b.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + Warehouse_.ID).matchingAny(warehouseIds));
+            }
+            if (isActives == null || isActives.isEmpty()) {
+                b.must(f.match().field(Product_.IS_ACTIVE).matching(true));
+            } else {
+                b.must(f.terms().field(Product_.IS_ACTIVE).matchingAny(isActives));
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                b.must(f.match().fields(Product_.VARIANTS + "." + Variant_.SKU, Product_.NAME).matching(keyword));
+            }
+        })).fetchHits(offset * limit, limit);
     }
 
     @Override

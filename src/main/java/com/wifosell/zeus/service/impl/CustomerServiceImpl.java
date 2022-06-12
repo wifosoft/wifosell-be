@@ -71,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
             } else {
                 b.must(f.terms().field(Customer_.IS_ACTIVE).matchingAny(isActives));
             }
-            if (keyword != null) {
+            if (keyword != null && !keyword.isEmpty()) {
                 b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);

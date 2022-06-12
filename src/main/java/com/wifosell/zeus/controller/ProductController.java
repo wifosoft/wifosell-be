@@ -1,11 +1,14 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
+import com.wifosell.zeus.payload.request.common.SearchRequest;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.payload.response.product.ProductResponse;
+import com.wifosell.zeus.payload.response.product.VariantResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ProductService;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/products")
@@ -29,8 +33,8 @@ public class ProductController {
     @PreAuthorize("isAuthenticated() and hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getAllProducts(
-            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
-            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+//            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+//            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
             @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "minQuantity", required = false) Integer minQuantity,
             @RequestParam(name = "maxQuantity", required = false) Integer maxQuantity,
@@ -58,8 +62,8 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<ProductResponse>>> getProducts(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
-            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
+//            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+//            @RequestParam(name = "saleChannelId", required = false) List<Long> saleChannelIds,
             @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
             @RequestParam(name = "minQuantity", required = false) Integer minQuantity,
             @RequestParam(name = "maxQuantity", required = false) Integer maxQuantity,
@@ -79,6 +83,24 @@ public class ProductController {
         Page<Product> products = productService.getProducts(
                 userPrincipal.getId(), warehouseIds, minQuantity, maxQuantity, isActives, offset, limit, sortBy, orderBy);
         Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds, minQuantity, maxQuantity));
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/search")
+    public ResponseEntity<GApiResponse<List<ProductResponse>>> searchProducts(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody @Valid SearchRequest request,
+            @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
+            @RequestParam(name = "minQuantity", required = false) Integer minQuantity,
+            @RequestParam(name = "maxQuantity", required = false) Integer maxQuantity,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        List<Product> products = productService.searchProducts(
+                userPrincipal.getId(), request.getKeyword(), warehouseIds, minQuantity, maxQuantity, isActives, offset, limit);
+        List<ProductResponse> responses = products.stream().map(ProductResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
