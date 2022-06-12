@@ -1,13 +1,11 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.customer.Customer;
-import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.common.SearchRequest;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.payload.response.customer.CustomerResponse;
-import com.wifosell.zeus.payload.response.option.OptionResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;

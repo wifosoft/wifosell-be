@@ -1,14 +1,12 @@
 package com.wifosell.zeus.controller;
 
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.common.SearchRequest;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.payload.response.product.ProductResponse;
-import com.wifosell.zeus.payload.response.product.VariantResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ProductService;
@@ -54,7 +52,7 @@ public class ProductController {
 //        }
         Page<Product> products = productService.getProducts(
                 null, warehouseIds, minQuantity, maxQuantity, isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds, minQuantity, maxQuantity));
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, null, warehouseIds, minQuantity, maxQuantity));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -82,7 +80,7 @@ public class ProductController {
 //        }
         Page<Product> products = productService.getProducts(
                 userPrincipal.getId(), warehouseIds, minQuantity, maxQuantity, isActives, offset, limit, sortBy, orderBy);
-        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds, minQuantity, maxQuantity));
+        Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, null, warehouseIds, minQuantity, maxQuantity));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -100,7 +98,9 @@ public class ProductController {
     ) {
         List<Product> products = productService.searchProducts(
                 userPrincipal.getId(), request.getKeyword(), warehouseIds, minQuantity, maxQuantity, isActives, offset, limit);
-        List<ProductResponse> responses = products.stream().map(ProductResponse::new).collect(Collectors.toList());
+        List<ProductResponse> responses = products.stream()
+                .map(product -> new ProductResponse(product, request.getKeyword(), warehouseIds, minQuantity, maxQuantity))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
