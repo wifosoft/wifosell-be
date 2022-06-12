@@ -66,13 +66,13 @@ public class CustomerServiceImpl implements CustomerService {
             if (gmId != null) {
                 b.must(f.match().field(Customer_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
             }
+            if (keyword != null && !keyword.isEmpty()) {
+                b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
+            }
             if (isActives == null || isActives.isEmpty()) {
                 b.must(f.match().field(Customer_.IS_ACTIVE).matching(true));
             } else {
                 b.must(f.terms().field(Customer_.IS_ACTIVE).matchingAny(isActives));
-            }
-            if (keyword != null && !keyword.isEmpty()) {
-                b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);
     }

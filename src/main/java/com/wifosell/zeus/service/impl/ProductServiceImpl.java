@@ -97,6 +97,9 @@ public class ProductServiceImpl implements ProductService {
             if (gmId != null) {
                 b.must(f.match().field(Product_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
             }
+            if (keyword != null && !keyword.isEmpty()) {
+                b.must(f.match().fields(Product_.VARIANTS + "." + Variant_.SKU, Product_.NAME).matching(keyword));
+            }
             if (warehouseIds != null && !warehouseIds.isEmpty()) {
                 b.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + Warehouse_.ID).matchingAny(warehouseIds));
             }
@@ -104,9 +107,6 @@ public class ProductServiceImpl implements ProductService {
                 b.must(f.match().field(Product_.IS_ACTIVE).matching(true));
             } else {
                 b.must(f.terms().field(Product_.IS_ACTIVE).matchingAny(isActives));
-            }
-            if (keyword != null && !keyword.isEmpty()) {
-                b.must(f.match().fields(Product_.VARIANTS + "." + Variant_.SKU, Product_.NAME).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);
     }

@@ -53,13 +53,13 @@ public class OptionServiceImpl implements OptionService {
             if (gmId != null) {
                 b.must(f.match().field(OptionModel_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
             }
+            if (keyword != null && !keyword.isEmpty()) {
+                b.must(f.match().field(OptionModel_.NAME).matching(keyword));
+            }
             if (isActives == null || isActives.isEmpty()) {
                 b.must(f.match().field(OptionModel_.IS_ACTIVE).matching(true));
             } else {
                 b.must(f.terms().field(OptionModel_.IS_ACTIVE).matchingAny(isActives));
-            }
-            if (keyword != null && !keyword.isEmpty()) {
-                b.must(f.match().field(OptionModel_.NAME).matching(keyword));
             }
         })).fetchHits(offset * limit, limit);
     }
