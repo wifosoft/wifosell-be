@@ -55,17 +55,16 @@ public class ProductResponse extends BasicEntityResponse {
 
         List<Variant> variants = product.getVariants().stream()
                 .filter(variant -> !variant.isDeleted())
-                .collect(Collectors.toList());
-
-        if (warehouseIds != null && !warehouseIds.isEmpty()) {
-            variants = variants.stream().filter(variant -> variant.getStocks().stream()
-                    .anyMatch(stock -> {
-                        boolean inWarehouse = warehouseIds.contains(stock.getWarehouse().getId());
+                .filter(variant -> {
+                    List<Stock> stocks = variant.getStocks().stream().filter(stock -> {
+                        boolean inWarehouse = warehouseIds == null || warehouseIds.isEmpty() || warehouseIds.contains(stock.getWarehouse().getId());
                         boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
                                 && (maxQuantity == null || stock.getQuantity() <= maxQuantity);
                         return inWarehouse && betweenQuantity;
-                    })).collect(Collectors.toList());
-        }
+                    }).collect(Collectors.toList());
+                    variant.setStocks(stocks);
+                    return !stocks.isEmpty();
+                }).collect(Collectors.toList());
 
         if (keyword != null && !keyword.isEmpty()) {
             List<Variant> variants1 = variants.stream()

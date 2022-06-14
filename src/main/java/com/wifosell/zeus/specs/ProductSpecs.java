@@ -11,7 +11,9 @@ import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.time.Instant;
 import java.util.List;
 
@@ -70,32 +72,19 @@ public class ProductSpecs {
         });
     }
 
-    public static Specification<Product> inWarehouses(List<Long> warehouseIds) {
+    public static Specification<Product> hasStocks(List<Long> warehouseIds, Integer minQuantity, Integer maxQuantity) {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);
-            if (warehouseIds == null || warehouseIds.isEmpty())
-                return criteriaBuilder.and();
-            return root.join(Product_.VARIANTS)
-                    .join(Variant_.STOCKS)
-                    .get(Stock_.WAREHOUSE)
-                    .get(Warehouse_.ID)
-                    .in(warehouseIds);
-        });
-    }
 
-    public static Specification<Product> hasQuantityBetween(Integer minQuantity, Integer maxQuantity) {
-        return ((root, query, criteriaBuilder) -> {
-            if (minQuantity == null && maxQuantity == null)
-                return criteriaBuilder.and();
+            Join<Object, Object> stock = root.join(Product_.VARIANTS).join(Variant_.STOCKS);
+            Path<Long> warehouseId = stock.get(Stock_.WAREHOUSE).get(Warehouse_.ID);
+            Path<Integer> quantity = stock.get(Stock_.QUANTITY);
 
-            Integer finalMinQuantity = minQuantity != null ? minQuantity : 0;
-
-            Path<Integer> quantity = root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY);
-            query.distinct(true);
-
-            return maxQuantity != null ?
-                    criteriaBuilder.between(quantity, finalMinQuantity, maxQuantity) :
-                    criteriaBuilder.greaterThanOrEqualTo(quantity, finalMinQuantity);
+            return criteriaBuilder.and(
+                    warehouseIds != null && !warehouseIds.isEmpty() ? warehouseId.in(warehouseIds) : criteriaBuilder.and(),
+                    criteriaBuilder.greaterThanOrEqualTo(quantity, minQuantity != null ? minQuantity : 1),
+                    maxQuantity != null ? criteriaBuilder.lessThanOrEqualTo(quantity, maxQuantity) : criteriaBuilder.and()
+            );
         });
     }
 

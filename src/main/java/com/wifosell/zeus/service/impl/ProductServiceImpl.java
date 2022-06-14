@@ -64,8 +64,7 @@ public class ProductServiceImpl implements ProductService {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return productRepository.findAll(
                 ProductSpecs.hasGeneralManager(gmId)
-                        .and(ProductSpecs.inWarehouses(warehouseIds))
-                        .and(ProductSpecs.hasQuantityBetween(minQuantity, maxQuantity))
+                        .and(ProductSpecs.hasStocks(warehouseIds, minQuantity, maxQuantity))
                         .and(ProductSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
