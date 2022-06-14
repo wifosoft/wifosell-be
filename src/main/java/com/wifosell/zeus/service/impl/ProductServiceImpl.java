@@ -102,6 +102,12 @@ public class ProductServiceImpl implements ProductService {
             if (warehouseIds != null && !warehouseIds.isEmpty()) {
                 b.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + Warehouse_.ID).matchingAny(warehouseIds));
             }
+            if (minQuantity != null) {
+                b.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atLeast(minQuantity));
+            }
+            if (maxQuantity != null) {
+                b.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atMost(maxQuantity));
+            }
             if (isActives == null || isActives.isEmpty()) {
                 b.must(f.match().field(Product_.IS_ACTIVE).matching(true));
             } else {
