@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
                 b.must(f.match().fields(Product_.VARIANTS + "." + Variant_.SKU, Product_.NAME).matching(keyword));
             }
             if (warehouseIds != null && !warehouseIds.isEmpty()) {
-                b.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + Warehouse_.ID).matchingAny(warehouseIds));
+                b.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + "." + Warehouse_.ID).matchingAny(warehouseIds));
             }
             if (minQuantity != null) {
                 b.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atLeast(minQuantity));
