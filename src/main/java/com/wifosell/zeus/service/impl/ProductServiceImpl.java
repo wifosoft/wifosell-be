@@ -99,15 +99,18 @@ public class ProductServiceImpl implements ProductService {
             if (keyword != null && !keyword.isEmpty()) {
                 b.must(f.match().fields(Product_.VARIANTS + "." + Variant_.SKU, Product_.NAME).matching(keyword));
             }
-            if (warehouseIds != null && !warehouseIds.isEmpty()) {
-                b.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + "." + Warehouse_.ID).matchingAny(warehouseIds));
-            }
-            if (minQuantity != null) {
-                b.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atLeast(minQuantity));
-            }
-            if (maxQuantity != null) {
-                b.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atMost(maxQuantity));
-            }
+            b.must(f.nested().objectField(Product_.VARIANTS + "." + Variant_.STOCKS).nest(f.bool(c -> {
+                c.must(f.matchAll());
+                if (warehouseIds != null) {
+                    c.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + "." + Warehouse_.ID).matchingAny(warehouseIds));
+                }
+                if (minQuantity != null) {
+                    c.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atLeast(minQuantity));
+                }
+                if (maxQuantity != null) {
+                    c.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atMost(maxQuantity));
+                }
+            })));
             if (isActives == null || isActives.isEmpty()) {
                 b.must(f.match().field(Product_.IS_ACTIVE).matching(true));
             } else {

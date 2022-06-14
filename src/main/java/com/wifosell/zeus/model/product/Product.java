@@ -65,7 +65,7 @@ public class Product extends BasicEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
-    @IndexedEmbedded(structure = ObjectStructure.NESTED)
+    @IndexedEmbedded
     private List<Variant> variants = new ArrayList<>();
 
     @JsonIgnore

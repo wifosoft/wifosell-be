@@ -54,17 +54,20 @@ public class ProductResponse extends BasicEntityResponse {
                 .map(OptionResponse::new).collect(Collectors.toList());
 
         List<Variant> variants = product.getVariants().stream()
-                .filter(variant -> !variant.isDeleted())
-                .filter(variant -> {
-                    List<Stock> stocks = variant.getStocks().stream().filter(stock -> {
-                        boolean inWarehouse = warehouseIds == null || warehouseIds.isEmpty() || warehouseIds.contains(stock.getWarehouse().getId());
-                        boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
-                                && (maxQuantity == null || stock.getQuantity() <= maxQuantity);
-                        return inWarehouse && betweenQuantity;
-                    }).collect(Collectors.toList());
-                    variant.setStocks(stocks);
-                    return !stocks.isEmpty();
+                .filter(variant -> !variant.isDeleted()).collect(Collectors.toList());
+        
+        if (warehouseIds != null || minQuantity != null || maxQuantity != null) {
+            variants = variants.stream().filter(variant -> {
+                List<Stock> stocks = variant.getStocks().stream().filter(stock -> {
+                    boolean inWarehouse = warehouseIds == null || warehouseIds.contains(stock.getWarehouse().getId());
+                    boolean betweenQuantity = (minQuantity == null || stock.getQuantity() >= minQuantity)
+                            && (maxQuantity == null || stock.getQuantity() <= maxQuantity);
+                    return inWarehouse && betweenQuantity;
                 }).collect(Collectors.toList());
+                variant.setStocks(stocks);
+                return !stocks.isEmpty();
+            }).collect(Collectors.toList());
+        }
 
         if (keyword != null && !keyword.isEmpty()) {
             List<Variant> variants1 = variants.stream()

@@ -15,6 +15,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductSpecs {
@@ -76,15 +77,15 @@ public class ProductSpecs {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);
 
-            Join<Object, Object> stock = root.join(Product_.VARIANTS).join(Variant_.STOCKS);
-            Path<Long> warehouseId = stock.get(Stock_.WAREHOUSE).get(Warehouse_.ID);
-            Path<Integer> quantity = stock.get(Stock_.QUANTITY);
+            List<Predicate> predicates = new ArrayList<>();
+            if (warehouseIds != null)
+                predicates.add(root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.WAREHOUSE).get(Warehouse_.ID).in(warehouseIds));
+            if (minQuantity != null)
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY), minQuantity));
+            if (maxQuantity != null)
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY), maxQuantity));
 
-            return criteriaBuilder.and(
-                    warehouseIds != null && !warehouseIds.isEmpty() ? warehouseId.in(warehouseIds) : criteriaBuilder.and(),
-                    criteriaBuilder.greaterThanOrEqualTo(quantity, minQuantity != null ? minQuantity : 1),
-                    maxQuantity != null ? criteriaBuilder.lessThanOrEqualTo(quantity, maxQuantity) : criteriaBuilder.and()
-            );
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
 
