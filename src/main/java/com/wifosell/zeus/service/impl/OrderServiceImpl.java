@@ -250,17 +250,21 @@ public class OrderServiceImpl implements OrderService {
 
             boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
             order.setComplete(isComplete);
+
+            orderRepository.save(order);
         }
-        return orderRepository.save(order);
+        return order;
     }
 
     private OrderModel updateOrderPaymentStatus(OrderModel order, UpdateOrderPaymentStatusRequest request) {
-        order.getPayment().setStatus(request.getStatus());
-        paymentRepository.save(order.getPayment());
+        if (request.getStatus() != order.getPayment().getStatus()) {
+            order.getPayment().setStatus(request.getStatus());
+            paymentRepository.save(order.getPayment());
 
-        boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
-        order.setComplete(isComplete);
-
-        return orderRepository.save(order);
+            boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
+            order.setComplete(isComplete);
+            orderRepository.save(order);
+        }
+        return order;
     }
 }
