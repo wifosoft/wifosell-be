@@ -127,6 +127,7 @@ public class EcomAccountController {
     }
 
 
+
     @GetMapping("/lazada/{ecomId}/getAccountInfo")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<GApiResponse> getLazadaAccountInfo(
