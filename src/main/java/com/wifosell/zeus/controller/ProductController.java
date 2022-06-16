@@ -11,6 +11,7 @@ import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.service.WarehouseService;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/products")
@@ -86,7 +86,7 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/search")
-    public ResponseEntity<GApiResponse<List<ProductResponse>>> searchProducts(
+    public ResponseEntity<GApiResponse<PageInfo<ProductResponse>>> searchProducts(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid SearchRequest request,
             @RequestParam(name = "warehouseId", required = false) List<Long> warehouseIds,
@@ -96,11 +96,10 @@ public class ProductController {
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit
     ) {
-        List<Product> products = productService.searchProducts(
+        PageInfo<Product> products = productService.searchProducts(
                 userPrincipal.getId(), request.getKeyword(), warehouseIds, minQuantity, maxQuantity, isActives, offset, limit);
-        List<ProductResponse> responses = products.stream()
-                .map(product -> new ProductResponse(product, request.getKeyword(), warehouseIds, minQuantity, maxQuantity))
-                .collect(Collectors.toList());
+        PageInfo<ProductResponse> responses = products
+                .map(product -> new ProductResponse(product, request.getKeyword(), warehouseIds, minQuantity, maxQuantity));
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

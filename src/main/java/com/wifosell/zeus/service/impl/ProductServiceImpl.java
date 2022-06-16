@@ -12,6 +12,7 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import com.wifosell.zeus.payload.GApiErrorBody;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
@@ -21,6 +22,7 @@ import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
@@ -71,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> searchProducts(
+    public PageInfo<Product> searchProducts(
             Long userId,
             String keyword,
             List<Long> warehouseIds,
@@ -91,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
             limit = 100;
         }
 
-        return searchSession.search(Product.class).where(f -> f.bool(b -> {
+        SearchResult<Product> result = searchSession.search(Product.class).where(f -> f.bool(b -> {
             b.must(f.matchAll());
             if (gmId != null) {
                 b.must(f.match().field(Product_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
@@ -116,7 +118,9 @@ public class ProductServiceImpl implements ProductService {
             } else {
                 b.must(f.terms().field(Product_.IS_ACTIVE).matchingAny(isActives));
             }
-        })).fetchHits(offset * limit, limit);
+        })).fetch(offset * limit, limit);
+
+        return new PageInfo<>(result.hits(), offset, limit, result.total().hitCount());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import lombok.NonNull;
@@ -22,7 +23,7 @@ public interface ProductService {
             String orderBy
     );
 
-    List<Product> searchProducts(
+    PageInfo<Product> searchProducts(
             Long userId,
             String keyword,
             List<Long> warehouseIds,

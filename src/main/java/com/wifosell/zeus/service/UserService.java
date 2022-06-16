@@ -5,7 +5,7 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.RegisterRequest;
 import com.wifosell.zeus.payload.request.user.ChangePasswordRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
-import com.wifosell.zeus.payload.response.AvailableResourceResponse;
+import com.wifosell.zeus.payload.response.common.AvailableResourceResponse;
 import com.wifosell.zeus.security.UserPrincipal;
 
 import java.util.List;

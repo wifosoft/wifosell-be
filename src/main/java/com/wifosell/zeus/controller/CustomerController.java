@@ -9,6 +9,7 @@ import com.wifosell.zeus.payload.response.customer.CustomerResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -58,15 +59,15 @@ public class CustomerController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/search")
-    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchCustomers(
+    public ResponseEntity<GApiResponse<PageInfo<CustomerResponse>>> searchCustomers(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid SearchRequest request,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit
     ) {
-        List<Customer> customers = customerService.searchCustomers(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
-        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
+        PageInfo<Customer> customers = customerService.searchCustomers(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
+        PageInfo<CustomerResponse> responses = customers.map(CustomerResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 

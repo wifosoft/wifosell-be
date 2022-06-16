@@ -7,6 +7,7 @@ import com.wifosell.zeus.payload.response.option.OptionResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.OptionService;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/options")
@@ -56,15 +56,15 @@ public class OptionController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/search")
-    public ResponseEntity<GApiResponse<List<OptionResponse>>> searchOptions(
+    public ResponseEntity<GApiResponse<PageInfo<OptionResponse>>> searchOptions(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid SearchRequest request,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit
     ) {
-        List<OptionModel> options = optionService.searchOptions(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
-        List<OptionResponse> responses = options.stream().map(OptionResponse::new).collect(Collectors.toList());
+        PageInfo<OptionModel> options = optionService.searchOptions(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
+        PageInfo<OptionResponse> responses = options.map(OptionResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 }

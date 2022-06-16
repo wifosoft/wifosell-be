@@ -8,7 +8,9 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.OptionService;
 import com.wifosell.zeus.specs.OptionSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
@@ -37,7 +39,7 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public List<OptionModel> searchOptions(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
+    public PageInfo<OptionModel> searchOptions(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
         SearchSession searchSession = Search.session(entityManager);
 
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
@@ -48,7 +50,7 @@ public class OptionServiceImpl implements OptionService {
             limit = 100;
         }
 
-        return searchSession.search(OptionModel.class).where(f -> f.bool(b -> {
+        SearchResult<OptionModel> result = searchSession.search(OptionModel.class).where(f -> f.bool(b -> {
             b.must(f.matchAll());
             if (gmId != null) {
                 b.must(f.match().field(OptionModel_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
@@ -61,6 +63,8 @@ public class OptionServiceImpl implements OptionService {
             } else {
                 b.must(f.terms().field(OptionModel_.IS_ACTIVE).matchingAny(isActives));
             }
-        })).fetchHits(offset * limit, limit);
+        })).fetch(offset * limit, limit);
+
+        return new PageInfo<>(result.hits(), offset, limit, result.total().hitCount());
     }
 }

@@ -10,8 +10,10 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CustomerService;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
@@ -50,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> searchCustomers(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
+    public PageInfo<Customer> searchCustomers(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
         SearchSession searchSession = Search.session(entityManager);
 
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
@@ -61,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
             limit = 100;
         }
 
-        return searchSession.search(Customer.class).where(f -> f.bool(b -> {
+        SearchResult<Customer> result = searchSession.search(Customer.class).where(f -> f.bool(b -> {
             b.must(f.matchAll());
             if (gmId != null) {
                 b.must(f.match().field(Customer_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
@@ -74,7 +76,9 @@ public class CustomerServiceImpl implements CustomerService {
             } else {
                 b.must(f.terms().field(Customer_.IS_ACTIVE).matchingAny(isActives));
             }
-        })).fetchHits(offset * limit, limit);
+        })).fetch(offset * limit, limit);
+
+        return new PageInfo<>(result.hits(), offset, limit, result.total().hitCount());
     }
 
     @Override
