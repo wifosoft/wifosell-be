@@ -35,6 +35,7 @@
         </profile>
     </profiles>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -184,6 +185,13 @@
             <groupId>org.hibernate.search</groupId>
             <artifactId>hibernate-search-backend-lucene</artifactId>
             <version>6.1.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>lazop-api-sdk</groupId>
+            <artifactId>lazop-api-sdk</artifactId>
+            <scope>system</scope>
+            <version>1.0</version>
+            <systemPath>${basedir}\Library\lazop-api-sdk-1.2.0.jar</systemPath>
         </dependency>
     </dependencies>
 
