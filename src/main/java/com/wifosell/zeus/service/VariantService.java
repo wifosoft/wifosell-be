@@ -3,27 +3,39 @@ package com.wifosell.zeus.service;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.payload.request.variant.AddVariantRequest;
 import com.wifosell.zeus.payload.request.variant.UpdateVariantRequest;
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public interface VariantService {
-    Page<Variant> getVariants(Long userId, List<Long> warehouseIds, List<Boolean> isActives,
-                              int offset, int limit, String sortBy, String orderBy);
+    Page<Variant> getVariants(
+            Long userId,
+            List<Long> warehouseIds,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit,
+            String sortBy,
+            String orderBy
+    );
 
-    Variant getVariant(Long userId, @NonNull Long variantId);
+    Variant getVariant(Long userId, Long variantId);
 
-    Variant addVariant(@NonNull Long userId, @Valid AddVariantRequest request);
+    @Deprecated
+    Variant addVariant(Long userId, @Valid AddVariantRequest request);
 
-    Variant updateVariant(@NonNull Long userId, @NonNull Long variantId, @Valid UpdateVariantRequest request);
+    @Deprecated
+    Variant updateVariant(Long userId, Long variantId, @Valid UpdateVariantRequest request);
 
-    Variant activateVariant(Long userId, @NonNull Long variantId);
+    @Deprecated
+    Variant activateVariant(Long userId, Long variantId);
 
-    Variant deactivateVariant(Long userId, @NonNull Long variantId);
+    @Deprecated
+    Variant deactivateVariant(Long userId, Long variantId);
 
-    List<Variant> activateVariants(Long userId, @NonNull List<Long> variantIds);
+    @Deprecated
+    List<Variant> activateVariants(Long userId, List<Long> variantIds);
 
-    List<Variant> deactivateVariants(Long userId, @NonNull List<Long> variantIds);
+    @Deprecated
+    List<Variant> deactivateVariants(Long userId, List<Long> variantIds);
 }

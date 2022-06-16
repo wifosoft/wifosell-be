@@ -14,7 +14,7 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.RegisterRequest;
 import com.wifosell.zeus.payload.request.user.ChangePasswordRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
-import com.wifosell.zeus.payload.response.AvailableResourceResponse;
+import com.wifosell.zeus.payload.response.common.AvailableResourceResponse;
 import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.ShopRepository;
 import com.wifosell.zeus.repository.UserRepository;

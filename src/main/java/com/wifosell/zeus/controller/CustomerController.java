@@ -3,11 +3,13 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
+import com.wifosell.zeus.payload.request.common.SearchRequest;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.payload.response.customer.CustomerResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,20 @@ public class CustomerController {
 
         Page<Customer> customers = customerService.getCustomers(userPrincipal.getId(), isActives, offset, limit, sortBy, orderBy);
         Page<CustomerResponse> responses = customers.map(CustomerResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/search")
+    public ResponseEntity<GApiResponse<PageInfo<CustomerResponse>>> searchCustomers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody @Valid SearchRequest request,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        PageInfo<Customer> customers = customerService.searchCustomers(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
+        PageInfo<CustomerResponse> responses = customers.map(CustomerResponse::new);
         return ResponseEntity.ok(GApiResponse.success(responses));
     }
 
@@ -129,13 +145,6 @@ public class CustomerController {
             @RequestBody @Valid ListIdRequest request
     ) {
         List<Customer> customers = customerService.deactivateCustomers(userPrincipal.getId(), request.getIds());
-        List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
-        return ResponseEntity.ok(GApiResponse.success(responses));
-    }
-
-    @GetMapping("/search/{text}")
-    public ResponseEntity<GApiResponse<List<CustomerResponse>>> searchCustomers(@PathVariable(name = "text") String text) {
-        List<Customer> customers = customerService.searchCustomers(text);
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(responses));
     }

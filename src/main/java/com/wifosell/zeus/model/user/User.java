@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.permission.UserPermission;
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.role.UserRoleRelation;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.shop.UserShopRelation;
@@ -14,6 +17,7 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.*;
@@ -44,6 +48,7 @@ public class User extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GenericField
     private Long id;
 
     @NotBlank
@@ -154,6 +159,18 @@ public class User extends BasicEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> childrenUsers;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager")
+    private List<OptionModel> options;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager")
+    private List<Customer> customers;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "generalManager")
+    private List<Product> products;
 
     public User(String firstName, String lastName, String username, String email, String phone, String password) {
         this.firstName = firstName;

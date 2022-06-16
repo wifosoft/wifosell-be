@@ -34,7 +34,9 @@ public class StatisticController {
             @RequestBody StatisticRequest statisticRequest,
             @PathVariable("shopId") Long shopId
     ) {
-        Long totalOrderByShopId = statisticService.totalOrderByShopId(shopId, Instant.ofEpochMilli(statisticRequest.getDateFrom()), Instant.ofEpochMilli(statisticRequest.getDateTo()));
+        Instant dateFrom = statisticRequest.getDateFrom() != null ? Instant.ofEpochMilli(statisticRequest.getDateFrom()) : null;
+        Instant dateTo = statisticRequest.getDateFrom() != null ? Instant.ofEpochMilli(statisticRequest.getDateTo()) : null;
+        Long totalOrderByShopId = statisticService.totalOrderByShopId(shopId, dateFrom, dateTo);
         return ResponseEntity.ok(GApiResponse.success(totalOrderByShopId));
     }
 
@@ -58,10 +60,9 @@ public class StatisticController {
     public ResponseEntity<GApiResponse<List<TopSellerProductResponse>>> getTopSeller(
             @RequestBody StatisticRequest statisticRequest
     ) {
-        List<TopSellerProductResponse> topSeller = statisticService.topSeller(
-                Instant.ofEpochMilli(statisticRequest.getDateFrom()),
-                Instant.ofEpochMilli(statisticRequest.getDateTo())
-        );
+        Instant dateFrom = statisticRequest.getDateFrom() != null ? Instant.ofEpochMilli(statisticRequest.getDateFrom()) : null;
+        Instant dateTo = statisticRequest.getDateFrom() != null ? Instant.ofEpochMilli(statisticRequest.getDateTo()) : null;
+        List<TopSellerProductResponse> topSeller = statisticService.topSeller(dateFrom, dateTo);
         return ResponseEntity.ok(GApiResponse.success(topSeller));
     }
 
@@ -71,21 +72,19 @@ public class StatisticController {
             @RequestBody StatisticRequest statisticRequest,
             @PathVariable("shopId") Long shopId
     ) {
-        List<TopSellerProductResponse> topSellerById = statisticService.topSellerByShopId(
-                shopId,
-                Instant.ofEpochMilli(statisticRequest.getDateFrom()),
-                Instant.ofEpochMilli(statisticRequest.getDateTo())
-        );
+        Instant dateFrom = statisticRequest.getDateFrom() != null ? Instant.ofEpochMilli(statisticRequest.getDateFrom()) : null;
+        Instant dateTo = statisticRequest.getDateFrom() != null ? Instant.ofEpochMilli(statisticRequest.getDateTo()) : null;
+        List<TopSellerProductResponse> topSellerById = statisticService.topSellerByShopId(shopId, dateFrom, dateTo);
         return ResponseEntity.ok(GApiResponse.success(topSellerById));
     }
 
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/employee-revenue/{userId}")
-    public ResponseEntity<GApiResponse<Long>> getRevenuePerEmployee (
+    public ResponseEntity<GApiResponse<Long>> getRevenuePerEmployee(
             @RequestBody StatisticRequest statisticRequest,
             @PathVariable("userId") Long userId
-    ){
+    ) {
         Long revenue = statisticService.revenuePerEmployee(
                 userId,
                 Instant.ofEpochMilli(statisticRequest.getDateFrom()),
@@ -96,11 +95,11 @@ public class StatisticController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/employee-revenue/{shopId}/{userId}")
-    public ResponseEntity<GApiResponse<Long>> getRevenuePerEmployeeByShopId (
+    public ResponseEntity<GApiResponse<Long>> getRevenuePerEmployeeByShopId(
             @RequestBody StatisticRequest statisticRequest,
             @PathVariable("userId") Long userId,
             @PathVariable("shopId") Long shopId
-    ){
+    ) {
         Long revenue = statisticService.revenuePerEmployeeByShopId(
                 userId,
                 shopId,

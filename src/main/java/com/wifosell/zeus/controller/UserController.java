@@ -9,7 +9,7 @@ import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.user.ChangePasswordRequest;
 import com.wifosell.zeus.payload.request.user.ChangeRoleRequest;
 import com.wifosell.zeus.payload.request.user.UpdateUserRequest;
-import com.wifosell.zeus.payload.response.AvailableResourceResponse;
+import com.wifosell.zeus.payload.response.common.AvailableResourceResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.UserService;

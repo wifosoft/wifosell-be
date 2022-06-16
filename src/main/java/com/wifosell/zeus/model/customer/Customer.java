@@ -1,10 +1,15 @@
 package com.wifosell.zeus.model.customer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wifosell.zeus.constant.lucence.LuceneAnalysisName;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
-import org.hibernate.search.annotations.*;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,7 +26,7 @@ public class Customer extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Field(termVector = TermVector.YES, analyze = Analyze.YES, store = Store.NO)
+    @FullTextField(analyzer = LuceneAnalysisName.VIE_NGRAM, searchAnalyzer = StandardTokenizerFactory.NAME)
     private String fullName;
 
     private Date dob;   // Date of birth
@@ -29,16 +34,17 @@ public class Customer extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
+    @GenericField
     private String phone;
 
+    @GenericField
     private String email;
 
+    @GenericField
     private String cin; // Citizen Identification Number
 
     private String nation;
 
-    @Field(analyze = Analyze.NO)
-    @Facet
     private String city;
 
     private String district;
@@ -50,6 +56,7 @@ public class Customer extends BasicEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
+    @IndexedEmbedded
     private User generalManager;
 
     public enum Sex {
