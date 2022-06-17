@@ -72,6 +72,7 @@ pipeline {
   environment {
     NOTIFY_GITHUB = "true"
     TESTER = 'placeholder'
+    FOO = 'bar'
   }
 
 
@@ -87,9 +88,9 @@ pipeline {
         }
         //when { anyOf { branch 'master'; branch 'develop'; branch 'feature/*' } }
         //when { anyOf { branch 'main'} }
-        options {
-          lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
-        }
+        // options {
+        //   lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
+        // }
         steps {
           notifyGitHub('PENDING')
           echo 'Initiating maven build'
