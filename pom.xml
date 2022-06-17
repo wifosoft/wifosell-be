@@ -186,13 +186,13 @@
             <artifactId>hibernate-search-backend-lucene</artifactId>
             <version>6.1.5.Final</version>
         </dependency>
-        <dependency>
-            <groupId>lazop-api-sdk</groupId>
-            <artifactId>lazop-api-sdk</artifactId>
-            <scope>system</scope>
-            <version>1.2.0</version>
-            <systemPath>${basedir}/Library/lazop-api-sdk-1.2.0.jar</systemPath>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>lazop-api-sdk</groupId>-->
+<!--            <artifactId>lazop-api-sdk</artifactId>-->
+<!--            <scope>system</scope>-->
+<!--            <version>1.2.0</version>-->
+<!--            <systemPath>${basedir}/Library/lazop-api-sdk-1.2.0.jar</systemPath>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
