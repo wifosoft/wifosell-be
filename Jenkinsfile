@@ -65,7 +65,10 @@ def notifyGitHub(status) {
 
 
 pipeline {
-  agent any
+  //agent any
+  agent {
+    label : 'BE'
+  }
   environment {
     NOTIFY_GITHUB = "true"
     TESTER = 'placeholder'
@@ -73,83 +76,81 @@ pipeline {
 
 
   //begin stage
-    stages {
-      node('App1'){
-
-        stage('Build') {  
-          when { 
-            anyOf { 
-              branch 'master';
-              branch 'feature/*';
-              branch 'develop'
-            } 
-          }
-          //when { anyOf { branch 'master'; branch 'develop'; branch 'feature/*' } }
-          //when { anyOf { branch 'main'} }
-          options {
-            lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
-          }
-          steps {
-            notifyGitHub('PENDING')
-            echo 'Initiating maven build'
-            sh 'mvn clean install -P prod -Dlicense.skip=true -Dmaven.test.skip'
-            sh 'docker ps -f name=wifosellbe -q | xargs --no-run-if-empty docker container stop'
-            sh 'docker container ls -a -fname=wifosellbe -q | xargs -r docker container rm'
-            sh 'docker build -t wifosell/wifosell-be .'
-            sh 'docker run -d -p 8888:8888 --network wifosell-be_default --name wifosellbe wifosell/wifosell-be'
-            echo 'Maven build complete'
-          }
+  stages {
+      stage('Build') {  
+        when { 
+          anyOf { 
+            branch 'master';
+            branch 'feature/*';
+            branch 'develop'
+          } 
         }
-
-        stage('Testing') {
-          parallel {
-            stage('SonarQube Test') {
-              steps {
-                notifyGitHub('PENDING')
-
-                echo 'Initiating SonarQube test'
-                sh 'echo "Testing by sonar"'
-                echo 'SonarQube test Complete'
-              }
-            }
-
-            stage('Print Build Number') {
-              steps {
-                notifyGitHub('PENDING')
-                sleep 3
-                echo "This is build number ${BUILD_ID}"
-              }
-            }
-
-          }
+        //when { anyOf { branch 'master'; branch 'develop'; branch 'feature/*' } }
+        //when { anyOf { branch 'main'} }
+        options {
+          lock(label: "wifosell-be-resource", quantity : 1, variable: "wifosell-be-resource")
         }
-
-        stage('Deploy') {
-          when { anyOf { branch 'main'; }}
-
-          steps {
-            notifyGitHub('PENDING')
-            echo 'Initiating Deployment'
-            echo 'Deployment Complete'
-    //         sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
-    // cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
-    // echo \'------- finish copy jar -------------------------------------\'
-    // echo \'------- restart spring-boot-hello service------------------\'
-    // sudo systemctl restart spring-boot-hello
-    // echo \'------- finish restart spring-boot-hello service\'
-    // sudo systemctl status spring-boot-hello
-    // echo \'------- finish restart spring-boot-hello service\'
-    // '''
-            script {
-              currentBuild.description = "Success Build! Access to API for using"
-            //  updateGithubCommitStatus(currentBuild)
-            }
-            notifyGitHub('SUCCESS')
-          }
+        steps {
+          notifyGitHub('PENDING')
+          echo 'Initiating maven build'
+          sh 'mvn clean install -P prod -Dlicense.skip=true -Dmaven.test.skip'
+          sh 'docker ps -f name=wifosellbe -q | xargs --no-run-if-empty docker container stop'
+          sh 'docker container ls -a -fname=wifosellbe -q | xargs -r docker container rm'
+          sh 'docker build -t wifosell/wifosell-be .'
+          sh 'docker run -d -p 8888:8888 --network wifosell-be_default --name wifosellbe wifosell/wifosell-be'
+          echo 'Maven build complete'
         }
-    }
-    //end stages
+      }
+
+      stage('Testing') {
+        parallel {
+          stage('SonarQube Test') {
+            steps {
+              notifyGitHub('PENDING')
+
+              echo 'Initiating SonarQube test'
+              sh 'echo "Testing by sonar"'
+              echo 'SonarQube test Complete'
+            }
+          }
+
+          stage('Print Build Number') {
+            steps {
+              notifyGitHub('PENDING')
+              sleep 3
+              echo "This is build number ${BUILD_ID}"
+            }
+          }
+
+        }
+      }
+
+      stage('Deploy') {
+        when { anyOf { branch 'main'; }}
+
+        steps {
+          notifyGitHub('PENDING')
+          echo 'Initiating Deployment'
+          echo 'Deployment Complete'
+  //         sh '''echo \'------- start copy jar to /home/stackjava/workspace ------------\'
+  // cp /var/lib/jenkins/workspace/wifosell-be_main/target/Zeus-0.0.1-SNAPSHOT.jar /home/workspace/zeus/zeus.jar
+  // echo \'------- finish copy jar -------------------------------------\'
+  // echo \'------- restart spring-boot-hello service------------------\'
+  // sudo systemctl restart spring-boot-hello
+  // echo \'------- finish restart spring-boot-hello service\'
+  // sudo systemctl status spring-boot-hello
+  // echo \'------- finish restart spring-boot-hello service\'
+  // '''
+          script {
+            currentBuild.description = "Success Build! Access to API for using"
+          //  updateGithubCommitStatus(currentBuild)
+          }
+          notifyGitHub('SUCCESS')
+        }
+      }
   }
+  //end stages
+  
 
   post {
     always {
