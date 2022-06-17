@@ -67,7 +67,7 @@ def notifyGitHub(status) {
 pipeline {
   //agent any
   agent {
-    label : 'BE'
+    label 'BE'
   }
   environment {
     NOTIFY_GITHUB = "true"
