@@ -60,6 +60,9 @@ def notifyGitHub(status) {
               contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
               statusResultSource: [$class: 'ConditionalStatusResultSource',
               results: [[$class: 'AnyBuildResult', message: message, state: status]]]])
+      discordSend description: "Jenkins Pipeline Build", footer: "Footer Text", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/987461551751581716/L8smD3EB_PQBpORkRMzeXTz8ixkttQ__Uu4IuN-vP2Qht4yTC3hdykX8e5dVymq59aut"
+
+        
     }
 }
 
