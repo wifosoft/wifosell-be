@@ -59,6 +59,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     @Override
     public void run() {
         User user = userRepository.getUserByName("manager1");
+
         ObjectMapper mapper = new ObjectMapper();
         //File file = new File("src/main/java/com/wifosell/zeus/database/data/order.json");
         InputStream file = (new FileUtils()).getFileAsIOStream("data/order.json");
