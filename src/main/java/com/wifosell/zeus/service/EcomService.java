@@ -36,7 +36,9 @@ public interface EcomService {
 
     void crawlCategoryAttribute() throws ApiException;
 
-    List<LazadaCategory> getListCategory();
+    List<LazadaCategory> getListCategory(boolean isLeaf);
+
+
 
     List<LazadaCategoryAttribute> getListCategoryAttribute();
 

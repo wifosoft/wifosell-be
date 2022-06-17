@@ -23,6 +23,7 @@ import io.swagger.models.Response;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.config.RepositoryNameSpaceHandler;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 @RestController
 @RequestMapping("api/ecom_sync/ecom_account")
@@ -222,8 +224,12 @@ public class EcomAccountController {
     }
 
     @GetMapping("/lazada/getListCategory")
-    public ResponseEntity<GApiResponse> getListCategory() {
-        List<LazadaCategory> list = ecomService.getListCategory();
+    public ResponseEntity<GApiResponse> getListCategory(
+            @RequestParam("isLeaf") boolean isLeaf
+            ) {
+        List<LazadaCategory> list = ecomService.getListCategory(isLeaf);
         return ResponseEntity.ok(GApiResponse.success(list));
     }
+
+
 }

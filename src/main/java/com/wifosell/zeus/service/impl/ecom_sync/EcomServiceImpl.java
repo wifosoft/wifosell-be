@@ -27,10 +27,7 @@ import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayl
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
-import com.wifosell.zeus.specs.CategorySpecs;
-import com.wifosell.zeus.specs.CustomerSpecs;
-import com.wifosell.zeus.specs.EcomAccountSpecs;
-import com.wifosell.zeus.specs.VariantSpecs;
+import com.wifosell.zeus.specs.*;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.NumberUtils;
 import org.slf4j.Logger;
@@ -246,8 +243,7 @@ public class EcomServiceImpl implements EcomService {
                         stock.setWarehouse(warehouse);
                         stockRepository.save(stock);
                     }
-                }
-                else {
+                } else {
                     //Không tồn tại variant thì có thể có tồn tại product hoặc không
                     //Thêm product + variant
                     if (!flagCacheCreatedProduct) {
@@ -439,10 +435,7 @@ public class EcomServiceImpl implements EcomService {
     }
 
     public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId) {
-        EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "Ecom account không tồn tại")
-        );
-
+        EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElse(null);
         SaleChannel saleChannel = saleChannelRepository.findById(saleChannelId).orElseThrow(
                 () -> new ZeusGlobalException(HttpStatus.OK, "saleChannelId không tồn tại")
         );
@@ -466,6 +459,9 @@ public class EcomServiceImpl implements EcomService {
         }
 
         //kiem tra ton tai link khong thi link
+        if(ecomAccount ==null){
+            return LazadaSwwAndEcomAccount.builder().saleChannelShop(sswRecord).ecomAccount(null).build();
+        }
         Optional<LazadaSwwAndEcomAccount> linkSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.getRecordBySswIdAndEcomAccountId(sswRecord.getId(), ecomId);
         LazadaSwwAndEcomAccount linkwwAndEcomAccountRecord = null;
         if (linkSwwAndEcomAccount.isPresent()) {
@@ -522,9 +518,10 @@ public class EcomServiceImpl implements EcomService {
     }
 
     @Override
-    public List<LazadaCategory> getListCategory() {
-        List<LazadaCategory> list = lazadaCategoryRepository.findAll();
-        return list;
+    public List<LazadaCategory> getListCategory(boolean isLeaf) {
+        return lazadaCategoryRepository.findAll(
+                LazadaCategorySpecs.isLeaf(isLeaf)
+        );
     }
 }
 

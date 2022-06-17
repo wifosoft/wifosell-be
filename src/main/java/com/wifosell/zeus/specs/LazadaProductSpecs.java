@@ -22,4 +22,5 @@ public class LazadaProductSpecs {
             return criteriaBuilder.equal(root.get(LazadaProduct_.ECOM_ACCOUNT).get(LazadaProduct_.ID), ecomAccountId);
         };
     }
+
 }
