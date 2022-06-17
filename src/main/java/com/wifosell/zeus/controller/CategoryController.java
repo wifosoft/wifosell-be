@@ -43,6 +43,8 @@ public class CategoryController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
+    
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getRootCategories(
