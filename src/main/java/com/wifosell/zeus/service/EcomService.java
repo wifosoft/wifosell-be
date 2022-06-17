@@ -36,6 +36,8 @@ public interface EcomService {
 
     void crawlCategoryAttribute() throws ApiException;
 
+    List<LazadaCategory> getListCategory();
+
     List<LazadaCategoryAttribute> getListCategoryAttribute();
 
     LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long sswId);

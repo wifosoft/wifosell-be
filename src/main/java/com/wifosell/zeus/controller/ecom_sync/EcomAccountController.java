@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.config.RepositoryNameSpaceHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -220,4 +221,9 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success("Liên kết thành công", lazadaVariantAndSysVariant));
     }
 
+    @GetMapping("/lazada/getListCategory")
+    public ResponseEntity<GApiResponse> getListCategory() {
+        List<LazadaCategory> list = ecomService.getListCategory();
+        return ResponseEntity.ok(GApiResponse.success(list));
+    }
 }

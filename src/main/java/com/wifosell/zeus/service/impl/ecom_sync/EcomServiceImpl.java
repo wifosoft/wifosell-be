@@ -521,6 +521,10 @@ public class EcomServiceImpl implements EcomService {
         return record;
     }
 
-
+    @Override
+    public List<LazadaCategory> getListCategory() {
+        List<LazadaCategory> list = lazadaCategoryRepository.findAll();
+        return list;
+    }
 }
 
