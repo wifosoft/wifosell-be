@@ -10,4 +10,4 @@ ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 ENV UPLOAD_DIR=storage
 EXPOSE 8888
-ENTRYPOINT ["java","-jar","/app.jar", "--spring.profiles.active=devdb"]
+ENTRYPOINT ["java","-jar","/app.jar", "--spring.profiles.active=prodv2"]
