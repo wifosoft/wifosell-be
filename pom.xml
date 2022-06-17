@@ -204,12 +204,14 @@
                     <exclude>**/*.xlsx</exclude>
                     <exclude>**/*.p12</exclude>
                     <exclude>**/*.xlsx</exclude>
+                    <exclude>**/*.json</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.p12</include>
+                    <include>**/*.json</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

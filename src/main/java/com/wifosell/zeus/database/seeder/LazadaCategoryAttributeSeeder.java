@@ -13,11 +13,9 @@ import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryAttributeRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
+import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +33,8 @@ public class LazadaCategoryAttributeSeeder extends BaseSeeder implements ISeeder
     public void run() throws FileNotFoundException {
 
         ObjectMapper mapper = new ObjectMapper();
-        File file = new File("src/main/java/com/wifosell/zeus/database/data/lazada_category_attribute_payload.json");
+        //File file = new File("src/main/java/com/wifosell/zeus/database/data/lazada_category_attribute_payload.json");
+        InputStream file = (new FileUtils()).getFileAsIOStream("data/lazada_category_attribute_payload.json");
 
         try {
             LazadaCategoryAttribute[] categoryAttributes  = mapper.readValue(file, LazadaCategoryAttribute[].class);
