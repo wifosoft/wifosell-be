@@ -127,7 +127,7 @@ pipeline {
       }
 
       stage('Deploy') {
-        when { anyOf { branch 'main'; branch 'develop' ; branch 'feature/*'}}
+        when { anyOf { branch 'main'; branch 'develop' ; branch 'feature/*' }}
 
         steps {
           notifyGitHub('PENDING')
