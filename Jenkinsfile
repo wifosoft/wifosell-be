@@ -45,13 +45,13 @@ def notifyGitHub(status) {
                 message = 'Stage: ' + (env.PARENT_STAGE_NAME ?: STAGE_NAME)
                 break
             case 'SUCCESS':
-                message = run_type + ' succeeded!'
+                message = run_type + ' succeeded! Thành công'
                 break
             case 'FAILURE':
-                message = run_type + ' failed!'
+                message = run_type + ' failed! Thất bại'
                 break
             case 'ABORTED':
-                message = run_type + ' aborted!'
+                message = run_type + ' aborted! Đã huỷ'
                 status == 'ERROR'
                 break
         }
@@ -60,7 +60,7 @@ def notifyGitHub(status) {
               contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
               statusResultSource: [$class: 'ConditionalStatusResultSource',
               results: [[$class: 'AnyBuildResult', message: message, state: status]]]])
-      discordSend description: "Jenkins Pipeline Build", footer: "Footer Text", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/987461551751581716/L8smD3EB_PQBpORkRMzeXTz8ixkttQ__Uu4IuN-vP2Qht4yTC3hdykX8e5dVymq59aut"
+      discordSend description: ' [' + STAGE_NAME +'] '+ message, footer: "Báo cáo tiến trình deployment ", link: env.BUILD_URL, result: currentBuild.currentResult, title: "Build trigger!!!", webhookURL: "https://discord.com/api/webhooks/987461551751581716/L8smD3EB_PQBpORkRMzeXTz8ixkttQ__Uu4IuN-vP2Qht4yTC3hdykX8e5dVymq59aut"
 
         
     }
