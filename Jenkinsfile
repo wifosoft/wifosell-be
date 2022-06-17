@@ -94,7 +94,7 @@ pipeline {
         steps {
           notifyGitHub('PENDING')
           echo 'Initiating maven build'
-          sh 'mvn clean install -P prod -Dlicense.skip=true -Dmaven.test.skip'
+          sh 'mvn clean install -P=devdb -Dlicense.skip=true -Dmaven.test.skip -Dspring-boot.run.profiles=devdb'
           sh 'docker ps -f name=wifosellbe -q | xargs --no-run-if-empty docker container stop'
           sh 'docker container ls -a -fname=wifosellbe -q | xargs -r docker container rm'
           sh 'docker build -t wifosell/wifosell-be .'
