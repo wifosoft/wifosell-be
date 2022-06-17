@@ -11,8 +11,11 @@ import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductSpecs {
@@ -70,32 +73,19 @@ public class ProductSpecs {
         });
     }
 
-    public static Specification<Product> inWarehouses(List<Long> warehouseIds) {
+    public static Specification<Product> hasStocks(List<Long> warehouseIds, Integer minQuantity, Integer maxQuantity) {
         return ((root, query, criteriaBuilder) -> {
             query.distinct(true);
-            if (warehouseIds == null || warehouseIds.isEmpty())
-                return criteriaBuilder.and();
-            return root.join(Product_.VARIANTS)
-                    .join(Variant_.STOCKS)
-                    .get(Stock_.WAREHOUSE)
-                    .get(Warehouse_.ID)
-                    .in(warehouseIds);
-        });
-    }
 
-    public static Specification<Product> hasQuantityBetween(Integer minQuantity, Integer maxQuantity) {
-        return ((root, query, criteriaBuilder) -> {
-            if (minQuantity == null && maxQuantity == null)
-                return criteriaBuilder.and();
+            List<Predicate> predicates = new ArrayList<>();
+            if (warehouseIds != null)
+                predicates.add(root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.WAREHOUSE).get(Warehouse_.ID).in(warehouseIds));
+            if (minQuantity != null)
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY), minQuantity));
+            if (maxQuantity != null)
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY), maxQuantity));
 
-            Integer finalMinQuantity = minQuantity != null ? minQuantity : 0;
-
-            Path<Integer> quantity = root.join(Product_.VARIANTS).join(Variant_.STOCKS).get(Stock_.QUANTITY);
-            query.distinct(true);
-
-            return maxQuantity != null ?
-                    criteriaBuilder.between(quantity, finalMinQuantity, maxQuantity) :
-                    criteriaBuilder.greaterThanOrEqualTo(quantity, finalMinQuantity);
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
 

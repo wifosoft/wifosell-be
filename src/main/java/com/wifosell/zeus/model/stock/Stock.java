@@ -5,6 +5,8 @@ import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 import javax.persistence.*;
 
@@ -23,6 +25,7 @@ public class Stock extends BasicEntity {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "warehouse_id")
+    @IndexedEmbedded
     private Warehouse warehouse;
 
     @ManyToOne
@@ -30,8 +33,10 @@ public class Stock extends BasicEntity {
     @JoinColumn(name = "variant_id")
     private Variant variant;
 
+    @GenericField
     private Integer actualQuantity; // decrease after the order is paid
 
+    @GenericField
     private Integer quantity;   // decrease after the order is created (<= actualQuantity)
 
     @Override

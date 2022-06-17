@@ -1,4 +1,4 @@
-package com.wifosell.zeus.payload.response;
+package com.wifosell.zeus.payload.response.auth;
 
 import lombok.Data;
 

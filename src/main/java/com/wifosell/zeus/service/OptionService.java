@@ -1,6 +1,7 @@
 package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.option.OptionModel;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,5 +14,13 @@ public interface OptionService {
             Integer limit,
             String sortBy,
             String orderBy
+    );
+
+    PageInfo<OptionModel> searchOptions(
+            Long userId,
+            String keyword,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit
     );
 }

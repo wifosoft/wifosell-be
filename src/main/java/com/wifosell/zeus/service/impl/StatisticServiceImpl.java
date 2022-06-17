@@ -3,7 +3,6 @@ package com.wifosell.zeus.service.impl;
 import com.wifosell.zeus.model.order.OrderItem_;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.user.User_;
@@ -22,7 +21,6 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Transactional
@@ -43,8 +41,8 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
-                        criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
+                        OrderSpecs.isBetweenTwoDates(dateFrom, dateTo).toPredicate(orderModelRoot, criteriaQuery, criteriaBuilder)
                 ))
                 .groupBy(typeJoin.get(OrderItem_.VARIANT))
                 .orderBy(criteriaBuilder.desc(total));
@@ -70,7 +68,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(typeJoin.get(OrderItem_.VARIANT), total)
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo),
                         criteriaBuilder.equal(orderModelRoot.get(OrderModel_.SHOP), shopId)
                 ))
@@ -88,7 +86,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<TopRevenueEmployeeResponse> topEmployee (Instant dateFrom, Instant dateTo) {
+    public List<TopRevenueEmployeeResponse> topEmployee(Instant dateFrom, Instant dateTo) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
         Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
@@ -97,7 +95,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(orderModelRoot.get(OrderModel_.CREATED_BY), total)
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
                 ))
                 .groupBy(orderModelRoot.get(OrderModel_.CREATED_BY))
@@ -116,7 +114,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<TopRevenueEmployeeResponse> topEmployeeByShopId (Long shopId, Instant dateFrom, Instant dateTo) {
+    public List<TopRevenueEmployeeResponse> topEmployeeByShopId(Long shopId, Instant dateFrom, Instant dateTo) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
         Root<OrderModel> orderModelRoot = criteriaQuery.from(OrderModel.class);
@@ -125,7 +123,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(orderModelRoot.get(OrderModel_.CREATED_BY), total)
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
                 ))
                 .groupBy(orderModelRoot.get(OrderModel_.CREATED_BY))
@@ -150,7 +148,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(criteriaBuilder.sum(orderModelRoot.get(OrderModel_.SUBTOTAL)))
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
                 ));
         Query query = entityManager.createQuery(criteriaQuery);
@@ -168,7 +166,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(criteriaBuilder.sum(orderModelRoot.get(OrderModel_.SUBTOTAL)))
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE),false),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.IS_COMPLETE), false),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo),
                         criteriaBuilder.equal(orderModelRoot.get(OrderModel_.SHOP), shopId)
                 ));
@@ -187,7 +185,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(criteriaBuilder.sum(orderModelRoot.get(OrderModel_.SUBTOTAL)))
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.CREATED_BY).get(User_.ID),userId),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.CREATED_BY).get(User_.ID), userId),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo)
                 ));
         Query query = entityManager.createQuery(criteriaQuery);
@@ -205,7 +203,7 @@ public class StatisticServiceImpl implements StatisticService {
         criteriaQuery
                 .multiselect(criteriaBuilder.sum(orderModelRoot.get(OrderModel_.SUBTOTAL)))
                 .where(criteriaBuilder.and(
-                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.CREATED_BY).get(User_.ID),userId),
+                        criteriaBuilder.equal(orderModelRoot.get(OrderModel_.CREATED_BY).get(User_.ID), userId),
                         criteriaBuilder.between(orderModelRoot.get(OrderModel_.UPDATED_AT), dateFrom, dateTo),
                         criteriaBuilder.equal(orderModelRoot.get(OrderModel_.SHOP), shopId)
                 ));

@@ -10,11 +10,11 @@ import com.wifosell.zeus.repository.VariantRepository;
 import com.wifosell.zeus.service.VariantService;
 import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -26,14 +26,15 @@ import java.util.stream.Collectors;
 public class VariantServiceImpl implements VariantService {
     private final UserRepository userRepository;
     private final VariantRepository variantRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Page<Variant> getVariants(
             Long userId,
             List<Long> warehouseIds,
             List<Boolean> isActives,
-            int offset,
-            int limit,
+            Integer offset,
+            Integer limit,
             String sortBy,
             String orderBy
     ) {
@@ -47,7 +48,7 @@ public class VariantServiceImpl implements VariantService {
     }
 
     @Override
-    public Variant getVariant(Long userId, @NonNull Long variantId) {
+    public Variant getVariant(Long userId, Long variantId) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return variantRepository.getOne(
                 VariantSpecs.hasGeneralManager(gmId)
@@ -56,40 +57,40 @@ public class VariantServiceImpl implements VariantService {
     }
 
     @Override
-    public Variant addVariant(@NonNull Long userId, AddVariantRequest request) {
+    public Variant addVariant(Long userId, AddVariantRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Variant variant = new Variant();
         return this.updateVariantByRequest(variant, request, gm);
     }
 
     @Override
-    public Variant updateVariant(@NonNull Long userId, @NonNull Long variantId, UpdateVariantRequest request) {
+    public Variant updateVariant(Long userId, Long variantId, UpdateVariantRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Variant variant = getVariant(userId, variantId);
         return this.updateVariantByRequest(variant, request, gm);
     }
 
     @Override
-    public Variant activateVariant(Long userId, @NonNull Long variantId) {
+    public Variant activateVariant(Long userId, Long variantId) {
         Variant variant = getVariant(userId, variantId);
         variant.setIsActive(true);
         return variantRepository.save(variant);
     }
 
     @Override
-    public Variant deactivateVariant(Long userId, @NonNull Long variantId) {
+    public Variant deactivateVariant(Long userId, Long variantId) {
         Variant variant = getVariant(userId, variantId);
         variant.setIsActive(false);
         return variantRepository.save(variant);
     }
 
     @Override
-    public List<Variant> activateVariants(Long userId, @NonNull List<Long> variantIds) {
+    public List<Variant> activateVariants(Long userId, List<Long> variantIds) {
         return variantIds.stream().map(id -> this.activateVariant(userId, id)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Variant> deactivateVariants(Long userId, @NonNull List<Long> variantIds) {
+    public List<Variant> deactivateVariants(Long userId, List<Long> variantIds) {
         return variantIds.stream().map(id -> this.deactivateVariant(userId, id)).collect(Collectors.toList());
     }
 

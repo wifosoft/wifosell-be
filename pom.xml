@@ -35,6 +35,7 @@
         </profile>
     </profiles>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -158,6 +159,8 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.2</version>
         </dependency>
+
+        <!-- Hibernate Search -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -174,10 +177,22 @@
             <version>2.8.6</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-search-orm</artifactId>
-            <version>5.11.10.Final</version>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-mapper-orm</artifactId>
+            <version>6.1.5.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-backend-lucene</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>lazop-api-sdk</groupId>-->
+<!--            <artifactId>lazop-api-sdk</artifactId>-->
+<!--            <scope>system</scope>-->
+<!--            <version>1.2.0</version>-->
+<!--            <systemPath>${basedir}/Library/lazop-api-sdk-1.2.0.jar</systemPath>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -189,12 +204,14 @@
                     <exclude>**/*.xlsx</exclude>
                     <exclude>**/*.p12</exclude>
                     <exclude>**/*.xlsx</exclude>
+                    <exclude>**/*.json</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.p12</include>
+                    <include>**/*.json</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

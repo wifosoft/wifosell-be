@@ -20,13 +20,13 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(RoleSeeder.class);
         seederTask.add(UserSeeder.class);
         seederTask.add(CategorySeeder.class);
-        seederTask.add(ProductSeeder.class);
         seederTask.add(VoucherSeeder.class);
         seederTask.add(CustomerSeeder.class);
         seederTask.add(SupplierSeeder.class);
         seederTask.add(WarehouseSeeder.class);
         seederTask.add(SaleChannelSeeder.class);
         seederTask.add(ShopSeeder.class);
+        seederTask.add(ProductSeeder.class);
         seederTask.add(OrderSeeder.class);
         seederTask.add(EcomAccountSeeder.class);
         seederTask.add(LazadaCategorySeeder.class);
