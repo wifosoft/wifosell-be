@@ -80,9 +80,12 @@ public enum EAppExceptionCode {
     //endregion
 
     //region Payment
-    PAYMENT_NOT_FOUND(1500001);
+    PAYMENT_NOT_FOUND(1500001),
     //endregion
 
+    //ecom
+    ECOM_ACCOUNT_NOT_FOUND(1500001);
+    //end ecom
     private final int value;
 
     EAppExceptionCode(int value) {

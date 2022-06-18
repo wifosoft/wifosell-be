@@ -13,9 +13,11 @@ import com.wifosell.zeus.payload.request.shop.IShopRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.WarehouseSpecs;
+import com.wifosell.zeus.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +43,8 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
         ObjectMapper mapper = new ObjectMapper();
-        File file = new File("src/main/java/com/wifosell/zeus/database/data/shop.json");
+        //File file = new File("src/main/java/com/wifosell/zeus/database/data/shop.json");
+        InputStream file = (new FileUtils()).getFileAsIOStream("data/shop.json");
 
         try {
             AddShopRequest[] requests = mapper.readValue(file, AddShopRequest[].class);
@@ -100,6 +103,7 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
                             WarehouseSpecs.hasGeneralManager(gm.getId())
                                     .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
                     );
+
                     SaleChannelShop relation = SaleChannelShop.builder()
                             .shop(shop)
                             .saleChannel(saleChannel)

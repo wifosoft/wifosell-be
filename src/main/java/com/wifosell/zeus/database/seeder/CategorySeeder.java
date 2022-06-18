@@ -53,9 +53,9 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
         categoryRepository.save(category112);
 
         Category category12 = Category.builder()
-                .name("Thoi trang nu")
-                .description("Thoi trang nu cao cap")
-                .shortName("TTNu")
+                .name("Thời trang nữ áo suna")
+                .description("Áo suna")
+                .shortName("TTNU_SUNA")
                 .generalManager(gm)
                 .parent(category1).build();
         categoryRepository.save(category12);
