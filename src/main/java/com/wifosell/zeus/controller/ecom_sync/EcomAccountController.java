@@ -163,7 +163,7 @@ public class EcomAccountController {
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "ecomId") Long ecomId
     ) throws ApiException {
-        return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId, 1)));
+        return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId, 50)));
     }
 
 

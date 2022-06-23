@@ -16,5 +16,6 @@ public interface LazadaSwwAndEcomAccountRepository extends SoftRepository<Lazada
     @Query("select u from LazadaSwwAndEcomAccount u where u.saleChannelShop.id= ?1 and u.ecomAccount.id=?2")
     Optional<LazadaSwwAndEcomAccount> getRecordBySswIdAndEcomAccountId(Long sswId, Long ecomAccountId);
 
+    @Query("select u from LazadaSwwAndEcomAccount u where u.ecomAccount.id= ?1")
     Optional<LazadaSwwAndEcomAccount> findByEcomAccountId(Long ecomAccountId);
 }
