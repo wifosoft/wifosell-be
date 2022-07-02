@@ -117,7 +117,15 @@ public class OrderSpecs {
         });
     }
 
-    public static Specification<OrderModel> isComplete() {
-        return ((root, query, cb) -> cb.equal(root.get(OrderModel_.IS_COMPLETE), true));
+    public static Specification<OrderModel> isCompleteEqual(boolean isComplete) {
+        return ((root, query, cb) -> cb.equal(root.get(OrderModel_.IS_COMPLETE), isComplete));
+    }
+
+    public static Specification<OrderModel> isCompleteIn(List<Boolean> isCompletes) {
+        return ((root, query, cb) -> {
+            if (isCompletes == null || isCompletes.isEmpty())
+                return cb.equal(root.get(OrderModel_.IS_COMPLETE), true);
+            return root.get(OrderModel_.IS_COMPLETE).in(isCompletes);
+        });
     }
 }
