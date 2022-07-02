@@ -9,7 +9,9 @@ import com.wifosell.zeus.model.shop.Shop_;
 import com.wifosell.zeus.model.user.User_;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Predicate;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderSpecs {
@@ -91,5 +93,31 @@ public class OrderSpecs {
                 return criteriaBuilder.and();
             return criteriaBuilder.between(root.get(OrderModel_.CREATED_AT), from, to);
         });
+    }
+
+    public static Specification<OrderModel> isCreatedAtBetween(Instant fromDate, Instant toDate) {
+        return ((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (fromDate != null)
+                predicates.add(cb.greaterThanOrEqualTo(root.get(OrderModel_.CREATED_AT), fromDate));
+            if (toDate != null)
+                predicates.add(cb.lessThanOrEqualTo(root.get(OrderModel_.CREATED_AT), toDate));
+            return cb.and(predicates.toArray(new Predicate[0]));
+        });
+    }
+
+    public static Specification<OrderModel> isCreatedAtBetween(Long fromDate, Long toDate) {
+        return ((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (fromDate != null)
+                predicates.add(cb.greaterThanOrEqualTo(root.get(OrderModel_.CREATED_AT), Instant.ofEpochMilli(fromDate)));
+            if (toDate != null)
+                predicates.add(cb.lessThanOrEqualTo(root.get(OrderModel_.CREATED_AT), Instant.ofEpochMilli(toDate)));
+            return cb.and(predicates.toArray(new Predicate[0]));
+        });
+    }
+
+    public static Specification<OrderModel> isComplete() {
+        return ((root, query, cb) -> cb.equal(root.get(OrderModel_.IS_COMPLETE), true));
     }
 }
