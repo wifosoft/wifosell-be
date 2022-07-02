@@ -58,6 +58,9 @@ public class OrderModel extends BasicEntity {
     @Column(name = "is_complete")
     private boolean isComplete;
 
+    @Column(name = "is_canceled")
+    private boolean isCanceled;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User createdBy;
@@ -77,6 +80,10 @@ public class OrderModel extends BasicEntity {
 
     public boolean getIsComplete() {
         return this.isComplete;
+    }
+
+    public boolean getIsCanceled() {
+        return this.isCanceled;
     }
 
     public enum STATUS {

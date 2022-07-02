@@ -121,11 +121,23 @@ public class OrderSpecs {
         return ((root, query, cb) -> cb.equal(root.get(OrderModel_.IS_COMPLETE), isComplete));
     }
 
-    public static Specification<OrderModel> isCompleteIn(List<Boolean> isCompletes) {
+    public static Specification<OrderModel> isCompleteIn(List<Boolean> isComplete) {
         return ((root, query, cb) -> {
-            if (isCompletes == null || isCompletes.isEmpty())
+            if (isComplete == null || isComplete.isEmpty())
                 return cb.equal(root.get(OrderModel_.IS_COMPLETE), true);
-            return root.get(OrderModel_.IS_COMPLETE).in(isCompletes);
+            return root.get(OrderModel_.IS_COMPLETE).in(isComplete);
+        });
+    }
+
+    public static Specification<OrderModel> isCanceledEqual(boolean isCanceled) {
+        return ((root, query, cb) -> cb.equal(root.get(OrderModel_.IS_CANCELED), isCanceled));
+    }
+
+    public static Specification<OrderModel> isCanceledIn(List<Boolean> isCanceled) {
+        return ((root, query, cb) -> {
+            if (isCanceled == null || isCanceled.isEmpty())
+                return cb.equal(root.get(OrderModel_.IS_CANCELED), false);
+            return root.get(OrderModel_.IS_CANCELED).in(isCanceled);
         });
     }
 }

@@ -98,7 +98,7 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public Long getNumberOfOrders(Long userId, Long fromDate, Long toDate, List<Boolean> isCompletes) {
+    public Long getNumberOfOrders(Long userId, Long fromDate, Long toDate, List<Boolean> isComplete, List<Boolean> isCanceled) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -108,7 +108,8 @@ public class StatsServiceImpl implements StatsService {
         cq.select(cb.count(root))
                 .where(cb.and(
                         OrderSpecs.hasGeneralManager(gmId).toPredicate(root, cq, cb),
-                        OrderSpecs.isCompleteIn(isCompletes).toPredicate(root, cq, cb),
+                        OrderSpecs.isCompleteIn(isComplete).toPredicate(root, cq, cb),
+                        OrderSpecs.isCanceledIn(isCanceled).toPredicate(root, cq, cb),
                         OrderSpecs.isCreatedAtBetween(fromDate, toDate).toPredicate(root, cq, cb)
                 ));
 

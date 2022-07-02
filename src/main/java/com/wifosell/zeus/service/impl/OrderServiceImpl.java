@@ -220,6 +220,9 @@ public class OrderServiceImpl implements OrderService {
         // Complete
         order.setComplete(false);
 
+        // Cancel
+        order.setCanceled(false);
+
         // Created by
         order.setCreatedBy(user);
 
@@ -250,6 +253,10 @@ public class OrderServiceImpl implements OrderService {
 
             boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
             order.setComplete(isComplete);
+
+            if (order.getStatus().equals(OrderModel.STATUS.CANCELED)) {
+                order.setCanceled(true);
+            }
 
             orderRepository.save(order);
         }

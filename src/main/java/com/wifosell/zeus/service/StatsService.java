@@ -13,5 +13,5 @@ public interface StatsService {
 
     RevenueBarChart getRevenueBarChart(Long userId, Long fromDate, Long toDate, RevenueBarChart.Type type, Integer offset, Integer limit);
 
-    Long getNumberOfOrders(Long userId, Long fromDate, Long toDate, List<Boolean> isCompletes);
+    Long getNumberOfOrders(Long userId, Long fromDate, Long toDate, List<Boolean> isComplete, List<Boolean> isCanceled);
 }

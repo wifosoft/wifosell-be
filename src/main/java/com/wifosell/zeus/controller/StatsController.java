@@ -75,9 +75,10 @@ public class StatsController {
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "fromDate", required = false) Long fromDate,
             @RequestParam(name = "toDate", required = false) Long toDate,
-            @RequestParam(name = "isComplete", required = false) List<Boolean> isCompletes
+            @RequestParam(name = "isComplete", required = false) List<Boolean> isComplete,
+            @RequestParam(name = "isCanceled", required = false) List<Boolean> isCanceled
     ) {
-        Long number = statsService.getNumberOfOrders(userPrincipal.getId(), fromDate, toDate, isCompletes);
+        Long number = statsService.getNumberOfOrders(userPrincipal.getId(), fromDate, toDate, isComplete, isCanceled);
         return ResponseEntity.ok(GApiResponse.success(number));
     }
 }
