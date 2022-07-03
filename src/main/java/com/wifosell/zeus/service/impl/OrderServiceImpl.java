@@ -149,8 +149,10 @@ public class OrderServiceImpl implements OrderService {
                 Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
                 OrderItem orderItem = OrderItem.builder()
                         .variant(variant)
+                        .originalPrice(variant.getOriginalCost())
                         .price(variant.getCost())
                         .quantity(orderItemRequest.getQuantity())
+                        .subtotal(variant.getCost().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity())))
                         .note(orderItemRequest.getNote())
                         .order(order)
                         .build();
@@ -195,6 +197,9 @@ public class OrderServiceImpl implements OrderService {
         // Subtotal
         BigDecimal subtotal = order.calcSubTotal();
         order.setSubtotal(subtotal);
+
+        // Shipping fee
+        Optional.of(request.getShippingFee()).ifPresent(order::setShippingFee);
 
         // Cur step
         order.setStatus(OrderModel.STATUS.CREATED);

@@ -27,9 +27,10 @@ public class Variant extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private BigDecimal originalCost;
+
     private BigDecimal cost;
 
-    //    @Column(unique = true)
     @GenericField
     private String sku;
 

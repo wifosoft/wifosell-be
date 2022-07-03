@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Getter
 public class VariantResponse extends BasicEntityResponse {
+    private final String originalCost;
     private final String cost;
     private final String sku;
     private final String barcode;
@@ -26,6 +27,7 @@ public class VariantResponse extends BasicEntityResponse {
 
     public VariantResponse(Variant variant) {
         super(variant);
+        this.originalCost = variant.getOriginalCost().toString();
         this.cost = variant.getCost().toString();
         this.sku = variant.getSku();
         this.barcode = variant.getBarcode();

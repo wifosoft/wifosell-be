@@ -55,7 +55,7 @@ public class ProductResponse extends BasicEntityResponse {
 
         List<Variant> variants = product.getVariants().stream()
                 .filter(variant -> !variant.isDeleted()).collect(Collectors.toList());
-        
+
         if (warehouseIds != null || minQuantity != null || maxQuantity != null) {
             variants = variants.stream().filter(variant -> {
                 List<Stock> stocks = variant.getStocks().stream().filter(stock -> {
@@ -84,14 +84,16 @@ public class ProductResponse extends BasicEntityResponse {
     @Getter
     @Setter
     private static class VariantResponse extends BasicEntityResponse {
-        private String cost;
-        private String sku;
-        private String barcode;
-        private List<OptionValueResponse> optionValues;
+        private final String originalCost;
+        private final String cost;
+        private final String sku;
+        private final String barcode;
+        private final List<OptionValueResponse> optionValues;
         private final List<StockResponse> stocks;
 
         public VariantResponse(Variant variant) {
             super(variant);
+            this.originalCost = variant.getOriginalCost().toString();
             this.cost = variant.getCost().toString();
             this.sku = variant.getSku();
             this.barcode = variant.getBarcode();

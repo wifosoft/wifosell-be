@@ -370,6 +370,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
             for (Variant variant : variants) {
                 if (variant.getId().equals(variantRequest.getId())) {
+                    variant.setOriginalCost(new BigDecimal(variantRequest.getOriginalCost()));
                     variant.setCost(new BigDecimal(variantRequest.getCost()));
                     variant.setSku(variantRequest.getSku());
                     variant.setBarcode(variantRequest.getBarcode());
@@ -381,6 +382,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
             if (!isExistingVariant) {
                 Variant variant = Variant.builder()
+                        .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
                         .cost(new BigDecimal(variantRequest.getCost()))
                         .sku(variantRequest.getSku())
                         .barcode(variantRequest.getBarcode())

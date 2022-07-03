@@ -479,6 +479,7 @@ public class ProductServiceImpl implements ProductService {
 
             for (Variant variant : variants) {
                 if (variant.getId().equals(variantRequest.getId())) {
+                    variant.setOriginalCost(new BigDecimal(variantRequest.getOriginalCost()));
                     variant.setCost(new BigDecimal(variantRequest.getCost()));
                     variant.setSku(variantRequest.getSku());
                     variant.setBarcode(variantRequest.getBarcode());
@@ -490,6 +491,7 @@ public class ProductServiceImpl implements ProductService {
 
             if (!isExistingVariant) {
                 Variant variant = Variant.builder()
+                        .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
                         .cost(new BigDecimal(variantRequest.getCost()))
                         .sku(variantRequest.getSku())
                         .barcode(variantRequest.getBarcode())

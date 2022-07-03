@@ -44,6 +44,8 @@ public class OrderModel extends BasicEntity {
 
     private BigDecimal subtotal;
 
+    private BigDecimal shippingFee;
+
     @Enumerated(EnumType.STRING)
     private STATUS status;
 
@@ -73,7 +75,7 @@ public class OrderModel extends BasicEntity {
     public BigDecimal calcSubTotal() {
         BigDecimal subtotal = new BigDecimal(0);
         for (OrderItem orderItem : this.getOrderItems()) {
-            subtotal = subtotal.add(orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+            subtotal = subtotal.add(orderItem.getSubtotal());
         }
         return subtotal;
     }

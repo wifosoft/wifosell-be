@@ -225,6 +225,7 @@ public class EcomServiceImpl implements EcomService {
                 if (sysVariant != null) {
                     //nếu tồn tại variant thì sẽ tồn tại product => Cập nhật thông tin product
                     //cập nhật thông tin variant hiện tại, stock ở warehouse tương ứng
+                    sysVariant.setOriginalCost(new BigDecimal(lzVariant.getPrice()));
                     sysVariant.setCost(new BigDecimal(lzVariant.getPrice()));
                     variantRepository.save(sysVariant);
                     Optional<Stock> stock_ = stockRepository.findByVariantAndWarehouse(sysVariant.getId(), warehouse.getId());
@@ -259,6 +260,7 @@ public class EcomServiceImpl implements EcomService {
                         flagCacheCreatedProduct = true;
                     }
                     Variant variant = new Variant();
+                    variant.setOriginalCost(new BigDecimal(lzVariant.getPrice()));
                     variant.setCost(new BigDecimal(lzVariant.getPrice()));
                     variant.setBarcode(s.getSellerSku());
                     variant.setSku(s.getSellerSku());
@@ -459,7 +461,7 @@ public class EcomServiceImpl implements EcomService {
         }
 
         //kiem tra ton tai link khong thi link
-        if(ecomAccount ==null){
+        if (ecomAccount == null) {
             return LazadaSwwAndEcomAccount.builder().saleChannelShop(sswRecord).ecomAccount(null).build();
         }
         Optional<LazadaSwwAndEcomAccount> linkSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.getRecordBySswIdAndEcomAccountId(sswRecord.getId(), ecomId);

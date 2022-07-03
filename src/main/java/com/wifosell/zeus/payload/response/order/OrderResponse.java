@@ -23,6 +23,7 @@ public class OrderResponse extends BasicEntityResponse {
     private final SaleChannelResponse saleChannel;
     private final CustomerResponse customer;
     private final BigDecimal subtotal;
+    private final BigDecimal shippingFee;
     private final OrderModel.STATUS status;
     private final List<OrderStepResponse> steps;
     private final PaymentResponse payment;
@@ -36,6 +37,7 @@ public class OrderResponse extends BasicEntityResponse {
         this.saleChannel = new SaleChannelResponse(order.getSaleChannel());
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
+        this.shippingFee = order.getShippingFee();
         this.status = order.getStatus();
         this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
         this.payment = new PaymentResponse(order.getPayment());
@@ -49,14 +51,18 @@ public class OrderResponse extends BasicEntityResponse {
 
     @Getter
     private static class OrderItemResponse extends BasicEntityResponse {
+        private final BigDecimal originalPrice;
         private final BigDecimal price;
         private final Integer quantity;
+        private final BigDecimal subtotal;
         private final VariantResponse variant;
 
         public OrderItemResponse(OrderItem orderItem) {
             super(orderItem);
+            this.originalPrice = orderItem.getOriginalPrice();
             this.price = orderItem.getPrice();
             this.quantity = orderItem.getQuantity();
+            this.subtotal = orderItem.getSubtotal();
             this.variant = new VariantResponse(orderItem.getVariant());
         }
     }
