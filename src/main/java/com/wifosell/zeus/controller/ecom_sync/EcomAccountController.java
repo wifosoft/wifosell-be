@@ -19,24 +19,19 @@ import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.ConvertorType;
-import io.swagger.models.Response;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.config.RepositoryNameSpaceHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.PresentationDirection;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-import java.util.function.BinaryOperator;
 
 @RestController
 @RequestMapping("api/ecom_sync/ecom_account")
@@ -128,7 +123,6 @@ public class EcomAccountController {
         EcomAccount ecomAccount = ecomService.addEcomAccountLazadaFromCallback(payload);
         return ResponseEntity.ok(GApiResponse.success(ecomAccount));
     }
-
 
 
     @GetMapping("/lazada/{ecomId}/getAccountInfo")
@@ -227,7 +221,7 @@ public class EcomAccountController {
     @GetMapping("/lazada/getListCategory")
     public ResponseEntity<GApiResponse> getListCategory(
             @RequestParam("isLeaf") boolean isLeaf
-            ) {
+    ) {
         List<LazadaCategory> list = ecomService.getListCategory(isLeaf);
         return ResponseEntity.ok(GApiResponse.success(list));
     }

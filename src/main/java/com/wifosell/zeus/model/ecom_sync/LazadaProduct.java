@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -51,25 +54,28 @@ public class LazadaProduct extends BasicEntity {
     private EcomAccount ecomAccount;
 
 
-    public LazadaProduct() {}
-    public LazadaProduct(ResponseListProductPayload.Product e){
+    public LazadaProduct() {
+    }
+
+    public LazadaProduct(ResponseListProductPayload.Product e) {
         this.withDataByProductAPI(e);
     }
-    public LazadaProduct(ResponseListProductPayload.Product e, EcomAccount ecomAccount){
+
+    public LazadaProduct(ResponseListProductPayload.Product e, EcomAccount ecomAccount) {
         this.withDataByProductAPI(e);
         this.setEcomAccount(ecomAccount);
     }
 
-    public LazadaProduct withDataByProductAPI(ResponseListProductPayload.Product e){
+    public LazadaProduct withDataByProductAPI(ResponseListProductPayload.Product e) {
         Gson gson = new Gson();
-         this.name = e.getAttributes().getName();
-         this.itemId = e.getItem_id();
-         this.primaryCategory  =e.getPrimary_category();
-         this.itemData = gson.toJson(e);
-         this.skuCount = e.getSkus().size();
-         this.images = gson.toJson(e.getImages());
-         this.createdTime =  e.getCreated_time();
-         this.updatedTime = e.getUpdated_time();
-         return this;
+        this.name = e.getAttributes().getName();
+        this.itemId = e.getItem_id();
+        this.primaryCategory = e.getPrimary_category();
+        this.itemData = gson.toJson(e);
+        this.skuCount = e.getSkus().size();
+        this.images = gson.toJson(e.getImages());
+        this.createdTime = e.getCreated_time();
+        this.updatedTime = e.getUpdated_time();
+        return this;
     }
 }

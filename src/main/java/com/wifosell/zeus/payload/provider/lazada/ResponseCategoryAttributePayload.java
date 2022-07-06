@@ -1,13 +1,10 @@
 package com.wifosell.zeus.payload.provider.lazada;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.poi.sl.draw.geom.GuideIf;
 
-import javax.persistence.Column;
 import java.util.List;
 
 @Getter
@@ -27,7 +24,7 @@ public class ResponseCategoryAttributePayload {
 
         @Getter
         @Setter
-        public class Options{
+        public class Options {
             private String name;
             private String en_name;
             private Long id;
@@ -56,14 +53,13 @@ public class ResponseCategoryAttributePayload {
         private String attributeType;
 
 
-
         @SerializedName("is_mandatory")
         @JsonProperty("is_mandatory")
         private Long isMandatory;
 
 
-
     }
+
     public List<CategoryAttributeItem> data;
     public Integer code;
     public String requestId;

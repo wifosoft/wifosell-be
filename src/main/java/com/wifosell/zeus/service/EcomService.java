@@ -4,7 +4,6 @@ import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
-import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
@@ -39,12 +38,13 @@ public interface EcomService {
     List<LazadaCategory> getListCategory(boolean isLeaf);
 
 
-
     List<LazadaCategoryAttribute> getListCategoryAttribute();
 
     LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long sswId);
 
     LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId);
+
     public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId);
+
     public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId);
 }

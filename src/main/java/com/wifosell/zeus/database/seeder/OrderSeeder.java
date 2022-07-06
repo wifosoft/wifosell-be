@@ -20,9 +20,10 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.ShopSpecs;
+import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +60,9 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         User user = userRepository.getUserByName("manager1");
 
         try {
-            File file = new File("src/main/resources/data/order.json");
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/order.json");
             AddOrderRequest[] requests = new ObjectMapper().readValue(file, AddOrderRequest[].class);
+            file.close();
             for (AddOrderRequest request : requests) {
                 this.updateOrderByRequest(user, request);
             }

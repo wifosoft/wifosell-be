@@ -7,7 +7,6 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
@@ -27,7 +26,10 @@ import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayl
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
-import com.wifosell.zeus.specs.*;
+import com.wifosell.zeus.specs.CategorySpecs;
+import com.wifosell.zeus.specs.EcomAccountSpecs;
+import com.wifosell.zeus.specs.LazadaCategorySpecs;
+import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.NumberUtils;
 import org.slf4j.Logger;
@@ -40,7 +42,6 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -3,13 +3,11 @@ package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
-import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
-import javassist.compiler.ast.CastExpr;
-import lombok.*;
-import org.w3c.dom.stylesheets.LinkStyle;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -40,7 +38,7 @@ public class LazadaCategory extends BasicEntity {
     LazadaCategory parent;
 
     @JsonIgnore
-    @OneToMany(mappedBy =  "parent" ,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LazadaCategory> categoryChildren;
 
 
@@ -48,18 +46,18 @@ public class LazadaCategory extends BasicEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lazadaCategory")
     List<LazadaCategoryAndAttribute> lazadaCategoryAndAttributes;
 
-    public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem){
+    public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem) {
         this.var = categoryTreeItem.isVar();
         this.name = categoryTreeItem.getName();
-        this.leaf  = categoryTreeItem.isLeaf();
+        this.leaf = categoryTreeItem.isLeaf();
         this.lazadaCategoryId = categoryTreeItem.getCategoryId();
     }
 
 
-    public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory _parent){
+    public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory _parent) {
         this.var = categoryTreeItem.isVar();
         this.name = categoryTreeItem.getName();
-        this.leaf  = categoryTreeItem.isLeaf();
+        this.leaf = categoryTreeItem.isLeaf();
         this.lazadaCategoryId = categoryTreeItem.getCategoryId();
         this.setParent(_parent);
     }

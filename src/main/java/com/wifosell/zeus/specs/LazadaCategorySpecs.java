@@ -2,8 +2,6 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory_;
-import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
-import com.wifosell.zeus.model.ecom_sync.LazadaProduct_;
 import org.springframework.data.jpa.domain.Specification;
 
 public class LazadaCategorySpecs {
@@ -19,8 +17,8 @@ public class LazadaCategorySpecs {
         return (root, query, criteriaBuilder) -> {
 //            if (!isLeaf)
 //                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(LazadaCategory_.LEAF) , true);
+            return criteriaBuilder.equal(root.get(LazadaCategory_.LEAF), true);
         };
     }
-    
+
 }

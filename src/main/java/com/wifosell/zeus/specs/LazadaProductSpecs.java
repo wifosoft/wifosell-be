@@ -2,8 +2,6 @@ package com.wifosell.zeus.specs;
 
 import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.ecom_sync.LazadaProduct_;
-
-import com.wifosell.zeus.model.user.User_;
 import org.springframework.data.jpa.domain.Specification;
 
 public class LazadaProductSpecs {

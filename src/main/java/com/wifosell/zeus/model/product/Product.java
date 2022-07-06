@@ -10,7 +10,6 @@ import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.hibernate.search.engine.backend.types.ObjectStructure;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;

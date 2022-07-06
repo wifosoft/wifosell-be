@@ -1,110 +1,111 @@
 package com.lazada.lazop.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.lazada.lazop.util.Constants;
 import com.lazada.lazop.util.FileItem;
 import com.lazada.lazop.util.LazopHashMap;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Lazada Open Platform API basic request.
- * 
+ *
  * @author carver.gu
  * @since Feb 4, 2018
  */
 public class LazopRequest {
 
-	/**
-	 * User custom request query parameters.
-	 */
-	protected LazopHashMap apiParams;
+    /**
+     * User custom request query parameters.
+     */
+    protected LazopHashMap apiParams;
 
-	/**
-	 * HTTP header parameters.
-	 */
-	protected LazopHashMap headerParams;
+    /**
+     * HTTP header parameters.
+     */
+    protected LazopHashMap headerParams;
 
-	/**
-	 * HTTP file parameters.
-	 */
-	protected Map<String, FileItem> fileParams;
+    /**
+     * HTTP file parameters.
+     */
+    protected Map<String, FileItem> fileParams;
 
-	private Long timestamp;
-	private String apiName;
-	private String httpMethod = Constants.METHOD_POST;
-	
-	public LazopRequest() {
-		
-	}
-	
-	/**
-	 * create LazopRequest with apiName
-	 * @param apiName
-	 */
-	public LazopRequest(String apiName) {
-		this.apiName = apiName;
-	}
+    private Long timestamp;
+    private String apiName;
+    private String httpMethod = Constants.METHOD_POST;
 
-	public void addApiParameter(String key, String value) {
-		if (this.apiParams == null) {
-			this.apiParams = new LazopHashMap();
-		}
-		this.apiParams.put(key, value);
-	}
+    public LazopRequest() {
 
-	public void addFileParameter(String key, FileItem file) {
-		if (this.fileParams == null) {
-			this.fileParams = new HashMap<String, FileItem>();
-		}
-		this.fileParams.put(key, file);
-	}
+    }
 
-	public void addHeaderParameter(String key, String value) {
-		if (this.headerParams == null) {
-			this.headerParams = new LazopHashMap();
-		}
-		this.headerParams.put(key, value);
-	}
+    /**
+     * create LazopRequest with apiName
+     *
+     * @param apiName
+     */
+    public LazopRequest(String apiName) {
+        this.apiName = apiName;
+    }
 
-	public LazopHashMap getApiParams() {
-		return apiParams;
-	}
+    public void addApiParameter(String key, String value) {
+        if (this.apiParams == null) {
+            this.apiParams = new LazopHashMap();
+        }
+        this.apiParams.put(key, value);
+    }
 
-	public Map<String, FileItem> getFileParams() {
-		return fileParams;
-	}
+    public void addFileParameter(String key, FileItem file) {
+        if (this.fileParams == null) {
+            this.fileParams = new HashMap<String, FileItem>();
+        }
+        this.fileParams.put(key, file);
+    }
 
-	public Map<String, String> getHeaderParams() {
-		return this.headerParams;
-	}
+    public void addHeaderParameter(String key, String value) {
+        if (this.headerParams == null) {
+            this.headerParams = new LazopHashMap();
+        }
+        this.headerParams.put(key, value);
+    }
 
-	public Long getTimestamp() {
-		return timestamp;
-	}
+    public LazopHashMap getApiParams() {
+        return apiParams;
+    }
 
-	public void setTimestamp(Long timestamp) {
-		this.timestamp = timestamp;
-	}
+    public Map<String, FileItem> getFileParams() {
+        return fileParams;
+    }
 
-	public String getApiName() {
-		return apiName;
-	}
+    public Map<String, String> getHeaderParams() {
+        return this.headerParams;
+    }
 
-	public void setApiName(String apiName) {
-		this.apiName = apiName;
-	}
+    public Long getTimestamp() {
+        return timestamp;
+    }
 
-	public String getHttpMethod() {
-		return httpMethod;
-	}
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public void setHttpMethod(String httpMethod) {
-		this.httpMethod = httpMethod;
-	}
+    public String getApiName() {
+        return apiName;
+    }
 
-	public void setHeaderParams(LazopHashMap headerParams) {
-		this.headerParams = headerParams;
-	}
+    public void setApiName(String apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
+    }
+
+    public void setHeaderParams(LazopHashMap headerParams) {
+        this.headerParams = headerParams;
+    }
 
 }
