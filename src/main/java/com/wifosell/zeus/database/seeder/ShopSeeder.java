@@ -15,7 +15,6 @@ import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.WarehouseSpecs;
 import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -43,7 +42,6 @@ public class ShopSeeder extends BaseSeeder implements ISeeder {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
         ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/shop.json");
         InputStream file = (new FileUtils()).getFileAsIOStream("data/shop.json");
 
         try {

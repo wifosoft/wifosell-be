@@ -20,7 +20,6 @@ import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -58,7 +57,6 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
         ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/product.json");
         InputStream file = (new FileUtils()).getFileAsIOStream("data/product.json");
 
         try {

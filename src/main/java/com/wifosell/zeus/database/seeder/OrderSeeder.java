@@ -22,7 +22,6 @@ import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.ShopSpecs;
 import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -61,7 +60,6 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         User user = userRepository.getUserByName("manager1");
 
         ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/order.json");
         InputStream file = (new FileUtils()).getFileAsIOStream("data/order.json");
 
         try {
@@ -163,6 +161,9 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
 
         // Complete
         order.setComplete(false);
+
+        // Cancel
+        order.setCanceled(false);
 
         // Created by
         order.setCreatedBy(user);
