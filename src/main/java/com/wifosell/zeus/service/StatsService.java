@@ -1,17 +1,18 @@
 package com.wifosell.zeus.service;
 
-import com.wifosell.zeus.model.stats.RevenueBarChart;
+import com.wifosell.zeus.model.stats.LatestRevenues;
 import com.wifosell.zeus.model.stats.TopRevenueVariant;
 import com.wifosell.zeus.utils.paging.PageInfo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface StatsService {
-    PageInfo<TopRevenueVariant> getTopRevenueVariants(Long userId, Long fromDate, Long toDate, Integer offset, Integer limit, String orderBy);
+    PageInfo<TopRevenueVariant> getTopRevenueVariants(Long userId, Long startTime, Long endTime, Integer offset, Integer limit, String orderBy);
 
-    Long getRevenue(Long userId, Long fromDate, Long toDate);
+    BigDecimal getRevenue(Long userId, Long startTime, Long endTime);
 
-    RevenueBarChart getRevenueBarChart(Long userId, Long fromDate, Long toDate, RevenueBarChart.Type type, Integer offset, Integer limit);
+    LatestRevenues getLatestRevenues(Long userId, Long lastTime, Integer number, LatestRevenues.Type type);
 
-    Long getNumberOfOrders(Long userId, Long fromDate, Long toDate, List<Boolean> isComplete, List<Boolean> isCanceled);
+    Long getNumberOfOrders(Long userId, Long startTime, Long endTime, List<Boolean> isComplete, List<Boolean> isCanceled);
 }
