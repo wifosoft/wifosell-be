@@ -8,12 +8,11 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.warehouse.WarehouseRequest;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.WarehouseRepository;
-import com.wifosell.zeus.utils.FileUtils;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
 
 @Service
@@ -31,11 +30,9 @@ public class WarehouseSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/warehouse.json");
-
         try {
-            WarehouseRequest[] requests = mapper.readValue(file, WarehouseRequest[].class);
+            File file = new File("src/main/resources/data/warehouse.json");
+            WarehouseRequest[] requests = new ObjectMapper().readValue(file, WarehouseRequest[].class);
             for (WarehouseRequest request : requests) {
                 this.addWarehouseByRequest(request, gm);
             }

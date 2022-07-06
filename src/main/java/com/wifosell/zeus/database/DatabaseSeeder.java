@@ -1,7 +1,6 @@
 package com.wifosell.zeus.database;
 
 import com.wifosell.zeus.database.seeder.*;
-import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;

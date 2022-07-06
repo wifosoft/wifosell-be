@@ -18,10 +18,9 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.repository.*;
-import com.wifosell.zeus.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,11 +55,9 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/product.json");
-
         try {
-            AddProductRequest[] requests = mapper.readValue(file, AddProductRequest[].class);
+            File file = new File("src/main/resources/data/product.json");
+            AddProductRequest[] requests = new ObjectMapper().readValue(file, AddProductRequest[].class);
             for (AddProductRequest request : requests) {
                 this.updateProductByRequest(request, gm);
             }

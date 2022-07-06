@@ -8,10 +8,9 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
-import com.wifosell.zeus.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
 
 public class CustomerSeeder extends BaseSeeder implements ISeeder {
@@ -29,11 +28,9 @@ public class CustomerSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        ObjectMapper mapper = new ObjectMapper();
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/customer.json");
-
         try {
-            CustomerRequest[] requests = mapper.readValue(file, CustomerRequest[].class);
+            File file = new File("src/main/resources/data/customer.json");
+            CustomerRequest[] requests = new ObjectMapper().readValue(file, CustomerRequest[].class);
             for (CustomerRequest request : requests) {
                 this.updateCustomerByRequest(request, gm);
             }

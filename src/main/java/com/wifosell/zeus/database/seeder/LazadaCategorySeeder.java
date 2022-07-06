@@ -12,6 +12,7 @@ import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
 import com.wifosell.zeus.utils.FileUtils;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -42,15 +43,20 @@ public class LazadaCategorySeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void run() throws FileNotFoundException {
-        Gson gson = new Gson();
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/lazada_category_response_payload.json");
+        try {
+            Gson gson = new Gson();
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/lazada_category_response_payload.json");
 
-        JsonReader reader = new JsonReader(new InputStreamReader(file));
-        ResponseCategoryTreePayload responseTokenPayload = gson.fromJson(reader, ResponseCategoryTreePayload.class);
+            JsonReader reader = new JsonReader(new InputStreamReader(file));
+            ResponseCategoryTreePayload responseTokenPayload = gson.fromJson(reader, ResponseCategoryTreePayload.class);
+            file.close();
 
-        List<ResponseCategoryTreePayload.CategoryTreeItem> categoryTreeItemList = responseTokenPayload.getData();
-        for (ResponseCategoryTreePayload.CategoryTreeItem item : categoryTreeItemList) {
-            saveLazadaCategory(item, null);
+            List<ResponseCategoryTreePayload.CategoryTreeItem> categoryTreeItemList = responseTokenPayload.getData();
+            for (ResponseCategoryTreePayload.CategoryTreeItem item : categoryTreeItemList) {
+                saveLazadaCategory(item, null);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
