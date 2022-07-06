@@ -6,6 +6,8 @@ import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderModel_;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.stats.LatestRevenues;
+import com.wifosell.zeus.model.stats.TopOrderNumRegion;
+import com.wifosell.zeus.model.stats.TopRevenueRegion;
 import com.wifosell.zeus.model.stats.TopRevenueVariant;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.StatsService;
@@ -99,6 +101,12 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
+    public BigDecimal getProfit(Long userId, Long startTime, Long endTime) {
+        // TODO haukc
+        return null;
+    }
+
+    @Override
     public LatestRevenues getLatestRevenues(Long userId, Long lastTime, Integer number, LatestRevenues.Type type) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         if (lastTime == null) lastTime = Instant.now().toEpochMilli();
@@ -175,5 +183,17 @@ public class StatsServiceImpl implements StatsService {
         Query query = entityManager.createQuery(cq);
         Long number = (Long) query.getSingleResult();
         return number != null ? number : 0L;
+    }
+
+    @Override
+    public PageInfo<TopRevenueRegion> getTopRevenueRegions(Long userId, Long startTime, Long endTime, Integer offset, Integer limit, String orderBy) {
+        // TODO haukc
+        return null;
+    }
+
+    @Override
+    public PageInfo<TopOrderNumRegion> getTopOrderNumRegions(Long userId, Long startTime, Long endTime, Integer offset, Integer limit, String orderBy) {
+        // TODO haukc
+        return null;
     }
 }
