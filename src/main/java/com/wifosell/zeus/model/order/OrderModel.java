@@ -46,6 +46,8 @@ public class OrderModel extends BasicEntity {
 
     private BigDecimal shippingFee;
 
+    private BigDecimal total;
+
     @Enumerated(EnumType.STRING)
     private STATUS status;
 
@@ -70,15 +72,6 @@ public class OrderModel extends BasicEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
-
-    @JsonIgnore
-    public BigDecimal calcSubTotal() {
-        BigDecimal subtotal = new BigDecimal(0);
-        for (OrderItem orderItem : this.getOrderItems()) {
-            subtotal = subtotal.add(orderItem.getSubtotal());
-        }
-        return subtotal;
-    }
 
     public boolean getIsComplete() {
         return this.isComplete;

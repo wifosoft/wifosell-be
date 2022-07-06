@@ -24,6 +24,7 @@ public class OrderResponse extends BasicEntityResponse {
     private final CustomerResponse customer;
     private final BigDecimal subtotal;
     private final BigDecimal shippingFee;
+    private final BigDecimal total;
     private final OrderModel.STATUS status;
     private final List<OrderStepResponse> steps;
     private final PaymentResponse payment;
@@ -38,6 +39,7 @@ public class OrderResponse extends BasicEntityResponse {
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
         this.shippingFee = order.getShippingFee();
+        this.total = order.getTotal();
         this.status = order.getStatus();
         this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
         this.payment = new PaymentResponse(order.getPayment());

@@ -195,11 +195,17 @@ public class OrderServiceImpl implements OrderService {
         });
 
         // Subtotal
-        BigDecimal subtotal = order.calcSubTotal();
+        BigDecimal subtotal = BigDecimal.ZERO;
+        for (OrderItem orderItem : order.getOrderItems()) {
+            subtotal = subtotal.add(orderItem.getSubtotal());
+        }
         order.setSubtotal(subtotal);
 
         // Shipping fee
         Optional.of(request.getShippingFee()).ifPresent(order::setShippingFee);
+
+        // Total
+        order.setTotal(order.getSubtotal().add(order.getShippingFee()));
 
         // Cur step
         order.setStatus(OrderModel.STATUS.CREATED);

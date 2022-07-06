@@ -84,7 +84,7 @@ public class StatsServiceImpl implements StatsService {
         CriteriaQuery<Object> cq = cb.createQuery();
         Root<OrderModel> root = cq.from(OrderModel.class);
 
-        cq.select(cb.sum(root.get(OrderModel_.SUBTOTAL)))
+        cq.select(cb.sum(root.get(OrderModel_.TOTAL)))
                 .where(cb.and(
                         OrderSpecs.hasGeneralManager(gmId).toPredicate(root, cq, cb),
                         OrderSpecs.isCompleteEqual(true).toPredicate(root, cq, cb),
@@ -141,7 +141,7 @@ public class StatsServiceImpl implements StatsService {
 
         List<LatestRevenues.Item> items = new ArrayList<>();
         for (int i = 0; i < times.size() - 1; ++i) {
-            cq.select(cb.sum(root.get(OrderModel_.SUBTOTAL)))
+            cq.select(cb.sum(root.get(OrderModel_.TOTAL)))
                     .where(cb.and(
                             OrderSpecs.hasGeneralManager(gmId).toPredicate(root, cq, cb),
                             OrderSpecs.isCompleteEqual(true).toPredicate(root, cq, cb),

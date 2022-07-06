@@ -28,7 +28,8 @@ public class AddOrderRequest {
 
     @NotNull
     private PaymentRequest payment;
-    
+
+    @NotNull
     private BigDecimal shippingFee;
 
     private Boolean isActive;
