@@ -15,6 +15,7 @@ public class EcomAccountLazadaCallbackPayload {
     public Long userId;
     public String signature;
     public String code;
-    public String feCallback;
+    public String feCallbackDomain;
+    public String feCallbackUrl;
     public ResponseTokenPayload tokenAuthResponse;
 }

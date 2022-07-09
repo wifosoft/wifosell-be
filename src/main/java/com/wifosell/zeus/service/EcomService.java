@@ -45,6 +45,8 @@ public interface EcomService {
     LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId);
 
     public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId);
+    public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user );
+
 
     public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId);
 }

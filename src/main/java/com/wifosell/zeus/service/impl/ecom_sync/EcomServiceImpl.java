@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -478,6 +479,8 @@ public class EcomServiceImpl implements EcomService {
         return linkwwAndEcomAccountRecord;
     }
 
+
+
     public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId) {
         LazadaCategoryAndSysCategory reslt = null;
 
@@ -501,7 +504,15 @@ public class EcomServiceImpl implements EcomService {
         return reslt;
     }
 
-    public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId) {
+    //lấy danh sách category đã linked
+    public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user ) {
+        List<LazadaCategoryAndSysCategory> listLazadaCategoryAndSystemCategory = new ArrayList<>();
+        User gm = user.getGeneralManager();
+        listLazadaCategoryAndSystemCategory =  lazadaCategoryAndSysCategoryRepository.findAllByGeneralManager(gm.getId());
+        return listLazadaCategoryAndSystemCategory;
+    }
+
+        public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId) {
         LazadaVariantAndSysVariant record = null;
         User gm = user.getGeneralManager();
 

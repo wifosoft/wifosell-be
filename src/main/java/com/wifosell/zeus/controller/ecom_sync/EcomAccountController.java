@@ -12,6 +12,7 @@ import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
+import com.wifosell.zeus.payload.request.ecom_sync.PostQueryUrlCallbackLazadaRequest;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -29,6 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -82,13 +84,33 @@ public class EcomAccountController {
                 EcomAccountLazadaCallbackPayload.builder()
                         .userId(userPrincipal.getId())
                         .signature(customSign)
-                        .feCallback(LazadaEcomSyncConst.FE_RETURN_URL)
+                        .feCallbackDomain(LazadaEcomSyncConst.FE_BASE_DOMAIN)
+                        .feCallbackUrl("")
                         .build();
         String jsonCallbackQuery = (new Gson()).toJson(callbackPayloadRequest);
         String base64_query = Base64.getEncoder().encodeToString(jsonCallbackQuery.getBytes());
-        String query_callback = String.format(LazadaEcomSyncConst.FORMAT_CALLBACK, base64_query);
+        String query_callback = String.format(LazadaEcomSyncConst.FORMAT_CALLBACK, LazadaEcomSyncConst.FE_BASE_DOMAIN, base64_query);
         return ResponseEntity.ok(GApiResponse.success(query_callback));
     }
+
+    @PostMapping("/lazada/get_url_callback")
+    public ResponseEntity<GApiResponse> postGetUrlCallbackLazada(@CurrentUser UserPrincipal userPrincipal, @RequestBody PostQueryUrlCallbackLazadaRequest body) {
+        String customSign = DigestUtils
+                .md5Hex(userPrincipal.getUsername() + userPrincipal.getId());
+
+        EcomAccountLazadaCallbackPayload callbackPayloadRequest =
+                EcomAccountLazadaCallbackPayload.builder()
+                        .userId(userPrincipal.getId())
+                        .signature(customSign)
+                        .feCallbackDomain(body.getFeCallbackDomain())
+                        .feCallbackUrl(body.getFeCallbackUrl())
+                        .build();
+        String jsonCallbackQuery = (new Gson()).toJson(callbackPayloadRequest);
+        String base64_query = Base64.getEncoder().encodeToString(jsonCallbackQuery.getBytes());
+        String query_callback = String.format(LazadaEcomSyncConst.FORMAT_CALLBACK, body.getFeCallbackDomain(), base64_query);
+        return ResponseEntity.ok(GApiResponse.success(query_callback));
+    }
+
 
     @GetMapping("/lazada/callback")
     public ResponseEntity<GApiResponse> callbackLazadaAccount(
@@ -121,6 +143,10 @@ public class EcomAccountController {
         payload.setTokenAuthResponse(responseTokenPayload);
 
         EcomAccount ecomAccount = ecomService.addEcomAccountLazadaFromCallback(payload);
+        if(!payload.getFeCallbackUrl().isEmpty()){
+            //redirect về url đã post
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(payload.getFeCallbackUrl())).build();
+        }
         return ResponseEntity.ok(GApiResponse.success(ecomAccount));
     }
 
@@ -204,6 +230,16 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success("Liên kết thành công", lazadaCategoryAndSysCategory));
     }
 
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/lazada/getLinkedLazadaCategoryAndSysCategory")
+    public ResponseEntity<GApiResponse> getLinkedLazadaCategoryAndSystemCategory(@CurrentUser UserPrincipal userPrincipal) {
+        User user = userRepository.getUser(userPrincipal);
+        List<LazadaCategoryAndSysCategory> listLinked =  ecomService.getLinkedLazadaCategoryAndSysCategory(user);
+        return ResponseEntity.ok(GApiResponse.success("Thành công" , listLinked));
+    }
+
+
     //liên kết danh mục hàng variatn và system
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/lazada/linkLazadaVariantAndSysVariant")
@@ -224,6 +260,9 @@ public class EcomAccountController {
         List<LazadaCategory> list = ecomService.getListCategory(isLeaf);
         return ResponseEntity.ok(GApiResponse.success(list));
     }
+
+
+
 
 
 }
