@@ -1,9 +1,9 @@
 package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.utils.paging.PageInfo;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 

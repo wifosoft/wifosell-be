@@ -12,7 +12,7 @@ import java.util.List;
 public class ResponseCategoryTreePayload {
     @Getter
     @Setter
-    public class CategoryTreeItem {
+    public static class CategoryTreeItem {
         boolean var;
         String name;
         boolean leaf;
@@ -25,6 +25,7 @@ public class ResponseCategoryTreePayload {
         @JsonProperty("children")
         List<CategoryTreeItem> children;
     }
+
     public List<CategoryTreeItem> data;
     public Integer code;
     public String requestId;

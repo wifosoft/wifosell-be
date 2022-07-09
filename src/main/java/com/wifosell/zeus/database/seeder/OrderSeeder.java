@@ -22,7 +22,6 @@ import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.ShopSpecs;
 import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -60,12 +59,10 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User user = userRepository.getUserByName("manager1");
 
-        ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/order.json");
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/order.json");
-
         try {
-            AddOrderRequest[] requests = mapper.readValue(file, AddOrderRequest[].class);
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/order.json");
+            AddOrderRequest[] requests = new ObjectMapper().readValue(file, AddOrderRequest[].class);
+            file.close();
             for (AddOrderRequest request : requests) {
                 this.updateOrderByRequest(user, request);
             }
@@ -88,8 +85,10 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
                 Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
                 OrderItem orderItem = OrderItem.builder()
                         .variant(variant)
+                        .originalPrice(variant.getOriginalCost())
                         .price(variant.getCost())
                         .quantity(orderItemRequest.getQuantity())
+                        .subtotal(variant.getCost().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity())))
                         .note(orderItemRequest.getNote())
                         .order(order)
                         .build();
@@ -132,8 +131,17 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         });
 
         // Subtotal
-        BigDecimal subtotal = order.calcSubTotal();
+        BigDecimal subtotal = BigDecimal.ZERO;
+        for (OrderItem orderItem : order.getOrderItems()) {
+            subtotal = subtotal.add(orderItem.getSubtotal());
+        }
         order.setSubtotal(subtotal);
+
+        // Shipping fee
+        Optional.of(request.getShippingFee()).ifPresent(order::setShippingFee);
+
+        // Total
+        order.setTotal(order.getSubtotal().add(order.getShippingFee()));
 
         // Cur step
         order.setStatus(OrderModel.STATUS.CREATED);
@@ -158,6 +166,9 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
 
         // Complete
         order.setComplete(false);
+
+        // Cancel
+        order.setCanceled(false);
 
         // Created by
         order.setCreatedBy(user);

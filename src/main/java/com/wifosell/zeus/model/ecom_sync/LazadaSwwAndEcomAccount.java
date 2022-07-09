@@ -2,7 +2,6 @@ package com.wifosell.zeus.model.ecom_sync;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.mail.util.BASE64DecoderStream;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import lombok.*;

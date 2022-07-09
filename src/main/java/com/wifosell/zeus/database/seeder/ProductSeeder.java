@@ -20,7 +20,6 @@ import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -57,12 +56,10 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/product.json");
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/product.json");
-
         try {
-            AddProductRequest[] requests = mapper.readValue(file, AddProductRequest[].class);
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/product.json");
+            AddProductRequest[] requests = new ObjectMapper().readValue(file, AddProductRequest[].class);
+            file.close();
             for (AddProductRequest request : requests) {
                 this.updateProductByRequest(request, gm);
             }
@@ -370,6 +367,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
             for (Variant variant : variants) {
                 if (variant.getId().equals(variantRequest.getId())) {
+                    variant.setOriginalCost(new BigDecimal(variantRequest.getOriginalCost()));
                     variant.setCost(new BigDecimal(variantRequest.getCost()));
                     variant.setSku(variantRequest.getSku());
                     variant.setBarcode(variantRequest.getBarcode());
@@ -381,6 +379,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
 
             if (!isExistingVariant) {
                 Variant variant = Variant.builder()
+                        .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
                         .cost(new BigDecimal(variantRequest.getCost()))
                         .sku(variantRequest.getSku())
                         .barcode(variantRequest.getBarcode())

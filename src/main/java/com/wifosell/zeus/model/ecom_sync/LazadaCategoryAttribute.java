@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryAttributePayload;
-import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryAttributeRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,9 +25,9 @@ public class LazadaCategoryAttribute extends BasicEntity {
     private Long id;
 
 
-    @Column(columnDefinition="tinyint(1) default 0")
+    @Column(columnDefinition = "tinyint(1) default 0")
     private boolean isKeyProp;
-    @Column(columnDefinition="tinyint(1) default 0")
+    @Column(columnDefinition = "tinyint(1) default 0")
     private boolean isSaleProp;
 
     private String name;
@@ -40,7 +39,7 @@ public class LazadaCategoryAttribute extends BasicEntity {
     @Column(columnDefinition = "MEDIUMTEXT", name = "options")
     private String options;
 
-    @Column(columnDefinition="tinyint(1) default 0")
+    @Column(columnDefinition = "tinyint(1) default 0")
     private boolean isMandatory;
 
     private String attributeType;
@@ -49,21 +48,20 @@ public class LazadaCategoryAttribute extends BasicEntity {
 
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL , mappedBy = "lazadaCategoryAttribute")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "lazadaCategoryAttribute")
     List<LazadaCategoryAndAttribute> lazadaCategoryAndAttributes;
 
     public LazadaCategoryAttribute(ResponseCategoryAttributePayload.CategoryAttributeItem item) {
         this.lazadaAttributeId = item.getId();
-        this.isKeyProp =  item.getAdvanced().getIsKeyProp() == 1L;
-        this.isSaleProp  = item.getIsSaleProp() == 1L;
+        this.isKeyProp = item.getAdvanced().getIsKeyProp() == 1L;
+        this.isSaleProp = item.getIsSaleProp() == 1L;
         this.name = item.getName();
         this.inputType = item.getInputType();
-        this.options =  (new Gson()).toJson(item.getOptions());
-        this.isMandatory  =item.getIsMandatory() == 1L;
+        this.options = (new Gson()).toJson(item.getOptions());
+        this.isMandatory = item.getIsMandatory() == 1L;
         this.attributeType = item.getAttributeType();
         this.label = item.getLabel();
     }
-
 
 
 }

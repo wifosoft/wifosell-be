@@ -12,7 +12,6 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.model.warehouse.Warehouse_;
 import com.wifosell.zeus.payload.GApiErrorBody;
-import com.wifosell.zeus.utils.paging.PageInfo;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
@@ -20,6 +19,7 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.search.engine.search.query.SearchResult;
@@ -479,6 +479,7 @@ public class ProductServiceImpl implements ProductService {
 
             for (Variant variant : variants) {
                 if (variant.getId().equals(variantRequest.getId())) {
+                    variant.setOriginalCost(new BigDecimal(variantRequest.getOriginalCost()));
                     variant.setCost(new BigDecimal(variantRequest.getCost()));
                     variant.setSku(variantRequest.getSku());
                     variant.setBarcode(variantRequest.getBarcode());
@@ -490,6 +491,7 @@ public class ProductServiceImpl implements ProductService {
 
             if (!isExistingVariant) {
                 Variant variant = Variant.builder()
+                        .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
                         .cost(new BigDecimal(variantRequest.getCost()))
                         .sku(variantRequest.getSku())
                         .barcode(variantRequest.getBarcode())

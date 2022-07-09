@@ -12,7 +12,6 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.utils.FileUtils;
 import lombok.NonNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -31,12 +30,10 @@ public class SupplierSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/supplier.json");
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/supplier.json");
-
         try {
-            AddSupplierRequest[] requests = mapper.readValue(file, AddSupplierRequest[].class);
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/supplier.json");
+            AddSupplierRequest[] requests = new ObjectMapper().readValue(file, AddSupplierRequest[].class);
+            file.close();
             for (AddSupplierRequest request : requests) {
                 this.addSupplierByRequest(request, gm);
             }

@@ -90,6 +90,10 @@ public interface IProductRequest {
 
         @NotBlank
         @Size(max = 50)
+        String originalCost;
+
+        @NotBlank
+        @Size(max = 50)
         String cost;
 
         @NotBlank

@@ -70,36 +70,42 @@
     "variants": [
       {
         "id": null,
+        "originalCost": "21000000",
         "cost": "21000000",
         "sku": "ABC100",
         "barcode": "00000000"
       },
       {
         "id": null,
+        "originalCost": "22000000",
         "cost": "22000000",
         "sku": "ABC101",
         "barcode": "00000001"
       },
       {
         "id": null,
+        "originalCost": "23000000",
         "cost": "23000000",
         "sku": "ABC102",
         "barcode": "00000002"
       },
       {
         "id": null,
+        "originalCost": "21500000",
         "cost": "21500000",
         "sku": "ABC103",
         "barcode": "00000003"
       },
       {
         "id": null,
+        "originalCost": "21000000",
         "cost": "21000000",
         "sku": "ABC104",
         "barcode": "00000004"
       },
       {
         "id": null,
+        "originalCost": "32000000",
         "cost": "32000000",
         "sku": "ABC105",
         "barcode": "00000005"
@@ -194,54 +200,63 @@
     "variants": [
       {
         "id": null,
+        "originalCost": "150000",
         "cost": "150000",
         "sku": "SBC100",
         "barcode": "00000006"
       },
       {
         "id": null,
+        "originalCost": "175000",
         "cost": "175000",
         "sku": "SBC101",
         "barcode": "00000007"
       },
       {
         "id": null,
+        "originalCost": "200000",
         "cost": "200000",
         "sku": "SBC102",
         "barcode": "00000008"
       },
       {
         "id": null,
+        "originalCost": "1820000",
         "cost": "1820000",
         "sku": "SBC103",
         "barcode": "00000009"
       },
       {
         "id": null,
+        "originalCost": "155000",
         "cost": "155000",
         "sku": "SBC104",
         "barcode": "00000010"
       },
       {
         "id": null,
+        "originalCost": "210000",
         "cost": "210000",
         "sku": "SBC105",
         "barcode": "00000011"
       },
       {
         "id": null,
+        "originalCost": "180000",
         "cost": "180000",
         "sku": "SBC106",
         "barcode": "00000012"
       },
       {
         "id": null,
+        "originalCost": "220000",
         "cost": "220000",
         "sku": "SBC107",
         "barcode": "00000013"
       },
       {
         "id": null,
+        "originalCost": "185000",
         "cost": "185000",
         "sku": "SBC108",
         "barcode": "00000014"

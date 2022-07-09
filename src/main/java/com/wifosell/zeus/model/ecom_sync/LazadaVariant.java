@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -70,11 +73,13 @@ public class LazadaVariant extends BasicEntity {
     private Long lazadaProductId;
 
 
-    public LazadaVariant() {}
+    public LazadaVariant() {
+    }
 
     public LazadaVariant(ResponseListProductPayload.Sku s) {
         this.withDataBySkuAPI(s);
     }
+
     public LazadaVariant(ResponseListProductPayload.Sku s, LazadaProduct lazadaProduct) {
         this.withDataBySkuAPI(s);
         this.setLazadaProduct(lazadaProduct);

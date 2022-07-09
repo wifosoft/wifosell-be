@@ -11,7 +11,6 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.utils.FileUtils;
 import lombok.NonNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -30,11 +29,10 @@ public class SaleChannelSeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        ObjectMapper mapper = new ObjectMapper();
-        //File file = new File("src/main/java/com/wifosell/zeus/database/data/sale_channel.json");
-        InputStream file = (new FileUtils()).getFileAsIOStream("data/sale_channel.json");
         try {
-            SaleChannelRequest[] requests = mapper.readValue(file, SaleChannelRequest[].class);
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/sale_channel.json");
+            SaleChannelRequest[] requests = new ObjectMapper().readValue(file, SaleChannelRequest[].class);
+            file.close();
             for (SaleChannelRequest request : requests) {
                 this.addSaleChannelByRequest(request, gm);
             }

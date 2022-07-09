@@ -25,9 +25,13 @@ public class OrderItem extends BasicEntity {
     @JoinColumn(name = "variant_id")
     private Variant variant;
 
+    private BigDecimal originalPrice;
+
     private BigDecimal price;
 
     private Integer quantity;
+
+    private BigDecimal subtotal;
 
     private String note;
 

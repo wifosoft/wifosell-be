@@ -7,7 +7,6 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
@@ -27,7 +26,10 @@ import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayl
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
-import com.wifosell.zeus.specs.*;
+import com.wifosell.zeus.specs.CategorySpecs;
+import com.wifosell.zeus.specs.EcomAccountSpecs;
+import com.wifosell.zeus.specs.LazadaCategorySpecs;
+import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.utils.NumberUtils;
 import org.slf4j.Logger;
@@ -40,7 +42,6 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -225,6 +226,7 @@ public class EcomServiceImpl implements EcomService {
                 if (sysVariant != null) {
                     //nếu tồn tại variant thì sẽ tồn tại product => Cập nhật thông tin product
                     //cập nhật thông tin variant hiện tại, stock ở warehouse tương ứng
+                    sysVariant.setOriginalCost(new BigDecimal(lzVariant.getPrice()));
                     sysVariant.setCost(new BigDecimal(lzVariant.getPrice()));
                     variantRepository.save(sysVariant);
                     Optional<Stock> stock_ = stockRepository.findByVariantAndWarehouse(sysVariant.getId(), warehouse.getId());
@@ -259,6 +261,7 @@ public class EcomServiceImpl implements EcomService {
                         flagCacheCreatedProduct = true;
                     }
                     Variant variant = new Variant();
+                    variant.setOriginalCost(new BigDecimal(lzVariant.getPrice()));
                     variant.setCost(new BigDecimal(lzVariant.getPrice()));
                     variant.setBarcode(s.getSellerSku());
                     variant.setSku(s.getSellerSku());
@@ -459,7 +462,7 @@ public class EcomServiceImpl implements EcomService {
         }
 
         //kiem tra ton tai link khong thi link
-        if(ecomAccount ==null){
+        if (ecomAccount == null) {
             return LazadaSwwAndEcomAccount.builder().saleChannelShop(sswRecord).ecomAccount(null).build();
         }
         Optional<LazadaSwwAndEcomAccount> linkSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.getRecordBySswIdAndEcomAccountId(sswRecord.getId(), ecomId);

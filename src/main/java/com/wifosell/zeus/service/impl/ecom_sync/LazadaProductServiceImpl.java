@@ -2,20 +2,17 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaProductRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaVariantRepository;
 import com.wifosell.zeus.service.LazadaProductService;
 import com.wifosell.zeus.specs.LazadaProductSpecs;
-import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 @Transactional

@@ -149,8 +149,10 @@ public class OrderServiceImpl implements OrderService {
                 Variant variant = variantRepository.getById(orderItemRequest.getVariantId());
                 OrderItem orderItem = OrderItem.builder()
                         .variant(variant)
+                        .originalPrice(variant.getOriginalCost())
                         .price(variant.getCost())
                         .quantity(orderItemRequest.getQuantity())
+                        .subtotal(variant.getCost().multiply(BigDecimal.valueOf(orderItemRequest.getQuantity())))
                         .note(orderItemRequest.getNote())
                         .order(order)
                         .build();
@@ -193,8 +195,17 @@ public class OrderServiceImpl implements OrderService {
         });
 
         // Subtotal
-        BigDecimal subtotal = order.calcSubTotal();
+        BigDecimal subtotal = BigDecimal.ZERO;
+        for (OrderItem orderItem : order.getOrderItems()) {
+            subtotal = subtotal.add(orderItem.getSubtotal());
+        }
         order.setSubtotal(subtotal);
+
+        // Shipping fee
+        Optional.of(request.getShippingFee()).ifPresent(order::setShippingFee);
+
+        // Total
+        order.setTotal(order.getSubtotal().add(order.getShippingFee()));
 
         // Cur step
         order.setStatus(OrderModel.STATUS.CREATED);
@@ -219,6 +230,9 @@ public class OrderServiceImpl implements OrderService {
 
         // Complete
         order.setComplete(false);
+
+        // Cancel
+        order.setCanceled(false);
 
         // Created by
         order.setCreatedBy(user);
@@ -250,6 +264,10 @@ public class OrderServiceImpl implements OrderService {
 
             boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
             order.setComplete(isComplete);
+
+            if (order.getStatus().equals(OrderModel.STATUS.CANCELED)) {
+                order.setCanceled(true);
+            }
 
             orderRepository.save(order);
         }

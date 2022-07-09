@@ -3,7 +3,6 @@ package com.wifosell.zeus.model.ecom_sync;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
 import lombok.Getter;
