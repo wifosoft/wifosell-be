@@ -253,6 +253,7 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success("Liên kết thành công", lazadaVariantAndSysVariant));
     }
 
+
     @GetMapping("/lazada/getListCategory")
     public ResponseEntity<GApiResponse> getListCategory(
             @RequestParam("isLeaf") boolean isLeaf
