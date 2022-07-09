@@ -25,7 +25,7 @@ public class Payment extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private STATUS status;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String info;
 
     @JsonIgnore

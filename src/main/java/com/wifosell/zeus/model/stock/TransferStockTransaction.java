@@ -39,7 +39,7 @@ public class TransferStockTransaction extends BasicEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String processingNote;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String description;
 
     @Builder.Default

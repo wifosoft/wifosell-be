@@ -23,7 +23,7 @@ public class OrderStep extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private OrderModel.STATUS status;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String note;
 
     @JsonIgnore

@@ -150,7 +150,6 @@ public class EcomServiceImpl implements EcomService {
 
     @Override
     public GetProductPageReport getProductsFromEcommerce(Long ecomId, int offset, int limit) throws ApiException {
-
         boolean flagModeCreateSysProduct = true;
         Gson gson = (new Gson());
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
@@ -184,8 +183,10 @@ public class EcomServiceImpl implements EcomService {
 
         totalProduct = listLazadaProducts.size();
         for (ResponseListProductPayload.Product e : listLazadaProducts) {
+            logger.info("Process product  {}",  e.getAttributes().getName());
             LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(e.getPrimary_category()).orElse(null);
             if (lazadaCategory == null) {
+                logger.info("Lazada category null {}",  e.getPrimary_category());
                 continue;
             }
             Optional<LazadaCategoryAndSysCategory> lazadaCategoryAndSysCategory = lazadaCategoryAndSysCategoryRepository.findByLazadaCategory(lazadaCategory.getId());
@@ -203,6 +204,7 @@ public class EcomServiceImpl implements EcomService {
             } else {
                 lzProduct.withDataByProductAPI(e).setEcomAccount(ecomAccount);
             }
+            logger.info("Save product {}",  lzProduct.getName());
             lazadaProductRepository.save(lzProduct);
 
             //xu ly sku
@@ -281,7 +283,6 @@ public class EcomServiceImpl implements EcomService {
 
         GetProductPageReport getProductPageReport = new GetProductPageReport(totalProduct, totalSku.intValue());
         getProductPageReport.setResponseListProductPayload(responseListProductPayload);
-
 
         return getProductPageReport;
     }

@@ -1,4 +1,4 @@
-package com.example.emailtest;
+package com.wifosell.zeus.config.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

@@ -160,7 +160,6 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success(ecomService.getAllProductsFromEcommerce(ecomId, 50)));
     }
 
-
     @GetMapping("/lazada/crawlCategoryTree")
     public ResponseEntity<GApiResponse> crawlCategoryTree() throws ApiException {
         ecomService.crawlCategoryTree();
