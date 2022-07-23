@@ -439,6 +439,8 @@ public class EcomServiceImpl implements EcomService {
         return lazadaSwwAndEcomAccount;
     }
 
+
+
     public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId) {
         EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElse(null);
         SaleChannel saleChannel = saleChannelRepository.findById(saleChannelId).orElseThrow(
@@ -480,7 +482,6 @@ public class EcomServiceImpl implements EcomService {
     }
 
 
-
     public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId) {
         LazadaCategoryAndSysCategory reslt = null;
 
@@ -503,6 +504,8 @@ public class EcomServiceImpl implements EcomService {
         lazadaCategoryAndSysCategoryRepository.save(reslt);
         return reslt;
     }
+
+    
 
     //lấy danh sách category đã linked
     public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user ) {

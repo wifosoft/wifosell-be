@@ -7,6 +7,7 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,8 +31,8 @@ public class SaleChannelShop {
     @ManyToOne
     private Warehouse warehouse;
 
-    @OneToOne(mappedBy = "saleChannelShop")
-    protected LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount;
+    @OneToMany(mappedBy = "saleChannelShop")
+    protected List<LazadaSwwAndEcomAccount> lazadaSwwAndEcomAccount;
     @Override
     public int hashCode() {
         final int prime = 31;

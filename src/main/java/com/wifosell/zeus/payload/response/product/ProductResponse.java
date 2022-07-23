@@ -13,7 +13,9 @@ import com.wifosell.zeus.payload.response.option.OptionResponse;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -24,7 +26,7 @@ public class ProductResponse extends BasicEntityResponse {
     private final String dimension;
     private final Integer state;
     private final Integer status;
-    private final CategoryResponse category;
+    private CategoryResponse category;
     private final List<ProductImageResponse> images;
     private final List<AttributeResponse> attributes;
     private final List<OptionResponse> options;
@@ -42,7 +44,9 @@ public class ProductResponse extends BasicEntityResponse {
         this.dimension = product.getDimension();
         this.state = product.getState();
         this.status = product.getStatus();
-        this.category = new CategoryResponse(product.getCategory());
+        Optional.ofNullable(product.getCategory()).ifPresent( (category) -> {
+            this.category =  new CategoryResponse(category);
+        });
         this.images = product.getImages().stream()
                 .filter(productImage -> !productImage.isDeleted())
                 .map(ProductImageResponse::new).collect(Collectors.toList());

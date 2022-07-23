@@ -20,6 +20,7 @@ public abstract class BasicEntityResponse {
     }
 
     public BasicEntityResponse(BasicEntity entity) {
+
         this.id = entity.getId();
         this.isActive = entity.getIsActive();
         this.isDeleted = entity.isDeleted();
