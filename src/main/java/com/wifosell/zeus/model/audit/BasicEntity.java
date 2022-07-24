@@ -34,7 +34,8 @@ public abstract class BasicEntity {
     private static final long serialVersionUID = 1L;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+//    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Instant createdAt;
 
     @LastModifiedDate
