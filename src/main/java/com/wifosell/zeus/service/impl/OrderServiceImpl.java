@@ -208,11 +208,11 @@ public class OrderServiceImpl implements OrderService {
         order.setTotal(order.getSubtotal().add(order.getShippingFee()));
 
         // Cur step
-        order.setStatus(OrderModel.STATUS.CREATED);
+        order.setStatus(request.getStatus() != null ? request.getStatus() : OrderModel.STATUS.CREATED);
 
         // Steps
         OrderStep step = OrderStep.builder()
-                .status(OrderModel.STATUS.CREATED)
+                .status(order.getStatus())
                 .note("")
                 .order(order)
                 .updatedBy(user)
@@ -229,10 +229,12 @@ public class OrderServiceImpl implements OrderService {
         order.setPayment(paymentRepository.save(payment));
 
         // Complete
-        order.setComplete(false);
+        boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
+        order.setComplete(isComplete);
 
         // Cancel
-        order.setCanceled(false);
+        boolean isCanceled = order.getStatus().equals(OrderModel.STATUS.CANCELED);
+        order.setCanceled(isCanceled);
 
         // Created by
         order.setCreatedBy(user);
@@ -265,9 +267,8 @@ public class OrderServiceImpl implements OrderService {
             boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
             order.setComplete(isComplete);
 
-            if (order.getStatus().equals(OrderModel.STATUS.CANCELED)) {
-                order.setCanceled(true);
-            }
+            boolean isCanceled = order.getStatus().equals(OrderModel.STATUS.CANCELED);
+            order.setCanceled(isCanceled);
 
             orderRepository.save(order);
         }

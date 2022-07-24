@@ -1,11 +1,21 @@
 package com.wifosell.zeus.database.seeder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.GApiErrorBody;
+import com.wifosell.zeus.payload.request.category.CategoryRequest;
 import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.utils.FileUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
 
 public class CategorySeeder extends BaseSeeder implements ISeeder {
     private CategoryRepository categoryRepository;
@@ -21,66 +31,31 @@ public class CategorySeeder extends BaseSeeder implements ISeeder {
     public void run() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
-        Category category1 = Category.builder()
-                .name("Thoi trang")
-                .description("Thoi trang cao cap")
-                .shortName("TT")
-                .generalManager(gm).build();
-        categoryRepository.save(category1);
+        try {
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/category.json");
+            CategoryRequest[] requests = new ObjectMapper().readValue(file, CategoryRequest[].class);
+            file.close();
+            for (CategoryRequest request : requests) {
+                this.addCategoryByRequest(request, gm);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        Category category11 = Category.builder()
-                .name("Thoi trang nam")
-                .description("Thoi trang nam cao cap")
-                .shortName("TTN")
-                .generalManager(gm)
-                .parent(category1).build();
-        categoryRepository.save(category11);
-
-        Category category111 = Category.builder()
-                .name("Thoi trang nam tre em")
-                .description("Thoi trang nam tre em cao cap")
-                .shortName("TTNTE")
-                .generalManager(gm)
-                .parent(category11).build();
-        categoryRepository.save(category111);
-
-        Category category112 = Category.builder()
-                .name("Thoi trang nam nguoi lon")
-                .description("Thoi trang nam nguoi lon cao cap")
-                .shortName("TTNNL")
-                .generalManager(gm)
-                .parent(category11).build();
-        categoryRepository.save(category112);
-
-        Category category12 = Category.builder()
-                .name("Thời trang nữ áo suna")
-                .description("Áo suna")
-                .shortName("TTNU_SUNA")
-                .generalManager(gm)
-                .parent(category1).build();
-        categoryRepository.save(category12);
-
-        Category category2 = Category.builder()
-                .name("Cong nghe")
-                .description("Mat hang cong nghe")
-                .shortName("CN")
-                .generalManager(gm).build();
-        categoryRepository.save(category2);
-
-        Category category21 = Category.builder()
-                .name("Dien thoai")
-                .description("Dien thoai thong minh cao cap")
-                .shortName("DT")
-                .generalManager(gm)
-                .parent(category2).build();
-        categoryRepository.save(category21);
-
-        Category category22 = Category.builder()
-                .name("Tai nghe")
-                .description("Tai nghe, tai nghe khong day")
-                .shortName("TN")
-                .generalManager(gm)
-                .parent(category2).build();
-        categoryRepository.save(category22);
+    private void addCategoryByRequest(CategoryRequest categoryRequest, User gm) {
+        Category category = new Category();
+        Optional.ofNullable(categoryRequest.getName()).ifPresent(category::setName);
+        Optional.ofNullable(categoryRequest.getDescription()).ifPresent(category::setDescription);
+        Optional.ofNullable(categoryRequest.getShortName()).ifPresent(category::setShortName);
+        Optional.ofNullable(categoryRequest.getParentCategoryId()).ifPresent(parentCategoryId -> {
+            Category parentCategory = categoryRepository.findByIdWithGmAndActive(gm.getId(), parentCategoryId, true).orElseThrow(
+                    () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.PARENT_CATEGORY_NOT_FOUND))
+            );
+            category.setParent(parentCategory);
+        });
+        Optional.ofNullable(categoryRequest.getIsActive()).ifPresent(category::setIsActive);
+        category.setGeneralManager(gm);
+        categoryRepository.save(category);
     }
 }

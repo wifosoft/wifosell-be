@@ -371,6 +371,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                     variant.setCost(new BigDecimal(variantRequest.getCost()));
                     variant.setSku(variantRequest.getSku());
                     variant.setBarcode(variantRequest.getBarcode());
+                    Optional.ofNullable(variantRequest.getIsActive()).ifPresent(variant::setIsActive);
                     variantRepository.save(variant);
                     isExistingVariant = true;
                     break;
@@ -386,6 +387,7 @@ public class ProductSeeder extends BaseSeeder implements ISeeder {
                         .product(product)
                         .generalManager(gm)
                         .build();
+                Optional.ofNullable(variantRequest.getIsActive()).ifPresent(variant::setIsActive);
 
                 for (OptionValue optionValue : combination) {
                     VariantValue variantValue = VariantValue.builder()

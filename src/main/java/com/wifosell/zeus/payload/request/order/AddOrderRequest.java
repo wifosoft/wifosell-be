@@ -1,6 +1,7 @@
 package com.wifosell.zeus.payload.request.order;
 
 import com.sun.istack.NotNull;
+import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.Payment;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,8 @@ public class AddOrderRequest {
 
     @NotNull
     private Long customerId;
+
+    private OrderModel.STATUS status;
 
     @NotNull
     private PaymentRequest payment;

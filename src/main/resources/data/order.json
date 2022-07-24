@@ -7,11 +7,7 @@
       },
       {
         "variantId": 2,
-        "quantity": 5
-      },
-      {
-        "variantId": 3,
-        "quantity": 9
+        "quantity": 1
       }
     ],
     "shopId": 1,
@@ -19,58 +15,107 @@
     "customerId": 1,
     "payment": {
       "method": "COD",
-      "status": "UNPAID",
-      "info": ""
-    },
-    "shippingFee": 0,
-    "isActive": true
-  },
-  {
-    "orderItems": [
-      {
-        "variantId": 1,
-        "quantity": 1
-      },
-      {
-        "variantId": 2,
-        "quantity": 2
-      },
-      {
-        "variantId": 3,
-        "quantity": 1
-      }
-    ],
-    "shopId": 1,
-    "saleChannelId": 2,
-    "customerId": 2,
-    "payment": {
-      "method": "BANKING",
       "status": "PAID",
       "info": ""
     },
     "shippingFee": 0,
+    "status": "COMPLETE",
     "isActive": true
   },
   {
     "orderItems": [
       {
         "variantId": 1,
+        "quantity": 1
+      },
+      {
+        "variantId": 10,
         "quantity": 2
       },
       {
-        "variantId": 3,
-        "quantity": 6
+        "variantId": 11,
+        "quantity": 1
       }
     ],
-    "shopId": 2,
+    "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
     "payment": {
       "method": "COD",
-      "status": "UNPAID",
+      "status": "PAID",
       "info": ""
     },
     "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 5,
+        "quantity": 1
+      },
+      {
+        "variantId": 9,
+        "quantity": 3
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 22,
+        "quantity": 1
+      },
+      {
+        "variantId": 25,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 19,
+        "quantity": 2
+      },
+      {
+        "variantId": 20,
+        "quantity": 3
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
     "isActive": true
   }
 ]

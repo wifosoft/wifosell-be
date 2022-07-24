@@ -1,186 +1,83 @@
 [
   {
-    "name": "iPhone 12",
-    "description": "Qua la iphone",
-    "categoryId": 7,
-    "weight": 2500,
-    "dimension": "4.1x7.2 (inch)",
-    "state": 0,
-    "status": 0,
+    "name": "Áo thun cổ tim nữ trơn GUMAC ATC04006",
+    "description": "",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
     "images": [
       {
         "id": null,
-        "url": "https://cf.shopee.vn/file/a4b5339add6e7d19a6be6ab459db91c3"
+        "url": "https://lzd-img-global.slatic.net/g/p/9789e5008f31249d4f2fcd8750b135c8.jpg_720x720q80.jpg_.webp"
       },
       {
         "id": null,
-        "url": "https://cf.shopee.vn/file/102f1de2b71e74dc947b16cbcc26359b"
+        "url": "https://lzd-img-global.slatic.net/g/p/93a12920a41c3005cd6f0d01da053293.jpg_720x720q80.jpg_.webp"
       },
       {
         "id": null,
-        "url": "https://cf.shopee.vn/file/d68c250de71755c946640c5402f4bcd7"
+        "url": "https://lzd-img-global.slatic.net/g/p/954b5eaa47d59d64e2b22ef9e6e29bca.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/5e61bae247d5a6059ba859f1f17214f7.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
       }
     ],
     "attributes": [
       {
         "id": null,
-        "name": "Origin",
-        "value": "USA"
+        "name": "Thương hiệu",
+        "value": ""
       },
       {
         "id": null,
-        "name": "Brand",
-        "value": "Apple"
+        "name": "Tay áo",
+        "value": "Ngắn"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Cotton"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ áo",
+        "value": "Cổ trái tim"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
       }
     ],
     "options": [
       {
         "id": null,
-        "name": "Color",
+        "name": "Nhóm màu",
         "values": [
           {
             "id": null,
-            "name": "Black"
+            "name": "Đen"
           },
           {
             "id": null,
-            "name": "Blue"
+            "name": "Hồng"
           },
           {
             "id": null,
-            "name": "White"
+            "name": "Cam"
           }
         ]
       },
       {
         "id": null,
-        "name": "RAM",
-        "values": [
-          {
-            "id": null,
-            "name": "256GB"
-          },
-          {
-            "id": null,
-            "name": "512GB"
-          }
-        ]
-      }
-    ],
-    "variants": [
-      {
-        "id": null,
-        "originalCost": "21000000",
-        "cost": "21000000",
-        "sku": "ABC100",
-        "barcode": "00000000"
-      },
-      {
-        "id": null,
-        "originalCost": "22000000",
-        "cost": "22000000",
-        "sku": "ABC101",
-        "barcode": "00000001"
-      },
-      {
-        "id": null,
-        "originalCost": "23000000",
-        "cost": "23000000",
-        "sku": "ABC102",
-        "barcode": "00000002"
-      },
-      {
-        "id": null,
-        "originalCost": "21500000",
-        "cost": "21500000",
-        "sku": "ABC103",
-        "barcode": "00000003"
-      },
-      {
-        "id": null,
-        "originalCost": "21000000",
-        "cost": "21000000",
-        "sku": "ABC104",
-        "barcode": "00000004"
-      },
-      {
-        "id": null,
-        "originalCost": "32000000",
-        "cost": "32000000",
-        "sku": "ABC105",
-        "barcode": "00000005"
-      }
-    ],
-    "isActive": true
-  },
-  {
-    "name": "Ao thun nam",
-    "description": "Ao thun duoc lam tu 100% cotton...",
-    "categoryId": 2,
-    "weight": 100,
-    "dimension": "200x100x50",
-    "state": 0,
-    "status": 0,
-    "images": [
-      {
-        "id": null,
-        "url": "https://cf.shopee.vn/file/191a95b2ff7821b6bb657fa6ed2c7bdc"
-      },
-      {
-        "id": null,
-        "url": "https://cf.shopee.vn/file/8f93afeab9c8825e8e7a60c5cd1b5aa1"
-      },
-      {
-        "id": null,
-        "url": "https://cf.shopee.vn/file/7f4e30d61c1ce5c1689d009eb6177706"
-      },
-      {
-        "id": null,
-        "url": "https://cf.shopee.vn/file/4a775aa4226fffd577beb5d8e88c0db9"
-      },
-      {
-        "id": null,
-        "url": "https://cf.shopee.vn/file/7e767303ceaa695d06e6038c5ff58499"
-      },
-      {
-        "id": null,
-        "url": "https://cf.shopee.vn/file/9f8d2e34c1a1378edb367a735cc9287a"
-      }
-    ],
-    "attributes": [
-      {
-        "id": null,
-        "name": "Xuat xu",
-        "value": "Viet Nam"
-      },
-      {
-        "id": null,
-        "name": "Thuong hieu",
-        "value": "Gumac"
-      }
-    ],
-    "options": [
-      {
-        "id": null,
-        "name": "Color",
-        "values": [
-          {
-            "id": null,
-            "name": "Green"
-          },
-          {
-            "id": null,
-            "name": "Blue"
-          },
-          {
-            "id": null,
-            "name": "White"
-          }
-        ]
-      },
-      {
-        "id": null,
-        "name": "Size",
+        "name": "Kích cỡ",
         "values": [
           {
             "id": null,
@@ -200,66 +97,603 @@
     "variants": [
       {
         "id": null,
-        "originalCost": "150000",
-        "cost": "150000",
-        "sku": "SBC100",
-        "barcode": "00000006"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-den-s",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "175000",
-        "cost": "175000",
-        "sku": "SBC101",
-        "barcode": "00000007"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-den-m",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "200000",
-        "cost": "200000",
-        "sku": "SBC102",
-        "barcode": "00000008"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-den-l",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "1820000",
-        "cost": "1820000",
-        "sku": "SBC103",
-        "barcode": "00000009"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-hong-s",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "155000",
-        "cost": "155000",
-        "sku": "SBC104",
-        "barcode": "00000010"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-hong-m",
+        "barcode": null,
+        "isActive": false
       },
       {
         "id": null,
-        "originalCost": "210000",
-        "cost": "210000",
-        "sku": "SBC105",
-        "barcode": "00000011"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-hong-l",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "180000",
-        "cost": "180000",
-        "sku": "SBC106",
-        "barcode": "00000012"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-cam-s",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "220000",
-        "cost": "220000",
-        "sku": "SBC107",
-        "barcode": "00000013"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-cam-m",
+        "barcode": null,
+        "isActive": true
       },
       {
         "id": null,
-        "originalCost": "185000",
-        "cost": "185000",
-        "sku": "SBC108",
-        "barcode": "00000014"
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-cam-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Áo thun nữ GUMAC ATC06020 gân phối bo",
+    "description": "-Mã Sản Phẩm: ATC06020\n-Tên Sản Phẩm: Áo thun gân phối bo\n-Giá Bán: 230,000vnđ\n-Màu Sắc: VÀNG, HỒNG, ĐEN\n-Số Đo Vải: 36CM\n-Số Đo Ngực: 82CM\n-Số Đo Lai: 88CM\n- Số Đo Dài Tay:\n17CM -Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông\nSố Size S\n-Chất Liệu Vải: THUN GÂN\n-Độ Co Giãn: NHIỀU\n* ÁO THUN CƠ BẢN, CỔ TIM, TAY NGẮN, CỔ VÀ LAI TAY CÓ BỘ PHỐI, KHÔNG TÚI. *",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/70b39e3b02b343e5d54b0354f0ba5524.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/f6fb02fc3869e0483fb6904715e53196.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/fb4c1053f7ebd763eaaeaa7e3b9b28e7.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/7b48bb033abed3e33cb36421e3afbbb5.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/26fbf994bfb1259c5caba914ad8b3d67.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Tay ngắn"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ",
+        "value": "V-NECK"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Thun gân"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Kẻ sọc"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Đen"
+          },
+          {
+            "id": null,
+            "name": "Hồng"
+          },
+          {
+            "id": null,
+            "name": "Vàng"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-den-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-den-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-den-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-hong-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-hong-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-hong-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-vang-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-vang-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-vang-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Áo thun nữ GUMAC ATC05071, Áo thun cổ tròn đơn giản trẻ trung",
+    "description": "-Mã Sản Phẩm: ATC05071\n-Tên Sản Phẩm: Áo thun cổ tròn\n-Giá Bán: 195,000vnđ\n-Màu Sắc: CAM, TÍM, XANH, XANH ĐEN\n-Số Đo Vải: 37CM\n\u200B\u200B-Số Đo Ngực:\n90CM -Số Đo Lai: 92CM\n-Số Đo Dài Tây: 16CM\n-Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông số\nSize S\n-Chất liệu Vải: TICI ĐỒ\n-Độ Co Giãn: NHIỀU\n-ÁO CÓ 1 LỚP\n-KHÔNG TÚI\n* ÁO BẢN THUN MẪU CƠ BẢN, CỔ TRÒN TÂY NGẮN",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/a5b4654cfbb20a14bd591b0f2118f86f.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b3331c39424a696d33542bbb75a8ac87.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/3c8eacc7ff29f93c611d77724a1fad23.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/c782378d812ee4b265e3f74c25674bbb.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Tay ngắn"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Dịp",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "TICI"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ áo",
+        "value": "Tròn"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Cam"
+          },
+          {
+            "id": null,
+            "name": "Tím"
+          },
+          {
+            "id": null,
+            "name": "Xanh"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Áo thun nữ GUMAC ATC05071, Áo thun cổ tròn đơn giản trẻ trung",
+    "description": "-Mã Sản Phẩm: ATC05071\n-Tên Sản Phẩm: Áo thun cổ tròn\n-Giá Bán: 195,000vnđ\n-Màu Sắc: CAM, TÍM, XANH, XANH ĐEN\n-Số Đo Vải: 37CM\n\u200B\u200B-Số Đo Ngực:\n90CM -Số Đo Lai: 92CM\n-Số Đo Dài Tây: 16CM\n-Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông số\nSize S\n-Chất liệu Vải: TICI ĐỒ\n-Độ Co Giãn: NHIỀU\n-ÁO CÓ 1 LỚP\n-KHÔNG TÚI\n* ÁO BẢN THUN MẪU CƠ BẢN, CỔ TRÒN TÂY NGẮN",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/a5b4654cfbb20a14bd591b0f2118f86f.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b3331c39424a696d33542bbb75a8ac87.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/3c8eacc7ff29f93c611d77724a1fad23.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/c782378d812ee4b265e3f74c25674bbb.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Tay ngắn"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Dịp",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "TICI"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ áo",
+        "value": "Tròn"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Cam"
+          },
+          {
+            "id": null,
+            "name": "Tím"
+          },
+          {
+            "id": null,
+            "name": "Xanh"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-l",
+        "barcode": null,
+        "isActive": true
       }
     ],
     "isActive": true

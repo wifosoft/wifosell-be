@@ -25,6 +25,7 @@ import com.wifosell.zeus.utils.FileUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,15 +64,17 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
             InputStream file = (new FileUtils()).getFileAsIOStream("data/order.json");
             AddOrderRequest[] requests = new ObjectMapper().readValue(file, AddOrderRequest[].class);
             file.close();
-            for (AddOrderRequest request : requests) {
-                this.updateOrderByRequest(user, request);
+            for (int i = 0; i < requests.length; ++i) {
+                OrderModel order = this.addOrderByRequest(user, requests[i]);
+                order.setCreatedAt(Instant.now().minusMillis(86400000L * (requests.length - 1 - i)));
+                orderRepository.save(order);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void updateOrderByRequest(User user, AddOrderRequest request) {
+    private OrderModel addOrderByRequest(User user, AddOrderRequest request) {
         User gm = user.getGeneralManager();
         OrderModel order = OrderModel.builder().build();
 
@@ -144,11 +147,11 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         order.setTotal(order.getSubtotal().add(order.getShippingFee()));
 
         // Cur step
-        order.setStatus(OrderModel.STATUS.CREATED);
+        order.setStatus(request.getStatus() != null ? request.getStatus() : OrderModel.STATUS.CREATED);
 
         // Steps
         OrderStep step = OrderStep.builder()
-                .status(OrderModel.STATUS.CREATED)
+                .status(order.getStatus())
                 .note("")
                 .order(order)
                 .updatedBy(user)
@@ -165,10 +168,12 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         order.setPayment(paymentRepository.save(payment));
 
         // Complete
-        order.setComplete(false);
+        boolean isComplete = order.getStatus().equals(OrderModel.STATUS.COMPLETE) && order.getPayment().getStatus().equals(Payment.STATUS.PAID);
+        order.setComplete(isComplete);
 
         // Cancel
-        order.setCanceled(false);
+        boolean isCanceled = order.getStatus().equals(OrderModel.STATUS.CANCELED);
+        order.setCanceled(isCanceled);
 
         // Created by
         order.setCreatedBy(user);
@@ -179,6 +184,6 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
         // Active
         Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 }

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Thời trang nữ",
+    "parentCategoryId": null
+  },
+  {
+    "name": "Thời trang nam",
+    "parentCategoryId": null
+  },
+  {
+    "name": "Áo thun nữ",
+    "parentCategoryId": 1
+  },
+  {
+    "name": "Đầm",
+    "parentCategoryId": 1
+  },
+  {
+    "name": "Chân váy",
+    "parentCategoryId": 1
+  },
+  {
+    "name": "Áo thun nam",
+    "parentCategoryId": 2
+  },
+  {
+    "name": "Quần jeans nam",
+    "parentCategoryId": 2
+  }
+]

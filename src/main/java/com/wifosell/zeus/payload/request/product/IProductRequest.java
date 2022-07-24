@@ -102,5 +102,7 @@ public interface IProductRequest {
 
         @Size(max = 100)
         String barcode;
+
+        Boolean isActive;
     }
 }
