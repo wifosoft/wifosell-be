@@ -5,21 +5,17 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 public interface IProductRequest {
-    @Size(max = 200)
     String getName();
 
-    @Size(max = 100)
     String getDescription();
 
     Long getCategoryId();
 
     Integer getWeight();
 
-    @Size(max = 50)
     String getDimension();
 
     Integer getState();
@@ -42,7 +38,6 @@ public interface IProductRequest {
         Long id;
 
         @NotBlank
-        @Size(max = 1000)
         String url;
     }
 
@@ -53,11 +48,9 @@ public interface IProductRequest {
         Long id;
 
         @NotBlank
-        @Size(max = 100)
         String name;
 
         @NotBlank
-        @Size(max = 100)
         String value;
     }
 
@@ -67,7 +60,6 @@ public interface IProductRequest {
         Long id;
 
         @NotBlank
-        @Size(max = 100)
         String name;
 
         @NotEmpty
@@ -89,18 +81,14 @@ public interface IProductRequest {
         Long id;
 
         @NotBlank
-        @Size(max = 50)
         String originalCost;
 
         @NotBlank
-        @Size(max = 50)
         String cost;
 
         @NotBlank
-        @Size(max = 100)
         String sku;
 
-        @Size(max = 100)
         String barcode;
 
         Boolean isActive;
