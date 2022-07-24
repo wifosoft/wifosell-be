@@ -13,7 +13,7 @@ import com.wifosell.zeus.payload.response.option.OptionResponse;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,8 +22,10 @@ import java.util.stream.Collectors;
 public class ProductResponse extends BasicEntityResponse {
     private final String name;
     private final String description;
-    private final Integer weight;
-    private final String dimension;
+    private final BigDecimal weight;
+    private final BigDecimal length;
+    private final BigDecimal width;
+    private final BigDecimal height;
     private final Integer state;
     private final Integer status;
     private CategoryResponse category;
@@ -41,11 +43,13 @@ public class ProductResponse extends BasicEntityResponse {
         this.name = product.getName();
         this.description = product.getDescription();
         this.weight = product.getWeight();
-        this.dimension = product.getDimension();
+        this.length = product.getLength();
+        this.width = product.getWidth();
+        this.height = product.getHeight();
         this.state = product.getState();
         this.status = product.getStatus();
-        Optional.ofNullable(product.getCategory()).ifPresent( (category) -> {
-            this.category =  new CategoryResponse(category);
+        Optional.ofNullable(product.getCategory()).ifPresent((category) -> {
+            this.category = new CategoryResponse(category);
         });
         this.images = product.getImages().stream()
                 .filter(productImage -> !productImage.isDeleted())

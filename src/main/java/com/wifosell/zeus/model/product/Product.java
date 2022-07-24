@@ -15,7 +15,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,12 +42,15 @@ public class Product extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    private Integer weight;
-
     private String ProductIdentify;
 
-    @Size(max = 50)
-    private String dimension;
+    private BigDecimal weight;
+
+    private BigDecimal length;
+
+    private BigDecimal width;
+
+    private BigDecimal height;
 
     @Builder.Default
     private Integer state = 0;

@@ -186,7 +186,9 @@ public class ProductServiceImpl implements ProductService {
             product.setCategory(category);
         });
         Optional.ofNullable(request.getWeight()).ifPresent(product::setWeight);
-        Optional.ofNullable(request.getDimension()).ifPresent(product::setDimension);
+        Optional.ofNullable(request.getWidth()).ifPresent(product::setWidth);
+        Optional.ofNullable(request.getLength()).ifPresent(product::setLength);
+        Optional.ofNullable(request.getHeight()).ifPresent(product::setHeight);
         Optional.ofNullable(request.getState()).ifPresent(product::setState);
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 

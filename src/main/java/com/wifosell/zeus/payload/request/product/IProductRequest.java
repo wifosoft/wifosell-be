@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IProductRequest {
@@ -14,9 +16,17 @@ public interface IProductRequest {
 
     Long getCategoryId();
 
-    Integer getWeight();
+    @NotNull
+    BigDecimal getWeight();
 
-    String getDimension();
+    @NotNull
+    BigDecimal getLength();
+
+    @NotNull
+    BigDecimal getWidth();
+
+    @NotNull
+    BigDecimal getHeight();
 
     Integer getState();
 

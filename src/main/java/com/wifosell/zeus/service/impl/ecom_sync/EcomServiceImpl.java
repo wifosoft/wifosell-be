@@ -184,10 +184,10 @@ public class EcomServiceImpl implements EcomService {
 
         totalProduct = listLazadaProducts.size();
         for (ResponseListProductPayload.Product e : listLazadaProducts) {
-            logger.info("Process product  {}",  e.getAttributes().getName());
+            logger.info("Process product  {}", e.getAttributes().getName());
             LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(e.getPrimary_category()).orElse(null);
             if (lazadaCategory == null) {
-                logger.info("Lazada category null {}",  e.getPrimary_category());
+                logger.info("Lazada category null {}", e.getPrimary_category());
                 continue;
             }
             Optional<LazadaCategoryAndSysCategory> lazadaCategoryAndSysCategory = lazadaCategoryAndSysCategoryRepository.findByLazadaCategory(lazadaCategory.getId());
@@ -205,7 +205,7 @@ public class EcomServiceImpl implements EcomService {
             } else {
                 lzProduct.withDataByProductAPI(e).setEcomAccount(ecomAccount);
             }
-            logger.info("Save product {}",  lzProduct.getName());
+            logger.info("Save product {}", lzProduct.getName());
             lazadaProductRepository.save(lzProduct);
 
             //xu ly sku
@@ -255,9 +255,11 @@ public class EcomServiceImpl implements EcomService {
                         sysProduct = new Product();
                         sysProduct.setProductIdentify(s.getSellerSku());
                         sysProduct.setDescription(e.getAttributes().getDescription());
-                        sysProduct.setDimension(s.getDimensionStr());
+                        sysProduct.setLength(new BigDecimal(s.getPackage_length()));
+                        sysProduct.setWidth(new BigDecimal(s.getPackage_width()));
+                        sysProduct.setHeight(new BigDecimal(s.getPackage_height()));
                         sysProduct.setName(e.getAttributes().getName());
-                        sysProduct.setWeight(NumberUtils.tryParseInt(s.getPackage_weight(), 500));
+                        sysProduct.setWeight(new BigDecimal(s.getPackage_weight()));
                         sysProduct.setGeneralManager(ecomAccount.getGeneralManager());
                         sysProduct.setCategory(sysCategory);
                         productRepository.save(sysProduct);
@@ -440,7 +442,6 @@ public class EcomServiceImpl implements EcomService {
     }
 
 
-
     public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId) {
         EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElse(null);
         SaleChannel saleChannel = saleChannelRepository.findById(saleChannelId).orElseThrow(
@@ -505,17 +506,16 @@ public class EcomServiceImpl implements EcomService {
         return reslt;
     }
 
-    
 
     //lấy danh sách category đã linked
-    public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user ) {
+    public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user) {
         List<LazadaCategoryAndSysCategory> listLazadaCategoryAndSystemCategory = new ArrayList<>();
         User gm = user.getGeneralManager();
-        listLazadaCategoryAndSystemCategory =  lazadaCategoryAndSysCategoryRepository.findAllByGeneralManager(gm.getId());
+        listLazadaCategoryAndSystemCategory = lazadaCategoryAndSysCategoryRepository.findAllByGeneralManager(gm.getId());
         return listLazadaCategoryAndSystemCategory;
     }
 
-        public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId) {
+    public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId) {
         LazadaVariantAndSysVariant record = null;
         User gm = user.getGeneralManager();
 

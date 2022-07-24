@@ -3,6 +3,7 @@ package com.wifosell.zeus.payload.request.product;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -14,9 +15,13 @@ public class UpdateProductRequest implements IProductRequest {
 
     private Long categoryId;
 
-    private Integer weight;
+    private BigDecimal weight;
 
-    private String dimension;
+    private BigDecimal length;
+
+    private BigDecimal width;
+
+    private BigDecimal height;
 
     private Integer state;
 

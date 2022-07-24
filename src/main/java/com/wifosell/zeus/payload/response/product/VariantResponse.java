@@ -12,6 +12,7 @@ import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,8 +56,10 @@ public class VariantResponse extends BasicEntityResponse {
     private static class ProductResponse extends BasicEntityResponse {
         private final String name;
         private final String description;
-        private final Integer weight;
-        private final String dimension;
+        private final BigDecimal weight;
+        private final BigDecimal length;
+        private final BigDecimal width;
+        private final BigDecimal height;
         private final Integer state;
         private final Integer status;
         private final CategoryResponse category;
@@ -69,7 +72,9 @@ public class VariantResponse extends BasicEntityResponse {
             this.name = product.getName();
             this.description = product.getDescription();
             this.weight = product.getWeight();
-            this.dimension = product.getDimension();
+            this.length = product.getLength();
+            this.width = product.getWidth();
+            this.height = product.getHeight();
             this.state = product.getState();
             this.status = product.getStatus();
             this.category = new CategoryResponse(product.getCategory());

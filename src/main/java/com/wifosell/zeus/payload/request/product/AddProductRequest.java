@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -19,9 +20,13 @@ public class AddProductRequest implements IProductRequest {
     @NotNull
     private Long categoryId;
 
-    private Integer weight;
+    private BigDecimal weight;
 
-    private String dimension;
+    private BigDecimal length;
+
+    private BigDecimal width;
+
+    private BigDecimal height;
 
     private Integer state;
 

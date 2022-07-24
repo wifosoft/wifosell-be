@@ -95,11 +95,6 @@ public class ResponseListProductPayload {
         public Long skuId;
         public int preorderStock;
         public int withholdingStock;
-
-        public String getDimensionStr() {
-            //dài rộng cao (LxWxH)
-            return package_length +"x" + package_width  + "x"+package_height;
-        }
     }
 
     public Data data;
