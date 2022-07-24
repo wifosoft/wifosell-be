@@ -8,11 +8,15 @@
     "parentCategoryId": null
   },
   {
-    "name": "Áo thun nữ",
+    "name": "Đầm",
     "parentCategoryId": 1
   },
   {
-    "name": "Đầm",
+    "name": "Áo sơ mi nữ",
+    "parentCategoryId": 1
+  },
+  {
+    "name": "Áo thun nữ",
     "parentCategoryId": 1
   },
   {
@@ -20,7 +24,19 @@
     "parentCategoryId": 1
   },
   {
+    "name": "Quần tây nữ",
+    "parentCategoryId": 1
+  },
+  {
+    "name": "Quần jeans nữ",
+    "parentCategoryId": 1
+  },
+  {
     "name": "Áo thun nam",
+    "parentCategoryId": 2
+  },
+  {
+    "name": "Áo sơ mi nam",
     "parentCategoryId": 2
   },
   {

@@ -1,531 +1,8 @@
 [
   {
-    "name": "Áo thun cổ tim nữ trơn GUMAC ATC04006",
-    "description": "",
-    "categoryId": 3,
-    "weight": null,
-    "dimension": null,
-    "state": null,
-    "status": null,
-    "images": [
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/9789e5008f31249d4f2fcd8750b135c8.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/93a12920a41c3005cd6f0d01da053293.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/954b5eaa47d59d64e2b22ef9e6e29bca.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/5e61bae247d5a6059ba859f1f17214f7.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
-      }
-    ],
-    "attributes": [
-      {
-        "id": null,
-        "name": "Thương hiệu",
-        "value": ""
-      },
-      {
-        "id": null,
-        "name": "Tay áo",
-        "value": "Ngắn"
-      },
-      {
-        "id": null,
-        "name": "Chất liệu",
-        "value": "Cotton"
-      },
-      {
-        "id": null,
-        "name": "Kiểu cổ áo",
-        "value": "Cổ trái tim"
-      },
-      {
-        "id": null,
-        "name": "Kiểu hoa văn",
-        "value": "Trơn"
-      }
-    ],
-    "options": [
-      {
-        "id": null,
-        "name": "Nhóm màu",
-        "values": [
-          {
-            "id": null,
-            "name": "Đen"
-          },
-          {
-            "id": null,
-            "name": "Hồng"
-          },
-          {
-            "id": null,
-            "name": "Cam"
-          }
-        ]
-      },
-      {
-        "id": null,
-        "name": "Kích cỡ",
-        "values": [
-          {
-            "id": null,
-            "name": "S"
-          },
-          {
-            "id": null,
-            "name": "M"
-          },
-          {
-            "id": null,
-            "name": "L"
-          }
-        ]
-      }
-    ],
-    "variants": [
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-den-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-den-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-den-l",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-hong-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-hong-m",
-        "barcode": null,
-        "isActive": false
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-hong-l",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-cam-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-cam-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "265000",
-        "cost": "89000",
-        "sku": "ATC04006-cam-l",
-        "barcode": null,
-        "isActive": true
-      }
-    ],
-    "isActive": true
-  },
-  {
-    "name": "Áo thun nữ GUMAC ATC06020 gân phối bo",
-    "description": "-Mã Sản Phẩm: ATC06020\n-Tên Sản Phẩm: Áo thun gân phối bo\n-Giá Bán: 230,000vnđ\n-Màu Sắc: VÀNG, HỒNG, ĐEN\n-Số Đo Vải: 36CM\n-Số Đo Ngực: 82CM\n-Số Đo Lai: 88CM\n- Số Đo Dài Tay:\n17CM -Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông\nSố Size S\n-Chất Liệu Vải: THUN GÂN\n-Độ Co Giãn: NHIỀU\n* ÁO THUN CƠ BẢN, CỔ TIM, TAY NGẮN, CỔ VÀ LAI TAY CÓ BỘ PHỐI, KHÔNG TÚI. *",
-    "categoryId": 3,
-    "weight": null,
-    "dimension": null,
-    "state": null,
-    "status": null,
-    "images": [
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/70b39e3b02b343e5d54b0354f0ba5524.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/f6fb02fc3869e0483fb6904715e53196.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/fb4c1053f7ebd763eaaeaa7e3b9b28e7.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/7b48bb033abed3e33cb36421e3afbbb5.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/26fbf994bfb1259c5caba914ad8b3d67.jpg_720x720q80.jpg_.webp"
-      }
-    ],
-    "attributes": [
-      {
-        "id": null,
-        "name": "Thương hiệu",
-        "value": "Gumac"
-      },
-      {
-        "id": null,
-        "name": "Tay áo",
-        "value": "Tay ngắn"
-      },
-      {
-        "id": null,
-        "name": "Phong cách thời trang",
-        "value": "Thường ngày"
-      },
-      {
-        "id": null,
-        "name": "Kiểu cổ",
-        "value": "V-NECK"
-      },
-      {
-        "id": null,
-        "name": "Chất liệu",
-        "value": "Thun gân"
-      },
-      {
-        "id": null,
-        "name": "Kiểu hoa văn",
-        "value": "Kẻ sọc"
-      }
-    ],
-    "options": [
-      {
-        "id": null,
-        "name": "Nhóm màu",
-        "values": [
-          {
-            "id": null,
-            "name": "Đen"
-          },
-          {
-            "id": null,
-            "name": "Hồng"
-          },
-          {
-            "id": null,
-            "name": "Vàng"
-          }
-        ]
-      },
-      {
-        "id": null,
-        "name": "Kích cỡ",
-        "values": [
-          {
-            "id": null,
-            "name": "S"
-          },
-          {
-            "id": null,
-            "name": "M"
-          },
-          {
-            "id": null,
-            "name": "L"
-          }
-        ]
-      }
-    ],
-    "variants": [
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-den-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-den-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-den-l",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-hong-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-hong-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-hong-l",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-vang-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-vang-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "230000",
-        "cost": "179000",
-        "sku": "ATC04006-vang-l",
-        "barcode": null,
-        "isActive": true
-      }
-    ],
-    "isActive": true
-  },
-  {
-    "name": "Áo thun nữ GUMAC ATC05071, Áo thun cổ tròn đơn giản trẻ trung",
-    "description": "-Mã Sản Phẩm: ATC05071\n-Tên Sản Phẩm: Áo thun cổ tròn\n-Giá Bán: 195,000vnđ\n-Màu Sắc: CAM, TÍM, XANH, XANH ĐEN\n-Số Đo Vải: 37CM\n\u200B\u200B-Số Đo Ngực:\n90CM -Số Đo Lai: 92CM\n-Số Đo Dài Tây: 16CM\n-Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông số\nSize S\n-Chất liệu Vải: TICI ĐỒ\n-Độ Co Giãn: NHIỀU\n-ÁO CÓ 1 LỚP\n-KHÔNG TÚI\n* ÁO BẢN THUN MẪU CƠ BẢN, CỔ TRÒN TÂY NGẮN",
-    "categoryId": 3,
-    "weight": null,
-    "dimension": null,
-    "state": null,
-    "status": null,
-    "images": [
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/a5b4654cfbb20a14bd591b0f2118f86f.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/b3331c39424a696d33542bbb75a8ac87.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/3c8eacc7ff29f93c611d77724a1fad23.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/c782378d812ee4b265e3f74c25674bbb.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
-      }
-    ],
-    "attributes": [
-      {
-        "id": null,
-        "name": "Thương hiệu",
-        "value": "Gumac"
-      },
-      {
-        "id": null,
-        "name": "Tay áo",
-        "value": "Tay ngắn"
-      },
-      {
-        "id": null,
-        "name": "Kiểu hoa văn",
-        "value": "Trơn"
-      },
-      {
-        "id": null,
-        "name": "Dịp",
-        "value": "Thường ngày"
-      },
-      {
-        "id": null,
-        "name": "Chất liệu",
-        "value": "TICI"
-      },
-      {
-        "id": null,
-        "name": "Kiểu cổ áo",
-        "value": "Tròn"
-      }
-    ],
-    "options": [
-      {
-        "id": null,
-        "name": "Nhóm màu",
-        "values": [
-          {
-            "id": null,
-            "name": "Cam"
-          },
-          {
-            "id": null,
-            "name": "Tím"
-          },
-          {
-            "id": null,
-            "name": "Xanh"
-          }
-        ]
-      },
-      {
-        "id": null,
-        "name": "Kích cỡ",
-        "values": [
-          {
-            "id": null,
-            "name": "S"
-          },
-          {
-            "id": null,
-            "name": "M"
-          },
-          {
-            "id": null,
-            "name": "L"
-          }
-        ]
-      }
-    ],
-    "variants": [
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-cam-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-cam-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-cam-l",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-tim-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-tim-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-tim-l",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-xanh-s",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-xanh-m",
-        "barcode": null,
-        "isActive": true
-      },
-      {
-        "id": null,
-        "originalCost": "195000",
-        "cost": "129000",
-        "sku": "ATC05071-xanh-l",
-        "barcode": null,
-        "isActive": true
-      }
-    ],
-    "isActive": true
-  },
-  {
     "name": "Đầm họa tiết nữ GUMAC DC05088 phối bèo",
     "description": "-Mã Sản Phẩm: DC05088\n-Tên Sản Phẩm: Đầm họa tiết phối bèo\n-Giá Bán: 650,000vnđ\n-Màu Sắc: TRẮNG\n-Số Đo Vải: 34CM\n-Số Đo Ngực: 88CM\n-Số Đo Eo: 68CM\n-Số Đo Dài Đầm : 104CM\n-Chất liệu Vải: SATIN -Thông số\nSize S\n-DẦM CÓ 2 LỚP\n-KHÔNG TÚI.\n* DẠNG A NHẸ, CỔ TRÒN, TÂY LỠ, PHỐI BÈO TẠO KIỂU, ĐẦM RÃ EO, CỔ TRƯỚC CÓ XEM 1 ĐOẠN 7CM CÓ KHUYÊN NÚT CÓ THỂ THÁO MỞ, ĐÂY KÉO PHỤ NỮ *",
-    "categoryId": 4,
+    "categoryId": 3,
     "weight": null,
     "dimension": null,
     "state": null,
@@ -676,9 +153,79 @@
     "isActive": true
   },
   {
+    "name": "Đầm dáng xòe GUMAC DC03027 form rộng nhún lai",
+    "description": "-Số Sản Phẩm: DC03027 -Số\nSản Phẩm: Đầm form rộng nhún bèo\n-Giá Bán: 675,000 vnđ\n-Màu Sắc: KEM\n-Số Đo Ngực: 100CM\n-Số Đo Vải: 34CM\n-Số Đo Dài Tay: 58CM\n-Số Đo Cửa Tay:\n20CM -Số Đo Dài Đầm: 87CM -Thông\nsố KÍCH THƯỚC MIỄN PHÍ\n-Chất liệu Vải: CHIFON THÊU LỤA\n-Độ Co Giãn: KHÔNG\n-DẦM CÓ 2 LỚP\n-KHÔNG TÚI\n* ĐẦM KIỂU SƠ MI MẪU RỘNG, LÁ CỔ LÀ CỔ SEN PHỐI BÈO TÂY, BẢN MẠNG KHOẢNG 6,7 CM CÓ NÚT NHỰA, GIỮA ĐẦM THẦN TRƯỚC CÓ NÚT NHỰA THÁO MỞ, CÓ BÈO DỌC THEO NẸP NÚT TẠO KIỂU, LAI CÓ PHỐI BÈO *",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/81a2b841b6d256fb9572a261cbf9fabf.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/12de5e3877609d99a804b268330c2c26.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/4af274402e8419307037ae43c6916395.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/bc3e1a26e4a3de982b1823e4e4ca86be.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/0884f748e6aacce8fcde69126ea441cb.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "Dài đến gối"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Váy chữ A"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Chiffon"
+      }
+    ],
+    "options": [],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "675000",
+        "cost": "399000",
+        "sku": "DC03027",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
     "name": "Đầm dáng xòe nữ GUMAC DC06044 xếp ly eo",
     "description": "*** ĐẦM FORM A DÀI, CỔ TRÒN, KHÔNG TAY, ĐẦM CÓ XẾP LY TẠI EO, TẠI VAI PHẢI CÓ ĐÍNH KHUY NÚT TẠO KIỂU, DÂY KÉO PHÍA SAU, ĐẦM 2 LỚP, CÓ TÚI.\n- MÃ SẢN PHẨM: DC06044\n- SỐ ĐO VAI: 51CM\n- SỐ ĐO NGỰC: 98CM\n- SỐ ĐO EO: 67CM\n- SỐ ĐO DÀI VÁY: 115CM\n- KÍCH CỠ SIZEl: S\n- CHẤT LIỆU: LỤA TUYẾT\n*** XUẤT XỨ: VIỆT NAM",
-    "categoryId": 4,
+    "categoryId": 3,
     "weight": null,
     "dimension": null,
     "state": null,
@@ -687,10 +234,6 @@
       {
         "id": null,
         "url": "https://lzd-img-global.slatic.net/g/p/56d543592aecf5e84cbc2b1b0c9d25f1.jpg_720x720q80.jpg_.webp"
-      },
-      {
-        "id": null,
-        "url": "https://lzd-img-global.slatic.net/g/p/e22ab4a6f9be01221682db7e95dd73f6.jpg_720x720q80.jpg_.webp"
       },
       {
         "id": null,
@@ -919,6 +462,1686 @@
         "originalCost": "530000",
         "cost": "299000",
         "sku": "DC06044-hong-xl",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Đầm nữ Form A sát nách thời trang nữ GUMAC sát nách xếp ly DC01012 - mẫu mới",
+    "description": "Đầm sát nách xếp ly\nMã Sản Phẩm: DC01012\n- Tên Sản Phẩm: Đầm sát nách xếp ly\n- Màu Sắc:\n- Số Đo Ngực: 84 CM\n- Số Đo Eo: 64 CM\n- Số Đo Vai: 30CM\n- Số Đo Dài Đầm: 86CM\n- Thông Số Size: XS\n- Chất Liệu Vải: Bố\nĐẦM FORM A CƠ BẢN, CỔ TRÒN, KHÔNG TAY, PHÍA TRƯỚC CÓ XẾP LY NỔI TẠO KIỂU, ĐẦM RÃ EO, DÂY KÉO PHÍA SAU, ĐẦM 1 LỚP, KHÔNG TÚI",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/8ae31168c4bac10847b1ebac02da603a.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/c0817cd3242b037950001c535bb12bde.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/3b14d1943c13168d57602347b6f8ae66.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/884a243fee96d6d8a1a6e1d475d8fc63.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/f5fdc7b1d3c64197f1ed029ba8b08b85.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b0488bf9e7fae51fbca560e3fa6806c9.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Tay ngắn"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "midi"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Bố"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ áo",
+        "value": "Tròn"
+      },
+      {
+        "id": null,
+        "name": "Nhóm kích thước",
+        "value": "Bình thường"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Đầm suông"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Be"
+          },
+          {
+            "id": null,
+            "name": "Xám"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "XS"
+          },
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-be-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-be-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-be-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-be-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-xam-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-xam-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-xam-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "249000",
+        "sku": "DC01012-xam-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Đầm nữ sát nách tay bèo DB758 mẫu mới GUMAC",
+    "description": "Mã Sản Phẩm: DB758\n- Tên Sản Phẩm: Đầm sát nách tay bèo\n- Màu Sắc: TRẮNG\n- Số Đo Ngực: 86CM\n- Số Đo Eo: 68CM\n- Số Đo Vai: 30CM\n- Chiều Dài Đầm: 90CM\n- Thông Số Size S\n- Số Size XS-S-M-L-XL\n- Chất Liệu Vải: COTTON XỐP\n- Có 2 Lớp\n- Không Có Túi",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/04c68873ce2688e5df0d52fc641b0a1f.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b51bf72e0b39108cd33b5f2ddef01186.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/5568b929544ec17955a049ce46e20b83.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/6db75bfb87be7cafbf07dd3efff8821f.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/071aa2ad578cf09375e4a074bff5a649.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/eeff871792987724fd298f1da076cc63.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Cotton xốp"
+      },
+      {
+        "id": null,
+        "name": "Thời gian bảo hành",
+        "value": "1 tháng"
+      },
+      {
+        "id": null,
+        "name": "Loại bảo hành",
+        "value": "Bằng hoá đơn mua hàng"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "Dài đến gối"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Đầm suông"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Trắng"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "550000",
+        "cost": "199000",
+        "sku": "DB758-trang-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Đầm nữ sát nách phụ kiện GUMAC mẫu mới DB580 chất liệu thun 2 da form body style thanh lịch",
+    "description": "Mã Sản Phẩm: DB580\n- Tên Sản Phẩm: Đầm sát nách phụ kiện\n- Giá Bán: 480,000vnđ\n- Màu Sắc: ĐEN-NÂU\n- Số Đo Ngực: 88CM\n- Số Đo Eo: 66CM\n- Số Đo Vai: 38CM\n- Số Đo Mông: 87CM\n- Số Đo Xẻ Sau: 17CM\n- Chiều Dài Đầm: 92CM\n- Thông Số Size S\n- Số Size S-M-L-XL\n- Chất Liệu Vải: Thun 2 Da\n- Đầm Co Giãn Tốt, Có 2 Lớp\n*ĐẦM FORM BODY, CỔ TRÒN, KHÔNG TAY, ĐẦM RÃ CÚP Ở NÁCH, RÃ EO, PHẦN EO XẾP LY CÁCH ĐIỆU TẠO KIỂU, EO CÓ ĐÍNH DÂY ĐAI PHỐI PHỤ KIỆN KO THỂ THÁO RỜI, PHẦN TÀ SAU CÓ XẺ ĐẮP, DÂY KÉO PHÍA SAU.",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/0ebde93bca133fbacafb4fc0011247bf.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/0ebde93bca133fbacafb4fc0011247bf.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/1375ff8802499581a80c35e0cb5c3971.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/3c3a0df782210f83f45f8e6e73d4268c.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/755c5c9a42b7238a085a64eb11481398.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b30c8f1c9441a9ca65abbca059cbdc15.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Thun 2 da"
+      },
+      {
+        "id": null,
+        "name": "Thời gian bảo hành",
+        "value": "1 tháng"
+      },
+      {
+        "id": null,
+        "name": "Loại bảo hành",
+        "value": "Bằng hoá đơn mua hàng"
+      },
+      {
+        "id": null,
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "Dài đến gối"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Đầm bodycon"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Đen"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "480000",
+        "cost": "199000",
+        "sku": "DB580-den-s",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Đầm nữ body công sở GUMAC thiết kế cổ V phối bèo DC01040",
+    "description": "Đầm cổ V phối bèo\nMã Sản Phẩm: DC01040\n- Tên Sản Phẩm: Đầm cổ V phối bèo\n- Màu Sắc:\n- Số Đo Ngực: 84CM\n- Số Đo Eo: 63CM\n- Số Đo Vai: 34CM\n- Số Đo Dài Tay: 19CM\n- Số Đo Cửa Tay: 26CM\n- Số Đo Dài Đầm: 89CM\n- Thông Số Size: XS\n- Chất Liệu Vải: Cotton Sọc\nĐẦM FORM BÚT CHÌ, CỔ V, TAY PHỒNG NGẮN, XẾP LY NHÚN Ở ĐỈNH VAI, TÃI EO CÓ PHỐI BÈO LỆCH TẠO KIỂU, DÂY KÉO PHÍA SAU, PHẦN GIỮA LAI SAU CÓ XẺ ĐẮP KHOẢNG 13.5CM, ĐẦM 2 LỚP, KHÔNG TÚI",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/759fabc7fc6cdc5e41d4ede8d5c8825d.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/3db5a25b79fc25dc13657062cd93f667.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/90bfe76cddb0641882424fb9f578e8e9.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/27e46ba9d4341882c16af755d25d736b.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/2bf1450a7f29b025588e11d3f53c1220.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/89e4a126ea5056ad6dfbc1563576d824.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Cotton"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Ngắn"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "Mini/Trên gối"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Đầm suông"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Đen"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "XS"
+          },
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "249000",
+        "sku": "DC01040-den-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "249000",
+        "sku": "DC01040-den-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "249000",
+        "sku": "DC01040-den-m",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Đầm Luxury dập ly GUMAC DVA856",
+    "description": "Mã Sản Phẩm: DA856\n- Màu Sắc: XANH ĐEN\n- Số Đo Ngực: 85CM\n- Số Đo Eo: 64CM\n- Chiều Dài Đầm: 89CM\n- Thông Tin Size: XS\n- Số Size: XS, S, M, L\n- Chất Liệu Vải: Gấm\n- Đầm Có 2 Lớp",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/1d7fc8cec5aa13e485c829512ec74615.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b98eef1cb6c3f388f99c74e18305db6b.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/85ee196c054d11cbab9f3e1769d9ae96.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Gấm"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Không tay"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "Maxi"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Đầm bút chì"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Xanh đen"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "XS"
+          },
+          {
+            "id": null,
+            "name": "S"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "1250000",
+        "cost": "350000",
+        "sku": "DVA856-xanhden-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "1250000",
+        "cost": "350000",
+        "sku": "DVA856-xanhden-s",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Đầm nữ xếp ly eo GUMAC mẫu mới DB571 Chất Liệu Cotton Misa form hơi ôm style công sở",
+    "description": "Mã Sản Phẩm: DB571\n- Tên Sản Phẩm: Đầm xếp ly eo\n- Giá Bán: 520,000vnđ\n- Màu Sắc: XANH, ĐEN\n- Số Đo Ngực: 85CM\n- Số Đo Eo: 64CM\n- Số Đo Vai: 32CM\n- Số Đo Dài Tay: 22CM\n- Số Đo Cửa Tay: 32CM\n- Chiều Dài Đầm: 91CM\n- Thông Số Size XS\n- Số Size XS-S-M-L-XL\n- Chất Liệu Vải: Cotton Misa\n- Đầm Có 2 Lớp, Không Có Túi\n*ĐẦM FORM HƠI ÔM, CỔ TRÒN, TAY NGẮN, XẾP LY NHÚN Ở ĐỈNH VAI, ĐẦM RÃ EO, PHẦN TÙNG CÓ XẾP LY MỞ, THÂN SAU CÓ XẺ ĐẮP, ĐẦM ĐÍNH KÈM PHỤ KIỆN HOA.",
+    "categoryId": 3,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/c862c7fe3429fa1adf6433c147fdd554.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/58ba837ac7d4d32124d03999fe172875.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/a7ae60416b63c5a995ede4742bcc6e7c.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/433df8f11f78164e0d4a88ae358d4725.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/726c8a06bab5248881ba24cf16269db5.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Cotton Misa"
+      },
+      {
+        "id": null,
+        "name": "Thời gian bảo hành",
+        "value": "1 tháng"
+      },
+      {
+        "id": null,
+        "name": "Loại bảo hành",
+        "value": "Bằng hoá đơn mua hàng"
+      },
+      {
+        "id": null,
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Hình thoi"
+      },
+      {
+        "id": null,
+        "name": "Độ dài đầm váy",
+        "value": "Dài đến gối"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng đầm",
+        "value": "Xếp ly eo"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Xanh"
+          },
+          {
+            "id": null,
+            "name": "Đen"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "XS"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "520000",
+        "cost": "199000",
+        "sku": "DB571-xanh-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "520000",
+        "cost": "199000",
+        "sku": "DB571-den-xs",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Áo thun cổ tim nữ trơn GUMAC ATC04006",
+    "description": "",
+    "categoryId": 5,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/9789e5008f31249d4f2fcd8750b135c8.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/93a12920a41c3005cd6f0d01da053293.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/954b5eaa47d59d64e2b22ef9e6e29bca.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/5e61bae247d5a6059ba859f1f17214f7.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": ""
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Ngắn"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Cotton"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ áo",
+        "value": "Cổ trái tim"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Đen"
+          },
+          {
+            "id": null,
+            "name": "Hồng"
+          },
+          {
+            "id": null,
+            "name": "Cam"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-den-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-den-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-den-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-hong-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-hong-m",
+        "barcode": null,
+        "isActive": false
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-hong-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-cam-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-cam-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "265000",
+        "cost": "89000",
+        "sku": "ATC04006-cam-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Áo thun nữ GUMAC ATC06020 gân phối bo",
+    "description": "-Mã Sản Phẩm: ATC06020\n-Tên Sản Phẩm: Áo thun gân phối bo\n-Giá Bán: 230,000vnđ\n-Màu Sắc: VÀNG, HỒNG, ĐEN\n-Số Đo Vải: 36CM\n-Số Đo Ngực: 82CM\n-Số Đo Lai: 88CM\n- Số Đo Dài Tay:\n17CM -Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông\nSố Size S\n-Chất Liệu Vải: THUN GÂN\n-Độ Co Giãn: NHIỀU\n* ÁO THUN CƠ BẢN, CỔ TIM, TAY NGẮN, CỔ VÀ LAI TAY CÓ BỘ PHỐI, KHÔNG TÚI. *",
+    "categoryId": 5,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/70b39e3b02b343e5d54b0354f0ba5524.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/f6fb02fc3869e0483fb6904715e53196.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/fb4c1053f7ebd763eaaeaa7e3b9b28e7.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/7b48bb033abed3e33cb36421e3afbbb5.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/26fbf994bfb1259c5caba914ad8b3d67.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Tay ngắn"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ",
+        "value": "V-NECK"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Thun gân"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Kẻ sọc"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Đen"
+          },
+          {
+            "id": null,
+            "name": "Hồng"
+          },
+          {
+            "id": null,
+            "name": "Vàng"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-den-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-den-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-den-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-hong-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-hong-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-hong-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-vang-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-vang-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "230000",
+        "cost": "179000",
+        "sku": "ATC04006-vang-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Áo thun nữ GUMAC ATC05071, Áo thun cổ tròn đơn giản trẻ trung",
+    "description": "-Mã Sản Phẩm: ATC05071\n-Tên Sản Phẩm: Áo thun cổ tròn\n-Giá Bán: 195,000vnđ\n-Màu Sắc: CAM, TÍM, XANH, XANH ĐEN\n-Số Đo Vải: 37CM\n\u200B\u200B-Số Đo Ngực:\n90CM -Số Đo Lai: 92CM\n-Số Đo Dài Tây: 16CM\n-Số Đo Cửa Tây:\n30CM -Số Đo Dài Áo: 59CM -Thông số\nSize S\n-Chất liệu Vải: TICI ĐỒ\n-Độ Co Giãn: NHIỀU\n-ÁO CÓ 1 LỚP\n-KHÔNG TÚI\n* ÁO BẢN THUN MẪU CƠ BẢN, CỔ TRÒN TÂY NGẮN",
+    "categoryId": 5,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/a5b4654cfbb20a14bd591b0f2118f86f.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/b3331c39424a696d33542bbb75a8ac87.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/3c8eacc7ff29f93c611d77724a1fad23.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/c782378d812ee4b265e3f74c25674bbb.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/4748782999279ad3d9f1ecc26bdfd769.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Tay áo",
+        "value": "Tay ngắn"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      },
+      {
+        "id": null,
+        "name": "Dịp",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "TICI"
+      },
+      {
+        "id": null,
+        "name": "Kiểu cổ áo",
+        "value": "Tròn"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Cam"
+          },
+          {
+            "id": null,
+            "name": "Tím"
+          },
+          {
+            "id": null,
+            "name": "Xanh"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-cam-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-tim-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "195000",
+        "cost": "129000",
+        "sku": "ATC05071-xanh-l",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Chân váy nữ phối dây kéo GUMAC mẫu mới VB597 Chất Liệu Thun 2 Da form A style trẻ trung",
+    "description": "Mã Sản Phẩm: VB597\n- Tên Sản Phẩm: Chân váy phối dây kéo\n- Giá Bán: 275,000vnđ\n- Màu Sắc: XÁM, ĐEN\n- Số Đo EO: 67CM\n- Số Đo Hông: 76CM\n- Chiều Dài Chân Váy: 41CM\n- Thông Số Size S\n- Số Size XS-S-M-L-XL\n- Chất Liệu Vải: Thun 2 Da\n- Co Giãn Tốt\n- Có Quần Trong\n*CHÂN VÁY FORM A, BẢN LƯNG KHOẢNG 3.6CM, CHÂN VÁY CÓ KÈM DÂY ĐAI LƯNG, PHẦN THÂN TRƯỚC RÃ TẠO KIỂU, DÂY KÉO PHÍA TRƯỚC.",
+    "categoryId": 6,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/45fa01590e673af97b6e8e8b266b661d.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/a13e1973ac6c66d621698a3b77e8c762.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/30941393da1bd8187d1b013e5c429f74.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/99c0d675863976eb5dadcab7dce894f4.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/f9f432e549d483e64d60cb12f411a11c.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Thời gian bảo hành",
+        "value": "1 tháng"
+      },
+      {
+        "id": null,
+        "name": "Độ dài váy",
+        "value": "Trên gối"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng váy",
+        "value": "Chữ A"
+      },
+      {
+        "id": null,
+        "name": "Loại bảo hành",
+        "value": "Bằng hoá đơn mua hàng"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Cotton"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Phối dây kéo"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Đỏ"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "XS"
+          },
+          {
+            "id": null,
+            "name": "S"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "275000",
+        "cost": "100000",
+        "sku": "CV12039-do-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "275000",
+        "cost": "100000",
+        "sku": "CV12039-do-s",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Chân váy nữ GUMAC CV12039 , Chân váy công sở phối viền",
+    "description": "Mã Sản Phẩm: VB597\n- Tên Sản Phẩm: Chân váy phối dây kéo\n- Giá Bán: 275,000vnđ\n- Màu Sắc: XÁM, ĐEN\n- Số Đo EO: 67CM\n- Số Đo Hông: 76CM\n- Chiều Dài Chân Váy: 41CM\n- Thông Số Size S\n- Số Size XS-S-M-L-XL\n- Chất Liệu Vải: Thun 2 Da\n- Co Giãn Tốt\n- Có Quần Trong\n*CHÂN VÁY FORM A, BẢN LƯNG KHOẢNG 3.6CM, CHÂN VÁY CÓ KÈM DÂY ĐAI LƯNG, PHẦN THÂN TRƯỚC RÃ TẠO KIỂU, DÂY KÉO PHÍA TRƯỚC.",
+    "categoryId": 6,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/bc06c43509bf917f15c2d72cd6969e56.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/10f375c83db795557a0b7908770fd341.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/1e4f92b47e8ee754f6826d7685846d12.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/1cf169ac587469bcef7eb4f1851b6a9c.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Độ dài váy",
+        "value": "Dài đến gối"
+      },
+      {
+        "id": null,
+        "name": "Thời gian bảo hành",
+        "value": "1 tháng"
+      },
+      {
+        "id": null,
+        "name": "Loại bảo hành",
+        "value": "Bằng hoá đơn mua hàng"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng váy",
+        "value": "Chữ A"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Thun 2 da"
+      },
+      {
+        "id": null,
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      },
+      {
+        "id": null,
+        "name": "Kiểu hoa văn",
+        "value": "Trơn"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Xám"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "S"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "275000",
+        "cost": "169000",
+        "sku": "VB597-xam-s",
+        "barcode": null,
+        "isActive": true
+      }
+    ],
+    "isActive": true
+  },
+  {
+    "name": "Chân váy dáng xòe GUMAC VC06031 dập ly",
+    "description": "- MÃ SẢN PHẨM: VC06031\n- SỐ ĐO EO: 63\n- SỐ ĐO DÀI VÁY: 74\n- KÍCH CỠ SIZE: XS\n- CHẤT LIỆU: LỤA 100D\n*** CHÂN VÁY DẬP LY, BẢNG LƯNG KHOẢNG 5CM, LƯNG CÓ PHỐI ĐAI NÚT 2 BÊN\n*** XUẤT XỨ: VIỆT NAM",
+    "categoryId": 6,
+    "weight": null,
+    "dimension": null,
+    "state": null,
+    "status": null,
+    "images": [
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/e5acc77626bc88d4e587e624bbf1f60a.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/d816eb01cffec7264ee56ab55956bb1c.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/ccbb94752d9d57af3fdd424c87a805f8.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/da961a9af7a21bd82e8c3813989b7449.jpg_720x720q80.jpg_.webp"
+      },
+      {
+        "id": null,
+        "url": "https://lzd-img-global.slatic.net/g/p/819f43698e0d6f0267b3fe5fb2889bdc.jpg_720x720q80.jpg_.webp"
+      }
+    ],
+    "attributes": [
+      {
+        "id": null,
+        "name": "Thương hiệu",
+        "value": "Gumac"
+      },
+      {
+        "id": null,
+        "name": "Độ dài váy",
+        "value": "Dài đến gối"
+      },
+      {
+        "id": null,
+        "name": "Phong cách thời trang",
+        "value": "Thường ngày"
+      },
+      {
+        "id": null,
+        "name": "Kiểu dáng váy",
+        "value": "Dáng xoè"
+      },
+      {
+        "id": null,
+        "name": "Chất liệu",
+        "value": "Lụa 100D"
+      }
+    ],
+    "options": [
+      {
+        "id": null,
+        "name": "Nhóm màu",
+        "values": [
+          {
+            "id": null,
+            "name": "Nâu"
+          },
+          {
+            "id": null,
+            "name": "Xanh"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "name": "Kích cỡ",
+        "values": [
+          {
+            "id": null,
+            "name": "XS"
+          },
+          {
+            "id": null,
+            "name": "S"
+          },
+          {
+            "id": null,
+            "name": "M"
+          },
+          {
+            "id": null,
+            "name": "L"
+          },
+          {
+            "id": null,
+            "name": "XL"
+          }
+        ]
+      }
+    ],
+    "variants": [
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-nau-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-nau-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-nau-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-nau-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-nau-xl",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-xanh-xs",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-xanh-s",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-xanh-m",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-xanh-l",
+        "barcode": null,
+        "isActive": true
+      },
+      {
+        "id": null,
+        "originalCost": "495000",
+        "cost": "299000",
+        "sku": "VC06031-xanh-xl",
         "barcode": null,
         "isActive": true
       }
