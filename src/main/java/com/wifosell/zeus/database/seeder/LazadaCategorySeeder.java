@@ -24,9 +24,9 @@ public class LazadaCategorySeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void prepareJpaRepository() {
-        this.categoryRepository = this.factory.getRepository(CategoryRepository.class);
-        this.userRepository = this.factory.getRepository(UserRepository.class);
-        this.lazadaCategoryRepository = this.factory.getRepository(LazadaCategoryRepository.class);
+        this.categoryRepository = context.getBean(CategoryRepository.class);
+        this.userRepository = context.getBean(UserRepository.class);
+        this.lazadaCategoryRepository = context.getBean(LazadaCategoryRepository.class);
     }
 
     public void saveLazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory parent) {

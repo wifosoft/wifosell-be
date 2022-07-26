@@ -17,9 +17,7 @@ import java.util.List;
 
 @Transactional
 public class UserSeeder extends BaseSeeder implements ISeeder {
-
-    RoleRepository roleRepository;
-
+    private RoleRepository roleRepository;
 
     public static PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -27,7 +25,7 @@ public class UserSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void prepareJpaRepository() {
-        roleRepository = this.factory.getRepository(RoleRepository.class);
+        roleRepository = context.getBean(RoleRepository.class);
     }
 
     @Override
@@ -88,7 +86,5 @@ public class UserSeeder extends BaseSeeder implements ISeeder {
             }
             entityManager.persist(userRoleRelation);
         });
-
-
     }
 }

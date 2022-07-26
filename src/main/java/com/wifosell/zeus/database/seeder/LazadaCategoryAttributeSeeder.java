@@ -19,7 +19,7 @@ public class LazadaCategoryAttributeSeeder extends BaseSeeder implements ISeeder
     @Override
     public void prepareJpaRepository() {
 
-        this.lazadaCategoryAttributeRepository = this.factory.getRepository(LazadaCategoryAttributeRepository.class);
+        this.lazadaCategoryAttributeRepository = context.getBean(LazadaCategoryAttributeRepository.class);
     }
 
 

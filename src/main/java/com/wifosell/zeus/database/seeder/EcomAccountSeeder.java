@@ -22,10 +22,10 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void prepareJpaRepository() {
-        this.ecomAccountRepository = this.factory.getRepository(EcomAccountRepository.class);
-        this.userRepository = this.factory.getRepository(UserRepository.class);
-        this.lazadaSwwAndEcomAccountRepository = this.factory.getRepository(LazadaSwwAndEcomAccountRepository.class);
-        this.saleChannelShopRepository = this.factory.getRepository(SaleChannelShopRepository.class);
+        this.ecomAccountRepository = context.getBean(EcomAccountRepository.class);
+        this.userRepository = context.getBean(UserRepository.class);
+        this.lazadaSwwAndEcomAccountRepository = context.getBean(LazadaSwwAndEcomAccountRepository.class);
+        this.saleChannelShopRepository = context.getBean(SaleChannelShopRepository.class);
     }
 
     @Override
