@@ -1,6 +1,7 @@
 package com.wifosell.zeus.database;
 
 import com.wifosell.zeus.exception.AppException;
+import org.springframework.context.ApplicationContext;
 
 import javax.persistence.EntityManager;
 import java.io.FileNotFoundException;
@@ -8,9 +9,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class Seeder {
-    EntityManager entityManager;
+    private final ApplicationContext context;
+    private final EntityManager entityManager;
 
-    public Seeder(EntityManager entityManager) {
+    public Seeder(ApplicationContext context, EntityManager entityManager) {
+        this.context = context;
         this.entityManager = entityManager;
     }
 
@@ -21,15 +24,7 @@ public class Seeder {
         try {
             ISeeder instance = (ISeeder) seeder.getDeclaredConstructor().newInstance();
             instance.run();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -42,17 +37,9 @@ public class Seeder {
 
             try {
                 BaseSeeder instance = seeder.getDeclaredConstructor().newInstance();
-                instance.InjectEntityManager(entityManager);
+                instance.inject(context, entityManager);
                 instance.prepareJpaRepository();
                 instance.run();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }

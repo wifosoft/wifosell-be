@@ -21,9 +21,9 @@ public class VoucherSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void prepareJpaRepository() {
-        this.voucherRepository = this.factory.getRepository(VoucherRepository.class);
-        this.userRepository = this.factory.getRepository(UserRepository.class);
-        this.shopRepository = this.factory.getRepository(ShopRepository.class);
+        this.voucherRepository = context.getBean(VoucherRepository.class);
+        this.userRepository = context.getBean(UserRepository.class);
+        this.shopRepository = context.getBean(ShopRepository.class);
     }
 
     @Deprecated

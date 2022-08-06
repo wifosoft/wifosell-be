@@ -1,0 +1,497 @@
+[
+  {
+    "warehouseId": 1,
+    "supplierId": 1,
+    "items": [
+      {
+        "variantId": 1,
+        "quantity": 185,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 2,
+        "quantity": 104,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 3,
+        "quantity": 114,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 4,
+        "quantity": 127,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 5,
+        "quantity": 191,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 6,
+        "quantity": 118,
+        "unitCost": 219000
+      },
+      {
+        "variantId": 7,
+        "quantity": 136,
+        "unitCost": 116000
+      },
+      {
+        "variantId": 8,
+        "quantity": 164,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 9,
+        "quantity": 157,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 10,
+        "quantity": 127,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 11,
+        "quantity": 151,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 12,
+        "quantity": 168,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 13,
+        "quantity": 118,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 14,
+        "quantity": 136,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 15,
+        "quantity": 126,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 16,
+        "quantity": 178,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 17,
+        "quantity": 148,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 18,
+        "quantity": 151,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 19,
+        "quantity": 197,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 20,
+        "quantity": 178,
+        "unitCost": 253000
+      }
+    ]
+  },
+  {
+    "warehouseId": 2,
+    "supplierId": 1,
+    "items": [
+      {
+        "variantId": 21,
+        "quantity": 159,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 22,
+        "quantity": 177,
+        "unitCost": 151000
+      },
+      {
+        "variantId": 23,
+        "quantity": 133,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 24,
+        "quantity": 194,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 25,
+        "quantity": 182,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 26,
+        "quantity": 183,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 27,
+        "quantity": 102,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 28,
+        "quantity": 134,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 29,
+        "quantity": 173,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 30,
+        "quantity": 103,
+        "unitCost": 115000
+      },
+      {
+        "variantId": 31,
+        "quantity": 150,
+        "unitCost": 121000
+      },
+      {
+        "variantId": 32,
+        "quantity": 140,
+        "unitCost": 92000
+      },
+      {
+        "variantId": 33,
+        "quantity": 178,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 34,
+        "quantity": 108,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 35,
+        "quantity": 184,
+        "unitCost": 143000
+      },
+      {
+        "variantId": 36,
+        "quantity": 168,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 37,
+        "quantity": 178,
+        "unitCost": 59000
+      },
+      {
+        "variantId": 38,
+        "quantity": 180,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 39,
+        "quantity": 198,
+        "unitCost": 57000
+      },
+      {
+        "variantId": 40,
+        "quantity": 111,
+        "unitCost": 253000
+      }
+    ]
+  },
+  {
+    "warehouseId": 1,
+    "supplierId": 2,
+    "items": [
+      {
+        "variantId": 41,
+        "quantity": 199,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 42,
+        "quantity": 161,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 43,
+        "quantity": 157,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 44,
+        "quantity": 157,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 45,
+        "quantity": 108,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 46,
+        "quantity": 103,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 47,
+        "quantity": 156,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 48,
+        "quantity": 194,
+        "unitCost": 66000
+      },
+      {
+        "variantId": 49,
+        "quantity": 148,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 50,
+        "quantity": 151,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 51,
+        "quantity": 182,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 52,
+        "quantity": 127,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 53,
+        "quantity": 124,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 54,
+        "quantity": 117,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 55,
+        "quantity": 115,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 56,
+        "quantity": 155,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 57,
+        "quantity": 185,
+        "unitCost": 54000
+      },
+      {
+        "variantId": 58,
+        "quantity": 157,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 59,
+        "quantity": 137,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 60,
+        "quantity": 121,
+        "unitCost": 253000
+      }
+    ]
+  },
+  {
+    "warehouseId": 2,
+    "supplierId": 2,
+    "items": [
+      {
+        "variantId": 61,
+        "quantity": 187,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 62,
+        "quantity": 132,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 63,
+        "quantity": 179,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 64,
+        "quantity": 188,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 65,
+        "quantity": 191,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 66,
+        "quantity": 138,
+        "unitCost": 43000
+      },
+      {
+        "variantId": 67,
+        "quantity": 198,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 68,
+        "quantity": 178,
+        "unitCost": 99000
+      },
+      {
+        "variantId": 69,
+        "quantity": 137,
+        "unitCost": 95000
+      },
+      {
+        "variantId": 70,
+        "quantity": 198,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 71,
+        "quantity": 150,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 72,
+        "quantity": 174,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 73,
+        "quantity": 151,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 74,
+        "quantity": 138,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 75,
+        "quantity": 163,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 76,
+        "quantity": 180,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 77,
+        "quantity": 192,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 78,
+        "quantity": 190,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 79,
+        "quantity": 119,
+        "unitCost": 251000
+      },
+      {
+        "variantId": 80,
+        "quantity": 171,
+        "unitCost": 253000
+      }
+    ]
+  },
+  {
+    "warehouseId": 2,
+    "supplierId": 3,
+    "items": [
+      {
+        "variantId": 81,
+        "quantity": 118,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 82,
+        "quantity": 129,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 83,
+        "quantity": 146,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 84,
+        "quantity": 145,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 85,
+        "quantity": 170,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 86,
+        "quantity": 161,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 87,
+        "quantity": 199,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 88,
+        "quantity": 146,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 89,
+        "quantity": 130,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 90,
+        "quantity": 157,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 91,
+        "quantity": 142,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 92,
+        "quantity": 176,
+        "unitCost": 253000
+      },
+      {
+        "variantId": 93,
+        "quantity": 168,
+        "unitCost": 253000
+      }
+    ]
+  }
+]

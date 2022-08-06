@@ -14,7 +14,7 @@ public class RoleSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void prepareJpaRepository() {
-        roleRepository = factory.getRepository(RoleRepository.class);
+        roleRepository = context.getBean(RoleRepository.class);
     }
 
     @Override
