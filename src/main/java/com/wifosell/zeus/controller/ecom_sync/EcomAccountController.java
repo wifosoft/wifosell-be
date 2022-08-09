@@ -4,6 +4,7 @@ package com.wifosell.zeus.controller.ecom_sync;
 import com.google.gson.Gson;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
+import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
@@ -11,17 +12,25 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
+import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.PostQueryUrlCallbackLazadaRequest;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequest;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ConvertorType;
 import lombok.Getter;
 import lombok.Setter;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,15 +38,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/ecom_sync/ecom_account")
 public class EcomAccountController {
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
+    @Autowired
+    AppProperties appProperties;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -47,7 +64,7 @@ public class EcomAccountController {
     UserService userService;
 
     @GetMapping("enum_const")
-    public ResponseEntity<GApiResponse> getListAccount() {
+    public ResponseEntity<GApiResponse> getEnumConst() {
         @Getter
         @Setter
         class EnumTypeConst {
@@ -143,7 +160,7 @@ public class EcomAccountController {
         payload.setTokenAuthResponse(responseTokenPayload);
 
         EcomAccount ecomAccount = ecomService.addEcomAccountLazadaFromCallback(payload);
-        if(!payload.getFeCallbackUrl().isEmpty()){
+        if (!payload.getFeCallbackUrl().isEmpty()) {
             //redirect về url đã post
             return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(payload.getFeCallbackUrl())).build();
         }
@@ -235,8 +252,8 @@ public class EcomAccountController {
     @GetMapping("/lazada/getLinkedLazadaCategoryAndSysCategory")
     public ResponseEntity<GApiResponse> getLinkedLazadaCategoryAndSystemCategory(@CurrentUser UserPrincipal userPrincipal) {
         User user = userRepository.getUser(userPrincipal);
-        List<LazadaCategoryAndSysCategory> listLinked =  ecomService.getLinkedLazadaCategoryAndSysCategory(user);
-        return ResponseEntity.ok(GApiResponse.success("Thành công" , listLinked));
+        List<LazadaCategoryAndSysCategory> listLinked = ecomService.getLinkedLazadaCategoryAndSysCategory(user);
+        return ResponseEntity.ok(GApiResponse.success("Thành công", listLinked));
     }
 
 
@@ -260,5 +277,24 @@ public class EcomAccountController {
         List<LazadaCategory> list = ecomService.getListCategory(isLeaf);
         return ResponseEntity.ok(GApiResponse.success(list));
     }
+
+    //Sendo controller
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/sendo/linkAccount")
+    public ResponseEntity<GApiResponse> postLinkSendoAccount(@CurrentUser UserPrincipal userPrincipal, @RequestBody SendoLinkAccountRequest body) throws IOException, InterruptedException {
+        User user = userRepository.getUser(userPrincipal);
+        var reqPayload = SendoLinkAccountRequestDTO
+                .builder()
+                .secret_key(body.secretKey)
+                .ecom_id("1")
+                .shop_key(body.shopKey).build();
+        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/account/login", reqPayload, ResponseLinkAccountPayload.class));
+        if(responseModel.success){
+
+        }
+        return ResponseEntity.ok(GApiResponse.success(responseModel));
+    }
+
+
 
 }

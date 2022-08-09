@@ -541,5 +541,8 @@ public class EcomServiceImpl implements EcomService {
                 LazadaCategorySpecs.isLeaf(isLeaf)
         );
     }
+
+    
+
 }
 

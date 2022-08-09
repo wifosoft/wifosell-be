@@ -186,7 +186,20 @@
             <artifactId>hibernate-search-backend-lucene</artifactId>
             <version>6.1.5.Final</version>
         </dependency>
-<!--        <dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.2</version>
+        </dependency>
+
+        <!--        <dependency>-->
 <!--            <groupId>lazop-api-sdk</groupId>-->
 <!--            <artifactId>lazop-api-sdk</artifactId>-->
 <!--            <scope>system</scope>-->

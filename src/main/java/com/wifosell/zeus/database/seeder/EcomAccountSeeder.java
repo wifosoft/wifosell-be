@@ -28,8 +28,7 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         this.saleChannelShopRepository = context.getBean(SaleChannelShopRepository.class);
     }
 
-    @Override
-    public void run() {
+    public void Seed1() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
         EcomAccount ecomAccount = new EcomAccount();
         ecomAccount.setAccountName("workevos@gmail.com");
@@ -42,7 +41,6 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         ecomAccount.setGeneralManager(gm);
         LocalDateTime now = LocalDateTime.now();
         ecomAccount.setExpiredAt(now.plusSeconds(30 * 24 * 60 * 60));
-
         ecomAccountRepository.save(ecomAccount);
 
         LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
@@ -53,5 +51,37 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
         lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
         lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+    }
+    public void Seed2() {
+        User gm = userRepository.getUserByName("manager1").getGeneralManager();
+        EcomAccount ecomAccount = new EcomAccount();
+        ecomAccount.setAccountName("workevos@gmail.com");
+        ecomAccount.setEcomName(EcomAccount.EcomName.LAZADA);
+        ecomAccount.setAccountInfo("{\"data\":{\"name\":\"hazymonmon\",\"verified\":\"false\",\"seller_id\":\"200193276251\",\"email\":\"nvth0712@gmail.com\",\"short_code\":\"VN33WMKXMW\",\"cb\":\"false\",\"status\":\"ACTIVE\"},\"code\":\"0\",\"request_id\":\"2101582c16600806557103654\"}");
+        ecomAccount.setAuthResponse("{\"userId\":2,\"signature\":\"50b5c6b357257f1909255ea59543980b\",\"code\":\"0_117995_WEqLdeEmrvjazGQKoIixgZuB26482\",\"feCallbackDomain\":\"https://wifosell-dev.com:8888\",\"feCallbackUrl\":\"\",\"tokenAuthResponse\":{\"access_token\":\"50000100b36gEDkApXNrbAyIXhIxexvkfbCsissuhllyH4Eq1f3b8dd7y3D7Cxke\",\"refresh_token\":\"50001101a36kDgupe8CcrfkUXhGlOm2lzslfbGppfPwaQuNv100470bc1yPmKjbx\",\"country\":\"vn\",\"refresh_expires_in\":15552000,\"account_platform\":\"seller_center\",\"expires_in\":2592000,\"account\":\"nvth0712@gmail.com\",\"request_id\":\"212a6f1316600806554265672\",\"country_user_info\":[{\"country\":\"vn\",\"seller_id\":\"200193276251\",\"user_id\":\"200193276251\",\"short_code\":\"VN33WMKXMW\"}]}}");
+        ecomAccount.setAccountStatus(EcomAccount.AccountStatus.AUTH);
+        ecomAccount.setDescription("Tài khoản lazada khởi tạo mới");
+        ecomAccount.setNote("Đã đăng nhập thành công");
+        ecomAccount.setGeneralManager(gm);
+        LocalDateTime now = LocalDateTime.now();
+        ecomAccount.setExpiredAt(now.plusSeconds(30 * 24 * 60 * 60));
+        ecomAccountRepository.save(ecomAccount);
+
+        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(1L).orElse(null);
+        if (saleChannelShop == null) {
+            return;
+        }
+        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
+        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+
+    }
+
+
+    @Override
+    public void run() {
+        this.Seed1();
+        this.Seed2();
     }
 }
