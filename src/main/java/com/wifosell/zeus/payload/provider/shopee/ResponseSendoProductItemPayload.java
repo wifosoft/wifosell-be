@@ -133,9 +133,9 @@ public class ResponseSendoProductItemPayload {
     @Getter
     @Setter
     public class VariantAttribute {
-        public Long attribute_id;
+        public Integer attribute_id;
         public String attribute_code;
-        public Long option_id;
+        public Integer option_id;
     }
 
     @Getter

@@ -281,18 +281,10 @@ public class EcomAccountController {
     //Sendo controller
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/sendo/linkAccount")
-    public ResponseEntity<GApiResponse> postLinkSendoAccount(@CurrentUser UserPrincipal userPrincipal, @RequestBody SendoLinkAccountRequest body) throws IOException, InterruptedException {
+    public ResponseEntity<GApiResponse> postLinkSendoAccount(@CurrentUser UserPrincipal userPrincipal, @RequestBody SendoLinkAccountRequest body) throws ApiException {
         User user = userRepository.getUser(userPrincipal);
-        var reqPayload = SendoLinkAccountRequestDTO
-                .builder()
-                .secret_key(body.secretKey)
-                .ecom_id("1")
-                .shop_key(body.shopKey).build();
-        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/account/login", reqPayload, ResponseLinkAccountPayload.class));
-        if(responseModel.success){
-
-        }
-        return ResponseEntity.ok(GApiResponse.success(responseModel));
+        EcomAccount ecomAccount = ecomService.addEcomAccountSendo(user.getId(), body.getShopKey() ,body.getSecretKey(), body.getShopName());
+        return ResponseEntity.ok(GApiResponse.success(ecomAccount));
     }
 
 

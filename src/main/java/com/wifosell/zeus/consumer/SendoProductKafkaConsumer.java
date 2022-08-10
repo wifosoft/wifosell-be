@@ -2,6 +2,8 @@ package com.wifosell.zeus.consumer;
 
 import com.google.gson.Gson;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
+import com.wifosell.zeus.service.SendoProductService;
+import com.wifosell.zeus.service.impl.ecom_sync.SendoProductServiceImpl;
 import net.minidev.json.JSONObject;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -9,6 +11,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 
 import java.util.Arrays;
@@ -17,7 +20,12 @@ import java.util.Map;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+
+
 public class SendoProductKafkaConsumer {
+    @Autowired
+    SendoProductService sendoProductService;
 
     private static final Logger logger = LoggerFactory.getLogger(SendoProductKafkaConsumer.class);
 
@@ -52,7 +60,9 @@ public class SendoProductKafkaConsumer {
                  */
                 String message = record.value();
                 var responseModel =  (new Gson()).fromJson(message, ResponseSendoProductItemPayload.class);
-
+                if(responseModel !=null){
+                    sendoProductService.consumeSingleSendoProductFromAPI(responseModel);
+                }
                 if(responseModel != null){
                     logger.info("Received sendo product:" + responseModel.name);
                 }

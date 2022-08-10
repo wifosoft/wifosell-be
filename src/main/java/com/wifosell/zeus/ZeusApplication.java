@@ -131,7 +131,7 @@ public class ZeusApplication implements CommandLineRunner {
                 SendoProductKafkaConsumer simpleKafkaConsumer = new SendoProductKafkaConsumer(
                         kafkaConfiguration.getSendoProductTopic(),
                         consumerProperties
-                ) ;
+                );
 
                 simpleKafkaConsumer.runSingleWorker();
                 logger.info("Run single worker thread sendo_product");

@@ -21,6 +21,8 @@ public interface EcomService {
 
     EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException;
 
+    EcomAccount addEcomAccountSendo(Long userId, String shopKey, String secretKey, String shopName) throws ApiException;
+
     EcomAccount getEcomAccount(Long ecomId);
 
     boolean deleteEcomAccount(Long ecomId);

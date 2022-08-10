@@ -1,10 +1,15 @@
 package com.wifosell.zeus.payload.request.product;
 
+import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.swing.text.html.Option;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -36,4 +41,95 @@ public class UpdateProductRequest implements IProductRequest {
     private List<VariantRequest> variants;
 
     private Boolean isActive;
+
+    public static UpdateProductRequest withResponseSendoProductItemPayload(ResponseSendoProductItemPayload e) {
+        UpdateProductRequest m = new UpdateProductRequest();
+        Optional.ofNullable(e.getName()).ifPresent(m::setName);
+        Optional.ofNullable(e.getDescription()).ifPresent(m::setDescription);
+        //Optional.ofNullable(null).ifPresent(m::setCategoryId);
+        Optional.ofNullable(e.getWeight()).ifPresent(v -> {
+            m.setWeight(new BigDecimal(v));
+        });
+        Optional.ofNullable(e.getHeight()).ifPresent(v -> {
+            m.setHeight(new BigDecimal(v));
+        });
+        Optional.ofNullable(e.getLength()).ifPresent(v -> {
+            m.setLength(new BigDecimal(v));
+        });
+        m.setState(0);
+        m.setStatus(0);
+
+        //list pictures
+        ArrayList<ImageRequest> listImageRequest = new ArrayList<ImageRequest>();
+        if (e.getPictures() != null) {
+            for (var itemPicture : e.getPictures()) {
+                ImageRequest imgRequest = new ImageRequest();
+                imgRequest.setUrl(itemPicture.getPicture_url());
+                listImageRequest.add(imgRequest);
+            }
+        }
+        //
+        ArrayList<OptionRequest > optionRequestList = new ArrayList<OptionRequest>();
+        ArrayList<VariantRequest> varirantRequests = new ArrayList<VariantRequest>();
+
+        List<ResponseSendoProductItemPayload.Variant> listVariantAPI = e.getVariants();
+
+        HashMap<Integer, List<Integer>> hashMapOptions = null; //attribute_id, option_id
+        for (ResponseSendoProductItemPayload.Variant variantAPIItem : listVariantAPI) {
+            if (hashMapOptions == null) {
+                hashMapOptions = new HashMap<>();
+            }
+
+            List<ResponseSendoProductItemPayload.VariantAttribute> listVariantAPIAttribute = variantAPIItem.getVariant_attributes();
+
+            for (ResponseSendoProductItemPayload.VariantAttribute attr_item : listVariantAPIAttribute) {
+                Integer attr_id = attr_item.getAttribute_id();
+                Integer opt_id = attr_item.getOption_id();
+                if (!hashMapOptions.containsKey(attr_id)) {
+                    hashMapOptions.put(attr_id, new ArrayList<Integer>());
+                }
+                hashMapOptions.get(attr_id).add(opt_id);
+            }
+
+            VariantRequest variantRequest = new VariantRequest();
+            variantRequest.originalCost = variantAPIItem.getVariant_price().toString();
+            variantRequest.cost = variantAPIItem.getVariant_price().toString();
+            variantRequest.sku = variantAPIItem.getVariant_sku();
+            variantRequest.barcode = variantAPIItem.getVariant_sku();
+            varirantRequests.add(variantRequest);
+
+
+        }
+
+        //build options
+        ArrayList<ResponseSendoProductItemPayload.Attribute> varirantAPIAttributes = e.getAttributes();
+
+        for(ResponseSendoProductItemPayload.Attribute _itemVariantAPIAttribute : varirantAPIAttributes) {
+            if(!hashMapOptions.containsKey(_itemVariantAPIAttribute.getAttribute_id())){
+                continue;
+            }
+            //khởi tạo option request
+            OptionRequest _optRequest = new OptionRequest();
+            _optRequest.setName(_itemVariantAPIAttribute.getAttribute_name());
+            ArrayList<OptionValueRequest> _optionValueRequestList = new ArrayList<>();
+            //tồn tại
+            for(ResponseSendoProductItemPayload.AttributeValue _attributeValueItem :  _itemVariantAPIAttribute.getAttribute_values()){
+                if( hashMapOptions.get(_itemVariantAPIAttribute.getAttribute_id()).contains(_attributeValueItem.getId())){
+                    //nếu tồn tại thì thêm option value
+                    OptionValueRequest _optionValueRequest = new OptionValueRequest();
+                    _optionValueRequest.setName(_attributeValueItem.getValue());
+                    _optionValueRequestList.add(_optionValueRequest);
+                }
+            }
+            _optRequest.setValues(_optionValueRequestList);
+            optionRequestList.add(_optRequest);
+            //luu _optRequest
+        }
+        //
+        m.setAttributes(new ArrayList<>());
+        m.setOptions(optionRequestList);
+        m.setVariants(varirantRequests);
+        m.setIsActive(true);
+        return m;
+    }
 }

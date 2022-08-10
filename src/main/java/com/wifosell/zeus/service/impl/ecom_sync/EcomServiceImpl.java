@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.lazada.lazop.api.LazopClient;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.util.ApiException;
+import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.ecom_sync.*;
@@ -16,13 +17,17 @@ import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.payload.provider.ecom.AccountInfoPayload;
+import com.wifosell.zeus.payload.provider.ecom.AccountInfoPayloadData;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryAttributePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
+import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
@@ -31,6 +36,7 @@ import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.specs.LazadaCategorySpecs;
 import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
+import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +47,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +56,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service()
 public class EcomServiceImpl implements EcomService {
     Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
+
+
+    @Autowired
+    AppProperties appProperties;
 
     @Autowired
     ProductRepository productRepository;
@@ -334,6 +345,72 @@ public class EcomServiceImpl implements EcomService {
         return this.addEcomAccountLazada(payloadCallback.getUserId(), ecomAccount);
     }
 
+    @Override
+    public EcomAccount addEcomAccountSendo(Long userId, String shopKey, String secretKey, String shopName) throws ApiException {
+        User user = userRepository.getUserById(userId);
+        EcomAccount ecomAccount;
+
+        //request to service sendo
+        var reqPayload = SendoLinkAccountRequestDTO
+                .builder()
+                .secret_key(secretKey)
+                .shop_key(shopKey).build();
+        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/account/login", reqPayload, ResponseLinkAccountPayload.class));
+        if (responseModel.success) {
+
+            Gson gson = new Gson();
+            var dataModel = responseModel.getData();
+
+            AccountInfoPayload accountInfoPayload = AccountInfoPayload.builder()
+                    .code("0")
+                    .request_id("2101241b16547560579496455").data(
+                            AccountInfoPayloadData.builder()
+                                    .name(shopName)
+                                    .verified("true")
+                                    .location("")
+                                    .seller_id(dataModel.get_id())
+                                    .status("ACTIVE")
+                                    .email("")
+                                    .secret_key(dataModel.getSecret_key())
+                                    .shop_key(dataModel.getShop_key())
+                                    .build()
+                    ).build();
+
+            //check existed
+            Optional<EcomAccount> checkExisted = ecomAccountRepository.findByAccountNameAndEcomName(shopKey, EcomAccount.EcomName.SENDO);
+
+            if(checkExisted.isEmpty()){
+                ecomAccount = new EcomAccount();
+                ecomAccount.setDescription("Tài khoản sendo khởi tạo mới");
+            }
+            else {
+                ecomAccount  = checkExisted.get();
+                ecomAccount.setDescription("Cập nhật tài khoản sendo");
+                ecomAccount.setGeneralManager(user);
+            }
+
+            Optional.ofNullable(dataModel.getShop_key()).ifPresent(ecomAccount::setAccountName);
+            Optional.ofNullable(responseModel).ifPresent(e -> {
+                ecomAccount.setAuthResponse((new Gson()).toJson(responseModel));
+            });
+
+            Optional.ofNullable(dataModel.getExpires()).ifPresent(e -> {
+                ecomAccount.setExpiredAt(LocalDateTime.ofInstant(e.toInstant(), ZoneId.systemDefault()));
+            });
+            ecomAccount.setNote("Đã đăng nhập thành công");
+            ecomAccount.setIsActive(true);
+            ecomAccount.setAccountStatus(EcomAccount.AccountStatus.AUTH);
+            ecomAccount.setEcomName(EcomAccount.EcomName.SENDO);
+            ecomAccount.setAccountInfo(gson.toJson(accountInfoPayload));
+            ecomAccountRepository.save(ecomAccount);
+
+        } else {
+            throw new ApiException("Đăng nhập không thành công. Vui lòng liên hệ quản trị viên");
+        }
+
+        return ecomAccount;
+    }
+
     public EcomAccount getEcomAccount(Long id) {
         return ecomAccountRepository.getEcomAccountById(id);
     }
@@ -542,7 +619,6 @@ public class EcomServiceImpl implements EcomService {
         );
     }
 
-    
 
 }
 

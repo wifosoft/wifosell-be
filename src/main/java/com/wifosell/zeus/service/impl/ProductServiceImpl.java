@@ -150,7 +150,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = getProduct(userId, productId);
+        Product product;
+        if(productId == -1) {
+            product = new Product();
+        }
+        else {
+            product = getProduct(userId, productId);
+        }
         return this.updateProductByRequest(product, request, gm);
     }
 

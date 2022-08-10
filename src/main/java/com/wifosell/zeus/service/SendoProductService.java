@@ -4,6 +4,7 @@ import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoVariant;
+import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import org.springframework.data.domain.Page;
 
 public interface SendoProductService {
@@ -23,4 +24,5 @@ public interface SendoProductService {
             String orderBy
     );
 
+     void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload);
 }
