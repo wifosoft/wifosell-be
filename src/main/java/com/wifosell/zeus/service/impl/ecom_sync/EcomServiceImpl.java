@@ -382,11 +382,11 @@ public class EcomServiceImpl implements EcomService {
             if(checkExisted.isEmpty()){
                 ecomAccount = new EcomAccount();
                 ecomAccount.setDescription("Tài khoản sendo khởi tạo mới");
+                ecomAccount.setGeneralManager(user);
             }
             else {
                 ecomAccount  = checkExisted.get();
                 ecomAccount.setDescription("Cập nhật tài khoản sendo");
-                ecomAccount.setGeneralManager(user);
             }
 
             Optional.ofNullable(dataModel.getShop_key()).ifPresent(ecomAccount::setAccountName);
@@ -402,6 +402,7 @@ public class EcomServiceImpl implements EcomService {
             ecomAccount.setAccountStatus(EcomAccount.AccountStatus.AUTH);
             ecomAccount.setEcomName(EcomAccount.EcomName.SENDO);
             ecomAccount.setAccountInfo(gson.toJson(accountInfoPayload));
+            ecomAccount.setGeneralManager(user);
             ecomAccountRepository.save(ecomAccount);
 
         } else {

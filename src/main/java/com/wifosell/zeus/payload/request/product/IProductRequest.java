@@ -17,16 +17,12 @@ public interface IProductRequest {
 
     Long getCategoryId();
 
-    @NotNull
     BigDecimal getWeight();
 
-    @NotNull
     BigDecimal getLength();
 
-    @NotNull
     BigDecimal getWidth();
 
-    @NotNull
     BigDecimal getHeight();
 
     Integer getState();

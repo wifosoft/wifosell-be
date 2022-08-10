@@ -56,6 +56,9 @@ public class UpdateProductRequest implements IProductRequest {
         Optional.ofNullable(e.getLength()).ifPresent(v -> {
             m.setLength(new BigDecimal(v));
         });
+        Optional.ofNullable(e.getWidth()).ifPresent(v -> {
+            m.setWidth(new BigDecimal(v));
+        });
         m.setState(0);
         m.setStatus(0);
 
@@ -74,7 +77,7 @@ public class UpdateProductRequest implements IProductRequest {
 
         List<ResponseSendoProductItemPayload.Variant> listVariantAPI = e.getVariants();
 
-        HashMap<Integer, List<Integer>> hashMapOptions = null; //attribute_id, option_id
+        HashMap<Long, List<Long>> hashMapOptions = null; //attribute_id, option_id
         for (ResponseSendoProductItemPayload.Variant variantAPIItem : listVariantAPI) {
             if (hashMapOptions == null) {
                 hashMapOptions = new HashMap<>();
@@ -83,12 +86,14 @@ public class UpdateProductRequest implements IProductRequest {
             List<ResponseSendoProductItemPayload.VariantAttribute> listVariantAPIAttribute = variantAPIItem.getVariant_attributes();
 
             for (ResponseSendoProductItemPayload.VariantAttribute attr_item : listVariantAPIAttribute) {
-                Integer attr_id = attr_item.getAttribute_id();
-                Integer opt_id = attr_item.getOption_id();
+                Long attr_id = attr_item.getAttribute_id();
+                Long opt_id = attr_item.getOption_id();
                 if (!hashMapOptions.containsKey(attr_id)) {
-                    hashMapOptions.put(attr_id, new ArrayList<Integer>());
+                    hashMapOptions.put(attr_id, new ArrayList<Long>());
                 }
-                hashMapOptions.get(attr_id).add(opt_id);
+                if(!hashMapOptions.get(attr_id).contains(opt_id)){
+                    hashMapOptions.get(attr_id).add(opt_id);
+                }
             }
 
             VariantRequest variantRequest = new VariantRequest();

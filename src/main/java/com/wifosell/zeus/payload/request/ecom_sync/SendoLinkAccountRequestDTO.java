@@ -11,5 +11,4 @@ import lombok.Setter;
 public class SendoLinkAccountRequestDTO {
     public String shop_key;
     public String secret_key;
-    public String ecom_id;
 }

@@ -1,5 +1,6 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
+import com.google.gson.Gson;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.warehouse.Warehouse;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.security.GeneralSecurityException;
 import java.util.Optional;
 
 @Service
@@ -78,29 +80,33 @@ public class SendoProductServiceImpl implements SendoProductService {
     }
 
 
-    public void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload){
+    public void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload) {
         //consume va luu vao db
         //userid productid,
-        String ShopKey = itemPayload.getShop_relation_id();
-        Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findByAccountNameAndEcomName(ShopKey , EcomAccount.EcomName.SENDO);
-        if(ecomAccountOpt.isEmpty()){
-            logger.info("Shop key khong ton tai " + ShopKey);
-            return;
+        try {
+            String ShopKey = itemPayload.getShop_relation_id();
+            Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findByAccountNameAndEcomName(ShopKey, EcomAccount.EcomName.SENDO);
+            if (ecomAccountOpt.isEmpty()) {
+                logger.info("Shop key khong ton tai " + ShopKey);
+                return;
+            }
+
+
+            Optional<LazadaSwwAndEcomAccount> relationSwwEAOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccountOpt.get().getId());
+            if (relationSwwEAOpt.isEmpty()) {
+                logger.info("Khong ton tai relation");
+            } else {
+                Warehouse warehouse = relationSwwEAOpt.get().getSaleChannelShop().getWarehouse();
+            }
+
+
+            UpdateProductRequest updateProductRequest = UpdateProductRequest.withResponseSendoProductItemPayload(itemPayload);
+            logger.info((new Gson()).toJson(updateProductRequest));
+
+            var response = productService.updateProduct(ecomAccountOpt.get().getGeneralManager().getId(), -1L, updateProductRequest);
+            logger.info(response.getName());
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-
-
-
-        Optional<LazadaSwwAndEcomAccount> relationSwwEAOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccountOpt.get().getId());
-        if(relationSwwEAOpt.isEmpty()){
-            logger.info("Khong ton tai relation");
-        }
-        else {
-            Warehouse warehouse = relationSwwEAOpt.get().getSaleChannelShop().getWarehouse();
-        }
-
-
-        UpdateProductRequest updateProductRequest = UpdateProductRequest.withResponseSendoProductItemPayload( itemPayload);
-
-        productService.updateProduct(ecomAccountOpt.get().getGeneralManager().getId(), -1L, updateProductRequest);
     }
 }

@@ -17,7 +17,7 @@ public class ResponseLinkAccountPayload  extends SendoServiceResponseBase{
         public String _id;
         public Date created_at;
         public Date updated_at;
-        public String ecom_id;
+        //public String ecom_id;
         public String shop_key;
         public String secret_key;
         public String token;

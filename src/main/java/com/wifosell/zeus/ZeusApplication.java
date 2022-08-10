@@ -1,6 +1,6 @@
 package com.wifosell.zeus;
 
-import com.wifosell.zeus.config.KafkaConfiguration;
+import com.wifosell.zeus.config.kafka.KafkaConsumerConfig;
 import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.consumer.SendoProductKafkaConsumer;
 import com.wifosell.zeus.database.DatabaseSeeder;
@@ -48,8 +48,6 @@ public class ZeusApplication implements CommandLineRunner {
 
     private final ApplicationContext context;
 
-    @Autowired
-    KafkaConfiguration kafkaConfiguration;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -109,43 +107,43 @@ public class ZeusApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         //EntityManagerFactory emf = Persistence.createEntityManagerFactory("seederManager");
         //EntityManager em = emf.createEntityManager();
-        try {
-            //consumer sendo product
-            Properties consumerProperties = new Properties();
-            consumerProperties.put("bootstrap.servers", kafkaConfiguration.getKafkaBootstrapServers());
-            consumerProperties.put("group.id", kafkaConfiguration.getZookeeperGroupId());
-            consumerProperties.put("zookeeper.session.timeout.ms", "6000");
-            consumerProperties.put("zookeeper.sync.time.ms","2000");
-            consumerProperties.put("auto.commit.enable", "false");
-            consumerProperties.put("auto.commit.interval.ms", "1000");
-            consumerProperties.put("consumer.timeout.ms", "-1");
-            consumerProperties.put("max.poll.records", "1");
-            consumerProperties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-            consumerProperties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-
-            /*
-             * Creating a thread to listen to the kafka topic
-             */
-            Thread kafkaConsumerThread = new Thread(() -> {
-                logger.info("Start consumer thread sendo_product");
-                SendoProductKafkaConsumer simpleKafkaConsumer = new SendoProductKafkaConsumer(
-                        kafkaConfiguration.getSendoProductTopic(),
-                        consumerProperties
-                );
-
-                simpleKafkaConsumer.runSingleWorker();
-                logger.info("Run single worker thread sendo_product");
-
-            });
-
-            /*
-             * Starting the first thread.
-             */
-            kafkaConsumerThread.start();
-        } catch (Exception exception){
-            logger.error("Run single worker thread sendo_product");
-            exception.printStackTrace();
-        }
+//        try {
+//            //consumer sendo product
+//            Properties consumerProperties = new Properties();
+//            consumerProperties.put("bootstrap.servers", kafkaConfiguration.getKafkaBootstrapServers());
+//            consumerProperties.put("group.id", kafkaConfiguration.getZookeeperGroupId());
+//            consumerProperties.put("zookeeper.session.timeout.ms", "6000");
+//            consumerProperties.put("zookeeper.sync.time.ms","2000");
+//            consumerProperties.put("auto.commit.enable", "false");
+//            consumerProperties.put("auto.commit.interval.ms", "1000");
+//            consumerProperties.put("consumer.timeout.ms", "-1");
+//            consumerProperties.put("max.poll.records", "1");
+//            consumerProperties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+//            consumerProperties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+//
+//            /*
+//             * Creating a thread to listen to the kafka topic
+//             */
+//            Thread kafkaConsumerThread = new Thread(() -> {
+//                logger.info("Start consumer thread sendo_product");
+//                SendoProductKafkaConsumer simpleKafkaConsumer = new SendoProductKafkaConsumer(
+//                        kafkaConfiguration.getSendoProductTopic(),
+//                        consumerProperties
+//                );
+//
+//                simpleKafkaConsumer.runSingleWorker();
+//                logger.info("Run single worker thread sendo_product");
+//
+//            });
+//
+//            /*
+//             * Starting the first thread.
+//             */
+//            kafkaConsumerThread.start();
+//        } catch (Exception exception){
+//            logger.error("Run single worker thread sendo_product");
+//            exception.printStackTrace();
+//        }
 
 
         String enableMigration = env.getProperty("app.migration");
