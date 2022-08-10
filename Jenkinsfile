@@ -85,7 +85,7 @@ pipeline {
         when { 
           anyOf { 
             branch 'master';
-            branch 'feature/*';
+//             branch 'feature/*';
             branch 'develop'
           } 
         }
