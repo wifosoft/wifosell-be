@@ -2,7 +2,6 @@ package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
@@ -31,7 +30,6 @@ public class LazadaVariantAndSysVariant extends BasicEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
     Variant variant;
-
 
 
     @JsonIgnore

@@ -31,7 +31,6 @@ import com.wifosell.zeus.specs.EcomAccountSpecs;
 import com.wifosell.zeus.specs.LazadaCategorySpecs;
 import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
-import com.wifosell.zeus.utils.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
