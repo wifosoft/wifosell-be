@@ -12,25 +12,19 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
 import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
-import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.PostQueryUrlCallbackLazadaRequest;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequest;
-import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.UserService;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
-import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ConvertorType;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,13 +32,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -283,10 +274,9 @@ public class EcomAccountController {
     @PostMapping("/sendo/linkAccount")
     public ResponseEntity<GApiResponse> postLinkSendoAccount(@CurrentUser UserPrincipal userPrincipal, @RequestBody SendoLinkAccountRequest body) throws ApiException {
         User user = userRepository.getUser(userPrincipal);
-        EcomAccount ecomAccount = ecomService.addEcomAccountSendo(user.getId(), body.getShopKey() ,body.getSecretKey(), body.getShopName());
+        EcomAccount ecomAccount = ecomService.addEcomAccountSendo(user.getId(), body.getShopKey(), body.getSecretKey(), body.getShopName());
         return ResponseEntity.ok(GApiResponse.success(ecomAccount));
     }
-
 
 
 }

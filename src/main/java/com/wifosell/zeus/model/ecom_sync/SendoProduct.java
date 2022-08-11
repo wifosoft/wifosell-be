@@ -4,7 +4,6 @@ package com.wifosell.zeus.model.ecom_sync;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
-import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter

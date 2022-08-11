@@ -7,7 +7,6 @@ import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
-import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.repository.CategoryRepository;
@@ -31,7 +30,6 @@ public class LazadaCategorySeeder extends BaseSeeder implements ISeeder {
     private LazadaCategoryAndSysCategoryRepository lazadaCategoryAndSysCategoryRepository;
 
 
-
     @Override
     public void prepareJpaRepository() {
         this.categoryRepository = context.getBean(CategoryRepository.class);
@@ -48,8 +46,6 @@ public class LazadaCategorySeeder extends BaseSeeder implements ISeeder {
                 saveLazadaCategory(item, lazadaCategory);
             }
         }
-
-
 
 
     }
@@ -74,8 +70,7 @@ public class LazadaCategorySeeder extends BaseSeeder implements ISeeder {
         }
 
 
-
-        Category category1 =  categoryRepository.findById(1L).orElse(null);
+        Category category1 = categoryRepository.findById(1L).orElse(null);
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
 
         LazadaCategory lazadaCategory1682 = lazadaCategoryRepository.findById(1682L).orElse(null);
@@ -88,8 +83,8 @@ public class LazadaCategorySeeder extends BaseSeeder implements ISeeder {
         listLazadaCategory.add(lazadaCategory1680);
 
 
-        for(LazadaCategory lc : listLazadaCategory) {
-            LazadaCategoryAndSysCategory linkCategory  = new LazadaCategoryAndSysCategory();
+        for (LazadaCategory lc : listLazadaCategory) {
+            LazadaCategoryAndSysCategory linkCategory = new LazadaCategoryAndSysCategory();
             linkCategory.setLazadaCategory(lc);
             linkCategory.setSysCategory(category1);
             linkCategory.setGeneralManager(gm);

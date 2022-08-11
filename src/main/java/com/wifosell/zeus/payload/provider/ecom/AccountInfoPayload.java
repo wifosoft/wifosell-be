@@ -5,13 +5,13 @@ package com.wifosell.zeus.payload.provider.ecom;
 Root root = om.readValue(myJsonString, Root.class); */
 
 import lombok.Builder;
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
-public class AccountInfoPayload{
+public class AccountInfoPayload {
     public AccountInfoPayloadData data;
     public String code;
     public String request_id;

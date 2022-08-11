@@ -1,6 +1,9 @@
 package com.wifosell.zeus.service;
 
-import com.wifosell.zeus.model.stats.*;
+import com.wifosell.zeus.model.stats.LatestRevenues;
+import com.wifosell.zeus.model.stats.TopOrderNumRegion;
+import com.wifosell.zeus.model.stats.TopRevenueRegion;
+import com.wifosell.zeus.model.stats.TopRevenueVariant;
 import com.wifosell.zeus.utils.paging.PageInfo;
 
 import java.math.BigDecimal;

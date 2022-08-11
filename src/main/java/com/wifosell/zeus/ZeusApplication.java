@@ -1,8 +1,6 @@
 package com.wifosell.zeus;
 
-import com.wifosell.zeus.config.kafka.KafkaConsumerConfig;
 import com.wifosell.zeus.config.property.AppProperties;
-import com.wifosell.zeus.consumer.SendoProductKafkaConsumer;
 import com.wifosell.zeus.database.DatabaseSeeder;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import com.wifosell.zeus.service.impl.storage.StorageProperties;
@@ -10,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,7 +28,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.Properties;
 import java.util.TimeZone;
 
 @EnableSwagger2

@@ -4,7 +4,6 @@ import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +71,7 @@ public class UpdateProductRequest implements IProductRequest {
             }
         }
         //
-        ArrayList<OptionRequest > optionRequestList = new ArrayList<OptionRequest>();
+        ArrayList<OptionRequest> optionRequestList = new ArrayList<OptionRequest>();
         ArrayList<VariantRequest> varirantRequests = new ArrayList<VariantRequest>();
 
         List<ResponseSendoProductItemPayload.Variant> listVariantAPI = e.getVariants();
@@ -91,7 +90,7 @@ public class UpdateProductRequest implements IProductRequest {
                 if (!hashMapOptions.containsKey(attr_id)) {
                     hashMapOptions.put(attr_id, new ArrayList<Long>());
                 }
-                if(!hashMapOptions.get(attr_id).contains(opt_id)){
+                if (!hashMapOptions.get(attr_id).contains(opt_id)) {
                     hashMapOptions.get(attr_id).add(opt_id);
                 }
             }
@@ -109,8 +108,8 @@ public class UpdateProductRequest implements IProductRequest {
         //build options
         ArrayList<ResponseSendoProductItemPayload.Attribute> varirantAPIAttributes = e.getAttributes();
 
-        for(ResponseSendoProductItemPayload.Attribute _itemVariantAPIAttribute : varirantAPIAttributes) {
-            if(!hashMapOptions.containsKey(_itemVariantAPIAttribute.getAttribute_id())){
+        for (ResponseSendoProductItemPayload.Attribute _itemVariantAPIAttribute : varirantAPIAttributes) {
+            if (!hashMapOptions.containsKey(_itemVariantAPIAttribute.getAttribute_id())) {
                 continue;
             }
             //khởi tạo option request
@@ -118,8 +117,8 @@ public class UpdateProductRequest implements IProductRequest {
             _optRequest.setName(_itemVariantAPIAttribute.getAttribute_name());
             ArrayList<OptionValueRequest> _optionValueRequestList = new ArrayList<>();
             //tồn tại
-            for(ResponseSendoProductItemPayload.AttributeValue _attributeValueItem :  _itemVariantAPIAttribute.getAttribute_values()){
-                if( hashMapOptions.get(_itemVariantAPIAttribute.getAttribute_id()).contains(_attributeValueItem.getId())){
+            for (ResponseSendoProductItemPayload.AttributeValue _attributeValueItem : _itemVariantAPIAttribute.getAttribute_values()) {
+                if (hashMapOptions.get(_itemVariantAPIAttribute.getAttribute_id()).contains(_attributeValueItem.getId())) {
                     //nếu tồn tại thì thêm option value
                     OptionValueRequest _optionValueRequest = new OptionValueRequest();
                     _optionValueRequest.setName(_attributeValueItem.getValue());

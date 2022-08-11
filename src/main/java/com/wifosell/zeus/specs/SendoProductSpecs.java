@@ -1,7 +1,5 @@
 package com.wifosell.zeus.specs;
 
-import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
-import com.wifosell.zeus.model.ecom_sync.LazadaProduct_;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct_;
 import org.springframework.data.jpa.domain.Specification;

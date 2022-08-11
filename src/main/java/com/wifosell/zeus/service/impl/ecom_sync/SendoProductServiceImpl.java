@@ -1,13 +1,18 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.google.gson.Gson;
-import com.wifosell.zeus.exception.ZeusGlobalException;
-import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
+import com.wifosell.zeus.model.ecom_sync.SendoProduct;
+import com.wifosell.zeus.model.ecom_sync.SendoVariant;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
-import com.wifosell.zeus.repository.ecom_sync.*;
+import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
+import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
+import com.wifosell.zeus.repository.ecom_sync.SendoProductRepository;
+import com.wifosell.zeus.repository.ecom_sync.SendoVariantRepository;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.service.SendoProductService;
 import com.wifosell.zeus.specs.SendoProductSpecs;
@@ -16,11 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.security.GeneralSecurityException;
 import java.util.Optional;
 
 @Service

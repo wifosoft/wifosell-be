@@ -1,15 +1,10 @@
 package com.wifosell.zeus.taurus.sendo;
 
 import com.google.gson.Gson;
-import com.lazada.lazop.util.ApiException;
-import com.wifosell.zeus.config.property.AppProperties;
-import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 
 import java.io.IOException;
 
