@@ -6,16 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "lazada_category_and_sys_category",
         uniqueConstraints = @UniqueConstraint(columnNames = {"lazada_category_id", "sys_category_id", "general_manager_id"})
 )
@@ -36,11 +36,12 @@ public class LazadaCategoryAndSysCategory extends BasicEntity {
     @Transient
     @JsonProperty("merge_key")
     public String getMergeKey() {
-        if(lazadaCategory == null || sysCategory == null){
+        if (lazadaCategory == null || sysCategory == null) {
             return "";
         }
         return lazadaCategory.getId() + "_" + sysCategory.getId();
     }
+
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)

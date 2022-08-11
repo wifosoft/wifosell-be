@@ -21,4 +21,11 @@ public class LazadaCategorySpecs {
         };
     }
 
+    public static Specification<LazadaCategory> isLeaf() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(LazadaCategory_.LEAF), true);
+    }
+
+    public static Specification<LazadaCategory> isRoot() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(LazadaCategory_.PARENT), null);
+    }
 }

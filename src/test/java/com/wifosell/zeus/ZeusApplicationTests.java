@@ -1,7 +1,5 @@
 package com.wifosell.zeus;
 
-import com.google.gson.Gson;
-import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import com.wifosell.zeus.service.SendoProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

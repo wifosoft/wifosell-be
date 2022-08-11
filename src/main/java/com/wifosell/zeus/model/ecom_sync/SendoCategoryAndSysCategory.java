@@ -5,16 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.user.User;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "sendo_category_and_sys_category",
         uniqueConstraints = @UniqueConstraint(columnNames = {"sendo_category_id", "sys_category_id", "general_manager_id"}))
 public class SendoCategoryAndSysCategory extends BasicEntity {

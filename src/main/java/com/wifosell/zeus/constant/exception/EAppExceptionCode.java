@@ -83,9 +83,15 @@ public enum EAppExceptionCode {
     PAYMENT_NOT_FOUND(1500001),
     //endregion
 
-    //ecom
-    ECOM_ACCOUNT_NOT_FOUND(1500001);
-    //end ecom
+    //region Ecom
+    ECOM_ACCOUNT_NOT_FOUND(1600001),
+
+    LAZADA_CATEGORY_NOT_FOUND(1700001),
+    LAZADA_CATEGORY_LINK_SYS_CATEGORY_NOT_FOUND(1700002),
+
+    SENDO_CATEGORY_NOT_FOUND(1800001),
+    SENDO_CATEGORY_LINK_SYS_CATEGORY_NOT_FOUND(1800002);
+    //endregion Ecom
     private final int value;
 
     EAppExceptionCode(int value) {

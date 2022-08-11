@@ -9,7 +9,10 @@ import com.wifosell.zeus.payload.provider.shopee.ResponseSendoCategoryPayload;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryRepository;
 import com.wifosell.zeus.utils.FileUtils;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Optional;
 
 public class SendoCategorySeeder extends BaseSeeder implements ISeeder {
