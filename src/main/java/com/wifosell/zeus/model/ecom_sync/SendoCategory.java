@@ -34,6 +34,7 @@ public class SendoCategory extends BasicEntity {
     @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
     SendoCategory parent;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SendoCategory> children;
 }

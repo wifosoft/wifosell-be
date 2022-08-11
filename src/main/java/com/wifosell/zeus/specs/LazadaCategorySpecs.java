@@ -26,6 +26,6 @@ public class LazadaCategorySpecs {
     }
 
     public static Specification<LazadaCategory> isRoot() {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(LazadaCategory_.PARENT), null);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get(LazadaCategory_.PARENT));
     }
 }

@@ -41,12 +41,11 @@ public class Category extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category parent;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
-
-
 }

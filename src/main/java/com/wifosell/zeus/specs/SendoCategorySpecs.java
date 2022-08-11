@@ -10,6 +10,6 @@ public class SendoCategorySpecs {
     }
 
     public static Specification<SendoCategory> isRoot() {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(SendoCategory_.PARENT), null);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get(SendoCategory_.PARENT));
     }
 }
