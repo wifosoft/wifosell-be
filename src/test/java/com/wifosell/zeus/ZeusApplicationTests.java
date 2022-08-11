@@ -1,6 +1,10 @@
 package com.wifosell.zeus;
 
+import com.google.gson.Gson;
+import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
+import com.wifosell.zeus.service.SendoProductService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,6 +12,9 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @SpringBootTest
 class ZeusApplicationTests {
+
+    @Autowired
+    SendoProductService sendoProductService;
 
     @Test
     void testSum() {
@@ -27,5 +34,10 @@ class ZeusApplicationTests {
         );
     }
 
+    @Test
+    public void testUpdateProduct() {
+
+
+    }
 
 }

@@ -17,7 +17,6 @@ public class AddProductRequest implements IProductRequest {
 
     private String description;
 
-    @NotNull
     private Long categoryId;
 
     private BigDecimal weight;
@@ -38,7 +37,7 @@ public class AddProductRequest implements IProductRequest {
 
     private List<OptionRequest> options;
 
-    @NotEmpty
+
     private List<VariantRequest> variants;
 
     private Boolean isActive;

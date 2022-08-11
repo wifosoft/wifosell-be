@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,16 +17,12 @@ public interface IProductRequest {
 
     Long getCategoryId();
 
-    @NotNull
     BigDecimal getWeight();
 
-    @NotNull
     BigDecimal getLength();
 
-    @NotNull
     BigDecimal getWidth();
 
-    @NotNull
     BigDecimal getHeight();
 
     Integer getState();
@@ -45,6 +42,12 @@ public interface IProductRequest {
     @Getter
     @Setter
     class ImageRequest {
+
+        public ImageRequest() {}
+        public ImageRequest(Long _id, String _url) {
+            this.id = _id;
+            this.url = _url;
+        }
         Long id;
 
         @NotBlank

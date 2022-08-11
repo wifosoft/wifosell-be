@@ -62,6 +62,4 @@ public class LazadaCategoryAttribute extends BasicEntity {
         this.attributeType = item.getAttributeType();
         this.label = item.getLabel();
     }
-
-
 }
