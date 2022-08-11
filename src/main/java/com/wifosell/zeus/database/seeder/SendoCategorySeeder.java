@@ -39,7 +39,7 @@ public class SendoCategorySeeder extends BaseSeeder implements ISeeder {
                         .build();
 
                 if (!categoryPayload.isRoot()) {
-                    Optional<SendoCategory> parent = sendoCategoryRepository.findById(categoryPayload.getParentId());
+                    Optional<SendoCategory> parent = sendoCategoryRepository.findBySendoCategoryId(categoryPayload.getParentId());
                     parent.ifPresent(sendoCategory::setParent);
                 }
 
