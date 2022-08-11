@@ -47,7 +47,13 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
     public SendoCategoryAndSysCategory linkWithSysCategory(Long userId, Long sendoCategoryId, Long sysCategoryId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
 
-        Category sysCategory = categoryService.getCategory(userId, sysCategoryId);
+        SendoCategoryAndSysCategory link = sendoCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(gm.getId(), sysCategoryId).orElse(null);
+
+        if (link != null && sendoCategoryId == null) {
+            link.setSendoCategory(null);
+            sendoCategoryAndSysCategoryRepository.delete(link);
+            return link;
+        }
 
         SendoCategory sendoCategory = sendoCategoryRepository.getById(sendoCategoryId);
 
@@ -55,13 +61,19 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
             throw new ZeusGlobalException(HttpStatus.OK, "Sendo category cần là category cấp cuối cùng.");
         }
 
-        SendoCategoryAndSysCategory result = SendoCategoryAndSysCategory.builder()
-                .sendoCategory(sendoCategory)
-                .sysCategory(sysCategory)
-                .generalManager(gm)
-                .build();
+        if (link != null) {
+            link.setSendoCategory(sendoCategory);
+        } else {
+            Category sysCategory = categoryService.getCategory(userId, sysCategoryId);
 
-        return sendoCategoryAndSysCategoryRepository.save(result);
+            link = SendoCategoryAndSysCategory.builder()
+                    .sysCategory(sysCategory)
+                    .sendoCategory(sendoCategory)
+                    .generalManager(gm)
+                    .build();
+        }
+
+        return sendoCategoryAndSysCategoryRepository.save(link);
     }
 
     @Override

@@ -47,7 +47,13 @@ public class LazadaCategoryServiceImpl implements LazadaCategoryService {
     public LazadaCategoryAndSysCategory linkWithSysCategory(Long userId, Long lazadaCategoryId, Long sysCategoryId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
 
-        Category sysCategory = categoryService.getCategory(userId, sysCategoryId);
+        LazadaCategoryAndSysCategory link = lazadaCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(gm.getId(), sysCategoryId).orElse(null);
+
+        if (link != null && lazadaCategoryId == null) {
+            link.setLazadaCategory(null);
+            lazadaCategoryAndSysCategoryRepository.delete(link);
+            return link;
+        }
 
         LazadaCategory lazadaCategory = lazadaCategoryRepository.getById(lazadaCategoryId);
 
@@ -55,13 +61,19 @@ public class LazadaCategoryServiceImpl implements LazadaCategoryService {
             throw new ZeusGlobalException(HttpStatus.OK, "Lazada category cần là category cấp cuối cùng.");
         }
 
-        LazadaCategoryAndSysCategory result = LazadaCategoryAndSysCategory.builder()
-                .lazadaCategory(lazadaCategory)
-                .sysCategory(sysCategory)
-                .generalManager(gm)
-                .build();
+        if (link != null) {
+            link.setLazadaCategory(lazadaCategory);
+        } else {
+            Category sysCategory = categoryService.getCategory(userId, sysCategoryId);
 
-        return lazadaCategoryAndSysCategoryRepository.save(result);
+            link = LazadaCategoryAndSysCategory.builder()
+                    .sysCategory(sysCategory)
+                    .lazadaCategory(lazadaCategory)
+                    .generalManager(gm)
+                    .build();
+        }
+
+        return lazadaCategoryAndSysCategoryRepository.save(link);
     }
 
     @Override
