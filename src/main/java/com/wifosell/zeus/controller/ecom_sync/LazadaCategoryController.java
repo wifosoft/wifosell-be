@@ -1,7 +1,10 @@
 package com.wifosell.zeus.controller.ecom_sync;
 
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
+import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.security.CurrentUser;
+import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.LazadaCategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +30,13 @@ public class LazadaCategoryController {
     public ResponseEntity<GApiResponse<List<LazadaCategory>>> getRootCategories() {
         List<LazadaCategory> categories = lazadaCategoryService.getRootCategories();
         return ResponseEntity.ok(GApiResponse.success(categories));
+    }
+
+    @GetMapping("/link")
+    public ResponseEntity<GApiResponse<List<LazadaCategoryAndSysCategory>>> getLinks(
+            @CurrentUser UserPrincipal userPrincipal
+    ) {
+        List<LazadaCategoryAndSysCategory> links = lazadaCategoryService.getLinks(userPrincipal.getId());
+        return ResponseEntity.ok(GApiResponse.success(links));
     }
 }
