@@ -10,6 +10,7 @@ import com.wifosell.zeus.repository.ecom_sync.SendoCategoryRepository;
 import com.wifosell.zeus.utils.FileUtils;
 
 import java.io.*;
+import java.util.Optional;
 
 public class SendoCategorySeeder extends BaseSeeder implements ISeeder {
     private SendoCategoryRepository sendoCategoryRepository;
@@ -38,8 +39,8 @@ public class SendoCategorySeeder extends BaseSeeder implements ISeeder {
                         .build();
 
                 if (!categoryPayload.isRoot()) {
-                    SendoCategory sendoParentCategory = sendoCategoryRepository.getById(categoryPayload.getParentId());
-                    sendoCategory.setParent(sendoParentCategory);
+                    Optional<SendoCategory> parent = sendoCategoryRepository.findById(categoryPayload.getParentId());
+                    parent.ifPresent(sendoCategory::setParent);
                 }
 
                 sendoCategoryRepository.save(sendoCategory);
