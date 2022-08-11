@@ -17,7 +17,7 @@ public class LazadaCategorySpecs {
         return (root, query, criteriaBuilder) -> {
 //            if (!isLeaf)
 //                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(LazadaCategory_.LEAF), true);
+            return criteriaBuilder.equal(root.get(LazadaCategory_.LEAF), isLeaf);
         };
     }
 

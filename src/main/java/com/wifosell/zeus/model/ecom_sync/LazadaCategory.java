@@ -39,7 +39,7 @@ public class LazadaCategory extends BasicEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<LazadaCategory> categoryChildren;
+    private List<LazadaCategory> children;
 
 
     @JsonIgnore
