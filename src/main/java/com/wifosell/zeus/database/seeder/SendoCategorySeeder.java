@@ -1,0 +1,51 @@
+package com.wifosell.zeus.database.seeder;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import com.wifosell.zeus.database.BaseSeeder;
+import com.wifosell.zeus.database.ISeeder;
+import com.wifosell.zeus.model.ecom_sync.SendoCategory;
+import com.wifosell.zeus.payload.provider.shopee.ResponseSendoCategoryPayload;
+import com.wifosell.zeus.repository.ecom_sync.SendoCategoryRepository;
+import com.wifosell.zeus.utils.FileUtils;
+
+import java.io.*;
+
+public class SendoCategorySeeder extends BaseSeeder implements ISeeder {
+    private SendoCategoryRepository sendoCategoryRepository;
+
+    @Override
+    public void prepareJpaRepository() {
+        sendoCategoryRepository = context.getBean(SendoCategoryRepository.class);
+    }
+
+    @Override
+    public void run() throws FileNotFoundException {
+        try {
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/sendo_categories.json");
+            JsonReader reader = new JsonReader(new InputStreamReader(file));
+
+            Gson gson = new Gson();
+            ResponseSendoCategoryPayload[] categoryTreePayload = gson.fromJson(reader, ResponseSendoCategoryPayload[].class);
+            file.close();
+
+            for (ResponseSendoCategoryPayload categoryPayload : categoryTreePayload) {
+                SendoCategory sendoCategory = SendoCategory.builder()
+                        .sendoCategoryId(categoryPayload.getId())
+                        .var(categoryPayload.isConfigVariant())
+                        .name(categoryPayload.getName())
+                        .leaf(categoryPayload.isLeaf())
+                        .build();
+
+                if (!categoryPayload.isRoot()) {
+                    SendoCategory sendoParentCategory = sendoCategoryRepository.getById(categoryPayload.getParentId());
+                    sendoCategory.setParent(sendoParentCategory);
+                }
+
+                sendoCategoryRepository.save(sendoCategory);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

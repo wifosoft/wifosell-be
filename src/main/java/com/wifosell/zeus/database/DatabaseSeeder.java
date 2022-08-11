@@ -31,6 +31,7 @@ public class DatabaseSeeder extends Seeder {
         seederTask.add(EcomAccountSeeder.class);
         seederTask.add(LazadaCategorySeeder.class);
         seederTask.add(LazadaCategoryAttributeSeeder.class);
+        seederTask.add(SendoCategorySeeder.class);
     }
 
     public void run() {
