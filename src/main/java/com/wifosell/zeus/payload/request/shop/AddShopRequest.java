@@ -14,23 +14,18 @@ public class AddShopRequest implements IShopRequest {
     @Size(max = 200)
     private String name;
 
-    @NotBlank
     @Size(max = 50)
     private String shortName;
 
-    @NotBlank
     @Size(max = 300)
     private String address;
 
-    @NotBlank
     @Size(max = 20)
     private String phone;
 
-    @NotBlank
     @Size(max = 1000)
     private String description;
-
-    @NotBlank
+    
     @Size(max = 50)
     private String businessLine;
 
