@@ -23,11 +23,11 @@ public class LazadaSwwAndEcomAccount extends BasicEntity {
     private Long id;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "sale_channel_shop_id", referencedColumnName = "id")
     SaleChannelShop saleChannelShop;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "ecom_account_id", referencedColumnName = "id")
     EcomAccount ecomAccount;
 }
