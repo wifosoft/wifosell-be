@@ -17,7 +17,7 @@ class SendoProductConsumer {
     SendoProductService sendoProductService;
     Logger LOG = LoggerFactory.getLogger(SendoProductConsumer.class);
 
-    @KafkaListener(topics = "sendo_product", containerFactory = "kafkaListenerContainerFactory", groupId = "core_sendo_product_group",  properties = "value.deserializer:org.apache.kafka.common.serialization.StringDeserializer")
+    @KafkaListener(topics = "sendo_product", containerFactory = "kafkaListenerContainerFactory", groupId = "core_sendo_spring",  properties = "value.deserializer:org.apache.kafka.common.serialization.StringDeserializer")
     void listener(String data) {
         LOG.info(data);
 

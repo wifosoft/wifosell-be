@@ -25,7 +25,7 @@ public class SendoVariantAndSysVariant extends BasicEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sendo_variant_id", referencedColumnName = "id")
-    LazadaVariant lazadaVariant;
+    SendoVariant sendoVariant;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
