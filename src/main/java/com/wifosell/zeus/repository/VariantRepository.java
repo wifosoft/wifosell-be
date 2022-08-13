@@ -5,6 +5,7 @@ import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.model.product.Variant;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +15,10 @@ public interface VariantRepository extends SoftRepository<Variant, Long> {
     }
 
     void deleteAllByProductId(Long productId);
+
+
+
+    Variant findFirstBySku( List<String> sku);
 
     default Variant getBySKUNoThrow(String sku, Long gmId) {
         Optional<Variant> optional = this.findBySkuAndGeneralManagerId(sku, gmId);

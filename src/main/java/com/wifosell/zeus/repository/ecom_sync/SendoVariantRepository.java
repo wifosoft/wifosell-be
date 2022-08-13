@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface SendoVariantRepository extends SoftRepository<SendoVariant, Long> {
     boolean existsBySkuId(Long skuId);
 
-    SendoVariant findBySkuId(Long skuId);
+    SendoVariant findBySkuId(String skuId);
 }

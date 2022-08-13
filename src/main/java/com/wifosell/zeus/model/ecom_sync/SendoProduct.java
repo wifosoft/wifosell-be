@@ -46,7 +46,7 @@ public class SendoProduct extends BasicEntity {
     @Column(columnDefinition = "TEXT", name = "images")
     private String images;
 
-    @OneToMany(mappedBy = "sendoProduct")
+    @OneToMany(mappedBy = "sendoProduct", cascade = CascadeType.ALL)
     private List<SendoVariant> sendoVariants;
 
     @ManyToOne

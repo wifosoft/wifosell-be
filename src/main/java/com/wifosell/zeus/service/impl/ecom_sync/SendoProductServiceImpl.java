@@ -1,10 +1,11 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.google.gson.Gson;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
-import com.wifosell.zeus.model.ecom_sync.SendoProduct;
-import com.wifosell.zeus.model.ecom_sync.SendoVariant;
+import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
+import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -83,6 +85,88 @@ public class SendoProductServiceImpl implements SendoProductService {
     }
 
 
+    public void consumeSingleSendoProductLinkProductPhase(ResponseSendoProductItemPayload itemPayload){
+        //created product, only mapping to db
+        Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findByAccountNameAndEcomName(itemPayload.getShop_relation_id(), EcomAccount.EcomName.SENDO);
+        if (ecomAccountOpt.isEmpty()) {
+            logger.info("Shop key khong ton tai " + itemPayload.getShop_relation_id());
+            return;
+        }
+        User gm = ecomAccountOpt.get().getGeneralManager();
+
+
+        SendoProduct sendoProduct = sendoProductRepository.findByItemId(itemPayload.getId());
+        if(sendoProduct == null){
+            sendoProduct = new SendoProduct(itemPayload, ecomAccountOpt.get());
+        }
+        else {
+            sendoProduct.withDataByProductAPI(itemPayload).setEcomAccount(ecomAccountOpt.get());
+        }
+        logger.info("[+] Save sendo product {}" , sendoProduct.getName());
+
+        sendoProductRepository.save(sendoProduct);
+
+        List<ResponseSendoProductItemPayload.Variant> listAPIVariants = itemPayload.getVariants();
+
+        boolean flagNewSendoVariantRecord =false;
+        if(listAPIVariants.size() > 0 ) {
+            for (var _apiVariant : listAPIVariants) {
+                SendoVariant sendoVariant = sendoVariantRepository.findBySkuId(_apiVariant.getVariant_sku());
+                if (sendoVariant == null) {
+                    sendoVariant = new SendoVariant(_apiVariant, sendoProduct);
+                    flagNewSendoVariantRecord =true;
+                } else {
+                    sendoVariant = sendoVariant.withDataBySkuAPI(_apiVariant);
+                }
+                sendoVariantRepository.save(sendoVariant);
+
+
+
+
+                logger.info("[+] Save sendo variant SKU {} - Product Name {} ", sendoVariant.getSkuId(), sendoProduct.getName());
+            }
+        }else {
+            SendoVariant sendoVariant = sendoVariantRepository.findBySkuId(itemPayload.getSku());
+            if (sendoVariant == null) {
+                sendoVariant = new SendoVariant(itemPayload, sendoProduct);
+                flagNewSendoVariantRecord = true;
+            } else {
+                sendoVariant = sendoVariant.withSingleVariant(itemPayload);
+            }
+            sendoVariantRepository.save(sendoVariant);
+            logger.info("[+] Save single sendo variant SKU {} - Product Name {} ", sendoVariant.getSkuId(), sendoProduct.getName());
+        }
+        //luu thnah cong 2 bang sendo_product, sendo_variant
+
+
+
+        //them vao csdl product, sendo neu sku khong ton tai
+        KafkaWrapperConsumeProduct kafkaWrapperConsumeProduct = UpdateProductRequest.withResponseSendoProductItemPayload(itemPayload);
+        logger.info((new Gson()).toJson(kafkaWrapperConsumeProduct.getUpdateProductRequest()));
+
+
+
+
+
+        Variant firstExistVariant = variantRepository.findFirstBySku(kafkaWrapperConsumeProduct.mapVariantSkus());
+        Long idProductAffected = -1L;
+        if(firstExistVariant != null){
+            //ton tai system varirant roi thi cap nhat theo varaint id
+            Product parentExist = firstExistVariant.getProduct();
+            if(parentExist != null) {
+                idProductAffected = parentExist.getId();
+            }
+        }
+
+        var response = productService.updateProduct(ecomAccountOpt.get().getGeneralManager().getId(), idProductAffected, kafkaWrapperConsumeProduct.getUpdateProductRequest());
+        //create if not exist
+        logger.info(response.getName());
+
+        //
+
+
+    }
+
     public void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload) {
         //consume va luu vao db
         //userid productid,
@@ -103,11 +187,11 @@ public class SendoProductServiceImpl implements SendoProductService {
             }
 
 
-            UpdateProductRequest updateProductRequest = UpdateProductRequest.withResponseSendoProductItemPayload(itemPayload);
-            logger.info((new Gson()).toJson(updateProductRequest));
+            this.consumeSingleSendoProductLinkProductPhase(itemPayload);
+            logger.info("[+] After consume consumeSingleSendoProductLinkProductPhase {}", itemPayload.getName());
 
-            var response = productService.updateProduct(ecomAccountOpt.get().getGeneralManager().getId(), -1L, updateProductRequest);
-            logger.info(response.getName());
+
+
         } catch (Exception exception) {
             exception.printStackTrace();
         }

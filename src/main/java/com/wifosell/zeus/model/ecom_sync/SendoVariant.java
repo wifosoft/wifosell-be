@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -47,7 +48,7 @@ public class SendoVariant extends BasicEntity {
     private Long price;
 
     @Column(name = "skuId")
-    private Long skuId;
+    private String skuId;
 
     @Column(columnDefinition = "TEXT", name = "images")
     private String images;
@@ -79,7 +80,13 @@ public class SendoVariant extends BasicEntity {
     public SendoVariant(ResponseSendoProductItemPayload.Variant s) {
         this.withDataBySkuAPI(s);
     }
-
+    public SendoVariant(ResponseSendoProductItemPayload e) {
+        this.withSingleVariant(e);
+    }
+    public SendoVariant(ResponseSendoProductItemPayload e, SendoProduct sendoProduct) {
+        this.withSingleVariant(e);
+        this.setSendoProduct(sendoProduct);
+    }
     public SendoVariant(ResponseSendoProductItemPayload.Variant s, SendoProduct sendoProduct) {
         this.withDataBySkuAPI(s);
         this.setSendoProduct(sendoProduct);
@@ -93,7 +100,7 @@ public class SendoVariant extends BasicEntity {
         this.url = "";
         this.specialPrice = s.getVariant_special_price();
         this.price = s.getVariant_price();
-        this.skuId = -1L;
+        this.skuId = s.getVariant_sku();
         this.images = "[]";
         this.quantity = s.getVariant_quantity();
         this.sellableStock = s.getVariant_quantity();
@@ -102,4 +109,28 @@ public class SendoVariant extends BasicEntity {
         return this;
     }
 
+    public SendoVariant withSingleVariant(ResponseSendoProductItemPayload e){
+        Gson gson = new Gson();
+
+        this.sellerSku = e.getSku();
+        this.shopSku = e.getSku();
+        this.status = "active";
+        this.url  =  "";
+        this.specialPrice = e.getSpecial_price();
+        this.price = e.getPrice();
+        this.skuId =  e.getSku();
+        if(e.getImage() !=null) {
+            ArrayList<String> imgls = new ArrayList<>();
+            imgls.add(e.getImage());
+            this.images = gson.toJson(imgls);
+        }
+        else {
+            this.images = "[]";
+        }
+        this.quantity = e.getStock_quantity();
+        this.sellableStock = e.getStock_quantity();
+        this.rawData = gson.toJson(e);
+        this.reserved = "single_product";
+        return this;
+    }
 }

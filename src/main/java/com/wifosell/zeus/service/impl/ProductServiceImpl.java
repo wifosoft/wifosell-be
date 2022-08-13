@@ -151,10 +151,9 @@ public class ProductServiceImpl implements ProductService {
     public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
         Product product;
-        if(productId == -1) {
+        if (productId == -1) {
             product = new Product();
-        }
-        else {
+        } else {
             product = getProduct(userId, productId);
         }
         return this.updateProductByRequest(product, request, gm);
