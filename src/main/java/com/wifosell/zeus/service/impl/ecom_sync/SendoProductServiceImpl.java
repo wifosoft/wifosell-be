@@ -3,7 +3,6 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 import com.google.gson.Gson;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProductVariantShortInfo;
-import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
