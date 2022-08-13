@@ -49,12 +49,11 @@ public class LazadaCategoryServiceImpl implements LazadaCategoryService {
 
         LazadaCategoryAndSysCategory link = lazadaCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(gm.getId(), sysCategoryId).orElse(null);
 
-        if (lazadaCategoryId == null && link == null)
-            return null;
-
         if (lazadaCategoryId == null) {
-            link.setLazadaCategory(null);
-            lazadaCategoryAndSysCategoryRepository.delete(link);
+            if (link != null) {
+                link.setLazadaCategory(null);
+                lazadaCategoryAndSysCategoryRepository.delete(link);
+            }
             return link;
         }
 

@@ -1,6 +1,5 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
-import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
 import com.wifosell.zeus.model.ecom_sync.SendoCategoryAndSysCategory;
