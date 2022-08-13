@@ -179,7 +179,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             //nếu chưa tồn tại thì mới tạo mới thôi
         }
         else {
-
+            //tồn tại rồi thì không cập nhật thông tin sản phẩm nữa
         }
         //create if not exist
         //
