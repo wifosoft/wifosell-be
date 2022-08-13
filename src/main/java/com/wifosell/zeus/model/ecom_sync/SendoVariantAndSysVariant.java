@@ -25,7 +25,7 @@ public class SendoVariantAndSysVariant extends BasicEntity {
 
     @OneToOne
     @JoinColumn(name = "sendo_variant_id", referencedColumnName = "id")
-    LazadaVariant lazadaVariant;
+    SendoVariant sendoVariant;
 
     @OneToOne
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
