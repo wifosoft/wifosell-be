@@ -33,10 +33,10 @@ public class EcomSyncCategoryServiceImpl implements EcomSyncCategoryService {
         result.setSysCategory(sysCategory);
 
         LazadaCategoryAndSysCategory lazadaLink = lazadaCategoryService.linkWithSysCategory(userId, lazadaCategoryId, sysCategoryId);
-        result.setLazadaCategory(lazadaLink.getLazadaCategory());
+        if (lazadaLink != null) result.setLazadaCategory(lazadaLink.getLazadaCategory());
 
         SendoCategoryAndSysCategory sendoLink = sendoCategoryService.linkWithSysCategory(userId, sendoCategoryId, sysCategoryId);
-        result.setSendoCategory(sendoLink.getSendoCategory());
+        if (sendoLink != null) result.setSendoCategory(sendoLink.getSendoCategory());
 
         return result;
     }

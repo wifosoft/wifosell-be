@@ -25,11 +25,11 @@ public class LazadaCategoryAndSysCategory extends BasicEntity {
     private Long id;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "lazada_category_id", referencedColumnName = "id")
     LazadaCategory lazadaCategory;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "sys_category_id", referencedColumnName = "id")
     Category sysCategory;
 

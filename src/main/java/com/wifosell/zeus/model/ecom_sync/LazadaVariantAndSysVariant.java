@@ -23,11 +23,11 @@ public class LazadaVariantAndSysVariant extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "lazada_variant_id", referencedColumnName = "id")
     LazadaVariant lazadaVariant;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
     Variant variant;
 
