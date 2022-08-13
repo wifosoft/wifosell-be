@@ -1,5 +1,6 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
+import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
 import com.wifosell.zeus.model.ecom_sync.SendoCategoryAndSysCategory;
@@ -33,10 +34,10 @@ public class EcomSyncCategoryServiceImpl implements EcomSyncCategoryService {
         result.setSysCategory(sysCategory);
 
         LazadaCategoryAndSysCategory lazadaLink = lazadaCategoryService.linkWithSysCategory(userId, lazadaCategoryId, sysCategoryId);
-        result.setLazadaCategory(lazadaLink.getLazadaCategory());
+        if (lazadaLink != null) result.setLazadaCategory(lazadaLink.getLazadaCategory());
 
         SendoCategoryAndSysCategory sendoLink = sendoCategoryService.linkWithSysCategory(userId, sendoCategoryId, sysCategoryId);
-        result.setSendoCategory(sendoLink.getSendoCategory());
+        if (sendoLink != null) result.setSendoCategory(sendoLink.getSendoCategory());
 
         return result;
     }

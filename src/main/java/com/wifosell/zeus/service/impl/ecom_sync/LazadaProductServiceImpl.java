@@ -8,24 +8,21 @@ import com.wifosell.zeus.repository.ecom_sync.LazadaVariantRepository;
 import com.wifosell.zeus.service.LazadaProductService;
 import com.wifosell.zeus.specs.LazadaProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-@Service
+@Service("LazadaProductService")
 @Transactional
+@RequiredArgsConstructor
 public class LazadaProductServiceImpl implements LazadaProductService {
-    @Autowired
-    LazadaVariantRepository lazadaVariantRepository;
+    private final LazadaVariantRepository lazadaVariantRepository;
+    private final LazadaProductRepository lazadaProductRepository;
+    private final EcomAccountRepository ecomAccountRepository;
 
-    @Autowired
-    LazadaProductRepository lazadaProductRepository;
-
-    @Autowired
-    EcomAccountRepository ecomAccountRepository;
-
+    @Override
     public Page<LazadaProduct> getProducts(
             Long ecomId,
             int offset,

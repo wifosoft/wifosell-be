@@ -49,7 +49,10 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
 
         SendoCategoryAndSysCategory link = sendoCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(gm.getId(), sysCategoryId).orElse(null);
 
-        if (link != null && sendoCategoryId == null) {
+        if (sendoCategoryId == null && link == null)
+            return null;
+
+        if (sendoCategoryId == null) {
             link.setSendoCategory(null);
             sendoCategoryAndSysCategoryRepository.delete(link);
             return link;
