@@ -23,11 +23,11 @@ public class SendoVariantAndSysVariant extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "sendo_variant_id", referencedColumnName = "id")
     SendoVariant sendoVariant;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
     Variant variant;
 

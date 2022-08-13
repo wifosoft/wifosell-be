@@ -22,11 +22,11 @@ public class SendoCategoryAndSysCategory extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "sendo_category_id", referencedColumnName = "id")
     SendoCategory sendoCategory;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "sys_category_id", referencedColumnName = "id")
     Category sysCategory;
 
