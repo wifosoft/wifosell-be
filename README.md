@@ -8,5 +8,5 @@ dgfdf
 assss
 oboption
 new asdfods
-New commiut to system
+New commit to system
 No readme
