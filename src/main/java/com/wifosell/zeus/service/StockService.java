@@ -1,7 +1,9 @@
 package com.wifosell.zeus.service;
 
+import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.stock.ImportStockTransaction;
 import com.wifosell.zeus.model.stock.TransferStockTransaction;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.stock.ImportStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksFromExcelRequest;
@@ -12,6 +14,10 @@ import java.util.List;
 
 public interface StockService {
     ImportStockTransaction importStocks(Long userId, ImportStocksRequest request);
+
+    void importStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity);
+
+    void updateStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity);
 
     ImportStockTransaction createImportStockTransactionExcel(Long userId, ImportStocksFromExcelRequest request);
 
