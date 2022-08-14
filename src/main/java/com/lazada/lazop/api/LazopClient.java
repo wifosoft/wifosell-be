@@ -9,6 +9,7 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Lazada Open Platform API Client.
@@ -31,6 +32,8 @@ public class LazopClient implements ILazopClient {
     protected String logLevel = Constants.LOG_LEVEL_ERROR;
 
     public LazopClient(String serverUrl, String appKey, String appSecret) {
+        System.out.println("app Key" + appKey);
+        System.out.println("app secret Key" + appSecret);
         this.appKey = appKey;
         this.appSecret = appSecret;
         this.serverUrl = serverUrl;
