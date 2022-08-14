@@ -303,13 +303,20 @@ public class ProductServiceImpl implements ProductService {
                     .filter(option -> !option.isDeleted())
                     .collect(Collectors.toList());
 
-            boolean isOptionIdsUnchanged = options.size() != 0 && options.stream().allMatch(option -> {
+            boolean isOptionIdsUnchanged = options.size() == optionRequests.size();
+            for (OptionModel option : options) {
+                boolean flag = false;
                 for (IProductRequest.OptionRequest optionRequest : optionRequests) {
-                    if (option.getId().equals(optionRequest.getId()))
-                        return true;
+                    if (option.getId().equals(optionRequest.getId())) {
+                        flag = true;
+                        break;
+                    }
                 }
-                return false;
-            });
+                if (!flag) {
+                    isOptionIdsUnchanged = false;
+                    break;
+                }
+            }
 
             if (isOptionIdsUnchanged) {
                 options.forEach(option -> {
