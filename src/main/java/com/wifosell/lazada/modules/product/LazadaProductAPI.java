@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
+import com.wifosell.lazada.modules.category.LazadaCategoryAPI;
+import com.wifosell.lazada.modules.category.payload.LazadaGetCategoryAttributesResponse;
 import com.wifosell.lazada.modules.product.payload.LazadaGetProductItemResponse;
 import com.wifosell.lazada.modules.product.payload.LazadaGetProductsResponse;
 import com.wifosell.lazada.modules.product.payload.LazadaUpdatePriceQuantityRequest;
@@ -56,7 +58,16 @@ public class LazadaProductAPI {
         }
 
         logger.info("getProductItem success | productId = {}.", productId);
-        return LazadaGetProductItemResponse.fromJson(response.getBody());
+
+        LazadaGetProductItemResponse productItemResponse = LazadaGetProductItemResponse.fromJson(response.getBody());
+
+        LazadaGetCategoryAttributesResponse attributesRes = LazadaCategoryAPI.getCategoryAttributes(productItemResponse.getData().getPrimaryCategoryId());
+
+        if (attributesRes != null) {
+            productItemResponse.translateData(attributesRes);
+        }
+
+        return productItemResponse;
     }
 
     public static boolean updatePriceAndQuantity(String accessToken, LazadaUpdatePriceQuantityRequest payload) throws JsonProcessingException, ApiException {

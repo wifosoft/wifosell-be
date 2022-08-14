@@ -15,6 +15,7 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.provider.lazada.report.FetchAndSyncLazadaProductsReport;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
+import com.wifosell.zeus.repository.CategoryRepository;
 import com.wifosell.zeus.repository.ProductRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.*;
@@ -56,6 +57,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
     private final LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
     private final LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
 
+    private final CategoryRepository categoryRepository;
     private final ProductService productService;
     private final ProductRepository productRepository;
 
