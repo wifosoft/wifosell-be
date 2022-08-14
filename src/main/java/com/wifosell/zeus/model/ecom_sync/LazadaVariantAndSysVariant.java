@@ -31,7 +31,6 @@ public class LazadaVariantAndSysVariant extends BasicEntity {
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
     Variant variant;
 
-
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)

@@ -183,7 +183,7 @@ public class ProductServiceImpl implements ProductService {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 
-    private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
+    public Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
