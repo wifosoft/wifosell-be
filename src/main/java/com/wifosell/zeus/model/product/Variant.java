@@ -35,6 +35,8 @@ public class Variant extends BasicEntity {
     private String sku;
 
     private String barcode;
+    
+    private int index = 0;
 
     @Builder.Default
     @OneToMany(mappedBy = "variant", orphanRemoval = true)
@@ -48,10 +50,10 @@ public class Variant extends BasicEntity {
     @OneToMany(mappedBy = "variant")
     @IndexedEmbedded(structure = ObjectStructure.NESTED)
     private List<Stock> stocks = new ArrayList<>();
-    
-    public Integer getStockWarehouse(Long warehouseId){
-        for(var _stock : stocks){
-            if(_stock.getWarehouse().getId().equals(warehouseId)){
+
+    public Integer getStockWarehouse(Long warehouseId) {
+        for (var _stock : stocks) {
+            if (_stock.getWarehouse().getId().equals(warehouseId)) {
                 return _stock.getQuantity();
             }
         }

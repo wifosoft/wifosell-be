@@ -111,6 +111,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         LazadaSwwAndEcomAccount link = lazadaSwwAndEcomAccountRepository.getByEcomAccountId(ecomId);
         Warehouse warehouse = link.getSaleChannelShop().getWarehouse();
 
+        logger.info("getProducts success | ecomId = {}, fetchTotal = {}, fetchSuccess = {}",
+                ecomAccount.getId(), fetchTotal, fetchSuccess);
         return FetchAndSyncLazadaProductsReport.builder().fetchTotal(fetchTotal.get()).fetchSuccess(fetchSuccess.get()).build();
     }
 
@@ -178,7 +180,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Link LazadaVariants and SysVariants
         List<Variant> sysVariants = sysProduct.getVariants().stream().filter(v -> !v.isDeleted())
-                .sorted(Comparator.comparing(Variant::getId))
+                .sorted(Comparator.comparing(Variant::getIndex))
                 .collect(Collectors.toList());
 
         for (int i = 0; i < sysVariants.size(); ++i) {

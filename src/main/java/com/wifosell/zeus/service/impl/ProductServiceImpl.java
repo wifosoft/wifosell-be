@@ -489,7 +489,7 @@ public class ProductServiceImpl implements ProductService {
                     .filter(variant -> !variant.isDeleted())
                     .collect(Collectors.toList());
 
-            boolean isExistingVariant = false;
+            Variant curVariant = null;
 
             for (Variant variant : variants) {
                 if (variant.getId().equals(variantRequest.getId())) {
@@ -499,12 +499,12 @@ public class ProductServiceImpl implements ProductService {
                     variant.setBarcode(variantRequest.getBarcode());
                     Optional.ofNullable(variantRequest.getIsActive()).ifPresent(variant::setIsActive);
                     variantRepository.save(variant);
-                    isExistingVariant = true;
+                    curVariant = variant;
                     break;
                 }
             }
 
-            if (!isExistingVariant) {
+            if (curVariant == null) {
                 Variant variant = Variant.builder()
                         .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
                         .cost(new BigDecimal(variantRequest.getCost()))
@@ -526,7 +526,11 @@ public class ProductServiceImpl implements ProductService {
                 variantValueRepository.saveAll(variant.getVariantValues());
                 variantRepository.save(variant);
                 productRepository.save(product);
+
+                curVariant = variant;
             }
+
+            curVariant.setIndex(j);
 
             return ++j;
         }
