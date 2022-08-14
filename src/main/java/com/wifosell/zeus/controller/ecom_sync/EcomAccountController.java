@@ -67,7 +67,7 @@ public class EcomAccountController {
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GApiResponse<List<EcomAccount>>> getListAccount(@CurrentUser UserPrincipal userPrincipal, @RequestParam(name = "ecomName")EcomAccount.EcomName ecomName) {
+    public ResponseEntity<GApiResponse<List<EcomAccount>>> getListAccount(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false,name = "ecomName")EcomAccount.EcomName ecomName) {
         return ResponseEntity.ok(GApiResponse.success(ecomService.getListEcomAccount(userPrincipal.getId(), ecomName)));
     }
 
