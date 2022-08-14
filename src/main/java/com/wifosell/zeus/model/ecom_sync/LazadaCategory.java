@@ -22,7 +22,7 @@ public class LazadaCategory extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long ecomCategoryId;
+    private Long lazadaCategoryId;
 
     private boolean var;
 
@@ -47,14 +47,14 @@ public class LazadaCategory extends BasicEntity {
         this.var = categoryTreeItem.isVar();
         this.name = categoryTreeItem.getName();
         this.leaf = categoryTreeItem.isLeaf();
-        this.ecomCategoryId = categoryTreeItem.getCategoryId();
+        this.lazadaCategoryId = categoryTreeItem.getCategoryId();
     }
 
     public LazadaCategory(ResponseCategoryTreePayload.CategoryTreeItem categoryTreeItem, LazadaCategory _parent) {
         this.var = categoryTreeItem.isVar();
         this.name = categoryTreeItem.getName();
         this.leaf = categoryTreeItem.isLeaf();
-        this.ecomCategoryId = categoryTreeItem.getCategoryId();
+        this.lazadaCategoryId = categoryTreeItem.getCategoryId();
         this.setParent(_parent);
     }
 }

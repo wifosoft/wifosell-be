@@ -37,6 +37,7 @@ import com.wifosell.zeus.specs.LazadaCategorySpecs;
 import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Service()
+@Service("EcomService")
+@Transactional
+@RequiredArgsConstructor
 public class EcomServiceImpl implements EcomService {
     Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
 
@@ -189,7 +192,7 @@ public class EcomServiceImpl implements EcomService {
         totalProduct = listLazadaProducts.size();
         for (ResponseListProductPayload.Product e : listLazadaProducts) {
             logger.info("Process product  {}", e.getAttributes().getName());
-            LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(e.getPrimary_category()).orElse(null);
+            LazadaCategory lazadaCategory = lazadaCategoryRepository.findByLazadaCategoryId(e.getPrimary_category()).orElse(null);
             if (lazadaCategory == null) {
                 logger.info("Lazada category null {}", e.getPrimary_category());
                 continue;
@@ -407,7 +410,7 @@ public class EcomServiceImpl implements EcomService {
 
     @Transactional
     public void crawlSingleCategoryAttributeById(Long lazadaCategoryId) throws ApiException {
-        LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(lazadaCategoryId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại category id"));
+        LazadaCategory lazadaCategory = lazadaCategoryRepository.findByLazadaCategoryId(lazadaCategoryId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại category id"));
 
         LazopRequest request = new LazopRequest();
         request.setApiName("/category/attributes/get");
@@ -449,9 +452,9 @@ public class EcomServiceImpl implements EcomService {
         for (LazadaCategory lazadaCategory : listLeafCategories) {
             //crawl the option by API
             try {
-                crawlSingleCategoryAttributeById(lazadaCategory.getEcomCategoryId());
+                crawlSingleCategoryAttributeById(lazadaCategory.getLazadaCategoryId());
             } catch (Exception ex) {
-                logger.info("[+] Error when process categoryId {}", lazadaCategory.getEcomCategoryId());
+                logger.info("[+] Error when process categoryId {}", lazadaCategory.getLazadaCategoryId());
                 ex.printStackTrace();
             }
         }

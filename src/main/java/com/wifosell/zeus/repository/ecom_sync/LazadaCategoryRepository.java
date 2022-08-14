@@ -18,7 +18,5 @@ public interface LazadaCategoryRepository extends SoftRepository<LazadaCategory,
     @Query("select lc from LazadaCategory lc where lc.leaf = true")
     List<LazadaCategory> findAllLeaf();
 
-    Optional<LazadaCategory> findFirstByLazadaCategoryId(Long lazadaCategoryId);
-
     Optional<LazadaCategory> findByLazadaCategoryId(Long lazadaCategoryId);
 }
