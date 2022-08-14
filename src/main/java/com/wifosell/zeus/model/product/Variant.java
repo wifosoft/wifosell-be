@@ -35,8 +35,8 @@ public class Variant extends BasicEntity {
     private String sku;
 
     private String barcode;
-    
-    private int index = 0;
+
+    private int idx = 0;
 
     @Builder.Default
     @OneToMany(mappedBy = "variant", orphanRemoval = true)

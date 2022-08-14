@@ -180,7 +180,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Link LazadaVariants and SysVariants
         List<Variant> sysVariants = sysProduct.getVariants().stream().filter(v -> !v.isDeleted())
-                .sorted(Comparator.comparing(Variant::getIndex))
+                .sorted(Comparator.comparing(Variant::getIdx))
                 .collect(Collectors.toList());
 
         for (int i = 0; i < sysVariants.size(); ++i) {

@@ -530,7 +530,7 @@ public class ProductServiceImpl implements ProductService {
                 curVariant = variant;
             }
 
-            curVariant.setIndex(j);
+            curVariant.setIdx(j);
 
             return ++j;
         }
