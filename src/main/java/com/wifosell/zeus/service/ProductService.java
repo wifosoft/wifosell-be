@@ -1,7 +1,9 @@
 package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.product.Product;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
+import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.NonNull;
@@ -47,4 +49,6 @@ public interface ProductService {
     List<Product> activateProducts(Long userId, @NonNull List<Long> productIds);
 
     List<Product> deactivateProducts(Long userId, @NonNull List<Long> productIds);
+
+    Product updateProductByRequest(Product product, IProductRequest request, User gm);
 }

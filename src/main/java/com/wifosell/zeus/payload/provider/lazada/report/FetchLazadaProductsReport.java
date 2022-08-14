@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class FetchAndSyncLazadaProductsReport {
+public class FetchLazadaProductsReport {
     private int fetchTotal;
     private int fetchSuccess;
 }

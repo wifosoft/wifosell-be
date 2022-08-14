@@ -183,7 +183,7 @@ public class ProductServiceImpl implements ProductService {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 
-    private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
+    public Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
@@ -303,13 +303,20 @@ public class ProductServiceImpl implements ProductService {
                     .filter(option -> !option.isDeleted())
                     .collect(Collectors.toList());
 
-            boolean isOptionIdsUnchanged = options.size() != 0 && options.stream().allMatch(option -> {
+            boolean isOptionIdsUnchanged = options.size() == optionRequests.size();
+            for (OptionModel option : options) {
+                boolean flag = false;
                 for (IProductRequest.OptionRequest optionRequest : optionRequests) {
-                    if (option.getId().equals(optionRequest.getId()))
-                        return true;
+                    if (option.getId().equals(optionRequest.getId())) {
+                        flag = true;
+                        break;
+                    }
                 }
-                return false;
-            });
+                if (!flag) {
+                    isOptionIdsUnchanged = false;
+                    break;
+                }
+            }
 
             if (isOptionIdsUnchanged) {
                 options.forEach(option -> {
@@ -482,7 +489,7 @@ public class ProductServiceImpl implements ProductService {
                     .filter(variant -> !variant.isDeleted())
                     .collect(Collectors.toList());
 
-            boolean isExistingVariant = false;
+            Variant curVariant = null;
 
             for (Variant variant : variants) {
                 if (variant.getId().equals(variantRequest.getId())) {
@@ -492,12 +499,12 @@ public class ProductServiceImpl implements ProductService {
                     variant.setBarcode(variantRequest.getBarcode());
                     Optional.ofNullable(variantRequest.getIsActive()).ifPresent(variant::setIsActive);
                     variantRepository.save(variant);
-                    isExistingVariant = true;
+                    curVariant = variant;
                     break;
                 }
             }
 
-            if (!isExistingVariant) {
+            if (curVariant == null) {
                 Variant variant = Variant.builder()
                         .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
                         .cost(new BigDecimal(variantRequest.getCost()))
@@ -519,7 +526,11 @@ public class ProductServiceImpl implements ProductService {
                 variantValueRepository.saveAll(variant.getVariantValues());
                 variantRepository.save(variant);
                 productRepository.save(product);
+
+                curVariant = variant;
             }
+
+            curVariant.setIdx(j);
 
             return ++j;
         }

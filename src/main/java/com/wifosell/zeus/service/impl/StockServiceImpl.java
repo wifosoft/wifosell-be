@@ -81,19 +81,7 @@ public class StockServiceImpl implements StockService {
 
         request.getItems().forEach(item -> {
             Variant variant = variantService.getVariant(userId, item.getVariantId());
-            Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
-            if (stock != null) {
-                stock.setActualQuantity(stock.getActualQuantity() + item.getQuantity());
-                stock.setQuantity(stock.getQuantity() + item.getQuantity());
-            } else {
-                stock = Stock.builder()
-                        .warehouse(warehouse)
-                        .variant(variant)
-                        .actualQuantity(item.getQuantity())
-                        .quantity(item.getQuantity())
-                        .build();
-            }
-            stockRepository.save(stock);
+            importStock(warehouse, variant, item.getQuantity(), item.getQuantity());
 
             ImportStockTransactionItem transactionItem = ImportStockTransactionItem.builder()
                     .variant(variant)
@@ -108,6 +96,40 @@ public class StockServiceImpl implements StockService {
         importStockTransactionRepository.save(transaction);
 
         return transaction;
+    }
+
+    @Override
+    public void importStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
+        Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
+        if (stock != null) {
+            stock.setActualQuantity(stock.getActualQuantity() + actualQuantity);
+            stock.setQuantity(stock.getQuantity() + quantity);
+        } else {
+            stock = Stock.builder()
+                    .warehouse(warehouse)
+                    .variant(variant)
+                    .actualQuantity(actualQuantity)
+                    .quantity(quantity)
+                    .build();
+        }
+        stockRepository.save(stock);
+    }
+
+    @Override
+    public void updateStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
+        Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
+        if (stock != null) {
+            stock.setActualQuantity(actualQuantity);
+            stock.setQuantity(quantity);
+        } else {
+            stock = Stock.builder()
+                    .warehouse(warehouse)
+                    .variant(variant)
+                    .actualQuantity(actualQuantity)
+                    .quantity(quantity)
+                    .build();
+        }
+        stockRepository.save(stock);
     }
 
     @Override
