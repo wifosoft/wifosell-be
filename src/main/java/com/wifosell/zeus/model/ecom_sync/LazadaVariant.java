@@ -69,11 +69,7 @@ public class LazadaVariant extends BasicEntity {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "item_id", nullable = true)
     private LazadaProduct lazadaProduct;
-
-    @Column(name = "item_id", insertable = false, updatable = false)
-    private Long lazadaProductId;
 
     @ManyToOne
     @JoinColumn(name = "ecom_account_id", nullable = true)
