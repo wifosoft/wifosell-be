@@ -171,6 +171,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         // Update stock
         // TODO haukc
 
+        logger.info("getProductItem success | ecomId = {}, itemId = {}, name = {}, skuCount = {}",
+                ecomAccount.getId(), lazadaProduct.getItemId(), lazadaProduct.getName(), lazadaProduct.getSkuCount());
         return true;
     }
 
@@ -199,8 +201,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 .map(entry -> {
                     IProductRequest.AttributeRequest attributeRequest = new IProductRequest.AttributeRequest();
                     attributeRequest.setId(null);
-                    attributeRequest.setName(attributeRequest.getName());
-                    attributeRequest.setValue(attributeRequest.getValue());
+                    attributeRequest.setName(entry.getKey());
+                    attributeRequest.setValue(entry.getValue());
                     return attributeRequest;
                 })
                 .collect(Collectors.toList());
@@ -220,6 +222,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 IProductRequest.OptionValueRequest optionValueRequest = new IProductRequest.OptionValueRequest();
                 optionValueRequest.setId(null);
                 optionValueRequest.setName(value);
+                optionValueRequests.add(optionValueRequest);
             });
 
             optionRequest.setValues(optionValueRequests);
