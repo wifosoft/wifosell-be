@@ -1,16 +1,22 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.google.gson.Gson;
+import com.wifosell.zeus.annotation.PreAuthorizeAccessGeneralManagerToShop;
+import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProductVariantShortInfo;
+import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
+import com.wifosell.zeus.payload.provider.shopee.SendoServiceResponseBase;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoCreateOrUpdateProductPayload;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.payload.response.product.ProductResponse;
 import com.wifosell.zeus.repository.*;
@@ -18,20 +24,20 @@ import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.service.SendoProductService;
 import com.wifosell.zeus.specs.SendoProductSpecs;
+import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
 import org.apache.commons.compress.harmony.unpack200.Pack200UnpackerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.metamodel.ListAttribute;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +81,10 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     @Autowired
     StockRepository stockRepository;
+
+    @Autowired
+    AppProperties appProperties;
+
 
 
     public Page<SendoProduct> getProducts(
@@ -350,16 +360,17 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         for (var _opt : sysProductResponse.getOptions()) {
             SendoCreateOrUpdateProductPayload.Attribute _attribute = new SendoCreateOrUpdateProductPayload.Attribute();
-            _attribute.setAttribute_id(Integer.parseInt("401216" + ZeusUtils.paddingId(_opt.getId().toString()))); //prefix 88 với các attribute Id
+            _attribute.setAttribute_id(Integer.parseInt("4012" + ZeusUtils.paddingId(_opt.getId().toString()))); //prefix 88 với các attribute Id
             _attribute.setAttribute_name(_opt.getName());
-            _attribute.setAttribute_code("401216" + ZeusUtils.paddingId(_opt.getId().toString()));
+            _attribute.setAttribute_code("4012" + ZeusUtils.paddingId(_opt.getId().toString()));
             _attribute.setAttribute_is_custom(true);
-            _attribute.setAttribute_is_checkout(false);
+            _attribute.setAttribute_is_checkout(true );
+            _attribute.setAttribute_is_required(false);
 
             ArrayList<SendoCreateOrUpdateProductPayload.AttributeValue> listAttributeValue = new ArrayList<>();
             for (var _optValue : _opt.getValues()) {
                 SendoCreateOrUpdateProductPayload.AttributeValue _attributeVal = new SendoCreateOrUpdateProductPayload.AttributeValue();
-                _attributeVal.setId(Integer.parseInt("391216" + ZeusUtils.paddingId(_optValue.getId().toString()))); //prefix 66 với các optionId
+                _attributeVal.setId(Integer.parseInt("3912" + ZeusUtils.paddingId(_optValue.getId().toString()))); //prefix 66 với các optionId
                 _attributeVal.setValue(_optValue.getName());
                 _attributeVal.set_custom(true);
                 _attributeVal.set_selected(true);
@@ -385,9 +396,9 @@ public class SendoProductServiceImpl implements SendoProductService {
             for (var _optionVal : _sysVariant.getOptionValues()) {
 
                 SendoCreateOrUpdateProductPayload.VariantAttribute __variantAttribute = new SendoCreateOrUpdateProductPayload.VariantAttribute();
-                __variantAttribute.setAttribute_id(Integer.parseInt("401216" + ZeusUtils.paddingId(_optionVal.getId().toString())));
-                __variantAttribute.setAttribute_code("401216" + ZeusUtils.paddingId(_optionVal.getId().toString()));
-                __variantAttribute.setOption_id(Integer.parseInt("391216" + ZeusUtils.paddingId(_optionVal.getId().toString())));
+                __variantAttribute.setAttribute_id(Integer.parseInt("4012" + ZeusUtils.paddingId(_optionVal.getId().toString())));
+                __variantAttribute.setAttribute_code("4012" + ZeusUtils.paddingId(_optionVal.getId().toString()));
+                __variantAttribute.setOption_id(Integer.parseInt("3912" + ZeusUtils.paddingId(_optionVal.getId().toString())));
                 listVariantAttributeInVariant.add(__variantAttribute);
             }
 
@@ -410,6 +421,33 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         m.setExtended_shipping_package(extendedShippingPackage);
         return m;
+    }
+
+    @Override
+    public boolean fetchAndSyncSendoProducts(Long ecomId) {
+
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        if(ecomAccount ==null){
+            throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
+        }
+        if(ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO){
+            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+        }
+
+        User user = ecomAccount.getGeneralManager();
+
+
+        String shopKey= ecomAccount.getAccountName();
+        String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
+        var reqPayload = SendoLinkAccountRequestDTO.builder().secret_key(secretKey).shop_key(shopKey).build();
+        HashMap<String, String> headerAuth = new HashMap<String, String>();
+        headerAuth.put("shop_key", shopKey);
+        headerAuth.put("secret_key", secretKey);
+        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/product/crawlAllProductToDB",  headerAuth , null, SendoServiceResponseBase.class));
+        if (responseModel.success== true) {
+            return true;
+        }
+        return false;
     }
 
 }

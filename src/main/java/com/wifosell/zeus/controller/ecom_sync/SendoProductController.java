@@ -3,6 +3,7 @@ package com.wifosell.zeus.controller.ecom_sync;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoVariant;
 import com.wifosell.zeus.payload.GApiResponse;
+import com.wifosell.zeus.payload.provider.lazada.report.FetchAndSyncLazadaProductsReport;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.SendoProductService;
@@ -57,8 +58,16 @@ public class SendoProductController {
         //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(response));
     }
-    
-    
 
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/fetch")
+    public ResponseEntity<GApiResponse> fetchSendoProduct(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ecomId") Long ecomId
+    ) {
+        boolean report = sendoProductService.fetchAndSyncSendoProducts(ecomId);
+        return ResponseEntity.ok(GApiResponse.success(report));
+    }
 
 }

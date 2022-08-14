@@ -1,12 +1,10 @@
 package com.wifosell.zeus.taurus.sendo;
 
 import com.google.gson.Gson;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import okhttp3.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 public class SendoServiceClient {
@@ -47,6 +45,39 @@ public class SendoServiceClient {
         return null;
     }
 
+
+
+    public <K, T> T Post(String path, Map<String, String> headers,K requestData, Class<T> responseBodyType) {
+        String bodyJson = (new Gson()).toJson(requestData);
+        Headers headerbuild = Headers.of(headers);
+
+        RequestBody requestBody = RequestBody.create(JSON, bodyJson); // new
+        // RequestBody body = RequestBody.create(JSON, json); // old
+        Request request = new Request.Builder()
+                .url(getBaseUrl() + path)
+                .headers(headerbuild)
+                .post(requestBody)
+                .build();
+
+        T contentData = null;
+        okhttp3.Response response;
+        try {
+            response = client.newCall(request).execute();
+            if (response.body() == null) {
+                return null;
+            }
+
+            String responseBody = response.body().string();
+            contentData = (T) (new Gson()).fromJson(responseBody, responseBodyType);
+            return contentData;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
 
     public <K, T> T Post(String path, K requestData, Class<T> responseBodyType) {
         String bodyJson = (new Gson()).toJson(requestData);
