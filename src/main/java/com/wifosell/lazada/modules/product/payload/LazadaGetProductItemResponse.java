@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.wifosell.lazada.modules.category.payload.LazadaGetCategoryAttributesResponse;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +22,44 @@ public class LazadaGetProductItemResponse {
         LazadaGetProductItemResponse object = new Gson().fromJson(json, LazadaGetProductItemResponse.class);
         object.processRawData();
         return object;
+    }
+
+    public void translateData(LazadaGetCategoryAttributesResponse res) {
+        // Attributes
+        Map<String, String> translatedAttributes = new HashMap<>();
+
+        data.attributes.forEach((rawName, rawValue) -> {
+            LazadaGetCategoryAttributesResponse.Attribute attributeRes = res.getData().get(rawName);
+
+            if (attributeRes != null) {
+                String translatedName = attributeRes.getLabel();
+                if (translatedName == null) translatedName = rawName;
+
+                String translatedValue = attributeRes.getOptions().get(rawValue);
+                if (translatedValue == null) translatedValue = rawValue;
+
+                translatedAttributes.put(translatedName, translatedValue);
+            }
+        });
+
+        data.attributes = translatedAttributes;
+
+        // Variations
+        data.variations.forEach(variation -> {
+            LazadaGetCategoryAttributesResponse.Attribute attributeRes = res.getData().get(variation.name);
+
+            if (attributeRes != null) {
+                String translatedName = attributeRes.getLabel();
+                if (translatedName == null) translatedName = variation.name;
+                variation.name = translatedName;
+
+                variation.options = variation.options.stream().map(option -> {
+                    String translatedOption = attributeRes.getOptions().get(option);
+                    if (translatedOption == null) translatedOption = option;
+                    return translatedOption;
+                }).collect(Collectors.toList());
+            }
+        });
     }
 
     @SerializedName("data")

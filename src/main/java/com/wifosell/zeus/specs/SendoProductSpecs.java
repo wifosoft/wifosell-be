@@ -1,5 +1,6 @@
 package com.wifosell.zeus.specs;
 
+import com.wifosell.zeus.model.ecom_sync.EcomAccount_;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct_;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,7 +18,7 @@ public class SendoProductSpecs {
         return (root, query, criteriaBuilder) -> {
             if (ecomAccountId == null)
                 return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(SendoProduct_.ECOM_ACCOUNT).get(SendoProduct_.ID), ecomAccountId);
+            return criteriaBuilder.equal(root.get(SendoProduct_.ECOM_ACCOUNT).get(EcomAccount_.ID), ecomAccountId);
         };
     }
 

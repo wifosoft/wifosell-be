@@ -8,6 +8,8 @@ public enum EAppExceptionCode {
     RECORD_EXISTED(-2),
     ENTITY_NOT_FOUND(-3),
     REQUEST_PAYLOAD_FORMAT_ERROR(-4),
+    LAZADA_API_ERROR(-5),
+    SENDO_API_ERROR(-6),
 
     //User
     USER_NOT_FOUND(100001),

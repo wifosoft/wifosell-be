@@ -31,6 +31,9 @@ public class ZeusUtils {
     }
 
     public static int convertIndicesToSortedIndex(List<Integer> indices, List<Integer> sizes) {
+        if (indices.isEmpty())
+            return 0;
+
         int factor = 1;
         int index = indices.get(indices.size() - 1);
 
