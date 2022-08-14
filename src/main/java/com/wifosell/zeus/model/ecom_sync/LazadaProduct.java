@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
+import com.wifosell.lazada.modules.product.payload.LazadaGetProductItemResponse;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import lombok.AllArgsConstructor;
@@ -77,5 +78,17 @@ public class LazadaProduct extends BasicEntity {
         this.createdTime = e.getCreated_time();
         this.updatedTime = e.getUpdated_time();
         return this;
+    }
+
+    public void injectData(LazadaGetProductItemResponse.Data data) {
+        Gson gson = new Gson();
+        this.name = data.getName();
+        this.itemId = data.getItemId();
+        this.primaryCategory = data.getPrimaryCategoryId();
+        this.itemData = gson.toJson(data);
+        this.skuCount = data.getSkus().size();
+        this.images = gson.toJson(data.getImages());
+        this.createdTime = data.getCreatedTime();
+        this.updatedTime = data.getUpdatedTime();
     }
 }

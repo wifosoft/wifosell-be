@@ -80,7 +80,7 @@ public class UpdateProductRequest implements IProductRequest {
 
         List<ResponseSendoProductItemPayload.Variant> listVariantAPI = e.getVariants();
 
-        if(listVariantAPI.size() == 0 ){
+        if (listVariantAPI.size() == 0) {
             //khong ton tai variant
 
             VariantRequest variantRequest = new VariantRequest();
@@ -129,7 +129,7 @@ public class UpdateProductRequest implements IProductRequest {
 
         //build options
         ArrayList<ResponseSendoProductItemPayload.Attribute> varirantAPIAttributes = e.getAttributes();
-        if(hashMapOptions != null) {
+        if (hashMapOptions != null) {
             for (ResponseSendoProductItemPayload.Attribute _itemVariantAPIAttribute : varirantAPIAttributes) {
                 if (!hashMapOptions.containsKey(_itemVariantAPIAttribute.getAttribute_id())) {
                     continue;
@@ -157,7 +157,7 @@ public class UpdateProductRequest implements IProductRequest {
         m.setOptions(optionRequestList);
         m.setVariants(varirantRequests);
         m.setIsActive(true);
-        kafkaWrapperConsumeProduct.setUpdateProductRequest( m);
+        kafkaWrapperConsumeProduct.setUpdateProductRequest(m);
         return kafkaWrapperConsumeProduct;
     }
 }

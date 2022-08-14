@@ -76,7 +76,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             String sortBy,
             String orderBy
     ) {
-        Long ecomIdCk = ecomId == null ? null : ecomAccountRepository.getEcomAccountById(ecomId).getId();
+        Long ecomIdCk = ecomId == null ? null : ecomAccountRepository.getById(ecomId).getId();
         return sendoProductRepository.findAll(
                 SendoProductSpecs.inEcomAccount(ecomIdCk),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
@@ -85,7 +85,7 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     @Override
     public Page<SendoVariant> getVariants(Long ecomId, int offset, int limit, String sortBy, String orderBy) {
-        Long ecomIdCk = ecomId == null ? null : ecomAccountRepository.getEcomAccountById(ecomId).getId();
+        Long ecomIdCk = ecomId == null ? null : ecomAccountRepository.getById(ecomId).getId();
         return sendoVariantRepository.findAll(
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );

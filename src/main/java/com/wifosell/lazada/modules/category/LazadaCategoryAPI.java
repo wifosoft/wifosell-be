@@ -22,7 +22,7 @@ public class LazadaCategoryAPI {
         LazopResponse response = LazadaClient.getClient().execute(request);
 
         if (!response.isSuccess()) {
-            logger.warn("getCategoryTree fail | body = {}", response.getBody());
+            logger.error("getCategoryTree fail | body = {}", response.getBody());
         }
 
         return LazadaConvertUtils.fromJsonStringToObject(response.getBody(), LazadaGetCategoryTreeResponse.class);

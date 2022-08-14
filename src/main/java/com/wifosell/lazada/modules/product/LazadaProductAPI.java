@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LazadaProductAPI {
-    private static final Logger logger = LoggerFactory.getLogger(LazadaProductAPI.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(LazadaProductAPI.class);
 
     public static LazadaGetProductsResponse getProducts(String accessToken, int offset, int limit) throws ApiException {
         LazopRequest request = new LazopRequest();
@@ -32,7 +32,7 @@ public class LazadaProductAPI {
         LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
 
         if (!response.isSuccess()) {
-            logger.warn("getProducts fail | body = {}.", response.getBody());
+            logger.error("getProducts fail | body = {}.", response.getBody());
             return null;
         }
 
@@ -40,19 +40,22 @@ public class LazadaProductAPI {
         return LazadaGetProductsResponse.fromJson(response.getBody());
     }
 
-    public static LazadaGetProductItemResponse getProductItem(String accessToken, String itemId) throws ApiException {
+    public static LazadaGetProductItemResponse getProductItem(String accessToken, Long productId) throws ApiException {
         LazopRequest request = new LazopRequest();
 
         request.setApiName("/product/item/get");
         request.setHttpMethod("GET");
-        request.addApiParameter("item_id", itemId);
+        request.addApiParameter("item_id", String.valueOf(productId));
         request.addApiParameter("seller_sku", "");
 
         LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
 
-        if (!response.isSuccess())
+        if (!response.isSuccess()) {
+            logger.error("getProductItem fail | productId = {}, body = {}.", productId, response.getBody());
             return null;
+        }
 
+        logger.info("getProductItem success | productId = {}.", productId);
         return LazadaGetProductItemResponse.fromJson(response.getBody());
     }
 
@@ -65,7 +68,7 @@ public class LazadaProductAPI {
         LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
 
         if (!response.isSuccess()) {
-            logger.warn("updatePriceAndQuantity fail | body = {}.", response.getBody());
+            logger.error("updatePriceAndQuantity fail | body = {}.", response.getBody());
             return false;
         }
 

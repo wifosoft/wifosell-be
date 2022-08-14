@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Getter
@@ -82,8 +83,8 @@ public class ResponseListProductPayload {
         public String package_width;
         public String package_height;
         public ArrayList<Object> fblWarehouseInventories;
-        public Long special_price;
-        public Long price;
+        public BigDecimal special_price;
+        public BigDecimal price;
         @SerializedName("Variation1")
         @JsonProperty("Variation1")
         public String variation1;

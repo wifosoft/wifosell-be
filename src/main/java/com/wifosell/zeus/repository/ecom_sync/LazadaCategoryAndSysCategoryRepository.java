@@ -22,4 +22,6 @@ public interface LazadaCategoryAndSysCategoryRepository extends SoftRepository<L
     List<LazadaCategoryAndSysCategory> findAllByGeneralManager(Long generalManagerId);
 
     Optional<LazadaCategoryAndSysCategory> findByGeneralManagerIdAndSysCategoryId(Long gmId, Long sysCategoryId);
+
+    Optional<LazadaCategoryAndSysCategory> findByGeneralManagerIdAndLazadaCategoryId(Long gmId, Long lazadaCategoryId);
 }

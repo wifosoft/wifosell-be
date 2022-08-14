@@ -15,11 +15,10 @@ public interface LazadaCategoryRepository extends SoftRepository<LazadaCategory,
         return EAppExceptionCode.LAZADA_CATEGORY_NOT_FOUND;
     }
 
-    @Query(
-            value = "SELECT * FROM `lazada_categories` WHERE leaf = 1",
-            nativeQuery = true)
+    @Query("select lc from LazadaCategory lc where lc.leaf = true")
     List<LazadaCategory> findAllLeaf();
 
     Optional<LazadaCategory> findFirstByLazadaCategoryId(Long lazadaCategoryId);
 
+    Optional<LazadaCategory> findByLazadaCategoryId(Long lazadaCategoryId);
 }

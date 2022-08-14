@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -56,6 +57,17 @@ public class LazadaGetProductItemResponse {
         @SerializedName("attributes")
         private Map<String, String> attributes;
 
+        @SerializedName("status")
+        private String status;
+
+        private transient String name;
+
+        private transient String description;
+
+        public boolean isActive() {
+            return "Active".equals(status);
+        }
+
         @Getter
         public static class Variation {
             @SerializedName("name")
@@ -100,6 +112,9 @@ public class LazadaGetProductItemResponse {
             @SerializedName("Images")
             private List<String> images;
 
+            @SerializedName("package_weight")
+            private BigDecimal packageWeight;
+
             @SerializedName("package_width")
             private BigDecimal packageWidth;
 
@@ -107,7 +122,7 @@ public class LazadaGetProductItemResponse {
             private BigDecimal packageHeight;
 
             @SerializedName("package_length")
-            private BigDecimal package_Length;
+            private BigDecimal packageLength;
 
             @SerializedName("Url")
             private String url;
@@ -116,6 +131,10 @@ public class LazadaGetProductItemResponse {
             private String status;
 
             private transient List<Integer> optionIndices;
+
+            public boolean isActive() {
+                return "active".equals(status);
+            }
         }
     }
 
@@ -123,15 +142,23 @@ public class LazadaGetProductItemResponse {
         Gson gson = new Gson();
         ObjectMapper objectMapper = new ObjectMapper();
 
+        data.name = data.attributes.remove("name");
+        data.description = data.attributes.remove("description");
+
         data.variations = new ArrayList<>(data._variations.values());
 
         data.skus = new ArrayList<>();
+        data._skus.forEach(rawSku -> data.skus.add(null));
         data._skus.forEach(rawSku -> {
             try {
                 Data.Sku sku = gson.fromJson(objectMapper.writeValueAsString(rawSku), Data.Sku.class);
                 sku.optionIndices = data.variations.stream()
                         .map(v -> v.options.indexOf(rawSku.get(v.name).toString())).collect(Collectors.toList());
-                data.skus.add(sku);
+                int index = ZeusUtils.convertIndicesToSortedIndex(
+                        sku.optionIndices,
+                        data.variations.stream().map(v -> v.getOptions().size()).collect(Collectors.toList())
+                );
+                data.skus.set(index, sku);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
