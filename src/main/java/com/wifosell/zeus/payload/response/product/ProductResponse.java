@@ -91,7 +91,7 @@ public class ProductResponse extends BasicEntityResponse {
 
     @Getter
     @Setter
-    private static class VariantResponse extends BasicEntityResponse {
+    public static class VariantResponse extends BasicEntityResponse {
         private final String originalCost;
         private final String cost;
         private final String sku;
@@ -99,6 +99,15 @@ public class ProductResponse extends BasicEntityResponse {
         private final List<OptionValueResponse> optionValues;
         private final List<StockResponse> stocks;
 
+
+        public StockResponse getStockInWarehouse(Long warehouseId){
+            for(StockResponse _stockResponse : stocks){
+                if(_stockResponse.getWarehouse().getId().equals(warehouseId)) {
+                    return _stockResponse;
+                }
+            }
+            return null;
+        }
         public VariantResponse(Variant variant) {
             super(variant);
             this.originalCost = variant.getOriginalCost().toString();
@@ -114,18 +123,25 @@ public class ProductResponse extends BasicEntityResponse {
                     .collect(Collectors.toList());
         }
 
-        @Getter
-        private static class OptionValueResponse extends BasicEntityResponse {
-            private final String name;
 
+        @Getter
+        public static class OptionValueResponse extends BasicEntityResponse {
+            private final String name;
+            private final Long idOptionModel;
             public OptionValueResponse(OptionValue optionValue) {
                 super(optionValue);
                 this.name = optionValue.getName();
+                this.idOptionModel = optionValue.getOption().getId();
+            }
+            public OptionValueResponse(OptionValue optionValue, Long idOptionModel) {
+                super(optionValue);
+                this.name = optionValue.getName();
+                this.idOptionModel = getIdOptionModel() ;
             }
         }
 
         @Getter
-        private static class StockResponse extends BasicEntityResponse {
+        public static class StockResponse extends BasicEntityResponse {
             private final Warehouse warehouse;
             private final Integer actualQuantity;
             private final Integer quantity;

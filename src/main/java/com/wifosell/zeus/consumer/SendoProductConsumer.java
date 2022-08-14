@@ -2,6 +2,7 @@ package com.wifosell.zeus.consumer;
 
 
 import com.google.gson.Gson;
+import com.wifosell.zeus.config.kafka.KafkaConsumerConfig;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import com.wifosell.zeus.service.SendoProductService;
 import org.slf4j.Logger;
@@ -13,11 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 class SendoProductConsumer {
 
+
     @Autowired
     SendoProductService sendoProductService;
     Logger LOG = LoggerFactory.getLogger(SendoProductConsumer.class);
 
-    @KafkaListener(topics = "sendo_product", containerFactory = "kafkaListenerContainerFactory", groupId = "core_sendo_spring",  properties = "value.deserializer:org.apache.kafka.common.serialization.StringDeserializer")
+    @KafkaListener(topics = "sendo_product", containerFactory = "kafkaListenerContainerFactory", groupId = "${spring.kafka.groupId}",  properties = "value.deserializer:org.apache.kafka.common.serialization.StringDeserializer")
     void listener(String data) {
         LOG.info(data);
 

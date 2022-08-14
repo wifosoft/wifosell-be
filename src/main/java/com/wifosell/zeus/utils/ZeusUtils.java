@@ -12,4 +12,19 @@ public class ZeusUtils {
         Sort sort = sortBy == null ? Sort.unsorted() : Sort.by(Sort.Direction.fromString(orderBy), sortBy);
         return PageRequest.of(offset, limit, sort);
     }
+    public static String padLeftCharacter(String inputString, int length, char character) {
+        if (inputString.length() >= length) {
+            return inputString;
+        }
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < length - inputString.length()) {
+            sb.append(character);
+        }
+        sb.append(inputString);
+
+        return sb.toString();
+    }
+    public static String paddingId(String id){
+        return padLeftCharacter(id, 5 , '0');
+    }
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
+import com.wifosell.zeus.payload.provider.shopee.ResponseSendoSellerInfoPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import lombok.*;
 
@@ -82,12 +83,20 @@ public class EcomAccount extends BasicEntity {
         return (new Gson()).fromJson(this.getAccountInfo(), ResponseSellerInfoPayload.class);
     }
 
+    public ResponseSendoSellerInfoPayload parseSendoSellerInfoPayload() {
+        return (new Gson()).fromJson(this.getAccountInfo(), ResponseSendoSellerInfoPayload.class);
+
+    }
     public String getShopName() {
         switch(this.getEcomName()){
             case LAZADA:
                 ResponseSellerInfoPayload payload = this.parseLazadaSellerInfoPayload();
                 if(payload == null) return null;
                 return payload.getData().name;
+            case SENDO:
+                ResponseSendoSellerInfoPayload payloadSendo = this.parseSendoSellerInfoPayload();
+                if(payloadSendo == null) return null;
+                return payloadSendo.getData().name;
         }
         return null;
     }

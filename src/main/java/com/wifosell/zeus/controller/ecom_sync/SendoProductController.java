@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/ecom_sync/sendo")
@@ -61,6 +58,20 @@ public class SendoProductController {
         //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(variants));
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("publishSendoProduct")
+    public ResponseEntity<GApiResponse> postSendoProduct(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ecomId", required = false) Long ecomId,
+            @RequestParam(name = "productId", required = false) Long productId
+    ) {
+        var response = sendoProductService.pulishCreateSystemProductToSendo(ecomId, productId);
+        //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
+        return ResponseEntity.ok(GApiResponse.success(response));
+    }
+    
+    
 
 
 }
