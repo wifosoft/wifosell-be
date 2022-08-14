@@ -40,7 +40,7 @@ public class LazadaProductController {
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<LazadaProduct> products = lazadaProductService.getProducts(ecomId, offset, limit, sortBy, orderBy);
+        Page<LazadaProduct> products = lazadaProductService.getLazadaProducts(ecomId, offset, limit, sortBy, orderBy);
         //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(products));
     }
@@ -55,7 +55,7 @@ public class LazadaProductController {
             @RequestParam(name = "sortBy", required = false) String sortBy,
             @RequestParam(name = "orderBy", required = false) String orderBy
     ) {
-        Page<LazadaVariant> variants = lazadaProductService.getVariants(ecomId, offset, limit, sortBy, orderBy);
+        Page<LazadaVariant> variants = lazadaProductService.getLazadaVariants(ecomId, offset, limit, sortBy, orderBy);
         //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
         return ResponseEntity.ok(GApiResponse.success(variants));
     }

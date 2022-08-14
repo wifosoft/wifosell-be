@@ -3,7 +3,6 @@ package com.wifosell.zeus.repository.ecom_sync;
 
 import com.wifosell.framework.repository.SoftRepository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import org.springframework.data.jpa.repository.Query;
@@ -27,5 +26,10 @@ public interface EcomAccountRepository extends SoftRepository<EcomAccount, Long>
         return findById(id).orElseThrow(
                 () -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.ECOM_ACCOUNT_NOT_FOUND))
         );
+    @Override
+    default EAppExceptionCode getExceptionCodeEntityNotFound() {
+        return EAppExceptionCode.ECOM_ACCOUNT_NOT_FOUND;
     }
+
+    Optional<EcomAccount> findByAccountNameAndEcomName(@NotBlank String accountName, @NotBlank EcomAccount.EcomName ecomName);
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
+import com.wifosell.lazada.modules.product.payload.LazadaGetProductItemResponse;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -41,12 +43,12 @@ public class LazadaVariant extends BasicEntity {
     private String url;
 
     @Column(name = "special_price")
-    private Long specialPrice;
+    private BigDecimal specialPrice;
 
     @Column(name = "price")
-    private Long price;
+    private BigDecimal price;
 
-    @Column(name = "skuId")
+    @Column(name = "sku_id")
     private Long skuId;
 
     @Column(columnDefinition = "TEXT", name = "images")
@@ -102,4 +104,19 @@ public class LazadaVariant extends BasicEntity {
         return this;
     }
 
+    public void injectData(LazadaGetProductItemResponse.Data.Sku sku) {
+        Gson gson = new Gson();
+        this.sellerSku = sku.getSellerSku();
+        this.shopSku = sku.getShopSku();
+        this.status = sku.getStatus();
+        this.url = sku.getUrl();
+        this.specialPrice = sku.getSpecialPrice();
+        this.price = sku.getPrice();
+        this.skuId = sku.getSkuId();
+        this.images = gson.toJson(sku.getImages());
+        this.quantity = sku.getQuantity();
+        this.sellableStock = sku.getAvailable();
+        this.rawData = gson.toJson(sku);
+        this.reserved = "";
+    }
 }

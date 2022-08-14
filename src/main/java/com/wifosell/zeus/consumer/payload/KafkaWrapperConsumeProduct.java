@@ -1,8 +1,8 @@
 package com.wifosell.zeus.consumer.payload;
 
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
-import lombok.*;
-import org.hibernate.sql.Update;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;

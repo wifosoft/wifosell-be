@@ -22,7 +22,7 @@ public interface EcomService {
 
     EcomAccount addEcomAccountSendo(Long userId, String shopKey, String secretKey, String shopName) throws ApiException;
 
-    EcomAccount getEcomAccount(Long ecomId);
+    EcomAccount getEcomAccount(Long userId, Long ecomId);
 
     boolean deleteEcomAccount(Long ecomId);
 

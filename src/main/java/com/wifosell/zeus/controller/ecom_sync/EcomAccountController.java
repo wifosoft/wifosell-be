@@ -164,7 +164,7 @@ public class EcomAccountController {
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "ecomId") Long ecomId
     ) throws ApiException {
-        EcomAccount ecomAccount = ecomService.getEcomAccount(ecomId);
+        EcomAccount ecomAccount = ecomService.getEcomAccount(userPrincipal.getId(), ecomId);
         LazopRequest request = new LazopRequest();
         request.setApiName("/seller/get");
         request.setHttpMethod("GET");

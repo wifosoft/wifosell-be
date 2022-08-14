@@ -37,6 +37,7 @@ import com.wifosell.zeus.specs.LazadaCategorySpecs;
 import com.wifosell.zeus.specs.VariantSpecs;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Service()
+@Service("EcomService")
+@Transactional
+@RequiredArgsConstructor
 public class EcomServiceImpl implements EcomService {
     Logger logger = LoggerFactory.getLogger(EcomServiceImpl.class);
 
@@ -107,7 +110,7 @@ public class EcomServiceImpl implements EcomService {
     LazadaCategoryAndSysCategoryRepository lazadaCategoryAndSysCategoryRepository;
 
     @Autowired
-    LazadaVariantAndSysVarirantRepository lazadaVariantAndSysVarirantRepository;
+    LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
 
 
     @Override
@@ -137,9 +140,7 @@ public class EcomServiceImpl implements EcomService {
 
     @Override
     public GetAllProductReport getAllProductsFromEcommerce(Long ecomId, int limitPerPage) {
-        GetAllProductReport getAllProductReport = GetAllProductReport.builder()
-                .totalProduct(0)
-                .totalSku(0).build();
+        GetAllProductReport getAllProductReport = GetAllProductReport.builder().totalProduct(0).totalSku(0).build();
         int offset = 0;
         int totalProduct = 0;
         int totalSku = 0;
@@ -171,11 +172,9 @@ public class EcomServiceImpl implements EcomService {
     public GetProductPageReport getProductsFromEcommerce(Long ecomId, int offset, int limit) throws ApiException {
         boolean flagModeCreateSysProduct = true;
         Gson gson = (new Gson());
-        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        EcomAccount ecomAccount = ecomAccountRepository.getById(ecomId);
 
-        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "Tài khoản chưa liên kết")
-        );
+        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Tài khoản chưa liên kết"));
 
         Warehouse warehouse = lazadaSwwAndEcomAccount.getSaleChannelShop().getWarehouse();
 
@@ -203,7 +202,7 @@ public class EcomServiceImpl implements EcomService {
         totalProduct = listLazadaProducts.size();
         for (ResponseListProductPayload.Product e : listLazadaProducts) {
             logger.info("Process product  {}", e.getAttributes().getName());
-            LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(e.getPrimary_category()).orElse(null);
+            LazadaCategory lazadaCategory = lazadaCategoryRepository.findByLazadaCategoryId(e.getPrimary_category()).orElse(null);
             if (lazadaCategory == null) {
                 logger.info("Lazada category null {}", e.getPrimary_category());
                 continue;
@@ -217,7 +216,7 @@ public class EcomServiceImpl implements EcomService {
             }
             logger.info("[+] Processed product item_id : {} - Name: {}", e.getItem_id(), e.getAttributes().getName());
             //kiem tra lzproduct ton tai khong
-            LazadaProduct lzProduct = lazadaProductRepository.findByItemId(e.getItem_id());
+            LazadaProduct lzProduct = lazadaProductRepository.getByItemId(e.getItem_id());
             if (lzProduct == null) {
                 lzProduct = new LazadaProduct(e, ecomAccount);
             } else {
@@ -233,7 +232,7 @@ public class EcomServiceImpl implements EcomService {
             boolean flagCacheCreatedProduct = false;
             Product sysProduct = null;
             for (ResponseListProductPayload.Sku s : listSkus) {
-                LazadaVariant lzVariant = lazadaVariantRepository.findBySkuId(s.getSkuId());
+                LazadaVariant lzVariant = lazadaVariantRepository.getBySkuId(s.getSkuId());
                 if (lzVariant == null) {
                     //tao moi variant link voi lazadaProduct
                     lzVariant = new LazadaVariant(s, finalLzProduct);
@@ -247,8 +246,8 @@ public class EcomServiceImpl implements EcomService {
                 if (sysVariant != null) {
                     //nếu tồn tại variant thì sẽ tồn tại product => Cập nhật thông tin product
                     //cập nhật thông tin variant hiện tại, stock ở warehouse tương ứng
-                    sysVariant.setOriginalCost(new BigDecimal(lzVariant.getPrice()));
-                    sysVariant.setCost(new BigDecimal(lzVariant.getPrice()));
+                    sysVariant.setOriginalCost(lzVariant.getPrice());
+                    sysVariant.setCost(lzVariant.getPrice());
                     variantRepository.save(sysVariant);
                     Optional<Stock> stock_ = stockRepository.findByVariantAndWarehouse(sysVariant.getId(), warehouse.getId());
                     if (stock_.isPresent()) {
@@ -284,8 +283,8 @@ public class EcomServiceImpl implements EcomService {
                         flagCacheCreatedProduct = true;
                     }
                     Variant variant = new Variant();
-                    variant.setOriginalCost(new BigDecimal(lzVariant.getPrice()));
-                    variant.setCost(new BigDecimal(lzVariant.getPrice()));
+                    variant.setOriginalCost(lzVariant.getPrice());
+                    variant.setCost(lzVariant.getPrice());
                     variant.setBarcode(s.getSellerSku());
                     variant.setSku(s.getSellerSku());
                     variant.setGeneralManager(ecomAccount.getGeneralManager());
@@ -316,10 +315,9 @@ public class EcomServiceImpl implements EcomService {
         //update
         //throw new ZeusGlobalException(HttpStatus.OK, "Tài khoản đã tồn tại");
         checkExisted.ifPresent(ecomAccount -> {
-                    account.setId(ecomAccount.getId());
-                    account.setNote("Đã cập nhật token tài khoản đã tồn tại");
-                }
-        );
+            account.setId(ecomAccount.getId());
+            account.setNote("Đã cập nhật token tài khoản đã tồn tại");
+        });
         account.setGeneralManager(user);
         ecomAccountRepository.save(account);
         return account;
@@ -358,30 +356,14 @@ public class EcomServiceImpl implements EcomService {
         EcomAccount ecomAccount;
 
         //request to service sendo
-        var reqPayload = SendoLinkAccountRequestDTO
-                .builder()
-                .secret_key(secretKey)
-                .shop_key(shopKey).build();
+        var reqPayload = SendoLinkAccountRequestDTO.builder().secret_key(secretKey).shop_key(shopKey).build();
         var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/account/login", reqPayload, ResponseLinkAccountPayload.class));
         if (responseModel.success) {
 
             Gson gson = new Gson();
             var dataModel = responseModel.getData();
 
-            AccountInfoPayload accountInfoPayload = AccountInfoPayload.builder()
-                    .code("0")
-                    .request_id("2101241b16547560579496455").data(
-                            AccountInfoPayloadData.builder()
-                                    .name(shopName)
-                                    .verified("true")
-                                    .location("")
-                                    .seller_id(dataModel.get_id())
-                                    .status("ACTIVE")
-                                    .email("")
-                                    .secret_key(dataModel.getSecret_key())
-                                    .shop_key(dataModel.getShop_key())
-                                    .build()
-                    ).build();
+            AccountInfoPayload accountInfoPayload = AccountInfoPayload.builder().code("0").request_id("2101241b16547560579496455").data(AccountInfoPayloadData.builder().name(shopName).verified("true").location("").seller_id(dataModel.get_id()).status("ACTIVE").email("").secret_key(dataModel.getSecret_key()).shop_key(dataModel.getShop_key()).build()).build();
 
             //check existed
             Optional<EcomAccount> checkExisted = ecomAccountRepository.findByAccountNameAndEcomName(shopKey, EcomAccount.EcomName.SENDO);
@@ -418,8 +400,9 @@ public class EcomServiceImpl implements EcomService {
         return ecomAccount;
     }
 
-    public EcomAccount getEcomAccount(Long id) {
-        return ecomAccountRepository.getEcomAccountById(id);
+    public EcomAccount getEcomAccount(Long userId, Long id) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return ecomAccountRepository.getOne(EcomAccountSpecs.hasGeneralManager(gmId).and(EcomAccountSpecs.hasId(id)));
     }
 
 
@@ -437,7 +420,7 @@ public class EcomServiceImpl implements EcomService {
 
     @Transactional
     public void crawlSingleCategoryAttributeById(Long lazadaCategoryId) throws ApiException {
-        LazadaCategory lazadaCategory = lazadaCategoryRepository.findFirstByLazadaCategoryId(lazadaCategoryId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại category id"));
+        LazadaCategory lazadaCategory = lazadaCategoryRepository.findByLazadaCategoryId(lazadaCategoryId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại category id"));
 
         LazopRequest request = new LazopRequest();
         request.setApiName("/category/attributes/get");
@@ -512,12 +495,8 @@ public class EcomServiceImpl implements EcomService {
     }
 
     public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long sswId) {
-        EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "Ecom account không tồn tại")
-        );
-        SaleChannelShop ssw = saleChannelShopRepository.findById(sswId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "Salechannel_shop_warehouse không tồn tại")
-        );
+        EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Ecom account không tồn tại"));
+        SaleChannelShop ssw = saleChannelShopRepository.findById(sswId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Salechannel_shop_warehouse không tồn tại"));
         LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
         lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
         lazadaSwwAndEcomAccount.setSaleChannelShop(ssw);
@@ -528,17 +507,11 @@ public class EcomServiceImpl implements EcomService {
 
     public LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId) {
         EcomAccount ecomAccount = ecomAccountRepository.findById(ecomId).orElse(null);
-        SaleChannel saleChannel = saleChannelRepository.findById(saleChannelId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "saleChannelId không tồn tại")
-        );
+        SaleChannel saleChannel = saleChannelRepository.findById(saleChannelId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "saleChannelId không tồn tại"));
 
-        Shop shop = shopRepository.findById(shopId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "shopId không tồn tại")
-        );
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "shopId không tồn tại"));
 
-        Warehouse warehouse = warehouseRepository.findById(warehouseId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "warehouseId không tồn tại")
-        );
+        Warehouse warehouse = warehouseRepository.findById(warehouseId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "warehouseId không tồn tại"));
 
         Optional<SaleChannelShop> ssw = saleChannelShopRepository.findRecordBySSWId(shopId, saleChannelId, warehouseId);
         SaleChannelShop sswRecord = null;
@@ -572,12 +545,9 @@ public class EcomServiceImpl implements EcomService {
 
         User gm = user.getGeneralManager();
 
-        Category sysCategory = categoryRepository.getOne(
-                CategorySpecs.hasGeneralManager(gm.getId()).and(CategorySpecs.hasId(sysCategoryId)));
+        Category sysCategory = categoryRepository.getOne(CategorySpecs.hasGeneralManager(gm.getId()).and(CategorySpecs.hasId(sysCategoryId)));
 
-        LazadaCategory lazadaCategory = lazadaCategoryRepository.findById(lazadaCategoryId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazada category")
-        );
+        LazadaCategory lazadaCategory = lazadaCategoryRepository.findById(lazadaCategoryId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazada category"));
         if (!lazadaCategory.isLeaf()) {
             throw new ZeusGlobalException(HttpStatus.OK, "Lazada category cần là category cấp cuối cùng.");
         }
@@ -603,27 +573,21 @@ public class EcomServiceImpl implements EcomService {
         LazadaVariantAndSysVariant record = null;
         User gm = user.getGeneralManager();
 
-        LazadaVariant lazadaVariant = lazadaVariantRepository.findById(lazadaVariantId).orElseThrow(
-                () -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazadaVariantId")
-        );
+        LazadaVariant lazadaVariant = lazadaVariantRepository.findById(lazadaVariantId).orElseThrow(() -> new ZeusGlobalException(HttpStatus.OK, "Không tồn tại lazadaVariantId"));
 
-        Variant sysVariant = variantRepository.getOne(
-                VariantSpecs.hasGeneralManager(gm.getId()).and(VariantSpecs.hasId(sysVariantId))
-        );
+        Variant sysVariant = variantRepository.getOne(VariantSpecs.hasGeneralManager(gm.getId()).and(VariantSpecs.hasId(sysVariantId)));
 
         record = new LazadaVariantAndSysVariant();
         record.setLazadaVariant(lazadaVariant);
         record.setVariant(sysVariant);
         record.setGeneralManager(gm);
-        lazadaVariantAndSysVarirantRepository.save(record);
+        lazadaVariantAndSysVariantRepository.save(record);
         return record;
     }
 
     @Override
     public List<LazadaCategory> getListCategory(boolean isLeaf) {
-        return lazadaCategoryRepository.findAll(
-                LazadaCategorySpecs.isLeaf(isLeaf)
-        );
+        return lazadaCategoryRepository.findAll(LazadaCategorySpecs.isLeaf(isLeaf));
     }
 
 

@@ -4,6 +4,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 public class ZeusUtils {
     public static Pageable getDefaultPageable(Integer offset, Integer limit, String sortBy, String orderBy) {
         if (offset == null) offset = 0;
@@ -26,5 +28,17 @@ public class ZeusUtils {
     }
     public static String paddingId(String id){
         return padLeftCharacter(id, 5 , '0');
+    }
+
+    public static int convertIndicesToSortedIndex(List<Integer> indices, List<Integer> sizes) {
+        int factor = 1;
+        int index = indices.get(indices.size() - 1);
+
+        for (int i = indices.size() - 1; i > 0; --i) {
+            factor *= sizes.get(i);
+            index += factor * indices.get(i - 1);
+        }
+
+        return index;
     }
 }

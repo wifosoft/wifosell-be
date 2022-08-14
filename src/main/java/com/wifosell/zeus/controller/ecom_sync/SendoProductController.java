@@ -1,7 +1,5 @@
 package com.wifosell.zeus.controller.ecom_sync;
 
-import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
-import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoVariant;
 import com.wifosell.zeus.payload.GApiResponse;
