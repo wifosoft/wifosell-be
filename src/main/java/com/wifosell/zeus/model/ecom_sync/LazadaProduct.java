@@ -1,10 +1,12 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.wifosell.lazada.modules.product.payload.LazadaGetProductItemResponse;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.lazada.ResponseListProductPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +56,10 @@ public class LazadaProduct extends BasicEntity {
     @JoinColumn(name = "ecom_account_id", nullable = true)
     private EcomAccount ecomAccount;
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
+    private User generalManager;
 
     public LazadaProduct() {
     }
