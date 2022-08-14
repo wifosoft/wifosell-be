@@ -59,6 +59,8 @@ public class SendoCreateOrUpdateProductPayload {
         public String attribute_name;
         public String attribute_code;
         public boolean attribute_is_custom;
+        public boolean attribute_is_required;
+
         public boolean attribute_is_checkout;
         public ArrayList<AttributeValue> attribute_values;
     }

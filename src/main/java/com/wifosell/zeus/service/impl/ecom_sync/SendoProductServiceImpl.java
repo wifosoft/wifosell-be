@@ -350,16 +350,16 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         for (var _opt : sysProductResponse.getOptions()) {
             SendoCreateOrUpdateProductPayload.Attribute _attribute = new SendoCreateOrUpdateProductPayload.Attribute();
-            _attribute.setAttribute_id(Integer.parseInt("88" + ZeusUtils.paddingId(_opt.getId().toString()))); //prefix 88 với các attribute Id
+            _attribute.setAttribute_id(Integer.parseInt("401216" + ZeusUtils.paddingId(_opt.getId().toString()))); //prefix 88 với các attribute Id
             _attribute.setAttribute_name(_opt.getName());
-            _attribute.setAttribute_code("88" + ZeusUtils.paddingId(_opt.getId().toString()));
+            _attribute.setAttribute_code("401216" + ZeusUtils.paddingId(_opt.getId().toString()));
             _attribute.setAttribute_is_custom(true);
             _attribute.setAttribute_is_checkout(false);
 
             ArrayList<SendoCreateOrUpdateProductPayload.AttributeValue> listAttributeValue = new ArrayList<>();
             for (var _optValue : _opt.getValues()) {
                 SendoCreateOrUpdateProductPayload.AttributeValue _attributeVal = new SendoCreateOrUpdateProductPayload.AttributeValue();
-                _attributeVal.setId(Integer.parseInt("66" + ZeusUtils.paddingId(_optValue.getId().toString()))); //prefix 66 với các optionId
+                _attributeVal.setId(Integer.parseInt("391216" + ZeusUtils.paddingId(_optValue.getId().toString()))); //prefix 66 với các optionId
                 _attributeVal.setValue(_optValue.getName());
                 _attributeVal.set_custom(true);
                 _attributeVal.set_selected(true);
@@ -385,9 +385,9 @@ public class SendoProductServiceImpl implements SendoProductService {
             for (var _optionVal : _sysVariant.getOptionValues()) {
 
                 SendoCreateOrUpdateProductPayload.VariantAttribute __variantAttribute = new SendoCreateOrUpdateProductPayload.VariantAttribute();
-                __variantAttribute.setAttribute_id(Integer.parseInt("88" + ZeusUtils.paddingId(_optionVal.getId().toString())));
-                __variantAttribute.setAttribute_code("88" + ZeusUtils.paddingId(_optionVal.getId().toString()));
-                __variantAttribute.setOption_id(Integer.parseInt("66" + ZeusUtils.paddingId(_optionVal.getId().toString())));
+                __variantAttribute.setAttribute_id(Integer.parseInt("401216" + ZeusUtils.paddingId(_optionVal.getId().toString())));
+                __variantAttribute.setAttribute_code("401216" + ZeusUtils.paddingId(_optionVal.getId().toString()));
+                __variantAttribute.setOption_id(Integer.parseInt("391216" + ZeusUtils.paddingId(_optionVal.getId().toString())));
                 listVariantAttributeInVariant.add(__variantAttribute);
             }
 
