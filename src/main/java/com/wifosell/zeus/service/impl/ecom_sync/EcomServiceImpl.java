@@ -111,12 +111,20 @@ public class EcomServiceImpl implements EcomService {
 
 
     @Override
-    public List<EcomAccount> getListEcomAccount(Long userId) {
+    public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
-        return ecomAccountRepository.findAll(
-                EcomAccountSpecs.hasGeneralManager(gmId)
-        );
+        if(ecomName ==null || ecomName.equals("")){
+            return ecomAccountRepository.findAll(
+                    EcomAccountSpecs.hasGeneralManager(gmId)
+            );
+        }
+        else {
+            return ecomAccountRepository.findAllByGeneralManagerAndEcomName(userId, ecomName);
+        }
+
     }
+
+
 
 
     public boolean deleteEcomAccount(Long ecomAccountId) {

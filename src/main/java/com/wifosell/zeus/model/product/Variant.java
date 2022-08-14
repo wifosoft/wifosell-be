@@ -48,6 +48,15 @@ public class Variant extends BasicEntity {
     @OneToMany(mappedBy = "variant")
     @IndexedEmbedded(structure = ObjectStructure.NESTED)
     private List<Stock> stocks = new ArrayList<>();
+    
+    public Integer getStockWarehouse(Long warehouseId){
+        for(var _stock : stocks){
+            if(_stock.getWarehouse().getId().equals(warehouseId)){
+                return _stock.getQuantity();
+            }
+        }
+        return 88;
+    }
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

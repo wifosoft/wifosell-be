@@ -15,8 +15,7 @@ import java.util.List;
 @Service
 @Transactional
 public interface EcomService {
-    List<EcomAccount> getListEcomAccount(Long userId);
-
+    public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
     EcomAccount addEcomAccountLazada(Long userId, EcomAccount account);
 
     EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException;

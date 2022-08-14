@@ -23,7 +23,7 @@ public class OptionResponse extends BasicEntityResponse {
     }
 
     @Getter
-    private static class OptionValueResponse extends BasicEntityResponse {
+    public static class OptionValueResponse extends BasicEntityResponse {
         private final String name;
 
         public OptionValueResponse(OptionValue optionValue) {

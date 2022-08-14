@@ -8,9 +8,13 @@ import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 
 public class LazadaClient {
-    static LazopClient clientAuth = new LazopClient("https://auth.lazada.com/rest", LazadaEcomSyncConst.APP_ID, LazadaEcomSyncConst.APP_SECRET);
-    static LazopClient client = new LazopClient("https://api.lazada.vn/rest", LazadaEcomSyncConst.APP_ID, LazadaEcomSyncConst.APP_SECRET);
+    static LazopClient clientAuth;
+    static LazopClient client;
 
+    public static void setupLazadaInfo(String appId, String appKey){
+        clientAuth =  new LazopClient("https://auth.lazada.com/rest", LazadaEcomSyncConst.APP_ID, LazadaEcomSyncConst.APP_SECRET);
+        client  = new LazopClient("https://api.lazada.vn/rest", LazadaEcomSyncConst.APP_ID, LazadaEcomSyncConst.APP_SECRET);
+    }
     public static LazopClient getClientAuth() {
         return clientAuth;
     }

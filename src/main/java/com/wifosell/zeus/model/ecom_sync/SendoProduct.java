@@ -2,6 +2,7 @@ package com.wifosell.zeus.model.ecom_sync;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
@@ -46,6 +47,7 @@ public class SendoProduct extends BasicEntity {
     @Column(columnDefinition = "TEXT", name = "images")
     private String images;
 
+    @JsonProperty("variants")
     @OneToMany(mappedBy = "sendoProduct", cascade = CascadeType.ALL)
     private List<SendoVariant> sendoVariants;
 
