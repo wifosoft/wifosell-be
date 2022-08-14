@@ -29,7 +29,7 @@ public class LazadaVariantAndSysVariant extends BasicEntity {
 
     @OneToOne
     @JoinColumn(name = "sys_variant_id", referencedColumnName = "id")
-    Variant variant;
+    Variant sysVariant;
 
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

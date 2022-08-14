@@ -576,7 +576,7 @@ public class EcomServiceImpl implements EcomService {
 
         record = new LazadaVariantAndSysVariant();
         record.setLazadaVariant(lazadaVariant);
-        record.setVariant(sysVariant);
+        record.setSysVariant(sysVariant);
         record.setGeneralManager(gm);
         lazadaVariantAndSysVariantRepository.save(record);
         return record;

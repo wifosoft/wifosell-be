@@ -184,7 +184,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         for (int i = 0; i < sysVariants.size(); ++i) {
             LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(sysVariants.get(i).getId())
                     .orElse(new LazadaVariantAndSysVariant());
-            variantLink.setVariant(sysVariants.get(i));
+            variantLink.setSysVariant(sysVariants.get(i));
             variantLink.setLazadaVariant(lazadaVariants.get(i));
             lazadaVariantAndSysVariantRepository.save(variantLink);
         }
@@ -304,7 +304,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             if (lazadaVariant != null) {
                 LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findByLazadaVariantId(lazadaVariant.getId()).orElse(null);
                 if (variantLink != null) {
-                    variantId = variantLink.getVariant().getId();
+                    variantId = variantLink.getSysVariant().getId();
                 }
             }
 
