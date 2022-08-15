@@ -21,6 +21,7 @@ import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.ProductImage;
 import com.wifosell.zeus.model.product.Variant;
+import com.wifosell.zeus.model.product.VariantValue;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.GApiErrorBody;
@@ -478,18 +479,28 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.product.skus = new ArrayList<>();
         for (Variant variant : product.getVariants(true)) {
             Map<String, Object> sku = new HashMap<>();
+
             sku.put(LazadaCreateProductRequest.Sku.SELLER_SKU, variant.getSku());
             sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
+
             sku.put(LazadaCreateProductRequest.Sku.PRICE, variant.getOriginalCost());
             sku.put(LazadaCreateProductRequest.Sku.SPECIAL_PRICE, variant.getCost());
             if (!variant.getOriginalCost().equals(variant.getCost())) {
                 sku.put(LazadaCreateProductRequest.Sku.SPECIAL_FROM_DATE, LazadaCreateProductRequest.Sku.SPECIAL_FROM_DATE_DEFAULT_VALUE);
                 sku.put(LazadaCreateProductRequest.Sku.SPECIAL_TO_DATE, LazadaCreateProductRequest.Sku.SPECIAL_TO_DATE_DEFAULT_VALUE);
             }
+
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_HEIGHT, variant.getProduct().getHeight());
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_LENGTH, variant.getProduct().getLength());
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WIDTH, variant.getProduct().getWidth());
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT, variant.getProduct().getWeight());
+
+            for (VariantValue variantValue : variant.getVariantValues(true)) {
+                String key = variantValue.getOptionValue().getOption().getName();
+                String value = variantValue.getOptionValue().getName();
+                sku.put(key, value);
+            }
+
             req.product.skus.add(sku);
         }
 

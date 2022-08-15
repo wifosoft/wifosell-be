@@ -14,6 +14,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -63,4 +64,8 @@ public class Variant extends BasicEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
+
+    public List<VariantValue> getVariantValues(boolean available) {
+        return variantValues.stream().filter(vv -> vv.isDeleted() != available).collect(Collectors.toList());
+    }
 }
