@@ -484,8 +484,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
 
             sku.put(LazadaCreateProductRequest.Sku.PRICE, variant.getOriginalCost());
-            sku.put(LazadaCreateProductRequest.Sku.SPECIAL_PRICE, variant.getCost());
             if (!variant.getOriginalCost().equals(variant.getCost())) {
+                sku.put(LazadaCreateProductRequest.Sku.SPECIAL_PRICE, variant.getCost());
                 sku.put(LazadaCreateProductRequest.Sku.SPECIAL_FROM_DATE, LazadaCreateProductRequest.Sku.SPECIAL_FROM_DATE_DEFAULT_VALUE);
                 sku.put(LazadaCreateProductRequest.Sku.SPECIAL_TO_DATE, LazadaCreateProductRequest.Sku.SPECIAL_TO_DATE_DEFAULT_VALUE);
             }
