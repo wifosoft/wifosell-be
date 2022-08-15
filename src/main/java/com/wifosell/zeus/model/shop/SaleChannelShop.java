@@ -7,7 +7,9 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -33,6 +35,11 @@ public class SaleChannelShop {
 
     @OneToMany(mappedBy = "saleChannelShop")
     protected List<LazadaSwwAndEcomAccount> lazadaSwwAndEcomAccount;
+
+    public List<Long> getAllLinkedSwwId () {
+        if(lazadaSwwAndEcomAccount == null){ return new ArrayList<>(); }
+        return lazadaSwwAndEcomAccount.stream().map(e -> e.getId()).collect(Collectors.toList());
+    }
     @Override
     public int hashCode() {
         final int prime = 31;

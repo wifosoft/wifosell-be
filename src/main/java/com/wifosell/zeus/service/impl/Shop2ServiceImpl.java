@@ -1,5 +1,7 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
@@ -9,6 +11,8 @@ import com.wifosell.zeus.payload.request.shop.AddShopRequest;
 import com.wifosell.zeus.payload.request.shop.IShopRequest;
 import com.wifosell.zeus.payload.request.shop.UpdateShopRequest;
 import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
+import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
 import com.wifosell.zeus.service.Shop2Service;
 import com.wifosell.zeus.specs.SaleChannelSpecs;
 import com.wifosell.zeus.specs.ShopSpecs;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +37,9 @@ public class Shop2ServiceImpl implements Shop2Service {
     private final SaleChannelRepository saleChannelRepository;
     private final SaleChannelShopRepository saleChannelShopRepository;
     private final WarehouseRepository warehouseRepository;
+    private final EcomAccountRepository ecomAccountRepository;
+
+    private final LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
 
     @Override
     public Page<Shop> getShops(Long userId, List<Boolean> isActives, Integer offset, Integer limit, String sortBy, String orderBy) {
@@ -108,19 +116,30 @@ public class Shop2ServiceImpl implements Shop2Service {
                     .map(IShopRequest.Relation::getSaleChannelId)
                     .collect(Collectors.toList());
 
+
+
+            List<Long> requestEcomIds = requestRelations.stream()
+                    .map(IShopRequest.Relation::getEcomId)
+                    .collect(Collectors.toList());
+
+
             List<Long> curSaleChannelIds = shop.getSaleChannelShops().stream()
                     .map(SaleChannelShop::getSaleChannel)
                     .map(SaleChannel::getId)
                     .collect(Collectors.toList());
 
+
+
             // Remove relations
             curSaleChannelIds.forEach(curSaleChannelId -> {
                 if (!requestSaleChannelIds.contains(curSaleChannelId)) {
                     saleChannelShopRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
+
                     Optional<SaleChannelShop> relationOptional = shop.getSaleChannelShops().stream()
                             .filter(relation -> relation.getSaleChannel().getId().equals(curSaleChannelId))
                             .findFirst();
                     relationOptional.ifPresent(relation -> shop.getSaleChannelShops().remove(relation));
+
                 }
             });
 
@@ -130,20 +149,21 @@ public class Shop2ServiceImpl implements Shop2Service {
                         WarehouseSpecs.hasGeneralManager(gm.getId())
                                 .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
                 );
-
+                SaleChannelShop relation;
                 if (curSaleChannelIds.contains(requestRelation.getSaleChannelId())) {
-                    SaleChannelShop relation = saleChannelShopRepository.getByShopIdAndSaleChannelId(
+                    relation = saleChannelShopRepository.getByShopIdAndSaleChannelId(
                             shop.getId(), requestRelation.getSaleChannelId());
                     if (relation != null) {
                         relation.setWarehouse(warehouse);
                         saleChannelShopRepository.save(relation);
                     }
+
                 } else {
                     SaleChannel saleChannel = saleChannelRepository.getOne(
                             SaleChannelSpecs.hasGeneralManager(gm.getId())
                                     .and(SaleChannelSpecs.hasId(requestRelation.getSaleChannelId()))
                     );
-                    SaleChannelShop relation = SaleChannelShop.builder()
+                    relation = SaleChannelShop.builder()
                             .shop(shop)
                             .saleChannel(saleChannel)
                             .warehouse(warehouse)
@@ -151,9 +171,37 @@ public class Shop2ServiceImpl implements Shop2Service {
                     saleChannelShopRepository.save(relation);
                     shop.getSaleChannelShops().add(relation);
                 }
+
+                //SaleChannelShop with ecom account
+
+                if(requestRelation.getEcomId() != null) {
+                    Optional<EcomAccount> ecomAccount = ecomAccountRepository.findById(requestRelation.getEcomId());
+
+                    if (ecomAccount.isPresent()) {
+
+                        Optional<LazadaSwwAndEcomAccount> relationSwwEAOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(requestRelation.getEcomId());
+                        LazadaSwwAndEcomAccount linkSwwEaRelation;
+
+                        if (relationSwwEAOpt.isEmpty()) {
+                            linkSwwEaRelation = LazadaSwwAndEcomAccount.builder()
+                                    .ecomAccount(ecomAccount.get())
+                                    .saleChannelShop(relation).build();
+                        } else {
+                            linkSwwEaRelation = relationSwwEAOpt.get();
+                            linkSwwEaRelation.setSaleChannelShop(relation);
+                        }
+                        lazadaSwwAndEcomAccountRepository.save(linkSwwEaRelation);
+                        if(relation.getLazadaSwwAndEcomAccount() ==null) {
+                            relation.setLazadaSwwAndEcomAccount(new ArrayList<>());
+                        }
+                        relation.getLazadaSwwAndEcomAccount().add(linkSwwEaRelation);
+                    }
+                }
+
             });
         });
-
-        return shopRepository.save(shop);
+        shopRepository.save(shop);
+        Shop fetchShop = getShop(gm.getId(), shop.getId());
+        return fetchShop;
     }
 }
