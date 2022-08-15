@@ -468,12 +468,10 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         for (OptionModel option : product.getOptions(true)) {
             String key = LazadaCreateProductRequest.Variation.TAG_PREFIX + (req.product.variations.size() + 1);
             LazadaCreateProductRequest.Variation value = new LazadaCreateProductRequest.Variation();
-            value.name = option.getName();
+            value.name = option.getName().replace(" ", "_");
             value.hasImage = false;
             value.customize = true;
-            value.options = option.getOptionValues(true).stream()
-                    .map(ov -> ov.getName().replace(" ", "_"))
-                    .collect(Collectors.toList());
+            value.options = option.getOptionValues(true).stream().map(OptionValue::getName).collect(Collectors.toList());
             req.product.variations.put(key, value);
         }
 
