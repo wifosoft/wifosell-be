@@ -69,18 +69,20 @@ public class SendoProductController {
             @RequestParam(name = "ecomId", required = false) Long ecomId,
             @RequestParam(name = "productId", required = false) Long productId
     ) {
-        SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
 
         var response = sendoProductService.pulishCreateSystemProductToSendo(ecomId, productId);
-
-        KafkaPublishProductSendoPayload kafkaPublishProductSendoPayload = new KafkaPublishProductSendoPayload();
-        kafkaPublishProductSendoPayload.setShop_key(sendoInfo.getShop_key());
-        kafkaPublishProductSendoPayload.setSecret_key(sendoInfo.getSecret_key());
-        kafkaPublishProductSendoPayload.setPublish_data_json(response);
-        var payloadStr = TaurusBus.buildPayloadMessageString(kafkaPublishProductSendoPayload , "sendo.product.publish");
-        //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
-        kafkaTemplate.send("publish_sendo_product", payloadStr );
         return ResponseEntity.ok(GApiResponse.success(response));
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("publishAllSendoProduct")
+    public ResponseEntity<GApiResponse> postAllSendoProduct(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ecomId", required = false) Long ecomId
+    ) {
+        boolean status=  sendoProductService.postAllProductToSendo(ecomId);
+        return ResponseEntity.ok(GApiResponse.success("Gửi thông tin đăng sản phẩm vào hàng đợi thành công", status));
     }
 
 

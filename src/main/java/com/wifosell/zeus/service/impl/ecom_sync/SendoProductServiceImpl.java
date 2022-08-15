@@ -17,13 +17,18 @@ import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload
 import com.wifosell.zeus.payload.provider.shopee.SendoServiceResponseBase;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoCreateOrUpdateProductPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.payload.response.product.ProductResponse;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
+import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.service.SendoProductService;
+import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.specs.SendoProductSpecs;
+import com.wifosell.zeus.taurus.core.TaurusBus;
+import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
 import org.apache.commons.compress.harmony.unpack200.Pack200UnpackerAdapter;
@@ -32,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.metamodel.ListAttribute;
@@ -84,6 +90,15 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     @Autowired
     AppProperties appProperties;
+
+    @Autowired
+    KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    SendoProductService sendoProductService;
+
+    @Autowired
+    EcomService ecomService;
 
 
     public Page<SendoProduct> getProducts(
@@ -420,6 +435,56 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         m.setExtended_shipping_package(extendedShippingPackage);
         return m;
+    }
+
+    @Override
+    public SendoCreateOrUpdateProductPayload postNewProductToSendo(Long ecomId, Long sysProductId) {
+        SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
+
+        var response = sendoProductService.pulishCreateSystemProductToSendo(ecomId, sysProductId);
+
+        KafkaPublishProductSendoPayload kafkaPublishProductSendoPayload = new KafkaPublishProductSendoPayload();
+        kafkaPublishProductSendoPayload.setShop_key(sendoInfo.getShop_key());
+        kafkaPublishProductSendoPayload.setSecret_key(sendoInfo.getSecret_key());
+        kafkaPublishProductSendoPayload.setPublish_data_json(response);
+        var payloadStr = TaurusBus.buildPayloadMessageString(kafkaPublishProductSendoPayload, "sendo.product.publish");
+        //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
+        kafkaTemplate.send("publish_sendo_product", payloadStr);
+        return response;
+    }
+
+    @Override
+    public boolean postAllProductToSendo(Long ecomId) {
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        if (ecomAccount == null) {
+            logger.info("[-] Ecom Account Id {} not found", ecomId);
+            throw new ZeusGlobalException(HttpStatus.OK, "Tài khoản sàn không tồn tại");
+        }
+
+        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+        }
+        User gm = ecomAccount.getGeneralManager();
+
+
+        // Lấy liên kết sww and ecom account
+        Optional<LazadaSwwAndEcomAccount> linkSwwOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccount.getId());
+        if (linkSwwOpt.isEmpty()) {
+            logger.info("[-] Chua lien ket ecom id {}, gm {}. ", ecomId, gm.getId());
+            throw new ZeusGlobalException(HttpStatus.OK, "Không tìm thấy liên kết với tài khoản sàn");
+        }
+        LazadaSwwAndEcomAccount linkSww = linkSwwOpt.get();
+        Warehouse warehouseLinked = linkSww.getSaleChannelShop().getWarehouse();
+
+        List<Product> listProducts = productRepository.findAll(
+                ProductSpecs.hasGeneralManager(gm.getId())
+        );
+        for (var p:
+                listProducts) {
+            this.postNewProductToSendo(ecomId,p.getId());
+        }
+
+        return true;
     }
 
     @Override
