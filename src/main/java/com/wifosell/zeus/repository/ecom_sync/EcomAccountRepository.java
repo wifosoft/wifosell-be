@@ -15,8 +15,8 @@ import java.util.Optional;
 
 @Repository
 public interface EcomAccountRepository extends SoftRepository<EcomAccount, Long> {
-    Optional<EcomAccount> findByAccountNameAndEcomName(@NotBlank String accountName, @NotBlank EcomAccount.EcomName ecomName);
 
+    Optional<EcomAccount> findFirstByAccountNameAndEcomName(@NotBlank String accountName, @NotBlank EcomAccount.EcomName ecomName);
 
 
     @Query("select e from EcomAccount e where e.generalManager.id = ?1 and e.ecomName = ?2")

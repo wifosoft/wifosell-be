@@ -1,7 +1,6 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.google.gson.Gson;
-import com.wifosell.zeus.annotation.PreAuthorizeAccessGeneralManagerToShop;
 import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProductVariantShortInfo;
@@ -12,7 +11,6 @@ import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
-import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import com.wifosell.zeus.payload.provider.shopee.SendoServiceResponseBase;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoCreateOrUpdateProductPayload;
@@ -31,7 +29,6 @@ import com.wifosell.zeus.taurus.core.TaurusBus;
 import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
-import org.apache.commons.compress.harmony.unpack200.Pack200UnpackerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +37,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.metamodel.ListAttribute;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
@@ -126,7 +122,7 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     public void consumeSingleSendoProductLinkProductPhase(ResponseSendoProductItemPayload itemPayload) {
         //created product, only mapping to db
-        Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findByAccountNameAndEcomName(itemPayload.getShop_relation_id(), EcomAccount.EcomName.SENDO);
+        Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findFirstByAccountNameAndEcomName(itemPayload.getShop_relation_id(), EcomAccount.EcomName.SENDO);
         if (ecomAccountOpt.isEmpty()) {
             logger.info("Shop key khong ton tai " + itemPayload.getShop_relation_id());
             return;
@@ -263,7 +259,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         //userid productid,
         try {
             String ShopKey = itemPayload.getShop_relation_id();
-            Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findByAccountNameAndEcomName(ShopKey, EcomAccount.EcomName.SENDO);
+            Optional<EcomAccount> ecomAccountOpt = ecomAccountRepository.findFirstByAccountNameAndEcomName(ShopKey, EcomAccount.EcomName.SENDO);
             if (ecomAccountOpt.isEmpty()) {
                 logger.info("Shop key khong ton tai " + ShopKey);
                 return;
