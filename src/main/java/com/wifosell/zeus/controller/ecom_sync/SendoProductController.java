@@ -3,7 +3,6 @@ package com.wifosell.zeus.controller.ecom_sync;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoVariant;
 import com.wifosell.zeus.payload.GApiResponse;
-import com.wifosell.zeus.payload.provider.lazada.report.FetchAndSyncLazadaProductsReport;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.SendoProductService;

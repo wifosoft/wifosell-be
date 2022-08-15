@@ -396,8 +396,8 @@ public class SendoProductServiceImpl implements SendoProductService {
             for (var _optionVal : _sysVariant.getOptionValues()) {
 
                 SendoCreateOrUpdateProductPayload.VariantAttribute __variantAttribute = new SendoCreateOrUpdateProductPayload.VariantAttribute();
-                __variantAttribute.setAttribute_id(Integer.parseInt("4012" + ZeusUtils.paddingId(_optionVal.getId().toString())));
-                __variantAttribute.setAttribute_code("4012" + ZeusUtils.paddingId(_optionVal.getId().toString()));
+                __variantAttribute.setAttribute_id(Integer.parseInt("4012" + ZeusUtils.paddingId(_optionVal.getIdOptionModel().toString())));
+                __variantAttribute.setAttribute_code("4012" + ZeusUtils.paddingId(_optionVal.getIdOptionModel().toString()));
                 __variantAttribute.setOption_id(Integer.parseInt("3912" + ZeusUtils.paddingId(_optionVal.getId().toString())));
                 listVariantAttributeInVariant.add(__variantAttribute);
             }
