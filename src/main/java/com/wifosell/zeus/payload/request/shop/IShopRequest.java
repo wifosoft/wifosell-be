@@ -31,5 +31,7 @@ public interface IShopRequest {
 
         @NotNull
         Long warehouseId;
+
+        Long ecomId;
     }
 }

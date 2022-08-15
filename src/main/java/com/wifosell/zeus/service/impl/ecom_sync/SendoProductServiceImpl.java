@@ -314,6 +314,11 @@ public class SendoProductServiceImpl implements SendoProductService {
 
 
         ProductResponse sysProductResponse = new ProductResponse(sysProduct);
+        if(sysProduct.getCategory() == null){
+            logger.info("[-] Khong co category ecom id {}, sys product {}, gm {} ", ecomId, sysProductId, gm.getId());
+            return null;
+        }
+
         Optional<SendoCategoryAndSysCategory> sendoCategoryAndSysCategoryOpt = sendoCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(gm.getId(), sysProductResponse.getCategory().getId());
         if (sendoCategoryAndSysCategoryOpt.isEmpty()) {
             logger.info("[-] Chua co lien ket category {}", sysProductResponse.getCategory().getId());
