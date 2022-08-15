@@ -28,6 +28,7 @@ import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
@@ -115,7 +116,7 @@ public class EcomServiceImpl implements EcomService {
 
 
     @Override
-    public SendoLinkAccountRequestDTO getSendoDTO(Long ecomId) {
+    public SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId) {
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
         if (ecomAccount == null) {
             throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
@@ -129,7 +130,7 @@ public class EcomServiceImpl implements EcomService {
 
         String shopKey = ecomAccount.getAccountName();
         String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
-        var reqPayload = SendoLinkAccountRequestDTO.builder()
+        var reqPayload = SendoLinkAccountRequestDTOWithModel.builder()
                 .secret_key(secretKey)
                 .shop_key(shopKey)
                 .ecomAccount(ecomAccount)

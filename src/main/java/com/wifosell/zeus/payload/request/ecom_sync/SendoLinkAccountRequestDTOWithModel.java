@@ -11,7 +11,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class SendoLinkAccountRequestDTO {
+public class SendoLinkAccountRequestDTOWithModel {
     public String shop_key;
     public String secret_key;
+
+    @Expose(serialize = false, deserialize = false)
+    @JsonIgnore
+    public EcomAccount ecomAccount;
+
 }
