@@ -50,7 +50,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -336,7 +335,7 @@ public class EcomServiceImpl implements EcomService {
     @Override
     public EcomAccount addEcomAccountLazada(Long userId, EcomAccount account) {
         User user = userRepository.getUserById(userId);
-        Optional<EcomAccount> checkExisted = ecomAccountRepository.findByAccountNameAndEcomName(account.getAccountName(), EcomAccount.EcomName.LAZADA);
+        Optional<EcomAccount> checkExisted = ecomAccountRepository.findFirstByAccountNameAndEcomName(account.getAccountName(), EcomAccount.EcomName.LAZADA);
         //update
         //throw new ZeusGlobalException(HttpStatus.OK, "Tài khoản đã tồn tại");
         checkExisted.ifPresent(ecomAccount -> {
@@ -391,7 +390,7 @@ public class EcomServiceImpl implements EcomService {
             AccountInfoPayload accountInfoPayload = AccountInfoPayload.builder().code("0").request_id("2101241b16547560579496455").data(AccountInfoPayloadData.builder().name(shopName).verified("true").location("").seller_id(dataModel.get_id()).status("ACTIVE").email("").secret_key(dataModel.getSecret_key()).shop_key(dataModel.getShop_key()).build()).build();
 
             //check existed
-            Optional<EcomAccount> checkExisted = ecomAccountRepository.findByAccountNameAndEcomName(shopKey, EcomAccount.EcomName.SENDO);
+            Optional<EcomAccount> checkExisted = ecomAccountRepository.findFirstByAccountNameAndEcomName(shopKey, EcomAccount.EcomName.SENDO);
 
             if (checkExisted.isEmpty()) {
                 ecomAccount = new EcomAccount();
