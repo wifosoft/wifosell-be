@@ -6,9 +6,7 @@ import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.lazada.modules.category.LazadaCategoryAPI;
 import com.wifosell.lazada.modules.category.payload.LazadaGetCategoryAttributesResponse;
-import com.wifosell.lazada.modules.product.payload.LazadaGetProductItemResponse;
-import com.wifosell.lazada.modules.product.payload.LazadaGetProductsResponse;
-import com.wifosell.lazada.modules.product.payload.LazadaUpdatePriceQuantityRequest;
+import com.wifosell.lazada.modules.product.payload.*;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,22 +40,22 @@ public class LazadaProductAPI {
         return LazadaGetProductsResponse.fromJson(response.getBody());
     }
 
-    public static LazadaGetProductItemResponse getProductItem(String accessToken, Long productId) throws ApiException {
+    public static LazadaGetProductItemResponse getProductItem(String accessToken, Long itemId) throws ApiException {
         LazopRequest request = new LazopRequest();
 
         request.setApiName("/product/item/get");
         request.setHttpMethod("GET");
-        request.addApiParameter("item_id", String.valueOf(productId));
+        request.addApiParameter("item_id", String.valueOf(itemId));
         request.addApiParameter("seller_sku", "");
 
         LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
 
         if (!response.isSuccess()) {
-            logger.error("getProductItem fail | productId = {}, body = {}.", productId, response.getBody());
+            logger.error("getProductItem fail | itemId = {}, body = {}.", itemId, response.getBody());
             return null;
         }
 
-        logger.info("getProductItem success | productId = {}.", productId);
+        logger.info("getProductItem success | itemId = {}.", itemId);
 
         LazadaGetProductItemResponse productItemResponse = LazadaGetProductItemResponse.fromJson(response.getBody());
 
@@ -85,5 +83,25 @@ public class LazadaProductAPI {
 
         logger.info("updatePriceAndQuantity success.");
         return true;
+    }
+
+    public static LazadaCreateProductResponse createProduct(String accessToken, LazadaCreateProductRequest payload) throws ApiException, JsonProcessingException {
+        LazopRequest request = new LazopRequest();
+
+        request.setApiName("/product/create");
+        request.addApiParameter("payload", payload.toXml());
+
+        LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
+
+        if (!response.isSuccess()) {
+            logger.error("createProduct fail | body = {}.", response.getBody());
+            return null;
+        }
+
+        LazadaCreateProductResponse createProductResponse = LazadaCreateProductResponse.fromJson(response.getBody());
+
+        logger.info("createProduct success | itemId = {}, skuCount = {}",
+                createProductResponse.getData().getItemId(), createProductResponse.getData().getSkus().size());
+        return createProductResponse;
     }
 }

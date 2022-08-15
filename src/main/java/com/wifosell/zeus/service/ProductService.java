@@ -25,6 +25,8 @@ public interface ProductService {
             String orderBy
     );
 
+    List<Product> getProducts(Long userId, List<Long> warehouseIds, List<Boolean> isActives);
+
     PageInfo<Product> searchProducts(
             Long userId,
             String keyword,

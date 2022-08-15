@@ -15,6 +15,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmb
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -44,4 +45,8 @@ public class OptionModel extends BasicEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
+
+    public List<OptionValue> getOptionValues(boolean available) {
+        return optionValues.stream().filter(ov -> ov.isDeleted() != available).collect(Collectors.toList());
+    }
 }

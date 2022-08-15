@@ -73,6 +73,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getProducts(Long userId, List<Long> warehouseIds, List<Boolean> isActives) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return productRepository.findAll(
+                ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.hasStocks(warehouseIds, null, null))
+                        .and(ProductSpecs.inIsActives(isActives)));
+    }
+
+    @Override
     public PageInfo<Product> searchProducts(
             Long userId,
             String keyword,

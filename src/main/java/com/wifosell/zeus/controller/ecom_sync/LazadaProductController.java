@@ -4,6 +4,7 @@ import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.report.FetchLazadaProductsReport;
+import com.wifosell.zeus.payload.provider.lazada.report.PushLazadaProductsReport;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.LazadaProductService;
@@ -26,6 +27,17 @@ public class LazadaProductController {
             @RequestParam(name = "ecomId") Long ecomId
     ) {
         FetchLazadaProductsReport report = lazadaProductService.fetchLazadaProducts(
+                userPrincipal.getId(), ecomId);
+        return ResponseEntity.ok(GApiResponse.success(report));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/push")
+    public ResponseEntity<GApiResponse<PushLazadaProductsReport>> pushLazadaProducts(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "ecomId") Long ecomId
+    ) {
+        PushLazadaProductsReport report = lazadaProductService.pushLazadaProducts(
                 userPrincipal.getId(), ecomId);
         return ResponseEntity.ok(GApiResponse.success(report));
     }

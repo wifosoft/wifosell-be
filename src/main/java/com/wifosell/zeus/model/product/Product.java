@@ -18,6 +18,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -79,4 +80,16 @@ public class Product extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @IndexedEmbedded
     private User generalManager;
+
+    public List<ProductImage> getImages(boolean available) {
+        return images.stream().filter(i -> i.isDeleted() != available).collect(Collectors.toList());
+    }
+
+    public List<OptionModel> getOptions(boolean available) {
+        return options.stream().filter(o -> o.isDeleted() != available).collect(Collectors.toList());
+    }
+
+    public List<Variant> getVariants(boolean available) {
+        return variants.stream().filter(v -> v.isDeleted() != available).collect(Collectors.toList());
+    }
 }

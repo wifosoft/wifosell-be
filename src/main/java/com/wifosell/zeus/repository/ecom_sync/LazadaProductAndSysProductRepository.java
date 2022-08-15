@@ -15,4 +15,6 @@ public interface LazadaProductAndSysProductRepository extends SoftRepository<Laz
     }
 
     Optional<LazadaProductAndSysProduct> findByLazadaProductId(Long lazadaProductId);
+
+    Optional<LazadaProductAndSysProduct> findBySysProductId(Long sysProductId);
 }
