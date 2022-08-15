@@ -44,7 +44,7 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         ecomAccountRepository.save(ecomAccount);
 
         LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
-        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
+        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(1L).orElse(null);
         if (saleChannelShop == null) {
             return;
         }
@@ -52,6 +52,7 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
         lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
     }
+
     public void Seed2() {
         User gm = userRepository.getUserByName("manager1").getGeneralManager();
         EcomAccount ecomAccount = new EcomAccount();
@@ -68,7 +69,7 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         ecomAccountRepository.save(ecomAccount);
 
         LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
-        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(1L).orElse(null);
+        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
         if (saleChannelShop == null) {
             return;
         }

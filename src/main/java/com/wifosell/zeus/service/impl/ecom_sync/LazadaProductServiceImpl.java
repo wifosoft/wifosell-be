@@ -214,7 +214,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.setName(data.getName());
         req.setDescription(data.getDescription());
 
-        req.setWeight(data.getSkus().get(0).getPackageWeight());
+        req.setWeight(Product.fromWeightLazada(data.getSkus().get(0).getPackageWeight()));
         req.setLength(data.getSkus().get(0).getPackageLength());
         req.setWidth(data.getSkus().get(0).getPackageWidth());
         req.setHeight(data.getSkus().get(0).getPackageHeight());

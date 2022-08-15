@@ -100,4 +100,9 @@ public class Product extends BasicEntity {
     public BigDecimal getWeightLazada() {
         return weight.divide(BigDecimal.valueOf(1000));
     }
+
+    @JsonIgnore
+    public static BigDecimal fromWeightLazada(BigDecimal weight) {
+        return weight.multiply(BigDecimal.valueOf(1000));
+    }
 }
