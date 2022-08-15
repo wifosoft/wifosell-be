@@ -493,7 +493,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_HEIGHT, variant.getProduct().getHeight());
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_LENGTH, variant.getProduct().getLength());
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WIDTH, variant.getProduct().getWidth());
-            sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT, variant.getProduct().getWeight());
+            sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT, variant.getProduct().getWeightLazada());
 
             for (VariantValue variantValue : variant.getVariantValues(true)) {
                 String key = variantValue.getOptionValue().getOption().getName().replace(" ", "_");

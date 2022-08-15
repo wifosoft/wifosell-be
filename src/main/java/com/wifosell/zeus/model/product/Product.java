@@ -81,15 +81,23 @@ public class Product extends BasicEntity {
     @IndexedEmbedded
     private User generalManager;
 
+    @JsonIgnore
     public List<ProductImage> getImages(boolean available) {
         return images.stream().filter(i -> i.isDeleted() != available).collect(Collectors.toList());
     }
 
+    @JsonIgnore
     public List<OptionModel> getOptions(boolean available) {
         return options.stream().filter(o -> o.isDeleted() != available).collect(Collectors.toList());
     }
 
+    @JsonIgnore
     public List<Variant> getVariants(boolean available) {
         return variants.stream().filter(v -> v.isDeleted() != available).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public BigDecimal getWeightLazada() {
+        return weight.divide(BigDecimal.valueOf(1000));
     }
 }
