@@ -1,37 +1,49 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.google.gson.Gson;
+import com.wifosell.zeus.annotation.PreAuthorizeAccessGeneralManagerToShop;
+import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProductVariantShortInfo;
+import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
+import com.wifosell.zeus.payload.provider.shopee.SendoServiceResponseBase;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoCreateOrUpdateProductPayload;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.payload.response.product.ProductResponse;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
+import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.service.SendoProductService;
+import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.specs.SendoProductSpecs;
+import com.wifosell.zeus.taurus.core.TaurusBus;
+import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
+import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
 import org.apache.commons.compress.harmony.unpack200.Pack200UnpackerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.metamodel.ListAttribute;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +87,18 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     @Autowired
     StockRepository stockRepository;
+
+    @Autowired
+    AppProperties appProperties;
+
+    @Autowired
+    KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    SendoProductService sendoProductService;
+
+    @Autowired
+    EcomService ecomService;
 
 
     public Page<SendoProduct> getProducts(
@@ -290,6 +314,11 @@ public class SendoProductServiceImpl implements SendoProductService {
 
 
         ProductResponse sysProductResponse = new ProductResponse(sysProduct);
+        if(sysProduct.getCategory() == null){
+            logger.info("[-] Khong co category ecom id {}, sys product {}, gm {} ", ecomId, sysProductId, gm.getId());
+            return null;
+        }
+
         Optional<SendoCategoryAndSysCategory> sendoCategoryAndSysCategoryOpt = sendoCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(gm.getId(), sysProductResponse.getCategory().getId());
         if (sendoCategoryAndSysCategoryOpt.isEmpty()) {
             logger.info("[-] Chua co lien ket category {}", sysProductResponse.getCategory().getId());
@@ -338,7 +367,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         //
         m.set_config_variant(variants.size() > 1);
         SendoCreateOrUpdateProductPayload.Voucher voucher = new SendoCreateOrUpdateProductPayload.Voucher();
-        voucher.setProduct_type(0);
+        voucher.setProduct_type(1);
         voucher.set_check_date(false);
         m.setVoucher(voucher);
         //attibutes
@@ -350,16 +379,17 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         for (var _opt : sysProductResponse.getOptions()) {
             SendoCreateOrUpdateProductPayload.Attribute _attribute = new SendoCreateOrUpdateProductPayload.Attribute();
-            _attribute.setAttribute_id(Integer.parseInt("401216" + ZeusUtils.paddingId(_opt.getId().toString()))); //prefix 88 với các attribute Id
+            _attribute.setAttribute_id(Integer.parseInt("4012" + ZeusUtils.paddingId(_opt.getId().toString()))); //prefix 88 với các attribute Id
             _attribute.setAttribute_name(_opt.getName());
-            _attribute.setAttribute_code("401216" + ZeusUtils.paddingId(_opt.getId().toString()));
+            _attribute.setAttribute_code("4012" + ZeusUtils.paddingId(_opt.getId().toString()));
             _attribute.setAttribute_is_custom(true);
-            _attribute.setAttribute_is_checkout(false);
+            _attribute.setAttribute_is_checkout(true);
+            _attribute.setAttribute_is_required(false);
 
             ArrayList<SendoCreateOrUpdateProductPayload.AttributeValue> listAttributeValue = new ArrayList<>();
             for (var _optValue : _opt.getValues()) {
                 SendoCreateOrUpdateProductPayload.AttributeValue _attributeVal = new SendoCreateOrUpdateProductPayload.AttributeValue();
-                _attributeVal.setId(Integer.parseInt("391216" + ZeusUtils.paddingId(_optValue.getId().toString()))); //prefix 66 với các optionId
+                _attributeVal.setId(Integer.parseInt("3912" + ZeusUtils.paddingId(_optValue.getId().toString()))); //prefix 66 với các optionId
                 _attributeVal.setValue(_optValue.getName());
                 _attributeVal.set_custom(true);
                 _attributeVal.set_selected(true);
@@ -385,9 +415,9 @@ public class SendoProductServiceImpl implements SendoProductService {
             for (var _optionVal : _sysVariant.getOptionValues()) {
 
                 SendoCreateOrUpdateProductPayload.VariantAttribute __variantAttribute = new SendoCreateOrUpdateProductPayload.VariantAttribute();
-                __variantAttribute.setAttribute_id(Integer.parseInt("401216" + ZeusUtils.paddingId(_optionVal.getId().toString())));
-                __variantAttribute.setAttribute_code("401216" + ZeusUtils.paddingId(_optionVal.getId().toString()));
-                __variantAttribute.setOption_id(Integer.parseInt("391216" + ZeusUtils.paddingId(_optionVal.getId().toString())));
+                __variantAttribute.setAttribute_id(Integer.parseInt("4012" + ZeusUtils.paddingId(_optionVal.getIdOptionModel().toString())));
+                __variantAttribute.setAttribute_code("4012" + ZeusUtils.paddingId(_optionVal.getIdOptionModel().toString()));
+                __variantAttribute.setOption_id(Integer.parseInt("3912" + ZeusUtils.paddingId(_optionVal.getId().toString())));
                 listVariantAttributeInVariant.add(__variantAttribute);
             }
 
@@ -410,6 +440,81 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         m.setExtended_shipping_package(extendedShippingPackage);
         return m;
+    }
+
+    @Override
+    public SendoCreateOrUpdateProductPayload postNewProductToSendo(Long ecomId, Long sysProductId) {
+        SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
+
+        var response = sendoProductService.pulishCreateSystemProductToSendo(ecomId, sysProductId);
+
+        KafkaPublishProductSendoPayload kafkaPublishProductSendoPayload = new KafkaPublishProductSendoPayload();
+        kafkaPublishProductSendoPayload.setShop_key(sendoInfo.getShop_key());
+        kafkaPublishProductSendoPayload.setSecret_key(sendoInfo.getSecret_key());
+        kafkaPublishProductSendoPayload.setPublish_data_json(response);
+        var payloadStr = TaurusBus.buildPayloadMessageString(kafkaPublishProductSendoPayload, "sendo.product.publish");
+        //Page<ProductResponse> responses = products.map(product -> new ProductResponse(product, warehouseIds));
+        kafkaTemplate.send("publish_sendo_product", payloadStr);
+        return response;
+    }
+
+    @Override
+    public boolean postAllProductToSendo(Long ecomId) {
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        if (ecomAccount == null) {
+            logger.info("[-] Ecom Account Id {} not found", ecomId);
+            throw new ZeusGlobalException(HttpStatus.OK, "Tài khoản sàn không tồn tại");
+        }
+
+        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+        }
+        User gm = ecomAccount.getGeneralManager();
+
+
+        // Lấy liên kết sww and ecom account
+        Optional<LazadaSwwAndEcomAccount> linkSwwOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccount.getId());
+        if (linkSwwOpt.isEmpty()) {
+            logger.info("[-] Chua lien ket ecom id {}, gm {}. ", ecomId, gm.getId());
+            throw new ZeusGlobalException(HttpStatus.OK, "Không tìm thấy liên kết với tài khoản sàn");
+        }
+        LazadaSwwAndEcomAccount linkSww = linkSwwOpt.get();
+        Warehouse warehouseLinked = linkSww.getSaleChannelShop().getWarehouse();
+
+        List<Product> listProducts = productRepository.findAll(
+                ProductSpecs.hasGeneralManager(gm.getId())
+        );
+        for (var p:
+                listProducts) {
+            this.postNewProductToSendo(ecomId,p.getId());
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean fetchAndSyncSendoProducts(Long ecomId) {
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        if (ecomAccount == null) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
+        }
+        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+        }
+
+        User user = ecomAccount.getGeneralManager();
+
+        String shopKey = ecomAccount.getAccountName();
+        String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
+        var reqPayload = SendoLinkAccountRequestDTO.builder().secret_key(secretKey).shop_key(shopKey).build();
+        HashMap<String, String> headerAuth = new HashMap<String, String>();
+        headerAuth.put("shop_key", shopKey);
+        headerAuth.put("secret_key", secretKey);
+        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/product/crawlAllProductToDB", headerAuth, null, SendoServiceResponseBase.class));
+        if (responseModel.success == true) {
+            return true;
+        }
+        return false;
     }
 
 }

@@ -28,6 +28,7 @@ import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.provider.shopee.ResponseLinkAccountPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.EcomService;
@@ -49,6 +50,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -112,6 +114,32 @@ public class EcomServiceImpl implements EcomService {
     @Autowired
     LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
 
+
+    @Override
+    public SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId) {
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        if (ecomAccount == null) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
+        }
+        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+        }
+
+        User user = ecomAccount.getGeneralManager();
+
+
+        String shopKey = ecomAccount.getAccountName();
+        String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
+        var reqPayload = SendoLinkAccountRequestDTOWithModel.builder()
+                .secret_key(secretKey)
+                .shop_key(shopKey)
+                .ecomAccount(ecomAccount)
+                .build();
+//        HashMap<String, String> headerAuth = new HashMap<String, String>();
+//        headerAuth.put("shop_key", shopKey);
+//        headerAuth.put("secret_key", secretKey);
+        return reqPayload;
+    }
 
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName) {

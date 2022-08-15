@@ -7,6 +7,8 @@ import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
+import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,7 +17,8 @@ import java.util.List;
 @Service
 @Transactional
 public interface EcomService {
-    public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
+    SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId);
+        public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
     EcomAccount addEcomAccountLazada(Long userId, EcomAccount account);
 
     EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException;

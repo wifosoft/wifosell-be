@@ -16,11 +16,13 @@ public class ResponseSendoSellerInfoPayload extends ResponseBasePayload {
         public String verified;
         public String location;
         public String seller_id;
+
         public String email;
         public String short_code;
         public String cb;
         public String status;
         public String shop_key;
+        public String secret_key;
 
     }
     public Data data;
