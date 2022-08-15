@@ -101,7 +101,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
             res.getData().getProducts().forEach(product -> {
                 try {
-                    boolean success = fetchLazadaProductItem(user, ecomAccount, product.getItemId(), warehouse);
+                    boolean success = fetchLazadaProductItem(user, ecomAccount, product.getItemId(), warehouse, null);
                     if (success) fetchSuccess.getAndIncrement();
                 } catch (ApiException e) {
                     e.printStackTrace();
@@ -120,7 +120,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         return FetchLazadaProductsReport.builder().fetchTotal(fetchTotal.get()).fetchSuccess(fetchSuccess.get()).build();
     }
 
-    private boolean fetchLazadaProductItem(User user, EcomAccount ecomAccount, Long itemId, Warehouse warehouse) throws ApiException {
+    private boolean fetchLazadaProductItem(User user, EcomAccount ecomAccount, Long itemId, Warehouse warehouse, Product syncProduct) throws ApiException {
         LazadaGetProductItemResponse res = LazadaProductAPI.getProductItem(ecomAccount.getAccessToken(), itemId);
 
         if (res == null) {
@@ -160,7 +160,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Create/Update SysProduct and SysVariants
         LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findByLazadaProductId(lazadaProduct.getId()).orElse(null);
-        Product sysProduct = productLink != null ? productLink.getSysProduct() : new Product();
+        Product sysProduct = productLink != null ? productLink.getSysProduct() : syncProduct != null ? syncProduct : new Product();
         sysProduct = productService.updateProductByRequest(
                 sysProduct,
                 toUpdateProductRequest(data, sysProduct),
@@ -183,7 +183,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         }
 
         // Link LazadaVariants and SysVariants
-        List<Variant> sysVariants = sysProduct.getVariants().stream().filter(v -> !v.isDeleted())
+        List<Variant> sysVariants = sysProduct.getVariants(true).stream()
                 .sorted(Comparator.comparing(Variant::getIdx))
                 .collect(Collectors.toList());
 
@@ -344,6 +344,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         // Push products to Lazada
         List<Product> sysProducts = productService.getProducts(userId, List.of(warehouse.getId()), List.of(true));
         List<Long> itemIds = new ArrayList<>();
+        List<Product> syncProducts = new ArrayList<>();
 
         for (Product sysProduct : sysProducts) {
             try {
@@ -354,7 +355,10 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 } else {
                     itemId = updateLazadaProductItem(ecomAccount, sysProduct);
                 }
-                if (itemId != null) itemIds.add(itemId);
+                if (itemId != null) {
+                    itemIds.add(itemId);
+                    syncProducts.add(sysProduct);
+                }
             } catch (JsonProcessingException | ApiException e) {
                 e.printStackTrace();
             }
@@ -363,9 +367,9 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         // Fetch products to create links
         int fetchSuccess = 0;
 
-        for (Long itemId : itemIds) {
+        for (int i = 0; i < itemIds.size(); ++i) {
             try {
-                boolean success = fetchLazadaProductItem(user, ecomAccount, itemId, warehouse);
+                boolean success = fetchLazadaProductItem(user, ecomAccount, itemIds.get(i), warehouse, syncProducts.get(i));
                 if (success) fetchSuccess++;
             } catch (ApiException e) {
                 e.printStackTrace();
