@@ -1500,7 +1500,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-den-s",
+        "sku": "ATC06020-den-s",
         "barcode": null,
         "isActive": true
       },
@@ -1508,7 +1508,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-den-m",
+        "sku": "ATC06020-den-m",
         "barcode": null,
         "isActive": true
       },
@@ -1516,7 +1516,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-den-l",
+        "sku": "ATC06020-den-l",
         "barcode": null,
         "isActive": true
       },
@@ -1524,7 +1524,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-hong-s",
+        "sku": "ATC06020-hong-s",
         "barcode": null,
         "isActive": true
       },
@@ -1532,7 +1532,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-hong-m",
+        "sku": "ATC06020-hong-m",
         "barcode": null,
         "isActive": true
       },
@@ -1540,7 +1540,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-hong-l",
+        "sku": "ATC06020-hong-l",
         "barcode": null,
         "isActive": true
       },
@@ -1548,7 +1548,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-vang-s",
+        "sku": "ATC06020-vang-s",
         "barcode": null,
         "isActive": true
       },
@@ -1556,7 +1556,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-vang-m",
+        "sku": "ATC06020-vang-m",
         "barcode": null,
         "isActive": true
       },
@@ -1564,7 +1564,7 @@
         "id": null,
         "originalCost": "230000",
         "cost": "179000",
-        "sku": "ATC04006-vang-l",
+        "sku": "ATC06020-vang-l",
         "barcode": null,
         "isActive": true
       }
