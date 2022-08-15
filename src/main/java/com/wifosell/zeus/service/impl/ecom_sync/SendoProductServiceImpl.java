@@ -86,7 +86,6 @@ public class SendoProductServiceImpl implements SendoProductService {
     AppProperties appProperties;
 
 
-
     public Page<SendoProduct> getProducts(
             Long ecomId,
             int offset,
@@ -348,7 +347,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         //
         m.set_config_variant(variants.size() > 1);
         SendoCreateOrUpdateProductPayload.Voucher voucher = new SendoCreateOrUpdateProductPayload.Voucher();
-        voucher.setProduct_type(0);
+        voucher.setProduct_type(1);
         voucher.set_check_date(false);
         m.setVoucher(voucher);
         //attibutes
@@ -364,7 +363,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             _attribute.setAttribute_name(_opt.getName());
             _attribute.setAttribute_code("4012" + ZeusUtils.paddingId(_opt.getId().toString()));
             _attribute.setAttribute_is_custom(true);
-            _attribute.setAttribute_is_checkout(true );
+            _attribute.setAttribute_is_checkout(true);
             _attribute.setAttribute_is_required(false);
 
             ArrayList<SendoCreateOrUpdateProductPayload.AttributeValue> listAttributeValue = new ArrayList<>();
@@ -427,24 +426,24 @@ public class SendoProductServiceImpl implements SendoProductService {
     public boolean fetchAndSyncSendoProducts(Long ecomId) {
 
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
-        if(ecomAccount ==null){
+        if (ecomAccount == null) {
             throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
         }
-        if(ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO){
+        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
             throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
         }
 
         User user = ecomAccount.getGeneralManager();
 
 
-        String shopKey= ecomAccount.getAccountName();
+        String shopKey = ecomAccount.getAccountName();
         String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
         var reqPayload = SendoLinkAccountRequestDTO.builder().secret_key(secretKey).shop_key(shopKey).build();
         HashMap<String, String> headerAuth = new HashMap<String, String>();
         headerAuth.put("shop_key", shopKey);
         headerAuth.put("secret_key", secretKey);
-        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/product/crawlAllProductToDB",  headerAuth , null, SendoServiceResponseBase.class));
-        if (responseModel.success== true) {
+        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/product/crawlAllProductToDB", headerAuth, null, SendoServiceResponseBase.class));
+        if (responseModel.success == true) {
             return true;
         }
         return false;
