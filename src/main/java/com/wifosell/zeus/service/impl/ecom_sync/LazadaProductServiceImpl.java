@@ -471,7 +471,9 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             value.name = option.getName();
             value.hasImage = false;
             value.customize = true;
-            value.options = option.getOptionValues(true).stream().map(OptionValue::getName).collect(Collectors.toList());
+            value.options = option.getOptionValues(true).stream()
+                    .map(ov -> ov.getName().replace(" ", "_"))
+                    .collect(Collectors.toList());
             req.product.variations.put(key, value);
         }
 
@@ -496,7 +498,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT, variant.getProduct().getWeight());
 
             for (VariantValue variantValue : variant.getVariantValues(true)) {
-                String key = variantValue.getOptionValue().getOption().getName();
+                String key = variantValue.getOptionValue().getOption().getName().replace(" ", "_");
                 String value = variantValue.getOptionValue().getName();
                 sku.put(key, value);
             }

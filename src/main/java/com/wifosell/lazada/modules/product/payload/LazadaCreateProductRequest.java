@@ -79,6 +79,7 @@ public class LazadaCreateProductRequest {
     public String toXml() throws JsonProcessingException {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        return xmlMapper.writeValueAsString(this);
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?> " + xmlMapper.writeValueAsString(this);
+        return xml;
     }
 }
