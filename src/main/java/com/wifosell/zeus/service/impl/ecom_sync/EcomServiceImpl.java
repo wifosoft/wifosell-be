@@ -49,6 +49,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -112,6 +113,32 @@ public class EcomServiceImpl implements EcomService {
     @Autowired
     LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
 
+
+    @Override
+    public SendoLinkAccountRequestDTO getSendoDTO(Long ecomId) {
+        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+        if (ecomAccount == null) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
+        }
+        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
+            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+        }
+
+        User user = ecomAccount.getGeneralManager();
+
+
+        String shopKey = ecomAccount.getAccountName();
+        String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
+        var reqPayload = SendoLinkAccountRequestDTO.builder()
+                .secret_key(secretKey)
+                .shop_key(shopKey)
+                .ecomAccount(ecomAccount)
+                .build();
+//        HashMap<String, String> headerAuth = new HashMap<String, String>();
+//        headerAuth.put("shop_key", shopKey);
+//        headerAuth.put("secret_key", secretKey);
+        return reqPayload;
+    }
 
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName) {

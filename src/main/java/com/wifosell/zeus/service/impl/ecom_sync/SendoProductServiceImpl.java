@@ -424,7 +424,6 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     @Override
     public boolean fetchAndSyncSendoProducts(Long ecomId) {
-
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
         if (ecomAccount == null) {
             throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
@@ -434,7 +433,6 @@ public class SendoProductServiceImpl implements SendoProductService {
         }
 
         User user = ecomAccount.getGeneralManager();
-
 
         String shopKey = ecomAccount.getAccountName();
         String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
