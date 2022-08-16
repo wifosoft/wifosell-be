@@ -35,12 +35,15 @@ public class SaleChannelShop {
 
 
     @OneToMany(mappedBy = "saleChannelShop", cascade = CascadeType.ALL, orphanRemoval = true)
-    protected List<LazadaSwwAndEcomAccount> lazadaSwwAndEcomAccount;
+    protected List<LazadaSwwAndEcomAccount> lazadaSwwAndEcomAccount = new ArrayList<>();
 
-    public List<Long> getAllLinkedSwwId () {
-        if(lazadaSwwAndEcomAccount == null){ return new ArrayList<>(); }
+    public List<Long> getAllLinkedSwwId() {
+        if (lazadaSwwAndEcomAccount == null) {
+            return new ArrayList<>();
+        }
         return lazadaSwwAndEcomAccount.stream().map(e -> e.getId()).collect(Collectors.toList());
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;
