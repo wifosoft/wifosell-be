@@ -58,7 +58,7 @@ public class Variant extends BasicEntity {
                 return _stock.getQuantity();
             }
         }
-        return 88;
+        return 0;
     }
 
     @JsonIgnore
