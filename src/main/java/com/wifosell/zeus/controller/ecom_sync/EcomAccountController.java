@@ -15,6 +15,7 @@ import com.wifosell.zeus.payload.provider.lazada.ResponseTokenPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
 import com.wifosell.zeus.payload.request.ecom_sync.PostQueryUrlCallbackLazadaRequest;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequest;
+import com.wifosell.zeus.payload.response.ecom_sync.EcomAccountResponse;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
@@ -37,6 +38,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/ecom_sync/ecom_account")
@@ -67,9 +69,13 @@ public class EcomAccountController {
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GApiResponse<List<EcomAccount>>> getListAccount(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false,name = "ecomName")EcomAccount.EcomName ecomName) {
-        return ResponseEntity.ok(GApiResponse.success(ecomService.getListEcomAccount(userPrincipal.getId(), ecomName)));
+    public ResponseEntity<GApiResponse<List<EcomAccountResponse>>> getListAccount(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false,name = "ecomName")EcomAccount.EcomName ecomName) {
+        var listEcom =ecomService.getListEcomAccount(userPrincipal.getId(), ecomName);
+        var listEcomResponse = listEcom.stream().map(EcomAccountResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(listEcomResponse));
     }
+
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("{id}/delete")

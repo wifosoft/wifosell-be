@@ -18,7 +18,7 @@ import java.util.List;
 @Transactional
 public interface EcomService {
     SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId);
-        public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
+    List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
     EcomAccount addEcomAccountLazada(Long userId, EcomAccount account);
 
     EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException;
