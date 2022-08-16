@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wifosell.lazada.utils.LazadaConvertUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @JacksonXmlRootElement(localName = "Request")
@@ -15,6 +16,19 @@ public class LazadaUpdatePriceQuantityRequest {
 
     public LazadaUpdatePriceQuantityRequest(List<Sku> skus) {
         product = new Product(skus);
+    }
+
+    public LazadaUpdatePriceQuantityRequest(long itemId, long skuId, int quantity) {
+        product = new Product(List.of(new Sku(
+                itemId,
+                skuId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                quantity
+        )));
     }
 
     public static class Product {
@@ -29,23 +43,23 @@ public class LazadaUpdatePriceQuantityRequest {
 
     public static class Sku {
         @JacksonXmlProperty(localName = "ItemId")
-        String itemId;
+        Long itemId;
         @JacksonXmlProperty(localName = "SkuId")
-        String skuId;
+        Long skuId;
         @JacksonXmlProperty(localName = "SellerSku")
         String sellerSku;
         @JacksonXmlProperty(localName = "Price")
-        String price;
+        BigDecimal price;
         @JacksonXmlProperty(localName = "SalePrice")
-        String salePrice;
+        BigDecimal salePrice;
         @JacksonXmlProperty(localName = "SaleStartDate")
         String saleStartDate;
         @JacksonXmlProperty(localName = "SaleEndDate")
         String saleEndDate;
         @JacksonXmlProperty(localName = "Quantity")
-        String quantity;
+        Integer quantity;
 
-        public Sku(String itemId, String skuId, String sellerSku, String price, String salePrice, String saleStartDate, String saleEndDate, String quantity) {
+        public Sku(Long itemId, Long skuId, String sellerSku, BigDecimal price, BigDecimal salePrice, String saleStartDate, String saleEndDate, Integer quantity) {
             this.itemId = itemId;
             this.skuId = skuId;
             this.sellerSku = sellerSku;
@@ -57,7 +71,7 @@ public class LazadaUpdatePriceQuantityRequest {
         }
     }
 
-    public String toXmlString() throws JsonProcessingException {
+    public String toXml() throws JsonProcessingException {
         return LazadaConvertUtils.fromObjectToXmlString(this);
     }
 }

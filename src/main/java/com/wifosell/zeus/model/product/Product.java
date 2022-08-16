@@ -82,6 +82,11 @@ public class Product extends BasicEntity {
     private User generalManager;
 
     @JsonIgnore
+    public List<Attribute> getAttributes(boolean available) {
+        return attributes.stream().filter(a -> a.isDeleted() != available).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
     public List<ProductImage> getImages(boolean available) {
         return images.stream().filter(i -> i.isDeleted() != available).collect(Collectors.toList());
     }
