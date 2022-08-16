@@ -20,7 +20,7 @@ public class EcomAccountResponse extends BasicEntityResponse {
     private final String description;
     private final EcomAccount.AccountStatus accountStatus;
     private final WarehouseResponse warehouseLinked;
-    private final ShopResponseNoRelation shopeLinked;
+    private final ShopResponseNoRelation shopLinked;
 
     public EcomAccountResponse(EcomAccount ecomAccount) {
         super(ecomAccount);
@@ -34,11 +34,11 @@ public class EcomAccountResponse extends BasicEntityResponse {
         if (ecomAccount.getRelationSwws() != null)
         {
             this.warehouseLinked = new WarehouseResponse( ecomAccount.getRelationSwws().getSaleChannelShop().getWarehouse());
-            this.shopeLinked = new ShopResponseNoRelation(ecomAccount.getRelationSwws().getSaleChannelShop().getShop());
+            this.shopLinked = new ShopResponseNoRelation(ecomAccount.getRelationSwws().getSaleChannelShop().getShop());
         }
         else {
             warehouseLinked = null;
-            shopeLinked = null;
+            shopLinked = null;
         }
     }
 }
