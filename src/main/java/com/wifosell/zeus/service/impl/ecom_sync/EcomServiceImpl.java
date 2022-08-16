@@ -140,6 +140,9 @@ public class EcomServiceImpl implements EcomService {
         return reqPayload;
     }
 
+
+
+
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();

@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
@@ -23,10 +24,13 @@ public class LazadaSwwAndEcomAccount extends BasicEntity {
     private Long id;
 
 
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "sale_channel_shop_id", referencedColumnName = "id")
     SaleChannelShop saleChannelShop;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "ecom_account_id", referencedColumnName = "id")
     EcomAccount ecomAccount;

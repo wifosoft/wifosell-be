@@ -1,6 +1,7 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.user.User;
@@ -49,6 +50,12 @@ public class EcomAccount extends BasicEntity {
     private String description;
 
     private String note;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "ecomAccount" , fetch = FetchType.LAZY)
+    private LazadaSwwAndEcomAccount relationSwws;
+
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "ecomAccount", fetch = FetchType.LAZY)
@@ -100,7 +107,6 @@ public class EcomAccount extends BasicEntity {
         }
         return null;
     }
-
 
     public String getShopId() {
         switch(this.getEcomName()){
