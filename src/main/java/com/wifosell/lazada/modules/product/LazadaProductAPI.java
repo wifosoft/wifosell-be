@@ -72,7 +72,7 @@ public class LazadaProductAPI {
         LazopRequest request = new LazopRequest();
 
         request.setApiName("/product/price_quantity/update");
-        request.addApiParameter("payload", payload.toXmlString());
+        request.addApiParameter("payload", payload.toXml());
 
         LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
 
