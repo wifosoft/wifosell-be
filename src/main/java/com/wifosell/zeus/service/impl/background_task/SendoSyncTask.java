@@ -25,9 +25,8 @@ public class SendoSyncTask {
     @Recurring(id = "fetch-sendo-product", cron = "*/3 * * * *")
     @Job(name = "fetchSendoProductRecurring Task")
     public void fetchSendoProductRecurring() {
-        List<EcomAccount> listEcoms = ecomAccountRepository.findAllByEcomName(EcomAccount.EcomName.SENDO);
+        List<EcomAccount> listEcoms  = ecomAccountRepository.findAllByEcomName(EcomAccount.EcomName.SENDO);
         try {
-
             listEcoms.stream().forEach( e ->  {
                 logger.info("fetchSendoProductRecurring begin process  {}" , e.getId());
                 sendoProductService.fetchAndSyncSendoProducts(e.getId());

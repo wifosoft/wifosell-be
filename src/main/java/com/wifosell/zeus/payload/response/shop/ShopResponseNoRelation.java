@@ -10,22 +10,19 @@ import com.wifosell.zeus.payload.response.sale_channel.SaleChannelResponse;
 import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import lombok.Getter;
 
-import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
-public class ShopResponse extends BasicEntityResponse {
+public class ShopResponseNoRelation extends BasicEntityResponse {
     private final String name;
     private final String shortName;
     private final String address;
     private final String phone;
     private final String description;
     private final String businessLine;
-    private final List<RelationResponse> relations;
 
-    public ShopResponse(Shop shop) {
+    public ShopResponseNoRelation(Shop shop) {
         super(shop);
         this.name = shop.getName();
         this.shortName = shop.getShortName();
@@ -34,15 +31,6 @@ public class ShopResponse extends BasicEntityResponse {
         this.description = shop.getDescription();
         this.businessLine = shop.getBusinessLine();
 
-        ArrayList<RelationResponse > listRelationResponse = new ArrayList<>();
-        for( var ssw  : shop.getSaleChannelShops()){
-            List<LazadaSwwAndEcomAccount> listSwwECom =  ssw.getLazadaSwwAndEcomAccount();
-            for(var accountEcom : listSwwECom){
-                RelationResponse rel = new RelationResponse(ssw, accountEcom.getEcomAccount());
-                listRelationResponse.add(rel);
-            }
-        }
-        this.relations = listRelationResponse;
     }
 
 
