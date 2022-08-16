@@ -29,6 +29,7 @@ import com.wifosell.zeus.taurus.core.TaurusBus;
 import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,9 +185,8 @@ public class SendoProductServiceImpl implements SendoProductService {
         logger.info((new Gson()).toJson(kafkaWrapperConsumeProduct.getUpdateProductRequest()));
 
 
-
         var listMapVariantSkuString = kafkaWrapperConsumeProduct.mapVariantSkus();
-        if(listMapVariantSkuString.size() ==0 ){
+        if (listMapVariantSkuString.size() == 0) {
             listMapVariantSkuString.add(itemPayload.getSku());
         }
         List<Variant> existedVariant = variantRepository.findListBySku(listMapVariantSkuString);
@@ -293,10 +293,21 @@ public class SendoProductServiceImpl implements SendoProductService {
         }
         User gm = ecomAccount.getGeneralManager();
         Product sysProduct = productService.getProduct(gm.getId(), sysProductId);
+
         if (sysProduct == null) {
             logger.info("[-] Product id {} not found ", sysProductId);
             return null;
-
+        }
+        Long sendoProductIdAffected = -1L;
+        if (sysProduct.getVariants().size() > 0) {
+            Variant firstSysVariant = sysProduct.getVariants().get(0);
+            SendoVariantAndSysVariant relationSendoProductAndSysProduct = sendoVariantAndSysVarirantRepository.findFirstByVariantId(firstSysVariant.getId());
+            if (relationSendoProductAndSysProduct != null) {
+                SendoProduct sendoAfftectedProduct = relationSendoProductAndSysProduct.getSendoVariant().getSendoProduct();
+                if (sendoAfftectedProduct != null) {
+                    sendoProductIdAffected = sendoAfftectedProduct.getItemId();
+                }
+            }
         }
 
         // Lấy liên kết sww and ecom account
@@ -311,10 +322,8 @@ public class SendoProductServiceImpl implements SendoProductService {
 
 
         // Lấy liên kết category
-
-
         ProductResponse sysProductResponse = new ProductResponse(sysProduct);
-        if(sysProduct.getCategory() == null){
+        if (sysProduct.getCategory() == null) {
             logger.info("[-] Khong co category ecom id {}, sys product {}, gm {} ", ecomId, sysProductId, gm.getId());
             return null;
         }
@@ -325,10 +334,14 @@ public class SendoProductServiceImpl implements SendoProductService {
             return null;
         }
         SendoCategoryAndSysCategory sendoCategoryAndSysCategory = sendoCategoryAndSysCategoryOpt.get();
-
         //Xử lý ánh xạ sang payload
 
         SendoCreateOrUpdateProductPayload m = new SendoCreateOrUpdateProductPayload();
+        if (sendoProductIdAffected.equals(-1L)) {
+            m.setId(0);
+        } else {
+            m.setId(sendoProductIdAffected.intValue());
+        }
         m.setName(sysProductResponse.getName());
 
         List<Variant> variants = sysProduct.getVariants().stream()
@@ -484,9 +497,9 @@ public class SendoProductServiceImpl implements SendoProductService {
         List<Product> listProducts = productRepository.findAll(
                 ProductSpecs.hasGeneralManager(gm.getId())
         );
-        for (var p:
+        for (var p :
                 listProducts) {
-            this.postNewProductToSendo(ecomId,p.getId());
+            this.postNewProductToSendo(ecomId, p.getId());
         }
 
         return true;
