@@ -184,7 +184,11 @@ public class SendoProductServiceImpl implements SendoProductService {
         logger.info((new Gson()).toJson(kafkaWrapperConsumeProduct.getUpdateProductRequest()));
 
 
+
         var listMapVariantSkuString = kafkaWrapperConsumeProduct.mapVariantSkus();
+        if(listMapVariantSkuString.size() ==0 ){
+            listMapVariantSkuString.add(itemPayload.getSku());
+        }
         List<Variant> existedVariant = variantRepository.findListBySku(listMapVariantSkuString);
         Long idProductAffected = -1L;
         if (existedVariant.size() != 0) {

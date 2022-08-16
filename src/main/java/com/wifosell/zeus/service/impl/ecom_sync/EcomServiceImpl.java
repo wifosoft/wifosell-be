@@ -551,7 +551,7 @@ public class EcomServiceImpl implements EcomService {
         if (ecomAccount == null) {
             return LazadaSwwAndEcomAccount.builder().saleChannelShop(sswRecord).ecomAccount(null).build();
         }
-        Optional<LazadaSwwAndEcomAccount> linkSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.getRecordBySswIdAndEcomAccountId(sswRecord.getId(), ecomId);
+        Optional<LazadaSwwAndEcomAccount> linkSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.findFirstBySaleChannelShopAndEcomAccount(sswRecord.getId(), ecomId);
         LazadaSwwAndEcomAccount linkwwAndEcomAccountRecord = null;
         if (linkSwwAndEcomAccount.isPresent()) {
             //ton tai

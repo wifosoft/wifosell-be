@@ -74,6 +74,7 @@ public class UpdateProductRequest implements IProductRequest {
                 listImageRequest.add(imgRequest);
             }
         }
+        m.setImages(listImageRequest);
         //
         ArrayList<OptionRequest> optionRequestList = new ArrayList<OptionRequest>();
         ArrayList<VariantRequest> varirantRequests = new ArrayList<VariantRequest>();

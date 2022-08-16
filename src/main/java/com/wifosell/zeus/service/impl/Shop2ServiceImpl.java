@@ -172,6 +172,8 @@ public class Shop2ServiceImpl implements Shop2Service {
                     shop.getSaleChannelShops().add(relation);
                 }
 
+                // filter ecomid not found
+
                 //SaleChannelShop with ecom account
 
                 if(requestRelation.getEcomId() != null) {
@@ -197,7 +199,6 @@ public class Shop2ServiceImpl implements Shop2Service {
                         relation.getLazadaSwwAndEcomAccount().add(linkSwwEaRelation);
                     }
                 }
-
             });
         });
         shopRepository.save(shop);

@@ -33,7 +33,8 @@ public class SaleChannelShop {
     @ManyToOne
     private Warehouse warehouse;
 
-    @OneToMany(mappedBy = "saleChannelShop")
+
+    @OneToMany(mappedBy = "saleChannelShop", cascade = CascadeType.ALL, orphanRemoval = true)
     protected List<LazadaSwwAndEcomAccount> lazadaSwwAndEcomAccount;
 
     public List<Long> getAllLinkedSwwId () {

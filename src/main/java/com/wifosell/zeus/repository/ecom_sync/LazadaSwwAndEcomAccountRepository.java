@@ -8,6 +8,7 @@ import com.wifosell.zeus.payload.GApiErrorBody;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,8 +18,14 @@ public interface LazadaSwwAndEcomAccountRepository extends SoftRepository<Lazada
         return EAppExceptionCode.ECOM_ACCOUNT_LINK_SALE_CHANNEL_SHOP_NOT_FOUND;
     }
 
+
+
     @Query("select u from LazadaSwwAndEcomAccount u where u.saleChannelShop.id= ?1 and u.ecomAccount.id=?2")
-    Optional<LazadaSwwAndEcomAccount> getRecordBySswIdAndEcomAccountId(Long sswId, Long ecomAccountId);
+    Optional<LazadaSwwAndEcomAccount> findFirstBySaleChannelShopAndEcomAccount(Long sswId, Long ecomAccountId);
+
+
+    @Query("select u from LazadaSwwAndEcomAccount u where u.saleChannelShop.id= ?1")
+    List<LazadaSwwAndEcomAccount> getRecordsBySsw(Long sswId);
 
     void deleteByEcomAccount(Long ecomId);
 
