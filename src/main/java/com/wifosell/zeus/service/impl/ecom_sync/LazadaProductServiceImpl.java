@@ -160,18 +160,22 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Create/Update SysProduct and SysVariants
         LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findByLazadaProductId(lazadaProduct.getId()).orElse(null);
-        Product sysProduct = productLink != null ? productLink.getSysProduct() : syncProduct != null ? syncProduct : new Product();
-        sysProduct = productService.updateProductByRequest(
-                sysProduct,
-                toUpdateProductRequest(data, sysProduct),
-                user.getGeneralManager());
+        Product sysProduct = syncProduct;
 
-        LazadaCategoryAndSysCategory categoryLink = lazadaCategoryAndSysCategoryRepository.findByGeneralManagerIdAndLazadaCategoryId(
-                ecomAccount.getGeneralManager().getId(), lazadaCategory.getId()).orElse(null);
-        Category sysCategory = categoryLink != null ? categoryLink.getSysCategory() : null;
-        sysProduct.setCategory(sysCategory);
+        if (sysProduct == null) {
+            sysProduct = productLink != null ? productLink.getSysProduct() : new Product();
+            sysProduct = productService.updateProductByRequest(
+                    sysProduct,
+                    toUpdateProductRequest(data, sysProduct),
+                    user.getGeneralManager());
 
-        productRepository.save(sysProduct);
+            LazadaCategoryAndSysCategory categoryLink = lazadaCategoryAndSysCategoryRepository.findByGeneralManagerIdAndLazadaCategoryId(
+                    ecomAccount.getGeneralManager().getId(), lazadaCategory.getId()).orElse(null);
+            Category sysCategory = categoryLink != null ? categoryLink.getSysCategory() : null;
+            sysProduct.setCategory(sysCategory);
+
+            productRepository.save(sysProduct);
+        }
 
         // Link LazadaProduct and SysProduct
         if (productLink == null) {
@@ -222,7 +226,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.setIsActive(data.isActive());
 
         // Images
-        List<ProductImage> productImages = product.getImages().stream().filter(i -> !i.isDeleted()).collect(Collectors.toList());
+        List<ProductImage> productImages = product.getImages(true);
         List<IProductRequest.ImageRequest> imageRequests = data.getImages().stream()
                 .map(url -> {
                     Long imageId = null;
@@ -238,7 +242,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.setImages(imageRequests);
 
         // Attributes
-        List<Attribute> attributes = product.getAttributes().stream().filter(a -> !a.isDeleted()).collect(Collectors.toList());
+        List<Attribute> attributes = product.getAttributes(true);
         List<IProductRequest.AttributeRequest> attributeRequests = data.getAttributes().entrySet().stream()
                 .map(entry -> {
                     Long attributeId = null;
@@ -259,7 +263,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Options
         List<IProductRequest.OptionRequest> optionRequests = new ArrayList<>();
-        List<OptionModel> options = product.getOptions().stream().filter(o -> !o.isDeleted()).collect(Collectors.toList());
+        List<OptionModel> options = product.getOptions(true);
 
         data.getVariations().forEach(variation -> {
             IProductRequest.OptionRequest optionRequest = new IProductRequest.OptionRequest();
