@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -208,7 +209,7 @@ public class ProductServiceImpl implements ProductService {
             Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
         });
-        Optional.ofNullable(request.getWeight()).ifPresent(product::setWeight);
+        Optional.of(request.getWeight().setScale(0, RoundingMode.CEILING)).ifPresent(product::setWeight);
         Optional.ofNullable(request.getWidth()).ifPresent(product::setWidth);
         Optional.ofNullable(request.getLength()).ifPresent(product::setLength);
         Optional.ofNullable(request.getHeight()).ifPresent(product::setHeight);
