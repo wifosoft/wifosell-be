@@ -18,6 +18,8 @@ public interface LazadaSwwAndEcomAccountRepository extends SoftRepository<Lazada
         return EAppExceptionCode.ECOM_ACCOUNT_LINK_SALE_CHANNEL_SHOP_NOT_FOUND;
     }
 
+    @Query("select u from LazadaSwwAndEcomAccount u where u.id in ?1")
+    List<LazadaSwwAndEcomAccount> getRecordsByListId(List<Long> ids);
 
 
     @Query("select u from LazadaSwwAndEcomAccount u where u.saleChannelShop.id= ?1 and u.ecomAccount.id=?2")
@@ -26,6 +28,7 @@ public interface LazadaSwwAndEcomAccountRepository extends SoftRepository<Lazada
 
     @Query("select u from LazadaSwwAndEcomAccount u where u.saleChannelShop.id= ?1")
     List<LazadaSwwAndEcomAccount> getRecordsBySsw(Long sswId);
+
 
     void deleteByEcomAccount(Long ecomId);
 

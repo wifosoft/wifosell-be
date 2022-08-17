@@ -2,7 +2,9 @@ package com.wifosell.zeus.service;
 
 import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
@@ -18,7 +20,12 @@ import java.util.List;
 @Transactional
 public interface EcomService {
     SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId);
+
+    List<EcomAccount> getEcomIdByVariant(Variant variant, Warehouse warehouse);
+    List<EcomAccount> getEcomIdByVariant(Long variantId, Long warehouseId);
+
     List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
+
     EcomAccount addEcomAccountLazada(Long userId, EcomAccount account);
 
     EcomAccount addEcomAccountLazadaFromCallback(EcomAccountLazadaCallbackPayload payloadCallback) throws ApiException;
@@ -49,7 +56,8 @@ public interface EcomService {
     LazadaSwwAndEcomAccount linkEcomAccountToSSW(Long ecomId, Long saleChannelId, Long shopId, Long warehouseId);
 
     public LazadaCategoryAndSysCategory linkLazadaCategoryAndSysCategory(User user, Long lazadaCategoryId, Long sysCategoryId);
-    public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user );
+
+    public List<LazadaCategoryAndSysCategory> getLinkedLazadaCategoryAndSysCategory(User user);
 
 
     public LazadaVariantAndSysVariant linkLazadaVariantAndSysVariant(User user, Long lazadaVariantId, Long sysVariantId);

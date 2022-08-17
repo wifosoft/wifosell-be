@@ -38,4 +38,5 @@ public interface EcomAccountRepository extends SoftRepository<EcomAccount, Long>
         return EAppExceptionCode.ECOM_ACCOUNT_NOT_FOUND;
     }
 
+
 }

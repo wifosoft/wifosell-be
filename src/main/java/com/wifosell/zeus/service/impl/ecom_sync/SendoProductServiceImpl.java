@@ -274,8 +274,6 @@ public class SendoProductServiceImpl implements SendoProductService {
             } else {
                 Warehouse warehouse = relationSwwEAOpt.get().getSaleChannelShop().getWarehouse();
             }
-
-
             this.consumeSingleSendoProductLinkProductPhase(itemPayload);
             logger.info("[+] After consume consumeSingleSendoProductLinkProductPhase {}", itemPayload.getName());
 

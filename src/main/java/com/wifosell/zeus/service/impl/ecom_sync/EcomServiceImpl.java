@@ -47,12 +47,14 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service("EcomService")
 @Transactional
@@ -113,7 +115,6 @@ public class EcomServiceImpl implements EcomService {
     @Autowired
     LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
 
-
     @Override
     public SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId) {
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
@@ -141,7 +142,34 @@ public class EcomServiceImpl implements EcomService {
     }
 
 
+    @Override
+    public List<EcomAccount> getEcomIdByVariant(Variant variant, Warehouse warehouse) {
+        if(variant ==null ){ return null;}
+        if(warehouse  ==null) { return null;}
+        List<EcomAccount>  listAccount = new ArrayList<>();
+        List<SaleChannelShop> listSSW = saleChannelShopRepository.findListSSWByWarehouseId(warehouse.getId());
 
+        List<Long> listSSWId = new ArrayList<>();
+        for (var ssw : listSSW)
+        {
+            listSSWId.addAll(ssw.getAllLinkedSwwId());
+        }
+
+        List<LazadaSwwAndEcomAccount> linkedSwwAndEcomAccount  = lazadaSwwAndEcomAccountRepository.getRecordsByListId(listSSWId);
+
+        listAccount = linkedSwwAndEcomAccount.stream().map(LazadaSwwAndEcomAccount::getEcomAccount).collect(Collectors.toList());
+        return listAccount;
+    }
+
+    @Override
+    public List<EcomAccount> getEcomIdByVariant(Long variantId, Long warehouseId) {
+        Variant variant = variantRepository.getById(variantId);
+        Warehouse warehouse = warehouseRepository.getById(warehouseId);
+        if(variant == null || warehouse == null){
+           return new ArrayList<>();
+        }
+        return this.getEcomIdByVariant(variant, warehouse);
+    }
 
     @Override
     public List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName) {

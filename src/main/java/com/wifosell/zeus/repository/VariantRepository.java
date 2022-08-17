@@ -19,6 +19,8 @@ public interface VariantRepository extends SoftRepository<Variant, Long> {
     void deleteAllByProductId(Long productId);
 
 
+    Variant findFirstById(Long id);
+
 
     @Query("select e from Variant e where e.sku in (:skus)")
     List<Variant> findListBySku(@Param("skus") List<String> skus);
