@@ -62,6 +62,8 @@ public class StockServiceImpl implements StockService {
 
     private final FileSystemStorageService fileStorageService;
 
+
+
     @Override
     public ImportStockTransaction importStocks(Long userId, ImportStocksRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
@@ -98,6 +100,7 @@ public class StockServiceImpl implements StockService {
         return transaction;
     }
 
+
     @Override
     public void importStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
         Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
@@ -132,6 +135,7 @@ public class StockServiceImpl implements StockService {
         stockRepository.save(stock);
     }
 
+
     @Override
     public ImportStockTransaction createImportStockTransactionExcel(Long userId, ImportStocksFromExcelRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
@@ -157,6 +161,8 @@ public class StockServiceImpl implements StockService {
 
         return transaction;
     }
+
+
 
     @Override
     public void importStocksFromExcel(Long userId, Long transactionId) {
@@ -399,6 +405,8 @@ public class StockServiceImpl implements StockService {
                 }
 
                 stockRepository.save(toStock);
+
+
 
                 // Transaction
                 TransferStockTransactionItem transactionItem = TransferStockTransactionItem.builder()

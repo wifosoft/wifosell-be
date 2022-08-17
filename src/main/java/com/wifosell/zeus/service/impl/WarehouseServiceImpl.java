@@ -97,6 +97,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         return warehouseIds.stream().map(id -> this.deactivateWarehouse(userId, id)).collect(Collectors.toList());
     }
 
+
     private Warehouse updateWarehouseByRequest(@NonNull Warehouse warehouse, @NonNull WarehouseRequest request, @NonNull User gm) {
         Optional.ofNullable(request.getName()).ifPresent(warehouse::setName);
         Optional.ofNullable(request.getShortName()).ifPresent(warehouse::setShortName);

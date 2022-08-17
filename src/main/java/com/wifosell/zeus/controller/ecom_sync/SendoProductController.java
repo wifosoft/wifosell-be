@@ -1,18 +1,12 @@
 package com.wifosell.zeus.controller.ecom_sync;
 
-import com.google.gson.Gson;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoVariant;
 import com.wifosell.zeus.payload.GApiResponse;
-import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomService;
 import com.wifosell.zeus.service.SendoProductService;
-import com.wifosell.zeus.taurus.core.TaurusBus;
-import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
-import com.wifosell.zeus.taurus.core.payload.TaurusKafkaPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.lang.reflect.GenericSignatureFormatError;
 
 @RestController
 @RequestMapping("api/ecom_sync/sendo/product")
@@ -70,7 +62,7 @@ public class SendoProductController {
             @RequestParam(name = "productId", required = false) Long productId
     ) {
 
-        var response = sendoProductService.pulishCreateSystemProductToSendo(ecomId, productId);
+        var response = sendoProductService.publishCreateSystemProductToSendo(ecomId, productId);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 

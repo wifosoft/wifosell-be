@@ -21,7 +21,7 @@ class SendoProductConsumer {
 
     @KafkaListener(topics = "sendo_product", containerFactory = "kafkaListenerContainerFactory", groupId = "${spring.kafka.groupId}",  properties = "value.deserializer:org.apache.kafka.common.serialization.StringDeserializer")
     void listener(String data) {
-        LOG.info(data);
+        LOG.info("[+] Kafka receive message Length : {}" , data.length());
 
         var responseModel =  (new Gson()).fromJson(data, ResponseSendoProductItemPayload.class);
         if(responseModel !=null){

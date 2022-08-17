@@ -8,6 +8,7 @@ import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.constant.LazadaEcomSyncConst;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.provider.lazada.ResponseSellerInfoPayload;
@@ -283,5 +284,14 @@ public class EcomAccountController {
         return ResponseEntity.ok(GApiResponse.success(ecomAccount));
     }
 
+    @GetMapping("/listEcomAffectedByWarehouseAndVariant")
+    public ResponseEntity<GApiResponse> getListEcomAffectByWarehouseAndVariant(
+            @RequestParam("variantId") Long variantId,
+            @RequestParam("warehouseId") Long warehouseId
+    ){
+
+        List<EcomAccount> listEcomAccount = ecomService.getEcomIdByVariant(variantId, warehouseId);
+        return ResponseEntity.ok(GApiResponse.success(listEcomAccount));
+    }
 
 }

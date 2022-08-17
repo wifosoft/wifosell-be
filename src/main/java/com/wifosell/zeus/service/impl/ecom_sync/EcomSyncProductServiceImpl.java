@@ -4,11 +4,9 @@ import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomSyncUpdateStockRequest;
+import com.wifosell.zeus.repository.VariantRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
-import com.wifosell.zeus.service.EcomSyncProductService;
-import com.wifosell.zeus.service.LazadaProductService;
-import com.wifosell.zeus.service.StockService;
-import com.wifosell.zeus.service.VariantService;
+import com.wifosell.zeus.service.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +22,33 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
 
     private final StockService stockService;
     private final VariantService variantService;
+    private final VariantRepository variantRepository ;
     private final LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
     private final LazadaProductService lazadaProductService;
+    private final SendoProductService sendoProductService;
+
+
+
+    void hookUpdateByVariant(Long variantId){
+        Variant variant = variantRepository.findFirstById(variantId);
+        if(variant ==null){
+            logger.info("[-] VariantId {} not found" ,variantId);
+        }
+    }
+
+
+    @Override
+    public void hookUpdateSendoProduct(Long ecomId, Long productId) {
+        try {
+            logger.info("[+] Enter Hook hookUpdateSendoProduct update price to sendo EcomId {} - ProductId {}", ecomId, productId);
+            sendoProductService.publishCreateSystemProductToSendo(ecomId, productId);
+            logger.info("[+] Send hookUpdateSendoProduct update price to sendo EcomId {} - ProductId {}", ecomId, productId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.error("[-] Exception hookUpdateSendoProduct when send update to sendo");
+        }
+    }
+
 
     @Override
     public boolean updateStock(Long userId, EcomSyncUpdateStockRequest request) {
@@ -40,7 +63,15 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
 
         // Update Sendo
         // TODO
-
+        try {
+            Long productId = variant.getProduct().getId();
+            Long ecomId = link.getEcomAccount().getId();
+            sendoProductService.publishCreateSystemProductToSendo(link.getEcomAccount().getId(), variant.getProduct().getId());
+            logger.info("[+] Send update price to sendo EcomId {} - ProductId {}", ecomId, productId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.error("[-] Exception when send update to sendo");
+        }
         return true;
     }
 }
