@@ -41,7 +41,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -185,11 +188,27 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             lazadaProductAndSysProductRepository.save(productLink);
         }
 
-        // Link LazadaVariants and SysVariants
-        List<Variant> sysVariants = sysProduct.getVariants(true).stream()
-                .sorted(Comparator.comparing(Variant::getIdx))
-                .collect(Collectors.toList());
+        // Sort sysVariants by data.skus order
+        List<Variant> sysVariants = new ArrayList<>();
+        List<Variant> tempSysVariants = sysProduct.getVariants(true);
+        data.getSkus().forEach(sku -> {
+            for (Variant variant : tempSysVariants) {
+                Map<String, String> skuOptions = new HashMap<>(sku.getOptions());
+                for (VariantValue variantValue : variant.getVariantValues()) {
+                    String optionName = variantValue.getOptionValue().getOption().getName();
+                    String optionValue = variantValue.getOptionValue().getName();
+                    if (skuOptions.get(optionName).equals(optionValue)) {
+                        skuOptions.remove(optionName);
+                    }
+                }
+                if (skuOptions.isEmpty()) {
+                    sysVariants.add(variant);
+                    break;
+                }
+            }
+        });
 
+        // Link LazadaVariants and SysVariants
         for (int i = 0; i < sysVariants.size(); ++i) {
             LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findByLazadaVariantId(lazadaVariants.get(i).getId())
                     .orElse(new LazadaVariantAndSysVariant());
@@ -201,8 +220,11 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Update stock
         for (int i = 0; i < sysVariants.size(); ++i) {
-            LazadaGetProductItemResponse.Data.Sku sku = data.getSkus().get(i);
-            stockService.updateStock(warehouse, sysVariants.get(i), sku.getAvailable(), sku.getAvailable());
+            stockService.updateStock(
+                    warehouse,
+                    sysVariants.get(i),
+                    data.getSkus().get(i).getAvailable(),
+                    data.getSkus().get(i).getAvailable());
         }
 
         logger.info("getProductItem success | ecomId = {}, itemId = {}, name = {}, skuCount = {}",
