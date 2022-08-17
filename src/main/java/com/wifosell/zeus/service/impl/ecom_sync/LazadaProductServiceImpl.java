@@ -26,6 +26,7 @@ import com.wifosell.zeus.payload.provider.lazada.report.FetchLazadaProductsRepor
 import com.wifosell.zeus.payload.provider.lazada.report.PushLazadaProductsReport;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
+import com.wifosell.zeus.repository.OptionRepository;
 import com.wifosell.zeus.repository.ProductRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.*;
@@ -66,6 +67,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
     private final ProductService productService;
     private final ProductRepository productRepository;
     private final VariantService variantService;
+    private final OptionRepository optionRepository;
     private final StockService stockService;
 
     @Override
@@ -189,7 +191,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 .collect(Collectors.toList());
 
         for (int i = 0; i < sysVariants.size(); ++i) {
-            LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(sysVariants.get(i).getId())
+            LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findByLazadaVariantId(lazadaVariants.get(i).getId())
                     .orElse(new LazadaVariantAndSysVariant());
             variantLink.setSysVariant(sysVariants.get(i));
             variantLink.setLazadaVariant(lazadaVariants.get(i));
@@ -521,7 +523,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         for (OptionModel option : product.getOptions(true)) {
             String key = LazadaCreateProductRequest.Variation.TAG_PREFIX + (req.product.variations.size() + 1);
             LazadaCreateProductRequest.Variation value = new LazadaCreateProductRequest.Variation();
-            value.name = option.getName().replace(" ", "_");
+            value.name = option.getProcessedName();
             value.hasImage = false;
             value.customize = true;
             value.options = option.getOptionValues(true).stream().map(OptionValue::getName).collect(Collectors.toList());
@@ -549,13 +551,19 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT, variant.getProduct().getWeightLazada());
 
             for (VariantValue variantValue : variant.getVariantValues(true)) {
-                String key = variantValue.getOptionValue().getOption().getName().replace(" ", "_");
+                String key = variantValue.getOptionValue().getOption().getProcessedName();
                 String value = variantValue.getOptionValue().getName();
                 sku.put(key, value);
             }
 
             req.product.skus.add(sku);
         }
+
+        // Update Option's name
+        product.getOptions().forEach(option -> {
+            option.setName(option.getProcessedName());
+            optionRepository.save(option);
+        });
 
         return req;
     }
