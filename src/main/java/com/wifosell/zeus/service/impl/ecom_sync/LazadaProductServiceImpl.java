@@ -94,20 +94,22 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 return null;
             }
 
-            res.getData().getProducts().forEach(product -> {
-                try {
-                    boolean success = fetchLazadaProductItem(user, ecomAccount, product.getItemId(), warehouse, null);
-                    if (success) fetchSuccess.getAndIncrement();
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                } finally {
-                    fetchTotal.getAndIncrement();
-                }
-            });
+            if (res.getData().getProducts() != null) {
+                res.getData().getProducts().forEach(product -> {
+                    try {
+                        boolean success = fetchLazadaProductItem(user, ecomAccount, product.getItemId(), warehouse, null);
+                        if (success) fetchSuccess.getAndIncrement();
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    } finally {
+                        fetchTotal.getAndIncrement();
+                    }
+                });
+                offset += res.getData().getProducts().size();
+            }
 
-            if (fetchTotal.get() >= res.getData().getTotalProducts()) break;
-
-            offset += res.getData().getProducts().size();
+            if (fetchTotal.get() >= res.getData().getTotalProducts())
+                break;
         }
 
         logger.info("getProducts success | ecomId = {}, fetchTotal = {}, fetchSuccess = {}",
