@@ -29,7 +29,6 @@ import com.wifosell.zeus.taurus.core.TaurusBus;
 import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
-import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,7 +284,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         }
     }
 
-    public SendoCreateOrUpdateProductPayload pulishCreateSystemProductToSendo(Long ecomId, Long sysProductId) {
+    public SendoCreateOrUpdateProductPayload publishCreateSystemProductToSendo(Long ecomId, Long sysProductId) {
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
         if (ecomAccount == null) {
             logger.info("[-] Ecom Account Id {} not found", ecomId);
@@ -459,7 +458,7 @@ public class SendoProductServiceImpl implements SendoProductService {
     public SendoCreateOrUpdateProductPayload postNewProductToSendo(Long ecomId, Long sysProductId) {
         SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
 
-        var response = sendoProductService.pulishCreateSystemProductToSendo(ecomId, sysProductId);
+        var response = sendoProductService.publishCreateSystemProductToSendo(ecomId, sysProductId);
 
         KafkaPublishProductSendoPayload kafkaPublishProductSendoPayload = new KafkaPublishProductSendoPayload();
         kafkaPublishProductSendoPayload.setShop_key(sendoInfo.getShop_key());

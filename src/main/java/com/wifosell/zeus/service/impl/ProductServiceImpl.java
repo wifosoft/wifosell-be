@@ -165,7 +165,16 @@ public class ProductServiceImpl implements ProductService {
         } else {
             product = getProduct(userId, productId);
         }
-        return this.updateProductByRequest(product, request, gm);
+        Product productResponse = this.updateProductByRequest(product, request, gm);
+
+        //TODO: update information to sendo, lazada here (stock,name,...)
+
+        //Lazada
+
+        //Sendo
+        
+
+        return productResponse;
     }
 
     @Override
