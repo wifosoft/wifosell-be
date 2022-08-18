@@ -19,7 +19,8 @@ public class LazopLogger {
     private static final String LOG_SPLIT = "^_^";
 
     private static String osName = System.getProperties().getProperty("os.name");
-    private static boolean needEnableLogger = true;
+    //    private static boolean needEnableLogger = true;   // Default
+    private static boolean needEnableLogger = false;        // TODO haukc
 
     public static void setNeedEnableLogger(boolean needEnableLogger) {
         LazopLogger.needEnableLogger = needEnableLogger;

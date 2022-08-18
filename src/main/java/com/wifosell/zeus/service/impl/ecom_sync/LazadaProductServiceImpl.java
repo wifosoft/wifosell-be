@@ -372,6 +372,10 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         List<Product> sysProducts = productService.getProducts(userId, List.of(warehouse.getId()), List.of(true));
         List<Long> itemIds = new ArrayList<>();
         List<Product> syncProducts = new ArrayList<>();
+        int createTotal = 0;
+        int createSuccess = 0;
+        int updateTotal = 0;
+        int updateSuccess = 0;
 
         for (Product sysProduct : sysProducts) {
             try {
@@ -379,8 +383,12 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 Long itemId;
                 if (productLink == null) {
                     itemId = createLazadaProductItem(ecomAccount, sysProduct, warehouse);
+                    createTotal++;
+                    if (itemId != null) createSuccess++;
                 } else {
                     itemId = updateLazadaProductItem(ecomAccount, sysProduct);
+                    updateTotal++;
+                    if (itemId != null) updateSuccess++;
                 }
                 if (itemId != null) {
                     itemIds.add(itemId);
@@ -409,55 +417,11 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         return PushLazadaProductsReport.builder()
                 .pushTotal(sysProducts.size())
                 .pushSuccess(itemIds.size())
+                .createTotal(createTotal)
+                .createSuccess(createSuccess)
+                .updateTotal(updateTotal)
+                .updateSuccess(updateSuccess)
                 .fetchSuccess(fetchSuccess).build();
-    }
-
-    @Override
-    public boolean pushLazadaVariantQuantity(Long userId, Long ecomId, Long variantId) {
-        Variant variant = variantService.getVariant(userId, variantId);
-
-        // itemId
-        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(variant.getProduct().getId()).orElse(null);
-        if (productLink == null) {
-            logger.error("pushLazadaVariantQuantity fail | product not link | userId = {}, ecomId = {}, variantId = {}",
-                    userId, ecomId, variantId);
-            return false;
-        }
-        Long itemId = productLink.getLazadaProduct().getItemId();
-
-        // skuId
-        LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(variantId).orElse(null);
-        if (variantLink == null) {
-            logger.error("pushLazadaVariantQuantity fail | variant not link | userId = {}, ecomId = {}, variantId = {}",
-                    userId, ecomId, variantId);
-            return false;
-        }
-        Long skuId = variantLink.getLazadaVariant().getSkuId();
-
-        // quantity
-        LazadaSwwAndEcomAccount link = lazadaSwwAndEcomAccountRepository.getByEcomAccountId(ecomId);
-        Warehouse warehouse = link.getSaleChannelShop().getWarehouse();
-        Integer quantity = variant.getStockWarehouse(warehouse.getId());
-
-        // Lazada API
-        EcomAccount ecomAccount = ecomService.getEcomAccount(userId, ecomId);
-
-        LazadaUpdatePriceQuantityRequest request = new LazadaUpdatePriceQuantityRequest(itemId, skuId, quantity);
-
-        try {
-            boolean success = LazadaProductAPI.updatePriceAndQuantity(ecomAccount.getAccessToken(), request);
-            if (!success) {
-                logger.error("pushLazadaVariantQuantity fail | response fail | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-                return false;
-            }
-        } catch (JsonProcessingException | ApiException e) {
-            e.printStackTrace();
-            logger.error("pushLazadaVariantQuantity fail | throw exception | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-            return false;
-        }
-
-        logger.info("pushLazadaVariantQuantity success | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-        return true;
     }
 
     private Long createLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
@@ -610,6 +574,54 @@ public class LazadaProductServiceImpl implements LazadaProductService {
     private Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct) {
         // TODO haukc
         return null;
+    }
+
+    @Override
+    public boolean pushLazadaVariantQuantity(Long userId, Long ecomId, Long variantId) {
+        Variant variant = variantService.getVariant(userId, variantId);
+
+        // itemId
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(variant.getProduct().getId()).orElse(null);
+        if (productLink == null) {
+            logger.error("pushLazadaVariantQuantity fail | product not link | userId = {}, ecomId = {}, variantId = {}",
+                    userId, ecomId, variantId);
+            return false;
+        }
+        Long itemId = productLink.getLazadaProduct().getItemId();
+
+        // skuId
+        LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(variantId).orElse(null);
+        if (variantLink == null) {
+            logger.error("pushLazadaVariantQuantity fail | variant not link | userId = {}, ecomId = {}, variantId = {}",
+                    userId, ecomId, variantId);
+            return false;
+        }
+        Long skuId = variantLink.getLazadaVariant().getSkuId();
+
+        // quantity
+        LazadaSwwAndEcomAccount link = lazadaSwwAndEcomAccountRepository.getByEcomAccountId(ecomId);
+        Warehouse warehouse = link.getSaleChannelShop().getWarehouse();
+        Integer quantity = variant.getStockWarehouse(warehouse.getId());
+
+        // Lazada API
+        EcomAccount ecomAccount = ecomService.getEcomAccount(userId, ecomId);
+
+        LazadaUpdatePriceQuantityRequest request = new LazadaUpdatePriceQuantityRequest(itemId, skuId, quantity);
+
+        try {
+            boolean success = LazadaProductAPI.updatePriceAndQuantity(ecomAccount.getAccessToken(), request);
+            if (!success) {
+                logger.error("pushLazadaVariantQuantity fail | response fail | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
+                return false;
+            }
+        } catch (JsonProcessingException | ApiException e) {
+            e.printStackTrace();
+            logger.error("pushLazadaVariantQuantity fail | throw exception | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
+            return false;
+        }
+
+        logger.info("pushLazadaVariantQuantity success | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
+        return true;
     }
 
     @Override
