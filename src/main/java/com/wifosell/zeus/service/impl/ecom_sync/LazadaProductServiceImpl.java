@@ -2,6 +2,8 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lazada.lazop.util.ApiException;
+import com.wifosell.lazada.modules.category.LazadaCategoryAPI;
+import com.wifosell.lazada.modules.category.payload.LazadaGetCategoryAttributesResponse;
 import com.wifosell.lazada.modules.image.LazadaImageAPI;
 import com.wifosell.lazada.modules.image.payload.LazadaMigrateImagesBatchResponse;
 import com.wifosell.lazada.modules.image.payload.LazadaMigrateImagesRequest;
@@ -535,10 +537,25 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.product.images = migratedImages;
 
         // Attributes
+        Map<String, String> remainingMandatoryAttributes;
+        try {
+            LazadaGetCategoryAttributesResponse attributesRes = LazadaCategoryAPI.getCategoryAttributes(req.product.primaryCategory);
+            if (attributesRes == null) {
+                logger.error("toLazadaCreateProductRequest fail | attributeRes null | productId = {}", product.getId());
+                return null;
+            }
+            remainingMandatoryAttributes = attributesRes.getRemainingMandatoryAttributes();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            logger.error("toLazadaCreateProductRequest fail | getCategoryAttributes fail | productId = {}", product.getId());
+            return null;
+        }
+
         req.product.attributes = new HashMap<>();
         req.product.attributes.put(LazadaCreateProductRequest.Attribute.NAME, product.getName());
         req.product.attributes.put(LazadaCreateProductRequest.Attribute.DESCRIPTION, product.getDescription());
         req.product.attributes.put(LazadaCreateProductRequest.Attribute.BRAND, LazadaCreateProductRequest.Attribute.BRAND_DEFAULT_VALUE);
+        req.product.attributes.putAll(remainingMandatoryAttributes);
 
         // Variations
         req.product.variations = new HashMap<>();
