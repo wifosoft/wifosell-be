@@ -47,7 +47,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.sql.Array;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -115,6 +114,7 @@ public class EcomServiceImpl implements EcomService {
     @Autowired
     LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
 
+
     @Override
     public SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId) {
         EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
@@ -141,34 +141,43 @@ public class EcomServiceImpl implements EcomService {
         return reqPayload;
     }
 
+    public List<EcomAccount> getEcomByVariant(Variant variant) {
+        List<EcomAccount> listEcomAccount = new ArrayList<>();
+        List<Stock> findAllStocks = stockRepository.findAllByVariantId(variant.getId());
+
+        return listEcomAccount;
+    }
 
     @Override
-    public List<EcomAccount> getEcomIdByVariant(Variant variant, Warehouse warehouse) {
-        if(variant ==null ){ return null;}
-        if(warehouse  ==null) { return null;}
-        List<EcomAccount>  listAccount = new ArrayList<>();
+    public List<EcomAccount> getEcomByVariantAndWarehouse(Variant variant, Warehouse warehouse) {
+        if (variant == null) {
+            return null;
+        }
+        if (warehouse == null) {
+            return null;
+        }
+        List<EcomAccount> listAccount = new ArrayList<>();
         List<SaleChannelShop> listSSW = saleChannelShopRepository.findListSSWByWarehouseId(warehouse.getId());
 
         List<Long> listSSWId = new ArrayList<>();
-        for (var ssw : listSSW)
-        {
+        for (var ssw : listSSW) {
             listSSWId.addAll(ssw.getAllLinkedSwwId());
         }
 
-        List<LazadaSwwAndEcomAccount> linkedSwwAndEcomAccount  = lazadaSwwAndEcomAccountRepository.getRecordsByListId(listSSWId);
+        List<LazadaSwwAndEcomAccount> linkedSwwAndEcomAccount = lazadaSwwAndEcomAccountRepository.getRecordsByListId(listSSWId);
 
         listAccount = linkedSwwAndEcomAccount.stream().map(LazadaSwwAndEcomAccount::getEcomAccount).collect(Collectors.toList());
         return listAccount;
     }
 
     @Override
-    public List<EcomAccount> getEcomIdByVariant(Long variantId, Long warehouseId) {
+    public List<EcomAccount> getEcomByVariantAndWarehouse(Long variantId, Long warehouseId) {
         Variant variant = variantRepository.getById(variantId);
         Warehouse warehouse = warehouseRepository.getById(warehouseId);
-        if(variant == null || warehouse == null){
-           return new ArrayList<>();
+        if (variant == null || warehouse == null) {
+            return new ArrayList<>();
         }
-        return this.getEcomIdByVariant(variant, warehouse);
+        return this.getEcomByVariantAndWarehouse(variant, warehouse);
     }
 
     @Override

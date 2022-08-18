@@ -9,7 +9,6 @@ import com.wifosell.zeus.payload.provider.lazada.ResponseCategoryTreePayload;
 import com.wifosell.zeus.payload.provider.lazada.report.GetAllProductReport;
 import com.wifosell.zeus.payload.provider.lazada.report.GetProductPageReport;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomAccountLazadaCallbackPayload;
-import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
 import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +20,8 @@ import java.util.List;
 public interface EcomService {
     SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId);
 
-    List<EcomAccount> getEcomIdByVariant(Variant variant, Warehouse warehouse);
-    List<EcomAccount> getEcomIdByVariant(Long variantId, Long warehouseId);
+    List<EcomAccount> getEcomByVariantAndWarehouse(Variant variant, Warehouse warehouse);
+    List<EcomAccount> getEcomByVariantAndWarehouse(Long variantId, Long warehouseId);
 
     List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
 

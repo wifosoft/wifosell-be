@@ -26,14 +26,12 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
     private final LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
     private final LazadaProductService lazadaProductService;
     private final SendoProductService sendoProductService;
+    private final EcomService ecomService;
 
 
 
     void hookUpdateByVariant(Long variantId){
-        Variant variant = variantRepository.findFirstById(variantId);
-        if(variant ==null){
-            logger.info("[-] VariantId {} not found" ,variantId);
-        }
+        
     }
 
 
