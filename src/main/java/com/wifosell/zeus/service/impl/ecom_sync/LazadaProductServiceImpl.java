@@ -411,8 +411,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             }
         }
 
-        logger.info("pushLazadaProducts success | ecomId = {}, pushTotal = {}, pushSuccess = {}, fetchSuccess = {}",
-                ecomAccount.getId(), sysProducts.size(), itemIds.size(), fetchSuccess);
+        logger.info("pushLazadaProducts success | ecomId = {}, pushTotal = {}, pushSuccess = {}, createTotal = {}, createSuccess = {}, updateTotal = {}, updateSuccess = {}, fetchSuccess = {}",
+                ecomAccount.getId(), sysProducts.size(), itemIds.size(), createTotal, createSuccess, updateTotal, updateSuccess, fetchSuccess);
 
         return PushLazadaProductsReport.builder()
                 .pushTotal(sysProducts.size())
@@ -573,6 +573,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
     private Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct) {
         // TODO haukc
+        
         return null;
     }
 
