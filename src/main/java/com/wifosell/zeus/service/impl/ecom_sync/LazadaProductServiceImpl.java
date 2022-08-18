@@ -199,7 +199,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 for (VariantValue variantValue : variant.getVariantValues()) {
                     String optionName = variantValue.getOptionValue().getOption().getName();
                     String optionValue = variantValue.getOptionValue().getName();
-                    if (skuOptions.get(optionName).equals(optionValue)) {
+                    if (optionValue.equals(skuOptions.get(optionName))) {
                         skuOptions.remove(optionName);
                     }
                 }

@@ -59,6 +59,27 @@ public class LazadaGetProductItemResponse {
                 }).collect(Collectors.toList());
             }
         });
+
+        // Skus
+        data.skus.forEach(sku -> {
+            Map<String, String> translatedOptions = new HashMap<>();
+
+            sku.options.forEach((rawName, rawValue) -> {
+                LazadaGetCategoryAttributesResponse.Attribute attributeRes = res.getData().get(rawName);
+
+                if (attributeRes != null) {
+                    String translatedName = attributeRes.getLabel();
+                    if (translatedName == null) translatedName = rawName;
+
+                    String translatedValue = attributeRes.getOptions().get(rawValue);
+                    if (translatedValue == null) translatedValue = rawValue;
+
+                    translatedOptions.put(translatedName, translatedValue);
+                }
+            });
+
+            sku.options = translatedOptions;
+        });
     }
 
     @SerializedName("data")

@@ -40,7 +40,7 @@ public class LazadaGetCategoryAttributesResponse {
         @SerializedName("options")
         private List<Option> _options;
 
-        private transient Map<String, String> options;  // {name, enName}
+        private transient Map<String, String> options;  // {enName, name}
 
         @Getter
         public static class Option {
