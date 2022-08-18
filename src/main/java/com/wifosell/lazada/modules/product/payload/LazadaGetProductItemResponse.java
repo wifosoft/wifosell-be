@@ -38,6 +38,8 @@ public class LazadaGetProductItemResponse {
                 if (translatedValue == null) translatedValue = rawValue;
 
                 translatedAttributes.put(translatedName, translatedValue);
+            } else {
+                translatedAttributes.put(rawName, rawValue);
             }
         });
 
@@ -75,6 +77,8 @@ public class LazadaGetProductItemResponse {
                     if (translatedValue == null) translatedValue = rawValue;
 
                     translatedOptions.put(translatedName, translatedValue);
+                } else {
+                    translatedOptions.put(rawName, rawValue);
                 }
             });
 
