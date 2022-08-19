@@ -117,7 +117,7 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
             } else {
                 offlineTotal++;
                 SaleChannel offlineSaleChannel = ssw.getSaleChannel();
-                logger.info("updateStock | no need for offline sale channel | userId = {}, saleChannelId = {}, saleChannelName = {}",
+                logger.info("[+] updateStock | no need for offline sale channel | userId = {}, saleChannelId = {}, saleChannelName = {}",
                         userId, offlineSaleChannel.getId(), offlineSaleChannel.getName());
             }
         }

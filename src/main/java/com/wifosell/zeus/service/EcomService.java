@@ -21,9 +21,10 @@ public interface EcomService {
     SendoLinkAccountRequestDTOWithModel getSendoDTO(Long ecomId);
 
     List<EcomAccount> getEcomByVariantAndWarehouse(Variant variant, Warehouse warehouse);
+
     List<EcomAccount> getEcomByVariantAndWarehouse(Long variantId, Long warehouseId);
 
-    List<EcomAccount> getListEcomAccount(Long userId, EcomAccount.EcomName ecomName);
+    List<EcomAccount> getListEcomAccount(Long userId, List<Long> shopIds, List<EcomAccount.EcomName> ecomNames);
 
     EcomAccount addEcomAccountLazada(Long userId, EcomAccount account);
 
