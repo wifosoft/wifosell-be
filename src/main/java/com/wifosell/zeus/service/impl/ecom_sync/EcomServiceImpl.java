@@ -143,7 +143,7 @@ public class EcomServiceImpl implements EcomService {
 
     public List<EcomAccount> getEcomByVariant(Variant variant) {
         List<EcomAccount> listEcomAccount = new ArrayList<>();
-        List<Stock> findAllStocks = stockRepository.findAllByVariantId(variant.getId());
+        //List<Stock> findAllStocks = stockRepository.findAllByVariantId(variant.getId());
 
         return listEcomAccount;
     }

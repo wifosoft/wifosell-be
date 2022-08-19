@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Setter
@@ -153,7 +150,24 @@ public class UpdateProductRequest implements IProductRequest {
                 //luu _optRequest
             }
         }
-        //
+
+        if(varirantRequests.size() > 1 && optionRequestList.size() == 0){
+            //sản phẩm này được custom vì vậy cần aggregate lại các option id
+            for(Map.Entry<Long, List<Long>> optKV : hashMapOptions.entrySet()){
+                OptionRequest optionRequest = new OptionRequest() ;
+                optionRequest.setId(optKV.getKey());
+                optionRequest.setName("CUSTOM_" + optKV.getKey());
+                List<OptionValueRequest> _listOptValRequest = new ArrayList<>();
+                for (Long optValueId : optKV.getValue()){
+                    OptionValueRequest _optValueRequest = new OptionValueRequest();
+                    _optValueRequest.setId(optValueId);
+                    _optValueRequest.setName("OPT_VAL_" + optValueId);
+                    _listOptValRequest.add(_optValueRequest);
+                }
+                optionRequest.setValues(_listOptValRequest);
+                optionRequestList.add(optionRequest);
+            }
+        }
         m.setAttributes(new ArrayList<>());
         m.setOptions(optionRequestList);
         m.setVariants(varirantRequests);
