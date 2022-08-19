@@ -1,7 +1,6 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
@@ -22,8 +21,6 @@ public class LazadaSwwAndEcomAccount extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
 
     @JsonIgnore
     @ManyToOne

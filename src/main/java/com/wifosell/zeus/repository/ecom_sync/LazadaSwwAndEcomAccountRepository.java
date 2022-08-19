@@ -43,4 +43,6 @@ public interface LazadaSwwAndEcomAccountRepository extends SoftRepository<Lazada
                 () -> new AppException(GApiErrorBody.makeErrorBody(this.getExceptionCodeEntityNotFound()))
         );
     }
+
+    Optional<LazadaSwwAndEcomAccount> findBySaleChannelShopId(Long sswId);
 }
