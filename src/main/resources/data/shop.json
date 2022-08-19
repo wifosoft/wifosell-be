@@ -10,6 +10,10 @@
       {
         "saleChannelId": 1,
         "warehouseId": 1
+      },
+      {
+        "saleChannelId": 2,
+        "warehouseId": 1
       }
     ],
     "isActive": true

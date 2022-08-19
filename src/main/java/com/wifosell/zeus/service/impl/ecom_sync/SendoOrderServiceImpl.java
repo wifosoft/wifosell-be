@@ -34,8 +34,6 @@ import com.wifosell.zeus.taurus.core.TaurusBus;
 import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
 import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
 import com.wifosell.zeus.utils.ZeusUtils;
-import org.apache.poi.sl.draw.geom.GuideIf;
-import org.jboss.jdeparser.FormatPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
