@@ -3,8 +3,6 @@ package com.wifosell.zeus.database.seeder;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
-import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.repository.SaleChannelShopRepository;
 import com.wifosell.zeus.repository.UserRepository;
@@ -43,14 +41,14 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         ecomAccount.setExpiredAt(now.plusSeconds(30 * 24 * 60 * 60));
         ecomAccountRepository.save(ecomAccount);
 
-        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
-        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(1L).orElse(null);
-        if (saleChannelShop == null) {
-            return;
-        }
-        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
-        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
-        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+//        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+//        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(1L).orElse(null);
+//        if (saleChannelShop == null) {
+//            return;
+//        }
+//        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+//        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
+//        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
     }
 
     public void Seed2() {
@@ -68,14 +66,14 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         ecomAccount.setExpiredAt(now.plusSeconds(30 * 24 * 60 * 60));
         ecomAccountRepository.save(ecomAccount);
 
-        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
-        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
-        if (saleChannelShop == null) {
-            return;
-        }
-        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
-        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
-        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+//        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+//        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
+//        if (saleChannelShop == null) {
+//            return;
+//        }
+//        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+//        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
+//        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
 
     }
 
@@ -91,17 +89,17 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
         ecomAccount.setNote("Đã đăng nhập thành công");
         ecomAccount.setGeneralManager(gm);
         LocalDateTime now = LocalDateTime.now();
-        ecomAccount.setExpiredAt(now.plusSeconds(2*60*60));
+        ecomAccount.setExpiredAt(now.plusSeconds(2 * 60 * 60));
         ecomAccountRepository.save(ecomAccount);
 
-        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
-        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
-        if (saleChannelShop == null) {
-            return;
-        }
-        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
-        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
-        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+//        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+//        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
+//        if (saleChannelShop == null) {
+//            return;
+//        }
+//        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+//        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
+//        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
     }
 
 
