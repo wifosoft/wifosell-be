@@ -79,10 +79,36 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
 
     }
 
+    public void Seed3() {
+        User gm = userRepository.getUserByName("manager1").getGeneralManager();
+        EcomAccount ecomAccount = new EcomAccount();
+        ecomAccount.setAccountName("7c18dde1a46746818086310f3779a342");
+        ecomAccount.setEcomName(EcomAccount.EcomName.SENDO);
+        ecomAccount.setAccountInfo("{\"data\":{\"name\":\"SENDO\",\"verified\":\"true\",\"location\":\"\",\"seller_id\":\"62ff5c6bf4f0e28e9d770b2b\",\"email\":\"\",\"secret_key\":\"02455a1580144c50aa138b6482e58e4e\",\"shop_key\":\"7c18dde1a46746818086310f3779a342\",\"status\":\"ACTIVE\"},\"code\":\"0\",\"request_id\":\"2101241b16547560579496455\"}");
+        ecomAccount.setAuthResponse("{\"data\":{\"_id\":\"62ff5c6bf4f0e28e9d770b2b\",\"created_at\":\"Aug 19, 2022, 9:48:27 AM\",\"updated_at\":\"Aug 19, 2022, 1:17:36 PM\",\"shop_key\":\"7c18dde1a46746818086310f3779a342\",\"secret_key\":\"02455a1580144c50aa138b6482e58e4e\",\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJTdG9yZUlkIjoiOTYyMTI1IiwiVXNlck5hbWUiOiIiLCJTdG9yZVN0YXR1cyI6IjIiLCJTaG9wVHlwZSI6IjEiLCJTdG9yZUxldmVsIjoiMCIsImV4cCI6MTY2MDk0Mzg1NiwiaXNzIjoiOTYyMTI1IiwiYXVkIjoiOTYyMTI1In0.dJMmHNRtwOTsKzUzuwa1mghIdg-BYnHI8ivu3pUzszg\",\"expires\":\"Aug 19, 2022, 9:17:36 PM\"},\"status\":200,\"message\":\"Thành công\",\"success\":true}");
+        ecomAccount.setAccountStatus(EcomAccount.AccountStatus.AUTH);
+        ecomAccount.setDescription("Tài khoản sendo khởi tạo mới");
+        ecomAccount.setNote("Đã đăng nhập thành công");
+        ecomAccount.setGeneralManager(gm);
+        LocalDateTime now = LocalDateTime.now();
+        ecomAccount.setExpiredAt(now.plusSeconds(2*60*60));
+        ecomAccountRepository.save(ecomAccount);
+
+        LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+        SaleChannelShop saleChannelShop = saleChannelShopRepository.findById(2L).orElse(null);
+        if (saleChannelShop == null) {
+            return;
+        }
+        lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+        lazadaSwwAndEcomAccount.setSaleChannelShop(saleChannelShop);
+        lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+    }
+
 
     @Override
     public void run() {
         this.Seed1();
         this.Seed2();
+        this.Seed3();
     }
 }

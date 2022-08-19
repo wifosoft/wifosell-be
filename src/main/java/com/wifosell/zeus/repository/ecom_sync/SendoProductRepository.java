@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface SendoProductRepository extends SoftRepository<SendoProduct, Long> {
     boolean existsByItemId(Long skuId);
 
-    SendoProduct findByItemId(Long itemId);
+
+    SendoProduct findFirstByItemId(Long itemId);
 }

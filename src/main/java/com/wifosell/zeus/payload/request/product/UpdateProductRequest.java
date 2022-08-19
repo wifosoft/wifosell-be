@@ -88,6 +88,15 @@ public class UpdateProductRequest implements IProductRequest {
             variantRequest.barcode = e.getSku();
             varirantRequests.add(variantRequest);
 
+
+
+            KafkaWrapperConsumeProductVariantShortInfo kafkaWrapperConsumeProductVariantShortInfo = new KafkaWrapperConsumeProductVariantShortInfo();
+            kafkaWrapperConsumeProductVariantShortInfo.setSku(e.getSku());
+            kafkaWrapperConsumeProductVariantShortInfo.setSpecialPrice(e.getPrice());
+            kafkaWrapperConsumeProductVariantShortInfo.setPrice(e.getPrice());
+            kafkaWrapperConsumeProductVariantShortInfo.setQuantity(e.getStock_quantity());
+            kafkaWrapperConsumeProduct.getListVariants().add(kafkaWrapperConsumeProductVariantShortInfo);
+
         }
         HashMap<Long, List<Long>> hashMapOptions = null; //attribute_id, option_id
         for (ResponseSendoProductItemPayload.Variant variantAPIItem : listVariantAPI) {

@@ -11,9 +11,12 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
 import lombok.Getter;
+import lombok.Setter;
+import org.apache.poi.sl.draw.geom.GuideIf;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -94,24 +97,29 @@ public class OrderResponse extends BasicEntityResponse {
     }
 
     @Getter
+    @Setter
     private static class CustomerResponse extends BasicEntityResponse {
-        private final String fullName;
-        private final String dob;
-        private final Integer sex;
-        private final String phone;
-        private final String email;
-        private final String cin;
-        private final String nation;
-        private final String city;
-        private final String district;
-        private final String ward;
-        private final String addressDetail;
+        private String fullName;
+        private String dob;
+        private Integer sex;
+        private String phone;
+        private String email;
+        private String cin;
+        private String nation;
+        private String city;
+        private String district;
+        private String ward;
+        private String addressDetail;
 
         public CustomerResponse(Customer customer) {
             super(customer);
             this.fullName = customer.getFullName();
-            this.dob = customer.getDob().toString();
-            this.sex = customer.getSex().ordinal();
+            Optional.ofNullable(customer.getDob()).ifPresent(e -> {
+                this.dob = e.toString();
+            });
+            Optional.ofNullable(customer.getSex()).ifPresent(e -> {
+                this.sex = customer.getSex().ordinal();
+            });
             this.phone = customer.getPhone();
             this.email = customer.getEmail();
             this.cin = customer.getCin();

@@ -14,6 +14,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -54,18 +55,18 @@ public class VariantResponse extends BasicEntityResponse {
 
     @Getter
     private static class ProductResponse extends BasicEntityResponse {
-        private final String name;
-        private final String description;
-        private final BigDecimal weight;
-        private final BigDecimal length;
-        private final BigDecimal width;
-        private final BigDecimal height;
-        private final Integer state;
-        private final Integer status;
-        private final CategoryResponse category;
-        private final List<ProductImageResponse> images;
-        private final List<AttributeResponse> attributes;
-        private final List<OptionResponse> options;
+        private String name;
+        private String description;
+        private BigDecimal weight;
+        private BigDecimal length;
+        private BigDecimal width;
+        private BigDecimal height;
+        private Integer state;
+        private Integer status;
+        private CategoryResponse category;
+        private List<ProductImageResponse> images;
+        private List<AttributeResponse> attributes;
+        private List<OptionResponse> options;
 
         public ProductResponse(Product product) {
             super(product);
@@ -77,6 +78,9 @@ public class VariantResponse extends BasicEntityResponse {
             this.height = product.getHeight();
             this.state = product.getState();
             this.status = product.getStatus();
+            Optional.ofNullable(product.getCategory()).ifPresent(e-> {
+                this.category = new CategoryResponse(e);
+            });
             this.category = new CategoryResponse(product.getCategory());
             this.images = product.getImages().stream()
                     .filter(productImage -> !productImage.isDeleted())

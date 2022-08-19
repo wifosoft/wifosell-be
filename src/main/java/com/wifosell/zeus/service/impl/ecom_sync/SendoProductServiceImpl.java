@@ -140,7 +140,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         User gm = ecomAccountOpt.get().getGeneralManager();
 
 
-        SendoProduct sendoProduct = sendoProductRepository.findByItemId(itemPayload.getId());
+        SendoProduct sendoProduct = sendoProductRepository.findFirstByItemId(itemPayload.getId());
         if (sendoProduct == null) {
             sendoProduct = new SendoProduct(itemPayload, ecomAccountOpt.get());
         } else {

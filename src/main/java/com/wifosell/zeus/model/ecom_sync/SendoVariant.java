@@ -115,7 +115,7 @@ public class SendoVariant extends BasicEntity {
         this.sellerSku = e.getSku();
         this.shopSku = e.getSku();
         this.status = "active";
-        this.url  =  "";
+        this.url  =  e.getLink();
         this.specialPrice = e.getSpecial_price();
         this.price = e.getPrice();
         this.skuId =  e.getSku();

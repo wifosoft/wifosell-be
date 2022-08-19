@@ -41,6 +41,10 @@ public class SendoProduct extends BasicEntity {
     @Column(columnDefinition = "MEDIUMTEXT", name = "item_data")
     private String itemData;
 
+
+    @Column(name = "product_identify")
+    private String productIdentify;
+
     @Column(name = "sku_count", columnDefinition = "int default 0")
     private Integer skuCount;
 
@@ -70,6 +74,8 @@ public class SendoProduct extends BasicEntity {
 
     public SendoProduct withDataByProductAPI(ResponseSendoProductItemPayload e) {
         Gson gson = new Gson();
+
+        this.productIdentify   = e.getSku();
         this.name = e.getName();
         this.itemId = e.getId();
         this.primaryCategory = e.getCat_4_id();

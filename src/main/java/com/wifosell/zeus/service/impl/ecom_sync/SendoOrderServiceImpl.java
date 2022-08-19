@@ -191,7 +191,18 @@ public class SendoOrderServiceImpl implements SendoOrderService {
 
         List<AddOrderRequest.OrderItem> listOrderItems = new ArrayList<>();
         for (var saleItem : orderData.getSales_order_details()) {
-            Variant variant = variantRepository.getBySku(saleItem.getStore_sku());
+            SendoProduct sendoProduct = sendoProductRepository.findFirstByItemId((long) saleItem.getProduct_variant_id());
+            if (sendoProduct == null) {
+                logger.info("[-] Sendo Product chưa tồn tại {}", saleItem.getProduct_variant_id());
+                continue;
+            }
+
+            String saleOrderItemProductSku = saleItem.getStore_sku();
+            String prefixProductIdentify = sendoProduct.getProductIdentify();
+            String identifyVariantSku = saleOrderItemProductSku.replaceAll(prefixProductIdentify + "-", "");
+
+
+            Variant variant = variantRepository.getBySku(identifyVariantSku);
             if (variant == null) {
                 logger.info("[-] Alert variant sku not found {}", saleItem.getStore_sku());
                 continue;
@@ -201,7 +212,7 @@ public class SendoOrderServiceImpl implements SendoOrderService {
             orderItem.setQuantity(saleItem.getQuantity());
             listOrderItems.add(orderItem);
         }
-        addOrderRequest.setOrderItems( listOrderItems);
+        addOrderRequest.setOrderItems(listOrderItems);
 
         //use service to add new order
         OrderModel order = orderService.addOrder(gm.getId(), addOrderRequest);
