@@ -424,8 +424,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 .fetchSuccess(fetchSuccess).build();
     }
 
-    @Override
-    public Long createLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
+    private Long createLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
         // Migrate images
         List<String> images = sysProduct.getImages(true).stream()
                 .map(ProductImage::getUrl).collect(Collectors.toList());
@@ -572,8 +571,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         return req;
     }
 
-    @Override
-    public Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
+    private Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
         // Migrate images
         List<String> images = sysProduct.getImages(true).stream()
                 .map(ProductImage::getUrl).collect(Collectors.toList());
@@ -681,6 +679,31 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         }
 
         return req;
+    }
+
+    @Override
+    public boolean updateLazadaProduct(Long userId, Long productId) {
+        Product product = productService.getProduct(userId, productId);
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(productId).orElse(null);
+
+        if (productLink != null) {
+            try {
+                Long itemId = updateLazadaProductItem(productLink.getLazadaProduct().getEcomAccount(), product, null);
+                if (itemId != null) {
+                    logger.info("updateLazadaProduct success | productId = {}, itemId = {}", product, itemId);
+                    return true;
+                } else {
+                    logger.error("updateLazadaProduct fail | request fail | productId = {}", product);
+                }
+            } catch (JsonProcessingException | ApiException e) {
+                e.printStackTrace();
+                logger.error("updateLazadaProduct fail | exception | productId = {}", product);
+            }
+        } else {
+            logger.warn("updateLazadaProduct not execute | product not link | productId = {}", productId);
+        }
+
+        return false;
     }
 
     @Override

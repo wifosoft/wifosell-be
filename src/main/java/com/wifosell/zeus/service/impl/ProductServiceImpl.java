@@ -1,12 +1,9 @@
 package com.wifosell.zeus.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.ecom_sync.LazadaProductAndSysProduct;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.*;
@@ -181,32 +178,22 @@ public class ProductServiceImpl implements ProductService {
         product = this.updateProductByRequest(product, request, gm);
 
         // Update product on Lazada & Sendo
-        updateLazadaProduct(product);
-        updateSendoProduct(product);
+        updateLazadaProduct(userId, productId);
+        updateSendoProduct();
 
         return product;
     }
 
-    private void updateLazadaProduct(Product product) {
-        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(product.getId()).orElse(null);
-        if (productLink != null) {
-            try {
-                Long itemId = lazadaProductService.updateLazadaProductItem(productLink.getLazadaProduct().getEcomAccount(), product, null);
-                if (itemId != null) {
-                    logger.info("updateLazadaProduct success | productId = {}, itemId = {}", product.getId(), itemId);
-                } else {
-                    logger.error("updateLazadaProduct fail | request fail | productId = {}", product.getId());
-                }
-            } catch (JsonProcessingException | ApiException e) {
-                e.printStackTrace();
-                logger.error("updateLazadaProduct fail | exception | productId = {}", product.getId());
-            }
+    private void updateLazadaProduct(Long userId, Long productId) {
+        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
+        if (success) {
+            logger.info("updateLazadaProduct success | productId = {}", productId);
         } else {
-            logger.info("updateLazadaProduct not execute | product not link | productId = {}", product.getId());
+            logger.error("updateLazadaProduct fail | productId = {}", productId);
         }
     }
 
-    private void updateSendoProduct(Product product) {
+    private void updateSendoProduct() {
         // TODO Sendo
     }
 
