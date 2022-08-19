@@ -17,7 +17,6 @@ import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.LazadaProductAndSysProductRepository;
-import com.wifosell.zeus.service.LazadaProductService;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
@@ -59,7 +58,6 @@ public class ProductServiceImpl implements ProductService {
     private final EntityManager entityManager;
 
     private final LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
-    private final LazadaProductService lazadaProductService;
 
     @Override
     public Page<Product> getProducts(
@@ -178,20 +176,20 @@ public class ProductServiceImpl implements ProductService {
         product = this.updateProductByRequest(product, request, gm);
 
         // Update product on Lazada & Sendo
-        updateLazadaProduct(userId, productId);
+//        updateLazadaProduct(userId, productId);
         updateSendoProduct();
 
         return product;
     }
 
-    private void updateLazadaProduct(Long userId, Long productId) {
-        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
-        if (success) {
-            logger.info("updateLazadaProduct success | productId = {}", productId);
-        } else {
-            logger.error("updateLazadaProduct fail | productId = {}", productId);
-        }
-    }
+//    private void updateLazadaProduct(Long userId, Long productId) {
+//        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
+//        if (success) {
+//            logger.info("updateLazadaProduct success | productId = {}", productId);
+//        } else {
+//            logger.error("updateLazadaProduct fail | productId = {}", productId);
+//        }
+//    }
 
     private void updateSendoProduct() {
         // TODO Sendo
