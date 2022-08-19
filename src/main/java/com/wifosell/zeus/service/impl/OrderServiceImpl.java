@@ -1,5 +1,6 @@
 package com.wifosell.zeus.service.impl;
 
+import com.google.gson.Gson;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.customer.Customer;
@@ -241,6 +242,13 @@ public class OrderServiceImpl implements OrderService {
 
         // General manager
         order.setGeneralManager(gm);
+
+        Optional.ofNullable(request.getShippingDetail()).ifPresent(o -> {
+            String encodeShippingDetail = (new Gson()).toJson(o);
+            order.setShipDetail(encodeShippingDetail);
+        });
+
+        order.setOrderSource(request.getOrderSource());
 
         // Active
         Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);

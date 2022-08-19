@@ -37,6 +37,19 @@ public class AddOrderRequest {
 
     private Boolean isActive;
 
+    private ShippingDetail shippingDetail;
+
+    private int orderSource;
+
+    @Getter
+    @Setter
+    public static class ShippingDetail{
+        private String contactName;
+        private String contactEmail;
+        private String contactPhone;
+        private String contactAddress;
+    }
+
     @Getter
     @Setter
     public static class OrderItem {
@@ -48,6 +61,8 @@ public class AddOrderRequest {
 
         @Size(max = 1000)
         private String note;
+
+
     }
 
     @Getter

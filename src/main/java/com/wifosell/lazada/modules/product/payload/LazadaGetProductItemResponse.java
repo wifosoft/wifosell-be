@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wifosell.lazada.modules.category.payload.LazadaGetCategoryAttributesResponse;
-import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -172,6 +171,8 @@ public class LazadaGetProductItemResponse {
 
             private transient List<Integer> optionIndices;
 
+            private transient Map<String, String> options;
+
             public boolean isActive() {
                 return "active".equals(status);
             }
@@ -188,17 +189,14 @@ public class LazadaGetProductItemResponse {
         data.variations = new ArrayList<>(data._variations.values());
 
         data.skus = new ArrayList<>();
-        data._skus.forEach(rawSku -> data.skus.add(null));
         data._skus.forEach(rawSku -> {
             try {
                 Data.Sku sku = gson.fromJson(objectMapper.writeValueAsString(rawSku), Data.Sku.class);
-                sku.optionIndices = data.variations.stream()
-                        .map(v -> v.options.indexOf(rawSku.get(v.name).toString())).collect(Collectors.toList());
-                int index = ZeusUtils.convertIndicesToSortedIndex(
-                        sku.optionIndices,
-                        data.variations.stream().map(v -> v.getOptions().size()).collect(Collectors.toList())
-                );
-                data.skus.set(index, sku);
+                sku.options = new HashMap<>();
+                data.variations.forEach(variation -> {
+                    sku.options.put(variation.name, String.valueOf(rawSku.get(variation.name)));
+                });
+                data.skus.add(sku);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

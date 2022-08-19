@@ -271,6 +271,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             Optional<LazadaSwwAndEcomAccount> relationSwwEAOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccountOpt.get().getId());
             if (relationSwwEAOpt.isEmpty()) {
                 logger.info("Khong ton tai relation");
+                return;
             } else {
                 Warehouse warehouse = relationSwwEAOpt.get().getSaleChannelShop().getWarehouse();
             }
@@ -526,5 +527,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         }
         return false;
     }
+
+
 
 }

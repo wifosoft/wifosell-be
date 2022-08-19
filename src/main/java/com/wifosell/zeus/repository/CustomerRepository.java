@@ -11,4 +11,9 @@ public interface CustomerRepository extends SoftRepository<Customer, Long>{
     default EAppExceptionCode getExceptionCodeEntityNotFound() {
         return EAppExceptionCode.CUSTOMER_NOT_FOUND;
     }
+
+    Customer getCustomerByPhone(String phone);
+
+
+    Customer getCustomerByEmail(String email) ;
 }

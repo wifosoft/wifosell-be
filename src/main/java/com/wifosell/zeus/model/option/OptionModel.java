@@ -46,7 +46,12 @@ public class OptionModel extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
 
+    @JsonIgnore
     public List<OptionValue> getOptionValues(boolean available) {
         return optionValues.stream().filter(ov -> ov.isDeleted() != available).collect(Collectors.toList());
+    }
+
+    public String getProcessedName() {
+        return name.replace(" ", "_");
     }
 }
