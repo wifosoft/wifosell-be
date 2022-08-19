@@ -68,23 +68,6 @@ public class LazadaProductAPI {
         return productItemResponse;
     }
 
-    public static boolean updatePriceAndQuantity(String accessToken, LazadaUpdatePriceQuantityRequest payload) throws JsonProcessingException, ApiException {
-        LazopRequest request = new LazopRequest();
-
-        request.setApiName("/product/price_quantity/update");
-        request.addApiParameter("payload", payload.toXml());
-
-        LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
-
-        if (!response.isSuccess()) {
-            logger.error("updatePriceAndQuantity fail | body = {}.", response.getBody());
-            return false;
-        }
-
-        logger.info("updatePriceAndQuantity success.");
-        return true;
-    }
-
     public static LazadaCreateProductResponse createProduct(String accessToken, LazadaCreateProductRequest payload) throws ApiException, JsonProcessingException {
         LazopRequest request = new LazopRequest();
 
@@ -103,5 +86,39 @@ public class LazadaProductAPI {
         logger.info("createProduct success | itemId = {}, skuCount = {}",
                 createProductResponse.getData().getItemId(), createProductResponse.getData().getSkus().size());
         return createProductResponse;
+    }
+
+    public static boolean updateProduct(String accessToken, LazadaUpdateProductRequest payload) throws JsonProcessingException, ApiException {
+        LazopRequest request = new LazopRequest();
+
+        request.setApiName("/product/update");
+        request.addApiParameter("payload", payload.toXml());
+
+        LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
+
+        if (!response.isSuccess()) {
+            logger.error("updateProduct fail | body = {}.", response.getBody());
+            return false;
+        }
+
+        logger.info("updateProduct success.");
+        return true;
+    }
+
+    public static boolean updatePriceAndQuantity(String accessToken, LazadaUpdatePriceQuantityRequest payload) throws JsonProcessingException, ApiException {
+        LazopRequest request = new LazopRequest();
+
+        request.setApiName("/product/price_quantity/update");
+        request.addApiParameter("payload", payload.toXml());
+
+        LazopResponse response = LazadaClient.getClient().execute(request, accessToken);
+
+        if (!response.isSuccess()) {
+            logger.error("updatePriceAndQuantity fail | body = {}.", response.getBody());
+            return false;
+        }
+
+        logger.info("updatePriceAndQuantity success.");
+        return true;
     }
 }

@@ -6,16 +6,22 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
 
+@Getter
 @JacksonXmlRootElement(localName = "Request")
-public class LazadaCreateProductRequest {
+public class LazadaUpdateProductRequest {
     @JacksonXmlProperty(localName = "Product")
     public Product product;
 
+    @Getter
     public static class Product {
+        @JacksonXmlProperty(localName = "ItemId")
+        public Long itemId;
+
         @JacksonXmlProperty(localName = "PrimaryCategory")
         public Long primaryCategory;
 
@@ -34,6 +40,7 @@ public class LazadaCreateProductRequest {
         public List<Map<String, Object>> skus;
     }
 
+    @Getter
     public static class Attribute {
         public static final String NAME = "name";
         public static final String DESCRIPTION = "description";
@@ -41,6 +48,7 @@ public class LazadaCreateProductRequest {
         public static final String BRAND_DEFAULT_VALUE = "No Brand";
     }
 
+    @Getter
     public static class Variation {
         public static String TAG_PREFIX = "variation";
 
@@ -58,6 +66,7 @@ public class LazadaCreateProductRequest {
         public List<String> options;
     }
 
+    @Getter
     public static class Sku {
         public static final String SELLER_SKU = "SellerSku";
         public static final String QUANTITY = "quantity";

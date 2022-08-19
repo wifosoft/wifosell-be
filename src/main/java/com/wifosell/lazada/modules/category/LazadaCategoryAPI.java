@@ -41,11 +41,11 @@ public class LazadaCategoryAPI {
         LazopResponse response = LazadaClient.getClient().execute(request);
 
         if (!response.isSuccess()) {
-            logger.error("getCategoryAttributes fail | body = {}", response.getBody());
+            logger.error("getCategoryAttributes fail | categoryId = {}, body = {}", categoryId, response.getBody());
             return null;
         }
 
-        logger.info("getCategoryAttributes success");
+        logger.info("getCategoryAttributes success | categoryId = {}", categoryId);
         return LazadaGetCategoryAttributesResponse.fromJson(response.getBody());
     }
 }

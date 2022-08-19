@@ -8,5 +8,9 @@ import lombok.Getter;
 public class PushLazadaProductsReport {
     private int pushTotal;
     private int pushSuccess;
+    private int createTotal;
+    private int createSuccess;
+    private int updateTotal;
+    private int updateSuccess;
     private int fetchSuccess;
 }

@@ -2,6 +2,8 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lazada.lazop.util.ApiException;
+import com.wifosell.lazada.modules.category.LazadaCategoryAPI;
+import com.wifosell.lazada.modules.category.payload.LazadaGetCategoryAttributesResponse;
 import com.wifosell.lazada.modules.image.LazadaImageAPI;
 import com.wifosell.lazada.modules.image.payload.LazadaMigrateImagesBatchResponse;
 import com.wifosell.lazada.modules.image.payload.LazadaMigrateImagesRequest;
@@ -197,7 +199,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 for (VariantValue variantValue : variant.getVariantValues()) {
                     String optionName = variantValue.getOptionValue().getOption().getName();
                     String optionValue = variantValue.getOptionValue().getName();
-                    if (skuOptions.get(optionName).equals(optionValue)) {
+                    if (optionValue.equals(skuOptions.get(optionName))) {
                         skuOptions.remove(optionName);
                     }
                 }
@@ -370,6 +372,10 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         List<Product> sysProducts = productService.getProducts(userId, List.of(warehouse.getId()), List.of(true));
         List<Long> itemIds = new ArrayList<>();
         List<Product> syncProducts = new ArrayList<>();
+        int createTotal = 0;
+        int createSuccess = 0;
+        int updateTotal = 0;
+        int updateSuccess = 0;
 
         for (Product sysProduct : sysProducts) {
             try {
@@ -377,8 +383,12 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 Long itemId;
                 if (productLink == null) {
                     itemId = createLazadaProductItem(ecomAccount, sysProduct, warehouse);
+                    createTotal++;
+                    if (itemId != null) createSuccess++;
                 } else {
-                    itemId = updateLazadaProductItem(ecomAccount, sysProduct);
+                    itemId = updateLazadaProductItem(ecomAccount, sysProduct, warehouse);
+                    updateTotal++;
+                    if (itemId != null) updateSuccess++;
                 }
                 if (itemId != null) {
                     itemIds.add(itemId);
@@ -401,61 +411,17 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             }
         }
 
-        logger.info("pushLazadaProducts success | ecomId = {}, pushTotal = {}, pushSuccess = {}, fetchSuccess = {}",
-                ecomAccount.getId(), sysProducts.size(), itemIds.size(), fetchSuccess);
+        logger.info("pushLazadaProducts success | ecomId = {}, pushTotal = {}, pushSuccess = {}, createTotal = {}, createSuccess = {}, updateTotal = {}, updateSuccess = {}, fetchSuccess = {}",
+                ecomAccount.getId(), sysProducts.size(), itemIds.size(), createTotal, createSuccess, updateTotal, updateSuccess, fetchSuccess);
 
         return PushLazadaProductsReport.builder()
                 .pushTotal(sysProducts.size())
                 .pushSuccess(itemIds.size())
+                .createTotal(createTotal)
+                .createSuccess(createSuccess)
+                .updateTotal(updateTotal)
+                .updateSuccess(updateSuccess)
                 .fetchSuccess(fetchSuccess).build();
-    }
-
-    @Override
-    public boolean pushLazadaVariantQuantity(Long userId, Long ecomId, Long variantId) {
-        Variant variant = variantService.getVariant(userId, variantId);
-
-        // itemId
-        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(variant.getProduct().getId()).orElse(null);
-        if (productLink == null) {
-            logger.error("pushLazadaVariantQuantity fail | product not link | userId = {}, ecomId = {}, variantId = {}",
-                    userId, ecomId, variantId);
-            return false;
-        }
-        Long itemId = productLink.getLazadaProduct().getItemId();
-
-        // skuId
-        LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(variantId).orElse(null);
-        if (variantLink == null) {
-            logger.error("pushLazadaVariantQuantity fail | variant not link | userId = {}, ecomId = {}, variantId = {}",
-                    userId, ecomId, variantId);
-            return false;
-        }
-        Long skuId = variantLink.getLazadaVariant().getSkuId();
-
-        // quantity
-        LazadaSwwAndEcomAccount link = lazadaSwwAndEcomAccountRepository.getByEcomAccountId(ecomId);
-        Warehouse warehouse = link.getSaleChannelShop().getWarehouse();
-        Integer quantity = variant.getStockWarehouse(warehouse.getId());
-
-        // Lazada API
-        EcomAccount ecomAccount = ecomService.getEcomAccount(userId, ecomId);
-
-        LazadaUpdatePriceQuantityRequest request = new LazadaUpdatePriceQuantityRequest(itemId, skuId, quantity);
-
-        try {
-            boolean success = LazadaProductAPI.updatePriceAndQuantity(ecomAccount.getAccessToken(), request);
-            if (!success) {
-                logger.error("pushLazadaVariantQuantity fail | response fail | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-                return false;
-            }
-        } catch (JsonProcessingException | ApiException e) {
-            e.printStackTrace();
-            logger.error("pushLazadaVariantQuantity fail | throw exception | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-            return false;
-        }
-
-        logger.info("pushLazadaVariantQuantity success | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-        return true;
     }
 
     private Long createLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
@@ -535,10 +501,25 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.product.images = migratedImages;
 
         // Attributes
+        Map<String, String> remainingMandatoryAttributes;
+        try {
+            LazadaGetCategoryAttributesResponse attributesRes = LazadaCategoryAPI.getCategoryAttributes(req.product.primaryCategory);
+            if (attributesRes == null) {
+                logger.error("toLazadaCreateProductRequest fail | attributeRes null | productId = {}", product.getId());
+                return null;
+            }
+            remainingMandatoryAttributes = attributesRes.getRemainingMandatoryAttributes();
+        } catch (ApiException e) {
+            e.printStackTrace();
+            logger.error("toLazadaCreateProductRequest fail | getCategoryAttributes fail | productId = {}", product.getId());
+            return null;
+        }
+
         req.product.attributes = new HashMap<>();
         req.product.attributes.put(LazadaCreateProductRequest.Attribute.NAME, product.getName());
         req.product.attributes.put(LazadaCreateProductRequest.Attribute.DESCRIPTION, product.getDescription());
         req.product.attributes.put(LazadaCreateProductRequest.Attribute.BRAND, LazadaCreateProductRequest.Attribute.BRAND_DEFAULT_VALUE);
+        req.product.attributes.putAll(remainingMandatoryAttributes);
 
         // Variations
         req.product.variations = new HashMap<>();
@@ -590,9 +571,160 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         return req;
     }
 
-    private Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct) {
-        // TODO haukc
-        return null;
+    private Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
+        // Migrate images
+        List<String> images = sysProduct.getImages(true).stream()
+                .map(ProductImage::getUrl).collect(Collectors.toList());
+
+        LazadaMigrateImagesRequest migrateImagesRequest = new LazadaMigrateImagesRequest(images);
+
+        LazadaMigrateImagesBatchResponse migrateImagesBatchResponse = LazadaImageAPI.migrateImages(
+                ecomAccount.getAccessToken(), migrateImagesRequest);
+
+        if (migrateImagesBatchResponse == null) {
+            logger.error("updateLazadaProductItem fail | migrateImages fail | ecomId = {}, productId = {}",
+                    ecomAccount.getId(), sysProduct.getId());
+            return null;
+        }
+
+        LazadaMigrateImagesResponse migrateImagesResponse = LazadaImageAPI.getMigrateImages(
+                ecomAccount.getAccessToken(), migrateImagesBatchResponse.getBatchId());
+
+        if (migrateImagesResponse == null) {
+            logger.error("updateLazadaProductItem fail | getMigrateImages fail | ecomId = {}, productId = {}",
+                    ecomAccount.getId(), sysProduct.getId());
+            return null;
+        }
+
+        images = migrateImagesResponse.getData().getImages().stream()
+                .map(LazadaMigrateImagesResponse.Data.Image::getUrl).collect(Collectors.toList());
+
+        // Update product
+        LazadaUpdateProductRequest request = toLazadaUpdateProductRequest(sysProduct, images, warehouse);
+
+        if (request == null) {
+            logger.error("updateLazadaProductItem create request fail | ecomId = {}, productId = {}",
+                    ecomAccount.getId(), sysProduct.getId());
+            return null;
+        }
+
+        boolean response = LazadaProductAPI.updateProduct(ecomAccount.getAccessToken(), request);
+
+        if (!response) {
+            logger.error("updateLazadaProductItem fail | ecomId = {}, productId = {}", ecomAccount.getId(), sysProduct.getId());
+            return null;
+        }
+
+        logger.info("updateLazadaProductItem success | ecomId = {}, productId = {}, itemId = {}, skuCount = {}",
+                ecomAccount.getId(), sysProduct.getId(), request.getProduct().getItemId(), request.getProduct().getSkus().size());
+
+        return request.getProduct().getItemId();
+    }
+
+    private LazadaUpdateProductRequest toLazadaUpdateProductRequest(Product product, List<String> migratedImages, Warehouse warehouse) {
+        if (product.getCategory() == null) {
+            logger.error("toLazadaUpdateProductRequest fail | category null | productId = {}", product.getId());
+            return null;
+        }
+
+        LazadaUpdateProductRequest req = new LazadaUpdateProductRequest();
+        req.product = new LazadaUpdateProductRequest.Product();
+
+        // ItemId
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(product.getId()).orElse(null);
+        if (productLink == null) {
+            logger.error("toLazadaUpdateProductRequest fail | product not link | productId = {}", product.getId());
+            return null;
+        }
+        req.product.itemId = productLink.getLazadaProduct().getItemId();
+
+        // Category
+        LazadaCategoryAndSysCategory categoryLink = lazadaCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(
+                product.getGeneralManager().getId(), product.getCategory().getId()).orElse(null);
+        if (categoryLink == null) {
+            logger.error("toLazadaUpdateProductRequest fail | category not link | productId = {}", product.getId());
+            return null;
+        }
+        req.product.primaryCategory = categoryLink.getLazadaCategory().getLazadaCategoryId();
+
+        // Images
+        req.product.images = migratedImages;
+
+        // Attributes
+        req.product.attributes = new HashMap<>();
+        req.product.attributes.put(LazadaCreateProductRequest.Attribute.NAME, product.getName());
+        req.product.attributes.put(LazadaCreateProductRequest.Attribute.DESCRIPTION, product.getDescription());
+
+        // Skus
+        req.product.skus = new ArrayList<>();
+        for (Variant variant : product.getVariants(true)) {
+            Map<String, Object> sku = new HashMap<>();
+
+            sku.put(LazadaCreateProductRequest.Sku.SELLER_SKU, variant.getSku());
+            sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
+
+            sku.put(LazadaCreateProductRequest.Sku.PRICE, variant.getOriginalCost());
+            sku.put(LazadaCreateProductRequest.Sku.SPECIAL_PRICE, variant.getCost());
+            sku.put(LazadaCreateProductRequest.Sku.SPECIAL_FROM_DATE, LazadaCreateProductRequest.Sku.SPECIAL_FROM_DATE_DEFAULT_VALUE);
+            sku.put(LazadaCreateProductRequest.Sku.SPECIAL_TO_DATE, LazadaCreateProductRequest.Sku.SPECIAL_TO_DATE_DEFAULT_VALUE);
+
+            sku.put(LazadaCreateProductRequest.Sku.PACKAGE_HEIGHT, variant.getProduct().getHeight());
+            sku.put(LazadaCreateProductRequest.Sku.PACKAGE_LENGTH, variant.getProduct().getLength());
+            sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WIDTH, variant.getProduct().getWidth());
+            sku.put(LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT, variant.getProduct().getWeightLazada());
+
+            req.product.skus.add(sku);
+        }
+
+        return req;
+    }
+
+    @Override
+    public boolean pushLazadaVariantQuantity(Long userId, Long ecomId, Long variantId) {
+        Variant variant = variantService.getVariant(userId, variantId);
+
+        // itemId
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(variant.getProduct().getId()).orElse(null);
+        if (productLink == null) {
+            logger.error("pushLazadaVariantQuantity fail | product not link | userId = {}, ecomId = {}, variantId = {}",
+                    userId, ecomId, variantId);
+            return false;
+        }
+        Long itemId = productLink.getLazadaProduct().getItemId();
+
+        // skuId
+        LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(variantId).orElse(null);
+        if (variantLink == null) {
+            logger.error("pushLazadaVariantQuantity fail | variant not link | userId = {}, ecomId = {}, variantId = {}",
+                    userId, ecomId, variantId);
+            return false;
+        }
+        Long skuId = variantLink.getLazadaVariant().getSkuId();
+
+        // quantity
+        LazadaSwwAndEcomAccount link = lazadaSwwAndEcomAccountRepository.getByEcomAccountId(ecomId);
+        Warehouse warehouse = link.getSaleChannelShop().getWarehouse();
+        Integer quantity = variant.getStockWarehouse(warehouse.getId());
+
+        // Lazada API
+        EcomAccount ecomAccount = ecomService.getEcomAccount(userId, ecomId);
+
+        LazadaUpdatePriceQuantityRequest request = new LazadaUpdatePriceQuantityRequest(itemId, skuId, quantity);
+
+        try {
+            boolean success = LazadaProductAPI.updatePriceAndQuantity(ecomAccount.getAccessToken(), request);
+            if (!success) {
+                logger.error("pushLazadaVariantQuantity fail | response fail | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
+                return false;
+            }
+        } catch (JsonProcessingException | ApiException e) {
+            e.printStackTrace();
+            logger.error("pushLazadaVariantQuantity fail | throw exception | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
+            return false;
+        }
+
+        logger.info("pushLazadaVariantQuantity success | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
+        return true;
     }
 
     @Override
