@@ -1,4 +1,4 @@
-FROM openjdk:18-ea-11-jdk-alpine3.15
+FROM openjdk:17-alpine3.14
 #WORKDIR /home/app
 #RUN addgroup -S spring && adduser -S spring -G spring
 RUN mkdir storage
