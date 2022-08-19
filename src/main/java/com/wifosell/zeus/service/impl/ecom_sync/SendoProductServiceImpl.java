@@ -322,7 +322,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         // Lấy liên kết category
         ProductResponse sysProductResponse = new ProductResponse(sysProduct);
         if (sysProduct.getCategory() == null) {
-            logger.info("[-] Khong co category ecom id {}, sys product {}, gm {} ", ecomId, sysProductId, gm.getId());
+            logger.info("[-] Khong co category, ecom id {}, sys product {}, gm {} ", ecomId, sysProductId, gm.getId());
             return null;
         }
 

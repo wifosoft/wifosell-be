@@ -5,6 +5,9 @@ RUN mkdir storage
 #RUN chown -R spring:spring storage
 RUN chmod 777 storage
 
+RUN apk add --no-cache gcompat
+
+
 RUN apk add java-snappy-native
 
 #RUN APK add --no-cache gcompat
