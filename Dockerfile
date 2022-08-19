@@ -5,6 +5,8 @@ RUN mkdir storage
 #RUN chown -R spring:spring storage
 RUN chmod 777 storage
 
+apk add --no-cache gcompat
+
 #USER spring:spring
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
