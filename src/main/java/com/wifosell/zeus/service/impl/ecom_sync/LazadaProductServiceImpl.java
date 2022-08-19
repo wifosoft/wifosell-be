@@ -424,7 +424,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 .fetchSuccess(fetchSuccess).build();
     }
 
-    private Long createLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
+    @Override
+    public Long createLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
         // Migrate images
         List<String> images = sysProduct.getImages(true).stream()
                 .map(ProductImage::getUrl).collect(Collectors.toList());
@@ -571,7 +572,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         return req;
     }
 
-    private Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
+    @Override
+    public Long updateLazadaProductItem(EcomAccount ecomAccount, Product sysProduct, Warehouse warehouse) throws JsonProcessingException, ApiException {
         // Migrate images
         List<String> images = sysProduct.getImages(true).stream()
                 .map(ProductImage::getUrl).collect(Collectors.toList());
@@ -661,7 +663,9 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             Map<String, Object> sku = new HashMap<>();
 
             sku.put(LazadaCreateProductRequest.Sku.SELLER_SKU, variant.getSku());
-            sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
+            if (warehouse != null) {
+                sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
+            }
 
             sku.put(LazadaCreateProductRequest.Sku.PRICE, variant.getOriginalCost());
             sku.put(LazadaCreateProductRequest.Sku.SPECIAL_PRICE, variant.getCost());

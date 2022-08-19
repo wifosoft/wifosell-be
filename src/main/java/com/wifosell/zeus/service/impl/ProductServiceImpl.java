@@ -1,9 +1,12 @@
 package com.wifosell.zeus.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.lazada.lazop.util.ApiException;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.ecom_sync.LazadaProductAndSysProduct;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.product.*;
@@ -16,6 +19,8 @@ import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.repository.ecom_sync.LazadaProductAndSysProductRepository;
+import com.wifosell.zeus.service.LazadaProductService;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
@@ -25,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +47,8 @@ import java.util.stream.Collectors;
 @Service("ProductService")
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final AttributeRepository attributeRepository;
@@ -51,6 +60,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
     private final StockRepository stockRepository;
     private final EntityManager entityManager;
+
+    private final LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
+    private final LazadaProductService lazadaProductService;
 
     @Override
     public Page<Product> getProducts(
@@ -166,18 +178,36 @@ public class ProductServiceImpl implements ProductService {
         } else {
             product = getProduct(userId, productId);
         }
-        Product productResponse = this.updateProductByRequest(product, request, gm);
+        product = this.updateProductByRequest(product, request, gm);
 
-        //TODO: update information to sendo, lazada here (stock,name,...)
+        // Update product on Lazada & Sendo
+        updateLazadaProduct(product);
+        updateSendoProduct(product);
 
-        //Lazada
+        return product;
+    }
 
+    private void updateLazadaProduct(Product product) {
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(product.getId()).orElse(null);
+        if (productLink != null) {
+            try {
+                Long itemId = lazadaProductService.updateLazadaProductItem(productLink.getLazadaProduct().getEcomAccount(), product, null);
+                if (itemId != null) {
+                    logger.info("updateLazadaProduct success | productId = {}, itemId = {}", product.getId(), itemId);
+                } else {
+                    logger.error("updateLazadaProduct fail | request fail | productId = {}", product.getId());
+                }
+            } catch (JsonProcessingException | ApiException e) {
+                e.printStackTrace();
+                logger.error("updateLazadaProduct fail | exception | productId = {}", product.getId());
+            }
+        } else {
+            logger.info("updateLazadaProduct not execute | product not link | productId = {}", product.getId());
+        }
+    }
 
-
-        //Sendo
-
-
-        return productResponse;
+    private void updateSendoProduct(Product product) {
+        // TODO Sendo
     }
 
     @Override
