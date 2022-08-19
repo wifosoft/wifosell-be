@@ -30,5 +30,8 @@ public interface VariantRepository extends SoftRepository<Variant, Long> {
         return optional.orElse(null);
     }
 
+    @Query("select e from Variant e where e.sku = ?1")
+    Variant getBySku(String sku);
+
     Optional<Variant> findBySkuAndGeneralManagerId(String sku, Long gmId);
 }

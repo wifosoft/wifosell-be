@@ -48,6 +48,15 @@ public class OrderModel extends BasicEntity {
 
     private BigDecimal total;
 
+    @Column(name= "shipping_detail" ,columnDefinition = "text")
+    private String shipDetail;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String reserved;
+
+    @Column(name = "order_source", nullable = false, columnDefinition = "int default 0")
+    private int orderSource;
+
     @Enumerated(EnumType.STRING)
     private STATUS status;
 
