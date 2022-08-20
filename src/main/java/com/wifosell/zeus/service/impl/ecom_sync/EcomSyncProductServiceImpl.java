@@ -67,7 +67,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
         int lazadaSuccess = 0;
         int sendoTotal = 0;
         int sendoSuccess = 0;
-        int offlineTotal = 0;
 
         List<SaleChannelShop> saleChannelShops = saleChannelShopRepository.findListSSWByWarehouseId(warehouse.getId());
 
@@ -121,7 +120,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
                 .lazadaSuccess(lazadaSuccess)
                 .sendoTotal(sendoTotal)
                 .sendoSuccess(sendoSuccess)
-                .offlineTotal(offlineTotal)
                 .build();
     }
 }
