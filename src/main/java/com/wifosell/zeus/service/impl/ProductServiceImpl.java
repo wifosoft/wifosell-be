@@ -190,19 +190,10 @@ public class ProductServiceImpl implements ProductService {
         product = this.updateProductByRequest(product, request, gm);
 
         // Update product on Lazada & Sendo
-        updateLazadaProduct(userId, productId);
+        lazadaProductService.updateLinkedLazadaProducts(userId, productId);
         updateSendoProduct();
 
         return product;
-    }
-
-    private void updateLazadaProduct(Long userId, Long productId) {
-        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
-        if (success) {
-            logger.info("updateLazadaProduct success | productId = {}", productId);
-        } else {
-            logger.error("updateLazadaProduct fail | productId = {}", productId);
-        }
     }
 
     private void updateSendoProduct() {

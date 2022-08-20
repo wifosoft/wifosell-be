@@ -52,7 +52,6 @@ import java.util.stream.Collectors;
 
 @Service("LazadaProductService")
 @Transactional
-//@RequiredArgsConstructor
 public class LazadaProductServiceImpl implements LazadaProductService {
     private static final Logger logger = LoggerFactory.getLogger(LazadaProductServiceImpl.class);
 
@@ -389,7 +388,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         for (Product sysProduct : sysProducts) {
             try {
-                LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(sysProduct.getId()).orElse(null);
+                LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(
+                        sysProduct.getId(), ecomAccount.getId()).orElse(null);
                 Long itemId;
                 if (productLink == null) {
                     itemId = createLazadaProductItem(ecomAccount, sysProduct, warehouse);
@@ -610,7 +610,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 .map(LazadaMigrateImagesResponse.Data.Image::getUrl).collect(Collectors.toList());
 
         // Update product
-        LazadaUpdateProductRequest request = toLazadaUpdateProductRequest(sysProduct, images, warehouse);
+        LazadaUpdateProductRequest request = toLazadaUpdateProductRequest(ecomAccount, sysProduct, images, warehouse);
 
         if (request == null) {
             logger.error("updateLazadaProductItem create request fail | ecomId = {}, productId = {}",
@@ -631,7 +631,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         return request.getProduct().getItemId();
     }
 
-    private LazadaUpdateProductRequest toLazadaUpdateProductRequest(Product product, List<String> migratedImages, Warehouse warehouse) {
+    private LazadaUpdateProductRequest toLazadaUpdateProductRequest(EcomAccount ecomAccount, Product product, List<String> migratedImages, Warehouse warehouse) {
         if (product.getCategory() == null) {
             logger.error("toLazadaUpdateProductRequest fail | category null | productId = {}", product.getId());
             return null;
@@ -641,7 +641,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         req.product = new LazadaUpdateProductRequest.Product();
 
         // ItemId
-        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(product.getId()).orElse(null);
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(
+                product.getId(), ecomAccount.getId()).orElse(null);
         if (productLink == null) {
             logger.error("toLazadaUpdateProductRequest fail | product not link | productId = {}", product.getId());
             return null;
@@ -692,16 +693,17 @@ public class LazadaProductServiceImpl implements LazadaProductService {
     }
 
     @Override
-    public boolean updateLazadaProduct(Long userId, Long productId) {
+    public void updateLinkedLazadaProducts(Long userId, Long productId) {
         Product product = productService.getProduct(userId, productId);
-        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(productId).orElse(null);
 
-        if (productLink != null) {
+        List<LazadaProductAndSysProduct> productLinks = lazadaProductAndSysProductRepository.findAllBySysProductId(productId);
+
+        for (LazadaProductAndSysProduct productLink : productLinks) {
             try {
-                Long itemId = updateLazadaProductItem(productLink.getLazadaProduct().getEcomAccount(), product, null);
+                EcomAccount ecomAccount = productLink.getLazadaProduct().getEcomAccount();
+                Long itemId = updateLazadaProductItem(ecomAccount, product, null);
                 if (itemId != null) {
                     logger.info("updateLazadaProduct success | productId = {}, itemId = {}", product, itemId);
-                    return true;
                 } else {
                     logger.error("updateLazadaProduct fail | request fail | productId = {}", product);
                 }
@@ -709,11 +711,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 e.printStackTrace();
                 logger.error("updateLazadaProduct fail | exception | productId = {}", product);
             }
-        } else {
-            logger.warn("updateLazadaProduct not execute | product not link | productId = {}", productId);
         }
-
-        return false;
     }
 
     @Override
@@ -721,7 +719,8 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         Variant variant = variantService.getVariant(userId, variantId);
 
         // itemId
-        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(variant.getProduct().getId()).orElse(null);
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(
+                variant.getProduct().getId(), ecomId).orElse(null);
         if (productLink == null) {
             logger.error("pushLazadaVariantQuantity fail | product not link | userId = {}, ecomId = {}, variantId = {}",
                     userId, ecomId, variantId);
@@ -730,7 +729,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         Long itemId = productLink.getLazadaProduct().getItemId();
 
         // skuId
-        LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(variantId).orElse(null);
+        LazadaVariantAndSysVariant variantLink = lazadaVariantAndSysVariantRepository.findBySysVariantId(variantId, ecomId).orElse(null);
         if (variantLink == null) {
             logger.error("pushLazadaVariantQuantity fail | variant not link | userId = {}, ecomId = {}, variantId = {}",
                     userId, ecomId, variantId);
