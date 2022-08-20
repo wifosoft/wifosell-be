@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service("ProductService")
-//@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
@@ -189,15 +188,13 @@ public class ProductServiceImpl implements ProductService {
         }
         product = this.updateProductByRequest(product, request, gm);
 
-        // Update product on Lazada & Sendo
+        // Update Lazada products
         lazadaProductService.updateLinkedLazadaProducts(userId, productId);
-        updateSendoProduct();
+
+        // Update Sendo products
+        // TODO
 
         return product;
-    }
-
-    private void updateSendoProduct() {
-        // TODO Sendo
     }
 
     @Override
