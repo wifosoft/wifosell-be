@@ -12,5 +12,4 @@ public class EcomSyncUpdateStockResponse {
     private int lazadaSuccess;
     private int sendoTotal;
     private int sendoSuccess;
-    private int offlineTotal;
 }

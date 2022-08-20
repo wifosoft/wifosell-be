@@ -44,5 +44,5 @@ public interface LazadaSwwAndEcomAccountRepository extends SoftRepository<Lazada
         );
     }
 
-    Optional<LazadaSwwAndEcomAccount> findBySaleChannelShopId(Long sswId);
+    List<LazadaSwwAndEcomAccount> findAllBySaleChannelShopId(Long sswId);
 }

@@ -3,7 +3,6 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomSyncUpdateStockRequest;
@@ -68,14 +67,13 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
         int lazadaSuccess = 0;
         int sendoTotal = 0;
         int sendoSuccess = 0;
-        int offlineTotal = 0;
 
         List<SaleChannelShop> saleChannelShops = saleChannelShopRepository.findListSSWByWarehouseId(warehouse.getId());
 
         for (SaleChannelShop ssw : saleChannelShops) {
-            LazadaSwwAndEcomAccount sswLink = lazadaSwwAndEcomAccountRepository.findBySaleChannelShopId(ssw.getId()).orElse(null);
+            List<LazadaSwwAndEcomAccount> sswLinks = lazadaSwwAndEcomAccountRepository.findAllBySaleChannelShopId(ssw.getId());
 
-            if (sswLink != null) {
+            for (LazadaSwwAndEcomAccount sswLink : sswLinks) {
                 EcomAccount ecomAccount = sswLink.getEcomAccount();
                 switch (ecomAccount.getEcomName()) {
                     case LAZADA:
@@ -114,11 +112,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
                         logger.error("[-] updateStock fail | unknown ecomName | userId = {}, ecomName = {}",
                                 userId, ecomAccount.getEcomName());
                 }
-            } else {
-                offlineTotal++;
-                SaleChannel offlineSaleChannel = ssw.getSaleChannel();
-                logger.info("[+] updateStock | no need for offline sale channel | userId = {}, saleChannelId = {}, saleChannelName = {}",
-                        userId, offlineSaleChannel.getId(), offlineSaleChannel.getName());
             }
         }
 
@@ -127,7 +120,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
                 .lazadaSuccess(lazadaSuccess)
                 .sendoTotal(sendoTotal)
                 .sendoSuccess(sendoSuccess)
-                .offlineTotal(offlineTotal)
                 .build();
     }
 }

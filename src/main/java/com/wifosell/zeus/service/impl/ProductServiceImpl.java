@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 
 @Transactional
 @Service("ProductService")
-//@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
@@ -189,24 +188,13 @@ public class ProductServiceImpl implements ProductService {
         }
         product = this.updateProductByRequest(product, request, gm);
 
-        // Update product on Lazada & Sendo
-        updateLazadaProduct(userId, productId);
-        updateSendoProduct();
+        // Update Lazada products
+        lazadaProductService.updateLinkedLazadaProducts(userId, productId);
+
+        // Update Sendo products
+        // TODO
 
         return product;
-    }
-
-    private void updateLazadaProduct(Long userId, Long productId) {
-        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
-        if (success) {
-            logger.info("updateLazadaProduct success | productId = {}", productId);
-        } else {
-            logger.error("updateLazadaProduct fail | productId = {}", productId);
-        }
-    }
-
-    private void updateSendoProduct() {
-        // TODO Sendo
     }
 
     @Override
