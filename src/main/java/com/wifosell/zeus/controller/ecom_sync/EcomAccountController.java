@@ -69,13 +69,14 @@ public class EcomAccountController {
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GApiResponse<List<EcomAccountResponse>>> getListAccount(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false,name = "ecomName")EcomAccount.EcomName ecomName) {
-        var listEcom =ecomService.getListEcomAccount(userPrincipal.getId(), ecomName);
+    public ResponseEntity<GApiResponse<List<EcomAccountResponse>>> getListAccount(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestParam(name = "shopId", required = false) List<Long> shopIds,
+            @RequestParam(name = "ecomName", required = false) List<EcomAccount.EcomName> ecomNames) {
+        var listEcom = ecomService.getListEcomAccount(userPrincipal.getId(), shopIds, ecomNames);
         var listEcomResponse = listEcom.stream().map(EcomAccountResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(listEcomResponse));
     }
-
-
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("{id}/delete")
@@ -287,7 +288,7 @@ public class EcomAccountController {
     public ResponseEntity<GApiResponse> getListEcomAffectByWarehouseAndVariant(
             @RequestParam("variantId") Long variantId,
             @RequestParam("warehouseId") Long warehouseId
-    ){
+    ) {
 
         List<EcomAccount> listEcomAccount = ecomService.getEcomByVariantAndWarehouse(variantId, warehouseId);
         return ResponseEntity.ok(GApiResponse.success(listEcomAccount));

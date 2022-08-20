@@ -11,6 +11,8 @@ public interface LazadaProductService {
 
     PushLazadaProductsReport pushLazadaProducts(Long userId, Long ecomId);
 
+    boolean updateLazadaProduct(Long userId, Long productId);
+
     boolean pushLazadaVariantQuantity(Long userId, Long ecomId, Long variantId);
 
     Page<LazadaProduct> getLazadaProducts(Long userId, Long ecomId, Integer offset, Integer limit, String sortBy, String orderBy);

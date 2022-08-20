@@ -2,6 +2,7 @@ package com.wifosell.zeus.controller.ecom_sync;
 
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomSyncUpdateStockRequest;
+import com.wifosell.zeus.payload.response.ecom_sync.EcomSyncUpdateStockResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.EcomSyncProductService;
@@ -23,11 +24,11 @@ public class EcomSyncProductController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update_stock")
-    public ResponseEntity<GApiResponse<Boolean>> updateStock(
+    public ResponseEntity<GApiResponse<EcomSyncUpdateStockResponse>> updateStock(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid EcomSyncUpdateStockRequest request
     ) {
-        boolean response = ecomSyncProductService.updateStock(userPrincipal.getId(), request);
+        EcomSyncUpdateStockResponse response = ecomSyncProductService.updateStock(userPrincipal.getId(), request);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 }

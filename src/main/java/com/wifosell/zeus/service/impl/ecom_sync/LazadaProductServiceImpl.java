@@ -661,7 +661,9 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             Map<String, Object> sku = new HashMap<>();
 
             sku.put(LazadaCreateProductRequest.Sku.SELLER_SKU, variant.getSku());
-            sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
+            if (warehouse != null) {
+                sku.put(LazadaCreateProductRequest.Sku.QUANTITY, variant.getStockWarehouse(warehouse.getId()));
+            }
 
             sku.put(LazadaCreateProductRequest.Sku.PRICE, variant.getOriginalCost());
             sku.put(LazadaCreateProductRequest.Sku.SPECIAL_PRICE, variant.getCost());
@@ -677,6 +679,31 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         }
 
         return req;
+    }
+
+    @Override
+    public boolean updateLazadaProduct(Long userId, Long productId) {
+        Product product = productService.getProduct(userId, productId);
+        LazadaProductAndSysProduct productLink = lazadaProductAndSysProductRepository.findBySysProductId(productId).orElse(null);
+
+        if (productLink != null) {
+            try {
+                Long itemId = updateLazadaProductItem(productLink.getLazadaProduct().getEcomAccount(), product, null);
+                if (itemId != null) {
+                    logger.info("updateLazadaProduct success | productId = {}, itemId = {}", product, itemId);
+                    return true;
+                } else {
+                    logger.error("updateLazadaProduct fail | request fail | productId = {}", product);
+                }
+            } catch (JsonProcessingException | ApiException e) {
+                e.printStackTrace();
+                logger.error("updateLazadaProduct fail | exception | productId = {}", product);
+            }
+        } else {
+            logger.warn("updateLazadaProduct not execute | product not link | productId = {}", productId);
+        }
+
+        return false;
     }
 
     @Override

@@ -16,6 +16,7 @@ import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.repository.ecom_sync.LazadaProductAndSysProductRepository;
 import com.wifosell.zeus.service.ProductService;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
@@ -25,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +43,8 @@ import java.util.stream.Collectors;
 @Service("ProductService")
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final AttributeRepository attributeRepository;
@@ -51,6 +56,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
     private final StockRepository stockRepository;
     private final EntityManager entityManager;
+
+    private final LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
 
     @Override
     public Page<Product> getProducts(
@@ -166,18 +173,26 @@ public class ProductServiceImpl implements ProductService {
         } else {
             product = getProduct(userId, productId);
         }
-        Product productResponse = this.updateProductByRequest(product, request, gm);
+        product = this.updateProductByRequest(product, request, gm);
 
-        //TODO: update information to sendo, lazada here (stock,name,...)
+        // Update product on Lazada & Sendo
+//        updateLazadaProduct(userId, productId);
+        updateSendoProduct();
 
-        //Lazada
+        return product;
+    }
 
+//    private void updateLazadaProduct(Long userId, Long productId) {
+//        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
+//        if (success) {
+//            logger.info("updateLazadaProduct success | productId = {}", productId);
+//        } else {
+//            logger.error("updateLazadaProduct fail | productId = {}", productId);
+//        }
+//    }
 
-
-        //Sendo
-
-
-        return productResponse;
+    private void updateSendoProduct() {
+        // TODO Sendo
     }
 
     @Override
