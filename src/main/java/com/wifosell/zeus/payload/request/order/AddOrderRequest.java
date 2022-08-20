@@ -3,6 +3,7 @@ package com.wifosell.zeus.payload.request.order;
 import com.sun.istack.NotNull;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.Payment;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,8 +25,15 @@ public class AddOrderRequest {
     @NotNull
     private Long saleChannelId;
 
+    //shopId, saleChannelId, warehouseId
+    private SaleChannelShop saleChannelShopId;
+
+
     @NotNull
     private Long customerId;
+
+
+
 
     private OrderModel.STATUS status;
 
