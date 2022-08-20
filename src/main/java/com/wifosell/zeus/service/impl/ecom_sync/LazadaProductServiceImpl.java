@@ -36,9 +36,9 @@ import com.wifosell.zeus.service.*;
 import com.wifosell.zeus.specs.LazadaProductSpecs;
 import com.wifosell.zeus.specs.LazadaVariantSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -52,28 +52,38 @@ import java.util.stream.Collectors;
 
 @Service("LazadaProductService")
 @Transactional
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class LazadaProductServiceImpl implements LazadaProductService {
     private static final Logger logger = LoggerFactory.getLogger(LazadaProductServiceImpl.class);
 
-    private final UserRepository userRepository;
-
-    private final EcomService ecomService;
-    private final LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
-
-    private final LazadaCategoryRepository lazadaCategoryRepository;
-    private final LazadaProductRepository lazadaProductRepository;
-    private final LazadaVariantRepository lazadaVariantRepository;
-
-    private final LazadaCategoryAndSysCategoryRepository lazadaCategoryAndSysCategoryRepository;
-    private final LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
-    private final LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
-
-    private final ProductService productService;
-    private final ProductRepository productRepository;
-    private final VariantService variantService;
-    private final OptionRepository optionRepository;
-    private final StockService stockService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private EcomService ecomService;
+    @Autowired
+    private LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
+    @Autowired
+    private LazadaCategoryRepository lazadaCategoryRepository;
+    @Autowired
+    private LazadaProductRepository lazadaProductRepository;
+    @Autowired
+    private LazadaVariantRepository lazadaVariantRepository;
+    @Autowired
+    private LazadaCategoryAndSysCategoryRepository lazadaCategoryAndSysCategoryRepository;
+    @Autowired
+    private LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
+    @Autowired
+    private LazadaVariantAndSysVariantRepository lazadaVariantAndSysVariantRepository;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private VariantService variantService;
+    @Autowired
+    private OptionRepository optionRepository;
+    @Autowired
+    private StockService stockService;
 
     @Override
     public FetchLazadaProductsReport fetchLazadaProducts(Long userId, Long ecomId) {
@@ -84,7 +94,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         Warehouse warehouse = link.getSaleChannelShop().getWarehouse();
 
         int offset = 0;
-        final int limit = 50;
+        int limit = 50;
         AtomicInteger fetchTotal = new AtomicInteger();
         AtomicInteger fetchSuccess = new AtomicInteger();
 
