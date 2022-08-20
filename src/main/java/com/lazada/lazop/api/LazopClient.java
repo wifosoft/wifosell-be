@@ -9,7 +9,6 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Lazada Open Platform API Client.

@@ -125,7 +125,7 @@ public class StockServiceImpl implements StockService {
         stockRepository.save(stock);
 
         // Update stocks on Lazada and Sendo
-        ecomSyncProductService.updateEcomStock(userId, warehouse, variant, stock.getQuantity());
+        ecomSyncProductService.updateEcomStock(userId, warehouse, variant);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class StockServiceImpl implements StockService {
                 successRecord += 1;
 
                 // Update stocks on Lazada and Sendo
-                ecomSyncProductService.updateEcomStock(userId, warehouse, variant, stock.getQuantity());
+                ecomSyncProductService.updateEcomStock(userId, warehouse, variant);
             }
 
             importStockTransaction.setProcessingStatus(ImportStockTransaction.PROCESSING_STATUS.PROCESSED);
@@ -328,8 +328,8 @@ public class StockServiceImpl implements StockService {
             transactionItems.add(transactionItem);
 
             // Update stocks on Lazada and Sendo
-            ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant, fromStock.getQuantity());
-            ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant, toStock.getQuantity());
+            ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant);
+            ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant);
         });
 
         transaction.setItems(transferStockTransactionItemRepository.saveAll(transactionItems));
@@ -435,8 +435,8 @@ public class StockServiceImpl implements StockService {
                 successRecord += 1;
 
                 // Update stocks on Lazada and Sendo
-                ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant, fromStock.getQuantity());
-                ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant, toStock.getQuantity());
+                ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant);
+                ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant);
             }
 
             transaction.setProcessingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSED);

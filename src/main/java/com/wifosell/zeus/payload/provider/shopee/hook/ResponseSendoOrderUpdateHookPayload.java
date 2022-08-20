@@ -5,18 +5,16 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @Getter
 @Setter
-public class ResponseSendoOrderUpdateHookPayload extends ResponseBaseHookPayload{
+public class ResponseSendoOrderUpdateHookPayload extends ResponseBaseHookPayload {
 
     @SerializedName("data")
     @JsonProperty("data")
     ResponseSendoOrderUpdateHookPayload.ResponseSendoOrderUpdateHookPayloadData Data;
 
     @Getter
-    public static class ResponseSendoOrderUpdateHookPayloadData{
+    public static class ResponseSendoOrderUpdateHookPayloadData {
         @SerializedName("data")
         @JsonProperty("data")
         public ResponseSendoOrderUpdateHookPayloadDataData data;
@@ -29,7 +27,7 @@ public class ResponseSendoOrderUpdateHookPayload extends ResponseBaseHookPayload
         public int cancel_date_timestamp;
 
         @Getter
-        public static class ResponseSendoOrderUpdateHookPayloadDataData{
+        public static class ResponseSendoOrderUpdateHookPayloadDataData {
             public String cancel_by;
             public int order_status;
             public String reason_cancel_code;

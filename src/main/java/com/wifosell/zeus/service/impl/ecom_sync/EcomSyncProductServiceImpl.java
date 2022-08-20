@@ -8,6 +8,7 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomSyncUpdateStockRequest;
 import com.wifosell.zeus.payload.response.ecom_sync.EcomSyncUpdateStockResponse;
 import com.wifosell.zeus.repository.SaleChannelShopRepository;
+import com.wifosell.zeus.repository.StockRepository;
 import com.wifosell.zeus.repository.VariantRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
 import com.wifosell.zeus.service.*;
@@ -33,6 +34,7 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
     private final SendoProductService sendoProductService;
     private final EcomService ecomService;
     private final SaleChannelShopRepository saleChannelShopRepository;
+    private final StockRepository stockRepository;
 
 
     void hookUpdateByVariant(Long variantId) {
@@ -63,11 +65,11 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
         stockService.updateSystemStock(warehouse, variant, request.getStock(), request.getStock());
 
         // Update on Lazada and Sendo
-        return updateEcomStock(userId, warehouse, variant, request.getStock());
+        return updateEcomStock(userId, warehouse, variant);
     }
 
     @Override
-    public EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant, Integer stock) {
+    public EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant) {
         // Broadcast to Lazada and Sendo
         int lazadaTotal = 0;
         int lazadaSuccess = 0;

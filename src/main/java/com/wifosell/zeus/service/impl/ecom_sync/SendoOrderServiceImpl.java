@@ -1,54 +1,33 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
-import com.google.gson.Gson;
 import com.wifosell.zeus.config.property.AppProperties;
-import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
-import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProductVariantShortInfo;
-import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.customer.Customer;
-import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
+import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.Payment;
-import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
-import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.model.warehouse.Warehouse;
-import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
-import com.wifosell.zeus.payload.provider.shopee.SendoServiceResponseBase;
 import com.wifosell.zeus.payload.provider.shopee.hook.ResponseSendoOrderCreateHookPayload;
-import com.wifosell.zeus.payload.request.ecom_sync.SendoCreateOrUpdateProductPayload;
-import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTO;
-import com.wifosell.zeus.payload.request.ecom_sync.SendoLinkAccountRequestDTOWithModel;
 import com.wifosell.zeus.payload.request.order.AddOrderRequest;
-import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
-import com.wifosell.zeus.payload.response.product.ProductResponse;
 import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.*;
 import com.wifosell.zeus.service.*;
-import com.wifosell.zeus.specs.ProductSpecs;
-import com.wifosell.zeus.specs.SendoProductSpecs;
-import com.wifosell.zeus.taurus.core.TaurusBus;
-import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
-import com.wifosell.zeus.taurus.sendo.SendoServiceClient;
-import com.wifosell.zeus.utils.ZeusUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

@@ -1,12 +1,10 @@
 package com.wifosell.zeus;
 
-import com.lazada.lazop.api.LazopClient;
 import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.database.DatabaseSeeder;
 import com.wifosell.zeus.security.JwtAuthenticationFilter;
 import com.wifosell.zeus.service.impl.storage.StorageProperties;
 import com.wifosell.zeus.taurus.lazada.LazadaClient;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -61,7 +59,7 @@ public class ZeusApplication implements CommandLineRunner {
 
     @Bean
     public void initLazopClient() {
-        LazadaClient.setupLazadaInfo(appProperties.getLazadaAppId() , appProperties.getLazadaAppSecret());
+        LazadaClient.setupLazadaInfo(appProperties.getLazadaAppId(), appProperties.getLazadaAppSecret());
     }
 
     //

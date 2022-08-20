@@ -1,7 +1,5 @@
 package com.wifosell.zeus.service.impl;
 
-import com.wifosell.zeus.exception.AppException;
-import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;

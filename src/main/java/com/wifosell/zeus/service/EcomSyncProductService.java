@@ -8,7 +8,7 @@ import com.wifosell.zeus.payload.response.ecom_sync.EcomSyncUpdateStockResponse;
 public interface EcomSyncProductService {
     EcomSyncUpdateStockResponse updateStock(Long userId, EcomSyncUpdateStockRequest request);
 
-    EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant, Integer stock);
+    EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant);
 
     void hookUpdateSendoProduct(Long ecomId, Long productId);
 }

@@ -1,7 +1,6 @@
 package com.wifosell.zeus.payload.response.shop;
 
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
@@ -9,9 +8,6 @@ import com.wifosell.zeus.payload.response.ecom_sync.EcomAccountResponse;
 import com.wifosell.zeus.payload.response.sale_channel.SaleChannelResponse;
 import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class ShopResponseNoRelation extends BasicEntityResponse {
@@ -41,7 +37,7 @@ public class ShopResponseNoRelation extends BasicEntityResponse {
 
         private final EcomAccountResponse ecomAccount;
 
-        public RelationResponse(SaleChannelShop saleChannelShop , EcomAccount ecomAccount) {
+        public RelationResponse(SaleChannelShop saleChannelShop, EcomAccount ecomAccount) {
             this.saleChannel = new SaleChannelResponse(saleChannelShop.getSaleChannel());
             this.warehouse = new WarehouseResponse(saleChannelShop.getWarehouse());
             this.ecomAccount = new EcomAccountResponse(ecomAccount);

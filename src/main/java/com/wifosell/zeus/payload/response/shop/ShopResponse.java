@@ -10,10 +10,8 @@ import com.wifosell.zeus.payload.response.sale_channel.SaleChannelResponse;
 import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import lombok.Getter;
 
-import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class ShopResponse extends BasicEntityResponse {
@@ -34,10 +32,10 @@ public class ShopResponse extends BasicEntityResponse {
         this.description = shop.getDescription();
         this.businessLine = shop.getBusinessLine();
 
-        ArrayList<RelationResponse > listRelationResponse = new ArrayList<>();
-        for( var ssw  : shop.getSaleChannelShops()){
-            List<LazadaSwwAndEcomAccount> listSwwECom =  ssw.getLazadaSwwAndEcomAccount();
-            for(var accountEcom : listSwwECom){
+        ArrayList<RelationResponse> listRelationResponse = new ArrayList<>();
+        for (var ssw : shop.getSaleChannelShops()) {
+            List<LazadaSwwAndEcomAccount> listSwwECom = ssw.getLazadaSwwAndEcomAccount();
+            for (var accountEcom : listSwwECom) {
                 RelationResponse rel = new RelationResponse(ssw, accountEcom.getEcomAccount());
                 listRelationResponse.add(rel);
             }
@@ -53,7 +51,7 @@ public class ShopResponse extends BasicEntityResponse {
 
         private final EcomAccountResponse ecomAccount;
 
-        public RelationResponse(SaleChannelShop saleChannelShop , EcomAccount ecomAccount) {
+        public RelationResponse(SaleChannelShop saleChannelShop, EcomAccount ecomAccount) {
             this.saleChannel = new SaleChannelResponse(saleChannelShop.getSaleChannel());
             this.warehouse = new WarehouseResponse(saleChannelShop.getWarehouse());
             this.ecomAccount = new EcomAccountResponse(ecomAccount);

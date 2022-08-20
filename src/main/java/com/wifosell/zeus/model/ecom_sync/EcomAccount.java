@@ -1,7 +1,6 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.user.User;
@@ -52,9 +51,8 @@ public class EcomAccount extends BasicEntity {
     private String note;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "ecomAccount" , fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "ecomAccount", fetch = FetchType.LAZY)
     private LazadaSwwAndEcomAccount relationSwws;
-
 
 
     @JsonIgnore
@@ -82,11 +80,11 @@ public class EcomAccount extends BasicEntity {
         BLOCKED
     }
 
-    public EcomAccountLazadaCallbackPayload parseLazadaAuthPayload(){
+    public EcomAccountLazadaCallbackPayload parseLazadaAuthPayload() {
         return (new Gson()).fromJson(this.getAuthResponse(), EcomAccountLazadaCallbackPayload.class);
     }
 
-    public ResponseSellerInfoPayload parseLazadaSellerInfoPayload(){
+    public ResponseSellerInfoPayload parseLazadaSellerInfoPayload() {
         return (new Gson()).fromJson(this.getAccountInfo(), ResponseSellerInfoPayload.class);
     }
 
@@ -94,22 +92,23 @@ public class EcomAccount extends BasicEntity {
         return (new Gson()).fromJson(this.getAccountInfo(), ResponseSendoSellerInfoPayload.class);
 
     }
+
     public String getShopName() {
-        switch(this.getEcomName()){
+        switch (this.getEcomName()) {
             case LAZADA:
                 ResponseSellerInfoPayload payload = this.parseLazadaSellerInfoPayload();
-                if(payload == null) return null;
+                if (payload == null) return null;
                 return payload.getData().name;
             case SENDO:
                 ResponseSendoSellerInfoPayload payloadSendo = this.parseSendoSellerInfoPayload();
-                if(payloadSendo == null) return null;
+                if (payloadSendo == null) return null;
                 return payloadSendo.getData().name;
         }
         return null;
     }
 
     public String getShopId() {
-        switch(this.getEcomName()){
+        switch (this.getEcomName()) {
             case LAZADA:
                 ResponseSellerInfoPayload payload = this.parseLazadaSellerInfoPayload();
                 return payload.getData().seller_id;
@@ -120,7 +119,7 @@ public class EcomAccount extends BasicEntity {
 
     @JsonIgnore
     public String getAccessToken() {
-        switch(this.getEcomName()){
+        switch (this.getEcomName()) {
             case LAZADA:
                 EcomAccountLazadaCallbackPayload payload = this.parseLazadaAuthPayload();
                 return payload.getTokenAuthResponse().getAccess_token();

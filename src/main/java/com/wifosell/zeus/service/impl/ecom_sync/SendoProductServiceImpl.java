@@ -39,7 +39,10 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -471,7 +474,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
 
         var response = sendoProductService.publishCreateSystemProductToSendo(ecomId, sysProductId);
-        if(response == null){
+        if (response == null) {
             logger.info("[-] Vui long kiem tra lai exception lien ket");
             return null;
         }
