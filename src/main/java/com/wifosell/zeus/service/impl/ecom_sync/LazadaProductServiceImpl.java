@@ -759,6 +759,14 @@ public class LazadaProductServiceImpl implements LazadaProductService {
             return false;
         }
 
+        // Fetch to update LazadaVariant's stock
+        try {
+            User user = userRepository.getUserById(userId);
+            fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+
         logger.info("pushLazadaVariantQuantity success | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
         return true;
     }
