@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import lombok.AllArgsConstructor;
@@ -74,6 +75,12 @@ public class SendoVariant extends BasicEntity {
     private Long sendoProductId;
 
 
+    @ManyToOne
+    @JsonIgnore
+    @Expose(serialize = false)
+    private EcomAccount ecomAccount;
+
+
     public SendoVariant() {
     }
 
@@ -86,10 +93,12 @@ public class SendoVariant extends BasicEntity {
     public SendoVariant(ResponseSendoProductItemPayload e, SendoProduct sendoProduct) {
         this.withSingleVariant(e);
         this.setSendoProduct(sendoProduct);
+        this.setEcomAccount(sendoProduct.getEcomAccount());
     }
     public SendoVariant(ResponseSendoProductItemPayload.Variant s, SendoProduct sendoProduct) {
         this.withDataBySkuAPI(s);
         this.setSendoProduct(sendoProduct);
+        this.setEcomAccount(sendoProduct.getEcomAccount());
     }
 
     public SendoVariant withDataBySkuAPI(ResponseSendoProductItemPayload.Variant s) {

@@ -93,7 +93,7 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
                     case SENDO:
                         Long productId = variant.getProduct().getId();
                         try {
-                            sendoProductService.publishCreateSystemProductToSendo(ecomAccount.getId(), productId);
+                            sendoProductService.postNewProductToSendo(ecomAccount.getId(), productId);
                             sendoSuccess++;
                             logger.info("[+] updateStock SENDO success | userId = {}, ecomId = {}, variantId = {}, productId = {}",
                                     userId, ecomAccount.getId(), variant.getId(), productId);
