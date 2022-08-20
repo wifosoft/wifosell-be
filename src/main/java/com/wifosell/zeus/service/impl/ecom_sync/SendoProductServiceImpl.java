@@ -253,8 +253,6 @@ public class SendoProductServiceImpl implements SendoProductService {
 
             }
         }
-
-
     }
 
     public void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload) {

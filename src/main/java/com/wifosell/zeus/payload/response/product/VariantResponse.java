@@ -81,7 +81,7 @@ public class VariantResponse extends BasicEntityResponse {
             Optional.ofNullable(product.getCategory()).ifPresent(e-> {
                 this.category = new CategoryResponse(e);
             });
-            this.category = new CategoryResponse(product.getCategory());
+//            this.category = new CategoryResponse(product.getCategory());
             this.images = product.getImages().stream()
                     .filter(productImage -> !productImage.isDeleted())
                     .map(ProductImageResponse::new).collect(Collectors.toList());
