@@ -96,6 +96,8 @@ public class SendoProductServiceImpl implements SendoProductService {
     @Autowired
     EcomService ecomService;
 
+    @Autowired
+    SendoProductAndSysProductRepository sendoProductAndSysProductRepository;
 
     public Page<SendoProduct> getProducts(
             Long ecomId,
@@ -205,6 +207,13 @@ public class SendoProductServiceImpl implements SendoProductService {
         if (idProductAffected == -1L) {
             var response = productService.updateProduct(ecomAccountOpt.get().getGeneralManager().getId(), idProductAffected, kafkaWrapperConsumeProduct.getUpdateProductRequest());
             logger.info(response.getName());
+
+            SendoProductAndSysProduct sendoProductAndSysProduct = new SendoProductAndSysProduct();
+            sendoProductAndSysProduct.setSendoProduct(sendoProduct);
+            sendoProductAndSysProduct.setSysProduct(response);
+            sendoProductAndSysProductRepository.save(sendoProductAndSysProduct);
+            //liên kết
+
             //nếu chưa tồn tại thì mới tạo mới thôi
         } else {
             //tồn tại rồi thì không cập nhật thông tin sản phẩm nữa
@@ -462,6 +471,10 @@ public class SendoProductServiceImpl implements SendoProductService {
         SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
 
         var response = sendoProductService.publishCreateSystemProductToSendo(ecomId, sysProductId);
+        if(response == null){
+            logger.info("[-] Vui long kiem tra lai exception lien ket");
+            return null;
+        }
 
         KafkaPublishProductSendoPayload kafkaPublishProductSendoPayload = new KafkaPublishProductSendoPayload();
         kafkaPublishProductSendoPayload.setShop_key(sendoInfo.getShop_key());
