@@ -21,12 +21,9 @@ import com.wifosell.zeus.specs.ShopSpecs;
 import com.wifosell.zeus.specs.WarehouseSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import lombok.RequiredArgsConstructor;
-import org.jboss.jdeparser.FormatPreferences;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

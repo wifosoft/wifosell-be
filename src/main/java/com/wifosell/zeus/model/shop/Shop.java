@@ -19,9 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Table(
-        name = "shops",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
+//@Table(
+//        name = "shops",
+//        uniqueConstraints = @UniqueConstraint(columnNames = {"general_manager_id", "short_name"}))
 public class Shop extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
