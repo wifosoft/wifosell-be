@@ -231,7 +231,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
 
         // Update stock
         for (int i = 0; i < sysVariants.size(); ++i) {
-            stockService.updateStock(
+            stockService.updateSystemStock(
                     warehouse,
                     sysVariants.get(i),
                     data.getSkus().get(i).getAvailable(),

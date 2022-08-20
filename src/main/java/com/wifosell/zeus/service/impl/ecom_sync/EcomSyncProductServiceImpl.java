@@ -60,8 +60,14 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
         Variant variant = variantService.getVariant(userId, request.getVariantId());
 
         // Update system
-        stockService.updateStock(warehouse, variant, request.getStock(), request.getStock());
+        stockService.updateSystemStock(warehouse, variant, request.getStock(), request.getStock());
 
+        // Update on Lazada and Sendo
+        return updateEcomStock(userId, warehouse, variant, request.getStock());
+    }
+
+    @Override
+    public EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant, Integer stock) {
         // Broadcast to Lazada and Sendo
         int lazadaTotal = 0;
         int lazadaSuccess = 0;
