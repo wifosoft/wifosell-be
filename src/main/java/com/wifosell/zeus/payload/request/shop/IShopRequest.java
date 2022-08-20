@@ -25,7 +25,7 @@ public interface IShopRequest {
 
     @Getter
     @Setter
-    class Relation {
+    public static class Relation {
         @NotNull
         Long saleChannelId;
 
@@ -33,5 +33,14 @@ public interface IShopRequest {
         Long warehouseId;
 
         Long ecomId;
+
+        public String getHashSWId() {
+            if(saleChannelId != null && warehouseId != null){
+                return  String.format("%s_%s", saleChannelId.toString(), warehouseId.toString());
+            }
+            return "";
+        }
+
+
     }
 }

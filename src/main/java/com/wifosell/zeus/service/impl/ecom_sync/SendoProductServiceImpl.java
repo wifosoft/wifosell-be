@@ -128,6 +128,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             return;
         }
 
+        EcomAccount ecomAccount = ecomAccountOpt.get();
         Optional<LazadaSwwAndEcomAccount> swwAndEcomAccountOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccountOpt.get().getId());
         if (swwAndEcomAccountOpt.isEmpty()) {
             logger.info("Chua ton tai lien ket shop");
@@ -154,8 +155,9 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         boolean flagNewSendoVariantRecord = false;
         if (listAPIVariants.size() > 0) {
+            //Trong trường hợp có variant
             for (var _apiVariant : listAPIVariants) {
-                SendoVariant sendoVariant = sendoVariantRepository.findBySkuId(_apiVariant.getVariant_sku());
+                SendoVariant sendoVariant = sendoVariantRepository.findBySkuIdAndEcomAccountId(_apiVariant.getVariant_sku(), ecomAccount.getId());
                 if (sendoVariant == null) {
                     sendoVariant = new SendoVariant(_apiVariant, sendoProduct);
                     flagNewSendoVariantRecord = true;
@@ -166,7 +168,8 @@ public class SendoProductServiceImpl implements SendoProductService {
                 logger.info("[+] Save sendo variant SKU {} - Product Name {} ", sendoVariant.getSkuId(), sendoProduct.getName());
             }
         } else {
-            SendoVariant sendoVariant = sendoVariantRepository.findBySkuId(itemPayload.getSku());
+            //Nếu là sản phẩm đơn thì sendo sẽ không trả về variatn, lấy theo productSku
+            SendoVariant sendoVariant = sendoVariantRepository.findBySkuIdAndEcomAccountId(itemPayload.getSku(), ecomAccount.getId());
             if (sendoVariant == null) {
                 sendoVariant = new SendoVariant(itemPayload, sendoProduct);
                 flagNewSendoVariantRecord = true;
@@ -188,6 +191,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         if (listMapVariantSkuString.size() == 0) {
             listMapVariantSkuString.add(itemPayload.getSku());
         }
+
         List<Variant> existedVariant = variantRepository.findListBySku(listMapVariantSkuString);
         Long idProductAffected = -1L;
         if (existedVariant.size() != 0) {
@@ -213,7 +217,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         for (KafkaWrapperConsumeProductVariantShortInfo skuInfoInstance : kafkaWrapperConsumeProduct.getListVariants()) {
             Variant _systemVar = variantRepository.getBySKUNoThrow(skuInfoInstance.getSku(), gm.getId());
 
-            SendoVariant _sendoVar = sendoVariantRepository.findBySkuId(skuInfoInstance.getSku());
+            SendoVariant _sendoVar = sendoVariantRepository.findBySkuIdAndEcomAccountId(skuInfoInstance.getSku(), ecomAccount.getId());
 
             if (_systemVar != null && _sendoVar != null) {
                 //check liên kết, nếu chưa liên kết thì liên kết. Sau đó cập nhật stock và quantity
@@ -230,7 +234,7 @@ public class SendoProductServiceImpl implements SendoProductService {
                 sendoVariantAndSysVariant.setSendoVariant(_sendoVar);
                 sendoVariantAndSysVariant.setVariant(_systemVar);
                 sendoVariantAndSysVarirantRepository.save(sendoVariantAndSysVariant);
-                logger.info("[+] Link sendo product and system product : {} vs {}", _sendoVar.getId(), _systemVar.getId());
+                logger.info("[+] Link sendo product {} vs system product {} [{}]", _sendoVar.getId(), _systemVar.getId(), sendoProduct.getName());
                 Optional<Stock> stock_ = stockRepository.findByVariantAndWarehouse(_systemVar.getId(), warehouse.getId());
 
                 if (stock_.isPresent()) {
@@ -253,8 +257,6 @@ public class SendoProductServiceImpl implements SendoProductService {
 
             }
         }
-
-
     }
 
     public void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload) {
@@ -275,6 +277,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             } else {
                 Warehouse warehouse = relationSwwEAOpt.get().getSaleChannelShop().getWarehouse();
             }
+            logger.info("[+] Before consume consumeSingleSendoProductLinkProductPhase {}", itemPayload.getName());
             this.consumeSingleSendoProductLinkProductPhase(itemPayload);
             logger.info("[+] After consume consumeSingleSendoProductLinkProductPhase {}", itemPayload.getName());
 
@@ -344,6 +347,7 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         List<Variant> variants = sysProduct.getVariants().stream()
                 .filter(variant -> !variant.isDeleted()).collect(Collectors.toList());
+
         Variant firstVariant = variants.get(0);
         Integer firstStock = firstVariant.getStockWarehouse(warehouseLinked.getId());
         m.setSku(firstVariant.getSku()); //first sku
@@ -505,29 +509,37 @@ public class SendoProductServiceImpl implements SendoProductService {
 
     @Override
     public boolean fetchAndSyncSendoProducts(Long ecomId) {
-        EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
-        if (ecomAccount == null) {
-            throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
-        }
-        if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
-            throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
-        }
+        try {
+            EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(ecomId);
+            if (ecomAccount == null) {
+                throw new ZeusGlobalException(HttpStatus.OK, "Không tồn tại tài khoản EcomId");
+            }
+            if (ecomAccount.getEcomName() != EcomAccount.EcomName.SENDO) {
+                throw new ZeusGlobalException(HttpStatus.OK, "Không phải sàn SENDO");
+            }
 
-        User user = ecomAccount.getGeneralManager();
+            User user = ecomAccount.getGeneralManager();
 
-        String shopKey = ecomAccount.getAccountName();
-        String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
-        var reqPayload = SendoLinkAccountRequestDTO.builder().secret_key(secretKey).shop_key(shopKey).build();
-        HashMap<String, String> headerAuth = new HashMap<String, String>();
-        headerAuth.put("shop_key", shopKey);
-        headerAuth.put("secret_key", secretKey);
-        var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/product/crawlAllProductToDB", headerAuth, null, SendoServiceResponseBase.class));
-        if (responseModel.success == true) {
-            return true;
+            String shopKey = ecomAccount.getAccountName();
+            String secretKey = ecomAccount.parseSendoSellerInfoPayload().getData().getSecret_key();
+            var reqPayload = SendoLinkAccountRequestDTO.builder().secret_key(secretKey).shop_key(shopKey).build();
+            HashMap<String, String> headerAuth = new HashMap<String, String>();
+            headerAuth.put("shop_key", shopKey);
+            headerAuth.put("secret_key", secretKey);
+            var responseModel = (new SendoServiceClient(appProperties.getServiceGoSendo()).Post("/sendo/product/crawlAllProductToDB", headerAuth, null, SendoServiceResponseBase.class));
+            if (responseModel == null) {
+                logger.info("[-] fetchAndSyncSendoProducts Ecom Id {} fail", ecomId);
+                return false;
+            }
+            if (responseModel.success) {
+                return true;
+            }
+            return false;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return false;
         }
-        return false;
     }
-
 
 
 }

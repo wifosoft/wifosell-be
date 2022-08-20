@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"shop_id", "sale_channel_id"}))
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"shop_id", "sale_channel_id"}))
 public class SaleChannelShop {
     @JsonIgnore
     @Id
@@ -44,6 +44,9 @@ public class SaleChannelShop {
         return lazadaSwwAndEcomAccount.stream().map(e -> e.getId()).collect(Collectors.toList());
     }
 
+    public String getHashMergeId() {
+        return String.format("%s_%s_%s", shop.getId().toString(), saleChannel.getId().toString(), warehouse.getId().toString());
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
