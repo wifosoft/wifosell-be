@@ -13,6 +13,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -40,6 +41,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -63,6 +65,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -86,6 +89,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -109,6 +113,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -128,6 +133,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -151,6 +157,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -186,6 +193,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",
@@ -209,6 +217,7 @@
     "shopId": 1,
     "saleChannelId": 1,
     "customerId": 1,
+    "sswId" : 1,
     "payment": {
       "method": "COD",
       "status": "PAID",

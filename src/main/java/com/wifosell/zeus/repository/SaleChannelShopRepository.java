@@ -25,6 +25,9 @@ public interface SaleChannelShopRepository extends JpaRepository<SaleChannelShop
     List<SaleChannelShop> findListSSWByShopId(Long shopId);
 
 
+    @Query("select u from SaleChannelShop u where u.id = ?1")
+    Optional<SaleChannelShop> getSaleChannelShopById(Long id);
+
     @Transactional
     void deleteByShopIdAndSaleChannelId(Long shopId, Long saleChannelId);
 

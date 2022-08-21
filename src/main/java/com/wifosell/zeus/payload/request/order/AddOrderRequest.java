@@ -25,13 +25,13 @@ public class AddOrderRequest {
     @NotNull
     private Long saleChannelId;
 
+
     //shopId, saleChannelId, warehouseId
-    private SaleChannelShop saleChannelShopId;
+    private Long sswId;
 
 
     @NotNull
     private Long customerId;
-
 
 
 

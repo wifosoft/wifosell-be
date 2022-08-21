@@ -36,7 +36,7 @@ public class Product extends BasicEntity {
     @FullTextField(analyzer = LuceneAnalysisName.VIE_NGRAM, searchAnalyzer = StandardTokenizerFactory.NAME)
     private String name;
 
-    @Lob
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
 
     @JsonIgnore

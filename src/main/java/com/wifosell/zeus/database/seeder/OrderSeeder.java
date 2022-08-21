@@ -31,7 +31,7 @@ public class OrderSeeder extends BaseSeeder implements ISeeder {
             AddOrderRequest[] requests = new ObjectMapper().readValue(file, AddOrderRequest[].class);
             file.close();
             for (int i = 0; i < requests.length; ++i) {
-                OrderModel order = orderService.addOrder(SeederConst.USER_ID, requests[i]);
+                OrderModel order = orderService.addOrderNoCaculateStock(SeederConst.USER_ID, requests[i]);
                 order.setCreatedAt(Instant.now().minusMillis(86400000L * (requests.length - 1 - i)));
                 orderRepository.save(order);
             }

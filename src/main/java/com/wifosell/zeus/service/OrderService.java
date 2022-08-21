@@ -31,6 +31,8 @@ public interface OrderService {
 
     OrderModel addOrder(Long userId, @Valid AddOrderRequest request);
 
+    OrderModel addOrderNoCaculateStock(Long userId, AddOrderRequest request);
+
     OrderModel updateOrder(Long userId, Long orderId, UpdateOrderRequest request);
 
     OrderModel updateOrderStatus(Long userId, Long orderId, UpdateOrderStatusRequest request);

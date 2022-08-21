@@ -2,6 +2,7 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
+import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.warehouse.Warehouse;
@@ -36,10 +37,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
     private final SaleChannelShopRepository saleChannelShopRepository;
     private final StockRepository stockRepository;
 
-
-    void hookUpdateByVariant(Long variantId) {
-
-    }
 
 
     @Override
