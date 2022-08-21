@@ -125,7 +125,12 @@ public class StockServiceImpl implements StockService {
         stockRepository.save(stock);
 
         // Update stocks on Lazada and Sendo
-        ecomSyncProductService.updateEcomStock(userId, warehouse, variant);
+        try {
+            ecomSyncProductService.updateEcomStock(userId, warehouse, variant);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.info("[+] importStock() exception");
+        }
     }
 
     @Override
@@ -328,8 +333,13 @@ public class StockServiceImpl implements StockService {
             transactionItems.add(transactionItem);
 
             // Update stocks on Lazada and Sendo
-            ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant);
-            ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant);
+            try {
+                ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant);
+                ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                logger.info("transferStocks exception");
+            }
         });
 
         transaction.setItems(transferStockTransactionItemRepository.saveAll(transactionItems));
