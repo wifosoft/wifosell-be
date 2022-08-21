@@ -2,7 +2,9 @@ package com.wifosell.zeus.payload.request.ecom_sync;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +56,7 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class Attribute{
+    public static class Attribute {
         public int attribute_id;
         public String attribute_name;
         public String attribute_code;
@@ -67,7 +69,7 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class AttributeValue{
+    public static class AttributeValue {
         public int id;
         public String value;
         public String attribute_img;
@@ -83,13 +85,13 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class  Avatar{
+    public static class Avatar {
         public String picture_url;
     }
 
     @Getter
     @Setter
-    public class CertificateFile{
+    public class CertificateFile {
         public int id;
         public String table_name;
         public int table_id;
@@ -100,7 +102,7 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class ExtendedShippingPackage{
+    public static class ExtendedShippingPackage {
 
         @SerializedName("is_using_instant")
         @JsonProperty("is_using_instant")
@@ -126,13 +128,13 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class Picture{
+    public static class Picture {
         public String picture_url;
     }
 
     @Getter
     @Setter
-    public static class Related{
+    public static class Related {
         public int id;
         public String name;
         public String sku;
@@ -144,7 +146,7 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class Variant{
+    public static class Variant {
         public ArrayList<VariantAttribute> variant_attributes;
         public String variant_sku;
         public int variant_price;
@@ -156,7 +158,7 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class VariantAttribute{
+    public static class VariantAttribute {
         public int attribute_id;
         public String attribute_code;
         public int option_id;
@@ -164,7 +166,7 @@ public class SendoCreateOrUpdateProductPayload {
 
     @Getter
     @Setter
-    public static class Voucher{
+    public static class Voucher {
         public int product_type;
         public Date start_date;
         public Date end_date;

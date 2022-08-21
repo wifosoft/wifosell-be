@@ -2,7 +2,6 @@ package com.wifosell.zeus.repository.ecom_sync;
 
 import com.wifosell.framework.repository.SoftRepository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.model.ecom_sync.LazadaProductAndSysProduct;
 import com.wifosell.zeus.model.ecom_sync.SendoProductAndSysProduct;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

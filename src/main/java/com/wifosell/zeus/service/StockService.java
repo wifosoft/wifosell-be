@@ -15,9 +15,9 @@ import java.util.List;
 public interface StockService {
     ImportStockTransaction importStocks(Long userId, ImportStocksRequest request);
 
-    void importStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity);
+    void importStock(Long userId, Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity);
 
-    void updateStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity);
+    void updateSystemStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity);
 
     ImportStockTransaction createImportStockTransactionExcel(Long userId, ImportStocksFromExcelRequest request);
 

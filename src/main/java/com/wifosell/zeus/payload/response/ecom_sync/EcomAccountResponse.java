@@ -1,14 +1,9 @@
 package com.wifosell.zeus.payload.response.ecom_sync;
 
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.Shop;
-import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
-import com.wifosell.zeus.payload.response.shop.ShopResponse;
 import com.wifosell.zeus.payload.response.shop.ShopResponseNoRelation;
 import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
-import com.wifosell.zeus.repository.ShopRepository;
 import lombok.Getter;
 
 @Getter
@@ -31,12 +26,10 @@ public class EcomAccountResponse extends BasicEntityResponse {
         this.description = ecomAccount.getDescription();
         this.accountStatus = ecomAccount.getAccountStatus();
 
-        if (ecomAccount.getRelationSwws() != null)
-        {
-            this.warehouseLinked = new WarehouseResponse( ecomAccount.getRelationSwws().getSaleChannelShop().getWarehouse());
+        if (ecomAccount.getRelationSwws() != null) {
+            this.warehouseLinked = new WarehouseResponse(ecomAccount.getRelationSwws().getSaleChannelShop().getWarehouse());
             this.shopLinked = new ShopResponseNoRelation(ecomAccount.getRelationSwws().getSaleChannelShop().getShop());
-        }
-        else {
+        } else {
             warehouseLinked = null;
             shopLinked = null;
         }

@@ -3,12 +3,12 @@ package com.wifosell.zeus.service.impl.ecom_sync;
 import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
 import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomSyncUpdateStockRequest;
 import com.wifosell.zeus.payload.response.ecom_sync.EcomSyncUpdateStockResponse;
 import com.wifosell.zeus.repository.SaleChannelShopRepository;
+import com.wifosell.zeus.repository.StockRepository;
 import com.wifosell.zeus.repository.VariantRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
 import com.wifosell.zeus.service.*;
@@ -34,6 +34,7 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
     private final SendoProductService sendoProductService;
     private final EcomService ecomService;
     private final SaleChannelShopRepository saleChannelShopRepository;
+    private final StockRepository stockRepository;
 
 
     void hookUpdateByVariant(Long variantId) {
@@ -61,21 +62,26 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
         Variant variant = variantService.getVariant(userId, request.getVariantId());
 
         // Update system
-        stockService.updateStock(warehouse, variant, request.getStock(), request.getStock());
+        stockService.updateSystemStock(warehouse, variant, request.getStock(), request.getStock());
 
+        // Update on Lazada and Sendo
+        return updateEcomStock(userId, warehouse, variant);
+    }
+
+    @Override
+    public EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant) {
         // Broadcast to Lazada and Sendo
         int lazadaTotal = 0;
         int lazadaSuccess = 0;
         int sendoTotal = 0;
         int sendoSuccess = 0;
-        int offlineTotal = 0;
 
         List<SaleChannelShop> saleChannelShops = saleChannelShopRepository.findListSSWByWarehouseId(warehouse.getId());
 
         for (SaleChannelShop ssw : saleChannelShops) {
-            LazadaSwwAndEcomAccount sswLink = lazadaSwwAndEcomAccountRepository.findBySaleChannelShopId(ssw.getId()).orElse(null);
+            List<LazadaSwwAndEcomAccount> sswLinks = lazadaSwwAndEcomAccountRepository.findAllBySaleChannelShopId(ssw.getId());
 
-            if (sswLink != null) {
+            for (LazadaSwwAndEcomAccount sswLink : sswLinks) {
                 EcomAccount ecomAccount = sswLink.getEcomAccount();
                 switch (ecomAccount.getEcomName()) {
                     case LAZADA:
@@ -114,11 +120,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
                         logger.error("[-] updateStock fail | unknown ecomName | userId = {}, ecomName = {}",
                                 userId, ecomAccount.getEcomName());
                 }
-            } else {
-                offlineTotal++;
-                SaleChannel offlineSaleChannel = ssw.getSaleChannel();
-                logger.info("[+] updateStock | no need for offline sale channel | userId = {}, saleChannelId = {}, saleChannelName = {}",
-                        userId, offlineSaleChannel.getId(), offlineSaleChannel.getName());
             }
         }
 
@@ -127,7 +128,6 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
                 .lazadaSuccess(lazadaSuccess)
                 .sendoTotal(sendoTotal)
                 .sendoSuccess(sendoSuccess)
-                .offlineTotal(offlineTotal)
                 .build();
     }
 }

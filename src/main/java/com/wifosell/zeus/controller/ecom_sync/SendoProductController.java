@@ -13,7 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/ecom_sync/sendo/product")
@@ -26,6 +29,7 @@ public class SendoProductController {
 
     @Autowired
     EcomService ecomService;
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
     public ResponseEntity<GApiResponse<Page<SendoProduct>>> getLazadaProducts(
@@ -73,7 +77,7 @@ public class SendoProductController {
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "ecomId", required = false) Long ecomId
     ) {
-        boolean status=  sendoProductService.postAllProductToSendo(ecomId);
+        boolean status = sendoProductService.postAllProductToSendo(ecomId);
         return ResponseEntity.ok(GApiResponse.success("Gửi thông tin đăng sản phẩm vào hàng đợi thành công", status));
     }
 

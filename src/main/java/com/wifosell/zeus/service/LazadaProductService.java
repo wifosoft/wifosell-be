@@ -11,7 +11,7 @@ public interface LazadaProductService {
 
     PushLazadaProductsReport pushLazadaProducts(Long userId, Long ecomId);
 
-    boolean updateLazadaProduct(Long userId, Long productId);
+    void updateLinkedLazadaProducts(Long userId, Long productId);
 
     boolean pushLazadaVariantQuantity(Long userId, Long ecomId, Long variantId);
 

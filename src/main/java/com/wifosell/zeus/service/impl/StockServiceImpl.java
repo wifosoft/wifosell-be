@@ -13,10 +13,7 @@ import com.wifosell.zeus.payload.request.stock.ImportStocksRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksFromExcelRequest;
 import com.wifosell.zeus.payload.request.stock.TransferStocksRequest;
 import com.wifosell.zeus.repository.*;
-import com.wifosell.zeus.service.StockService;
-import com.wifosell.zeus.service.SupplierService;
-import com.wifosell.zeus.service.VariantService;
-import com.wifosell.zeus.service.WarehouseService;
+import com.wifosell.zeus.service.*;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockRow;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.ImportStockServiceImpl;
 import com.wifosell.zeus.service.impl.batch_process.warehouse.TransferStockRow;
@@ -25,12 +22,12 @@ import com.wifosell.zeus.service.impl.storage.FileSystemStorageService;
 import com.wifosell.zeus.specs.ImportStockTransactionSpecs;
 import com.wifosell.zeus.specs.TransferStockTransactionSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
-import lombok.RequiredArgsConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jobrunr.jobs.JobId;
 import org.jobrunr.scheduling.JobScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -44,25 +41,35 @@ import java.util.List;
 
 @Service("StockService")
 @Transactional
-@RequiredArgsConstructor
 public class StockServiceImpl implements StockService {
-    private final UserRepository userRepository;
-    private final StockRepository stockRepository;
-    private final VariantRepository variantRepository;
-    private final ImportStockTransactionRepository importStockTransactionRepository;
-    private final ImportStockTransactionItemRepository importStockTransactionItemRepository;
-    private final TransferStockTransactionRepository transferStockTransactionRepository;
-    private final TransferStockTransactionItemRepository transferStockTransactionItemRepository;
-    private final WarehouseService warehouseService;
-    private final SupplierService supplierService;
-    private final VariantService variantService;
-
-    private final JobScheduler jobScheduler;
     private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
 
-    private final FileSystemStorageService fileStorageService;
-
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private StockRepository stockRepository;
+    @Autowired
+    private VariantRepository variantRepository;
+    @Autowired
+    private ImportStockTransactionRepository importStockTransactionRepository;
+    @Autowired
+    private ImportStockTransactionItemRepository importStockTransactionItemRepository;
+    @Autowired
+    private TransferStockTransactionRepository transferStockTransactionRepository;
+    @Autowired
+    private TransferStockTransactionItemRepository transferStockTransactionItemRepository;
+    @Autowired
+    private WarehouseService warehouseService;
+    @Autowired
+    private SupplierService supplierService;
+    @Autowired
+    private VariantService variantService;
+    @Autowired
+    private JobScheduler jobScheduler;
+    @Autowired
+    private FileSystemStorageService fileStorageService;
+    @Autowired
+    private EcomSyncProductService ecomSyncProductService;
 
     @Override
     public ImportStockTransaction importStocks(Long userId, ImportStocksRequest request) {
@@ -83,7 +90,7 @@ public class StockServiceImpl implements StockService {
 
         request.getItems().forEach(item -> {
             Variant variant = variantService.getVariant(userId, item.getVariantId());
-            importStock(warehouse, variant, item.getQuantity(), item.getQuantity());
+            importStock(userId, warehouse, variant, item.getQuantity(), item.getQuantity());
 
             ImportStockTransactionItem transactionItem = ImportStockTransactionItem.builder()
                     .variant(variant)
@@ -102,7 +109,7 @@ public class StockServiceImpl implements StockService {
 
 
     @Override
-    public void importStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
+    public void importStock(Long userId, Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
         Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
         if (stock != null) {
             stock.setActualQuantity(stock.getActualQuantity() + actualQuantity);
@@ -116,10 +123,13 @@ public class StockServiceImpl implements StockService {
                     .build();
         }
         stockRepository.save(stock);
+
+        // Update stocks on Lazada and Sendo
+        ecomSyncProductService.updateEcomStock(userId, warehouse, variant);
     }
 
     @Override
-    public void updateStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
+    public void updateSystemStock(Warehouse warehouse, Variant variant, Integer actualQuantity, Integer quantity) {
         Stock stock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), variant.getId());
         if (stock != null) {
             stock.setActualQuantity(actualQuantity);
@@ -161,7 +171,6 @@ public class StockServiceImpl implements StockService {
 
         return transaction;
     }
-
 
 
     @Override
@@ -214,8 +223,11 @@ public class StockServiceImpl implements StockService {
 
                 importStockTransaction.setItems(importStockTransactionItemRepository.saveAll(transactionItems));
                 successRecord += 1;
+
+                // Update stocks on Lazada and Sendo
+                ecomSyncProductService.updateEcomStock(userId, warehouse, variant);
             }
-            ;
+
             importStockTransaction.setProcessingStatus(ImportStockTransaction.PROCESSING_STATUS.PROCESSED);
             importStockTransaction.setProcessingNote(String.format("Đã xử lý, thành công %d sản phẩm - không thành công %d sản phẩm.", successRecord, errorRecord));
             importStockTransactionRepository.save(importStockTransaction);
@@ -314,6 +326,10 @@ public class StockServiceImpl implements StockService {
                     .transaction(transaction)
                     .build();
             transactionItems.add(transactionItem);
+
+            // Update stocks on Lazada and Sendo
+            ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant);
+            ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant);
         });
 
         transaction.setItems(transferStockTransactionItemRepository.saveAll(transactionItems));
@@ -407,7 +423,6 @@ public class StockServiceImpl implements StockService {
                 stockRepository.save(toStock);
 
 
-
                 // Transaction
                 TransferStockTransactionItem transactionItem = TransferStockTransactionItem.builder()
                         .variant(variant)
@@ -418,6 +433,10 @@ public class StockServiceImpl implements StockService {
 
                 transaction.setItems(transferStockTransactionItemRepository.saveAll(transactionItems));
                 successRecord += 1;
+
+                // Update stocks on Lazada and Sendo
+                ecomSyncProductService.updateEcomStock(userId, fromWarehouse, variant);
+                ecomSyncProductService.updateEcomStock(userId, toWarehouse, variant);
             }
 
             transaction.setProcessingStatus(TransferStockTransaction.PROCESSING_STATUS.PROCESSED);
