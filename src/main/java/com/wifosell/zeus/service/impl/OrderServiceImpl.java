@@ -372,6 +372,14 @@ public class OrderServiceImpl implements OrderService {
         });
         //order, shop
 
+        Optional.of(request.getSswId()).ifPresent(e-> {
+            SaleChannelShop saleChannelShop  = saleChannelShopRepository.getById(e);
+            if(saleChannelShop!=null){
+                order.setSaleChannelShop(saleChannelShop);
+
+            }
+        });
+
         // Sale Channel & Shop
         Optional.of(request.getShopId()).ifPresent(shopId -> {
             Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {

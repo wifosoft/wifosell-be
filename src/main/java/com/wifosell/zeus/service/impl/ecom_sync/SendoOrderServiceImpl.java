@@ -190,7 +190,7 @@ public class SendoOrderServiceImpl implements SendoOrderService {
             listOrderItems.add(orderItem);
         }
         addOrderRequest.setOrderItems(listOrderItems);
-
+        addOrderRequest.setSswId(saleChannelShop.getId());
         //use service to add new order
         OrderModel order = orderService.addOrder(gm.getId(), addOrderRequest);
 
