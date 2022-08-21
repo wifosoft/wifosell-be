@@ -69,7 +69,7 @@ public class LazadaCreateProductRequest {
         public static final String PACKAGE_LENGTH = "package_length";
         public static final String PACKAGE_WIDTH = "package_width";
         public static final String PACKAGE_WEIGHT = "package_weight";
-        public static final String PACKAGE_CONTENT = "package_content";
+        //        public static final String PACKAGE_CONTENT = "package_content";
         public static final String IMAGES = "Images";
 
         public static final String SPECIAL_FROM_DATE_DEFAULT_VALUE = "2022-01-01 00:00:00";

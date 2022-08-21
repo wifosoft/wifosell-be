@@ -91,7 +91,6 @@ public class LazadaGetCategoryAttributesResponse {
                 LazadaCreateProductRequest.Sku.PACKAGE_WIDTH,
                 LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT,
                 LazadaCreateProductRequest.Sku.PACKAGE_WEIGHT,
-                LazadaCreateProductRequest.Sku.PACKAGE_CONTENT,
                 LazadaCreateProductRequest.Sku.IMAGES
         );
         Map<String, String> attributes = getMandatoryAttributes();
