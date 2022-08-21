@@ -19,6 +19,7 @@ import com.wifosell.zeus.repository.*;
 import com.wifosell.zeus.repository.ecom_sync.LazadaProductAndSysProductRepository;
 import com.wifosell.zeus.service.LazadaProductService;
 import com.wifosell.zeus.service.ProductService;
+import com.wifosell.zeus.service.SendoProductService;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import com.wifosell.zeus.utils.paging.PageInfo;
@@ -71,6 +72,8 @@ public class ProductServiceImpl implements ProductService {
     private LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
     @Autowired
     private LazadaProductService lazadaProductService;
+    @Autowired
+    private SendoProductService sendoProductService;
 
     @Override
     public Page<Product> getProducts(
@@ -188,11 +191,19 @@ public class ProductServiceImpl implements ProductService {
         }
         product = this.updateProductByRequest(product, request, gm);
 
-        // Update Lazada products
-        lazadaProductService.updateLinkedLazadaProducts(userId, productId);
+        try {
+            lazadaProductService.updateLinkedLazadaProducts(userId, productId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.info("[-] Exception when use updateProduct Sync to Lazada");
+        }
 
-        // Update Sendo products
-        // TODO
+        try {
+            sendoProductService.updateProductToSendo(userId, productId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.info("[-] Exception when use updateProduct Sync to Sendo");
+        }
 
         return product;
     }
@@ -213,18 +224,6 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
-    private void updateLazadaProduct(Long userId, Long productId) {
-        boolean success = lazadaProductService.updateLazadaProduct(userId, productId);
-        if (success) {
-            logger.info("updateLazadaProduct success | productId = {}", productId);
-        } else {
-            logger.error("updateLazadaProduct fail | productId = {}", productId);
-        }
-    }
-
-    private void updateSendoProduct() {
-        // TODO Sendo
-    }
 
     @Override
     public Product activateProduct(Long userId, @NonNull Long productId) {

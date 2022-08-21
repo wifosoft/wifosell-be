@@ -211,7 +211,7 @@ public class SendoProductServiceImpl implements SendoProductService {
                 idProductAffected = parentExist.getId();
             }
         } else {
-            parentExist  = null;
+            parentExist = null;
         }
 
         if (idProductAffected == -1L) {
@@ -240,7 +240,9 @@ public class SendoProductServiceImpl implements SendoProductService {
             Category _sysCategory = null;
             if (sendoCategory != null) {
                 SendoCategoryAndSysCategory sendoCategoryAndSysCategory = sendoCategoryAndSysCategoryRepository.findFirstBySendoCategoryId(sendoCategory.getId()).orElse(null);
-                if(sendoCategoryAndSysCategory !=null){ _sysCategory = sendoCategoryAndSysCategory.getSysCategory();}
+                if (sendoCategoryAndSysCategory != null) {
+                    _sysCategory = sendoCategoryAndSysCategory.getSysCategory();
+                }
             }
 
             SendoProductAndSysProduct sendoProductAndSysProduct = sendoProductAndSysProductRepository.findBySendoProductId(sendoProduct.getId()).orElse(null);
@@ -360,8 +362,8 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         List<SendoProductAndSysProduct> sendoProductAndSysProduct = sendoProductAndSysProductRepository.findBySysProductId(sysProductId);
         Long sendoProductIdAffected = -1L;
-        for(SendoProductAndSysProduct _relationSensoProductAndSysProduct : sendoProductAndSysProduct){
-            if(_relationSensoProductAndSysProduct.getSendoProduct().getEcomAccount()!=null &&_relationSensoProductAndSysProduct.getSendoProduct().getEcomAccount().getId() == ecomId ){
+        for (SendoProductAndSysProduct _relationSensoProductAndSysProduct : sendoProductAndSysProduct) {
+            if (_relationSensoProductAndSysProduct.getSendoProduct().getEcomAccount() != null && _relationSensoProductAndSysProduct.getSendoProduct().getEcomAccount().getId() == ecomId) {
                 sendoProductIdAffected = _relationSensoProductAndSysProduct.getSendoProduct().getItemId();
             }
         }
@@ -523,6 +525,24 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         m.setExtended_shipping_package(extendedShippingPackage);
         return m;
+    }
+
+    @Override
+    public boolean updateProductToSendo(Long userId, Long sysProductId) {
+
+        Product product = productService.getProduct(userId, sysProductId);
+        if (product == null) {
+            return false;
+        }
+
+        List<SendoProductAndSysProduct> sendoProductAndSysProduct = sendoProductAndSysProductRepository.findBySysProductId( product.getId());
+
+        for(var _relationSendoProductAndSysProduct : sendoProductAndSysProduct){
+            EcomAccount __ecomAccount =  _relationSendoProductAndSysProduct.getSendoProduct().getEcomAccount();
+            this.postNewProductToSendo(__ecomAccount.getId(), sysProductId);
+        }
+
+        return true;
     }
 
     @Override

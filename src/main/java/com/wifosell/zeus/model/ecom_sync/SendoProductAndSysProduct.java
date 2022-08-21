@@ -34,6 +34,8 @@ public class SendoProductAndSysProduct extends BasicEntity {
 
 
 
+
+
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
