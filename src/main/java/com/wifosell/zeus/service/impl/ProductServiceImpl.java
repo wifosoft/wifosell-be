@@ -190,9 +190,26 @@ public class ProductServiceImpl implements ProductService {
         product = this.updateProductByRequest(product, request, gm);
 
         // Update product on Lazada & Sendo
+
         updateLazadaProduct(userId, productId);
         updateSendoProduct();
 
+        return product;
+    }
+
+
+    @Override
+    public Product updateProductNoPostEcommerce(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Product product;
+        if (productId == -1) {
+            product = new Product();
+        } else {
+            product = getProduct(userId, productId);
+        }
+        product = this.updateProductByRequest(product, request, gm);
+
+        // Update product on Lazada & Sendo
         return product;
     }
 

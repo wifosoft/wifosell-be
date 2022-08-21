@@ -44,6 +44,8 @@ public interface ProductService {
 
     Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request);
 
+    Product updateProductNoPostEcommerce(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request);
+
     Product activateProduct(Long userId, @NonNull Long productId);
 
     Product deactivateProduct(Long userId, @NonNull Long productId);

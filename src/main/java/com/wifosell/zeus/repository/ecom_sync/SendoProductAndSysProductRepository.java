@@ -15,7 +15,7 @@ public interface SendoProductAndSysProductRepository extends SoftRepository<Send
         return EAppExceptionCode.SENDO_PRODUCT_LINK_SYS_PRODUCT_NOT_FOUND;
     }
 
-    Optional<SendoProductAndSysProduct> findByLazadaProductId(Long sendoProductId);
+    Optional<SendoProductAndSysProduct> findBySendoProductId(Long sendoProductId);
 
     Optional<SendoProductAndSysProduct> findBySysProductId(Long sysProductId);
 }

@@ -5,6 +5,7 @@ import com.wifosell.zeus.config.property.AppProperties;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProduct;
 import com.wifosell.zeus.consumer.payload.KafkaWrapperConsumeProductVariantShortInfo;
 import com.wifosell.zeus.exception.ZeusGlobalException;
+import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.ecom_sync.*;
 import com.wifosell.zeus.model.product.Product;
 import com.wifosell.zeus.model.product.Variant;
@@ -49,6 +50,8 @@ public class SendoProductServiceImpl implements SendoProductService {
     private Logger logger = LoggerFactory.getLogger(SendoProductServiceImpl.class);
     @Autowired
     SendoCategoryAndSysCategoryRepository sendoCategoryAndSysCategoryRepository;
+    @Autowired
+    SendoCategoryRepository sendoCategoryRepository;
     @Autowired
     ProductService productService;
     @Autowired
@@ -143,9 +146,10 @@ public class SendoProductServiceImpl implements SendoProductService {
         User gm = ecomAccountOpt.get().getGeneralManager();
 
 
-        SendoProduct sendoProduct = sendoProductRepository.findFirstByItemId(itemPayload.getId());
+        SendoProduct sendoProduct = sendoProductRepository.findFirstByItemIdAndEcomAccountId(itemPayload.getId(), ecomAccount.getId());
         if (sendoProduct == null) {
             sendoProduct = new SendoProduct(itemPayload, ecomAccountOpt.get());
+            sendoProduct.setEcomAccount(ecomAccountOpt.get());
         } else {
             sendoProduct.withDataByProductAPI(itemPayload).setEcomAccount(ecomAccountOpt.get());
         }
@@ -196,16 +200,19 @@ public class SendoProductServiceImpl implements SendoProductService {
 
         List<Variant> existedVariant = variantRepository.findListBySku(listMapVariantSkuString);
         Long idProductAffected = -1L;
+        Product parentExist;
         if (existedVariant.size() != 0) {
             //ton tai system varirant roi thi cap nhat theo varaint id
-            Product parentExist = existedVariant.get(0).getProduct();
+            parentExist = existedVariant.get(0).getProduct();
             if (parentExist != null) {
                 idProductAffected = parentExist.getId();
             }
+        } else {
+            parentExist  = null;
         }
 
         if (idProductAffected == -1L) {
-            var response = productService.updateProduct(ecomAccountOpt.get().getGeneralManager().getId(), idProductAffected, kafkaWrapperConsumeProduct.getUpdateProductRequest());
+            var response = productService.updateProductNoPostEcommerce(ecomAccountOpt.get().getGeneralManager().getId(), idProductAffected, kafkaWrapperConsumeProduct.getUpdateProductRequest());
             logger.info(response.getName());
 
             SendoProductAndSysProduct sendoProductAndSysProduct = new SendoProductAndSysProduct();
@@ -213,9 +220,36 @@ public class SendoProductServiceImpl implements SendoProductService {
             sendoProductAndSysProduct.setSysProduct(response);
             sendoProductAndSysProductRepository.save(sendoProductAndSysProduct);
             //liên kết
+            SendoCategory sendoCategory = sendoCategoryRepository.findBySendoCategoryId(itemPayload.getCat_4_id()).orElse(null);
+            if (sendoCategory != null) {
+                SendoCategoryAndSysCategory sendoCategoryAndSysCategory = sendoCategoryAndSysCategoryRepository.findFirstBySendoCategoryId(sendoCategory.getId()).orElse(null);
+                if (sendoCategoryAndSysCategory != null) {
+                    Category sysCategory = sendoCategoryAndSysCategory.getSysCategory();
+                    response.setCategory(sysCategory);
+                    productRepository.save(response);
+                }
 
+            }
             //nếu chưa tồn tại thì mới tạo mới thôi
         } else {
+            SendoProductAndSysProduct sendoProductAndSysProduct = sendoProductAndSysProductRepository.findBySendoProductId(sendoProduct.getId()).orElse(null);
+            if (sendoProductAndSysProduct != null) {
+                Product __sysProduct = sendoProductAndSysProduct.getSysProduct();
+                SendoCategoryAndSysCategory sendoCategoryAndSysCategory = sendoCategoryAndSysCategoryRepository.findFirstBySendoCategoryId(itemPayload.getCat_4_id()).orElse(null);
+                if (sendoCategoryAndSysCategory != null) {
+                    __sysProduct.setCategory(sendoCategoryAndSysCategory.getSysCategory());
+                    productRepository.save(__sysProduct);
+                }
+                logger.info("[+] Update category system product id: {} - Name: {} - Cate : {}", __sysProduct.getId(), __sysProduct.getName(), __sysProduct);
+            } else {
+                //null thì lien kết nha
+                SendoProductAndSysProduct __sendoProductAndSysProduct = new SendoProductAndSysProduct();
+                __sendoProductAndSysProduct.setSendoProduct(sendoProduct);
+                __sendoProductAndSysProduct.setSysProduct(parentExist);
+                sendoProductAndSysProductRepository.save(__sendoProductAndSysProduct);
+                logger.info("[+] Lien ket product : Sendo Product Id {} - System product id {}", sendoProduct.getId(), parentExist.getId());
+            }
+
             //tồn tại rồi thì không cập nhật thông tin sản phẩm nữa
         }
         //create if not exist
@@ -471,7 +505,7 @@ public class SendoProductServiceImpl implements SendoProductService {
         SendoLinkAccountRequestDTOWithModel sendoInfo = ecomService.getSendoDTO(ecomId);
 
         var response = sendoProductService.publishCreateSystemProductToSendo(ecomId, sysProductId);
-        if(response == null){
+        if (response == null) {
             logger.info("[-] Vui long kiem tra lai exception lien ket");
             return null;
         }
