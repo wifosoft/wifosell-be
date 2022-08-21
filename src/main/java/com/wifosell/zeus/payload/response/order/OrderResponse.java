@@ -25,8 +25,7 @@ import java.util.stream.Collectors;
 public class OrderResponse extends BasicEntityResponse {
     private List<OrderItemResponse> orderItems;
     private ShopResponse shop;
-
-    //private SaleChannelResponse saleChannel;
+    private SaleChannelResponse saleChannel;
     private CustomerResponse customer;
     private BigDecimal subtotal;
     private BigDecimal shippingFee;
@@ -42,7 +41,7 @@ public class OrderResponse extends BasicEntityResponse {
         super(order);
         this.orderItems = order.getOrderItems().stream().map(OrderItemResponse::new).collect(Collectors.toList());
         this.shop = new ShopResponse(order.getShop());
-        //this.saleChannel = new SaleChannelResponse(order.getSaleChannel());
+        this.saleChannel = new SaleChannelResponse(order.getSaleChannel());
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
         this.shippingFee = order.getShippingFee();

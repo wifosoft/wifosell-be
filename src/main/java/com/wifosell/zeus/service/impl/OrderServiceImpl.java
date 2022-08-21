@@ -185,7 +185,9 @@ public class OrderServiceImpl implements OrderService {
         SaleChannel saleChannel = saleChannelShop.getSaleChannel() ;
 
         order.setSaleChannelShop(saleChannelShop);
-
+        order.setShop(shop);
+        order.setWarehouse(warehouse);
+        order.setSaleChannel(saleChannel);
 
         List<Long> aggregateSystemProductIds = new ArrayList<>();
         List<Long> aggregateSystemVariantIds = new ArrayList<>();
@@ -234,7 +236,7 @@ public class OrderServiceImpl implements OrderService {
             orderItemRepository.saveAll(orderItems);
             orderRepository.save(order);
         });
-        
+
         // Sale Channel & Shop
 //        Optional.of(request.getShopId()).ifPresent(shopId -> {
 //            Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
