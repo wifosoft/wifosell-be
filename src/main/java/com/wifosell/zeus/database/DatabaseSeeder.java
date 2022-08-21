@@ -17,6 +17,7 @@ public class DatabaseSeeder extends Seeder {
     public void prepare() {
         seederTask.clear();
         seederTask.add(RoleSeeder.class);
+
         seederTask.add(UserSeeder.class);
         seederTask.add(CategorySeeder.class);
         seederTask.add(VoucherSeeder.class);

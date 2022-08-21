@@ -19,10 +19,9 @@ public class AddOrderRequest {
     @NotEmpty
     private List<OrderItem> orderItems;
 
-    @NotNull
+
     private Long shopId;
 
-    @NotNull
     private Long saleChannelId;
 
 

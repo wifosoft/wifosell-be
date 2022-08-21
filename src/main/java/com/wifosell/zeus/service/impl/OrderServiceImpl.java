@@ -108,7 +108,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     @Override
     public OrderModel addOrderNoCaculateStock(Long userId, AddOrderRequest request) {
         User user = userRepository.getUserById(userId);
@@ -182,6 +181,8 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_NOT_FOUND, "Vui lòng liên kết cửa hàng, kênh bán hàng, kho"));
         }
         Warehouse warehouse = saleChannelShop.getWarehouse();
+        Shop shop = saleChannelShop.getShop();
+        SaleChannel saleChannel = saleChannelShop.getSaleChannel() ;
 
 
         List<Long> aggregateSystemProductIds = new ArrayList<>();
@@ -232,26 +233,29 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order);
         });
 
+        order.setShop(shop);
+        order.setWarehouse(warehouse);
+        order.setSaleChannel(saleChannel);
         // Sale Channel & Shop
-        Optional.of(request.getShopId()).ifPresent(shopId -> {
-            Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
-                if (saleChannelShopRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
-                    Shop shop = shopRepository.getOne(
-                            ShopSpecs.hasGeneralManager(gm.getId())
-                                    .and(ShopSpecs.hasId(shopId))
-                    );
-                    order.setShop(shop);
-
-                    SaleChannel saleChannel = saleChannelRepository.getOne(
-                            SaleChannelSpecs.hasGeneralManager(gm.getId())
-                                    .and(SaleChannelSpecs.hasId(saleChannelId))
-                    );
-                    order.setSaleChannel(saleChannel);
-                } else {
-                    throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));
-                }
-            });
-        });
+//        Optional.of(request.getShopId()).ifPresent(shopId -> {
+//            Optional.of(request.getSaleChannelId()).ifPresent(saleChannelId -> {
+//                if (saleChannelShopRepository.existsSaleChannelShopRelationByShopAndSaleChannel(shopId, saleChannelId)) {
+//                    Shop shop = shopRepository.getOne(
+//                            ShopSpecs.hasGeneralManager(gm.getId())
+//                                    .and(ShopSpecs.hasId(shopId))
+//                    );
+//                    order.setShop(shop);
+//
+//                    SaleChannel saleChannel = saleChannelRepository.getOne(
+//                            SaleChannelSpecs.hasGeneralManager(gm.getId())
+//                                    .and(SaleChannelSpecs.hasId(saleChannelId))
+//                    );
+//                    order.setSaleChannel(saleChannel);
+//                } else {
+//                    throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.SALE_CHANNEL_SHOP_RELATION_NOT_FOUND));
+//                }
+//            });
+//        });
 
         // Customer
         Optional.of(request.getCustomerId()).ifPresent(customerId -> {
@@ -338,7 +342,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     private OrderModel addOrderNoCaculateStockByRequest(User user, AddOrderRequest request) {
         User gm = user.getGeneralManager();
         OrderModel order = OrderModel.builder().build();
@@ -367,6 +370,7 @@ public class OrderServiceImpl implements OrderService {
             orderItemRepository.saveAll(orderItems);
             orderRepository.save(order);
         });
+        //order, shop
 
         // Sale Channel & Shop
         Optional.of(request.getShopId()).ifPresent(shopId -> {

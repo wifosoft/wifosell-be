@@ -6,10 +6,12 @@ import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderStep;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
+import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,18 +22,19 @@ import java.util.stream.Collectors;
 
 @Getter
 public class OrderResponse extends BasicEntityResponse {
-    private final List<OrderItemResponse> orderItems;
-    private final ShopResponse shop;
-    private final SaleChannelResponse saleChannel;
-    private final CustomerResponse customer;
-    private final BigDecimal subtotal;
-    private final BigDecimal shippingFee;
-    private final BigDecimal total;
-    private final OrderModel.STATUS status;
-    private final List<OrderStepResponse> steps;
-    private final PaymentResponse payment;
-    private final boolean isComplete;
-    private final UserResponse createdBy;
+    private List<OrderItemResponse> orderItems;
+    private ShopResponse shop;
+    private SaleChannelResponse saleChannel;
+    private CustomerResponse customer;
+    private BigDecimal subtotal;
+    private BigDecimal shippingFee;
+    private BigDecimal total;
+    private OrderModel.STATUS status;
+    private List<OrderStepResponse> steps;
+    private PaymentResponse payment;
+    private boolean isComplete;
+    private UserResponse createdBy;
+    private Long sswId;
 
     public OrderResponse(OrderModel order) {
         super(order);
@@ -47,6 +50,9 @@ public class OrderResponse extends BasicEntityResponse {
         this.payment = new PaymentResponse(order.getPayment());
         this.isComplete = order.getIsComplete();
         this.createdBy = order.getCreatedBy() != null ? new UserResponse(order.getCreatedBy()) : null;
+        Optional.ofNullable(order.getSaleChannelShop()).ifPresent(e->{
+            this.sswId =e.getId();
+        });
     }
 
     public boolean getIsComplete() {
@@ -94,6 +100,7 @@ public class OrderResponse extends BasicEntityResponse {
             this.name = saleChannel.getName();
         }
     }
+
 
     @Getter
     @Setter
