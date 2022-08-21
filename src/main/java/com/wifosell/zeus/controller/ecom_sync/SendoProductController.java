@@ -62,7 +62,7 @@ public class SendoProductController {
             @RequestParam(name = "productId", required = false) Long productId
     ) {
 
-        var response = sendoProductService.publishCreateSystemProductToSendo(ecomId, productId);
+        var response = sendoProductService.getPublishCreateSystemProductToSendoPayload(ecomId, productId);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 

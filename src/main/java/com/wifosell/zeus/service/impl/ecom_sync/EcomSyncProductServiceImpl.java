@@ -45,7 +45,7 @@ public class EcomSyncProductServiceImpl implements EcomSyncProductService {
     public void hookUpdateSendoProduct(Long ecomId, Long productId) {
         try {
             logger.info("[+] Enter Hook hookUpdateSendoProduct update price to sendo EcomId {} - ProductId {}", ecomId, productId);
-            sendoProductService.publishCreateSystemProductToSendo(ecomId, productId);
+            sendoProductService.getPublishCreateSystemProductToSendoPayload(ecomId, productId);
             logger.info("[+] Send hookUpdateSendoProduct update price to sendo EcomId {} - ProductId {}", ecomId, productId);
         } catch (Exception exception) {
             exception.printStackTrace();

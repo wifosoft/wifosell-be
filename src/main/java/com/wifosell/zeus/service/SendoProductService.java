@@ -24,7 +24,7 @@ public interface SendoProductService {
     );
 
     void consumeSingleSendoProductFromAPI(ResponseSendoProductItemPayload itemPayload);
-    SendoCreateOrUpdateProductPayload publishCreateSystemProductToSendo(Long ecomId, Long sysProductId);
+    SendoCreateOrUpdateProductPayload getPublishCreateSystemProductToSendoPayload(Long ecomId, Long sysProductId);
 
     SendoCreateOrUpdateProductPayload postNewProductToSendo(Long ecomId, Long sysProductId);
 

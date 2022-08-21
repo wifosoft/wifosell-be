@@ -32,6 +32,8 @@ public class SendoProductAndSysProduct extends BasicEntity {
     @JoinColumn(name = "sys_product_id", referencedColumnName = "id")
     Product sysProduct;
 
+
+
     @JsonIgnore
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)

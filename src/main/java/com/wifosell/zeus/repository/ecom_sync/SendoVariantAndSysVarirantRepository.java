@@ -13,4 +13,5 @@ public interface SendoVariantAndSysVarirantRepository extends SoftRepository<Sen
 
     @Query("select e from SendoVariantAndSysVariant e where e.variant.id = ?1")
     SendoVariantAndSysVariant findFirstByVariantId(Long variantId);
+
 }
