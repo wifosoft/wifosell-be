@@ -35,8 +35,15 @@ public class ShopResponse extends BasicEntityResponse {
         ArrayList<RelationResponse> listRelationResponse = new ArrayList<>();
         for (var ssw : shop.getSaleChannelShops()) {
             List<LazadaSwwAndEcomAccount> listLinkSwwECom = ssw.getLazadaSwwAndEcomAccount();
-            for (var accountEcom : listLinkSwwECom) {
-                RelationResponse rel = new RelationResponse(ssw, accountEcom.getEcomAccount(), accountEcom.getId());
+
+            if (listLinkSwwECom.size() > 0) {
+                for (var accountEcom : listLinkSwwECom) {
+                    RelationResponse rel = new RelationResponse(ssw, accountEcom.getEcomAccount(), accountEcom.getId());
+                    listRelationResponse.add(rel);
+                }
+            }
+            else {
+                RelationResponse rel = new RelationResponse(ssw);
                 listRelationResponse.add(rel);
             }
         }
@@ -51,6 +58,15 @@ public class ShopResponse extends BasicEntityResponse {
         private final SaleChannelResponse saleChannel;
         private final WarehouseResponse warehouse;
         private final EcomAccountResponse ecomAccount;
+
+
+        public RelationResponse(SaleChannelShop saleChannelShop) {
+            this.saleChannel = new SaleChannelResponse(saleChannelShop.getSaleChannel());
+            this.warehouse = new WarehouseResponse(saleChannelShop.getWarehouse());
+            this.ecomAccount =null;
+            this.sswId = null;
+            this.sswEcomRelationId = null;
+        }
 
         public RelationResponse(SaleChannelShop saleChannelShop, EcomAccount ecomAccount, Long sswEcomRelationId) {
             this.saleChannel = new SaleChannelResponse(saleChannelShop.getSaleChannel());
