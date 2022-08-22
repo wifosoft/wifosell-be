@@ -68,7 +68,7 @@ public class LazadaGetCategoryAttributesResponse {
         data.values().forEach(attribute -> {
             if (attribute.isMandatory == 1) {
                 String key = attribute.name;
-                String value = attribute._options == null || attribute._options.isEmpty() ? "" : attribute._options.get(0).enName;
+                String value = attribute._options == null || attribute._options.isEmpty() ? "Default" : attribute._options.get(0).enName;
                 mandatoryAttributes.put(key, value);
             }
         });
