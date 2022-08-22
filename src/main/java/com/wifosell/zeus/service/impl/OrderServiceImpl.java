@@ -160,10 +160,7 @@ public class OrderServiceImpl implements OrderService {
     private boolean processListOrderItem(User user, List<OrderItem> listOrderItem, Warehouse warehouse) {
         for (OrderItem orderItem : listOrderItem) {
             Stock toStock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), orderItem.getVariant().getId());
-            if (toStock != null &&
-                    toStock.getQuantity() >= orderItem.getQuantity() &&
-                    toStock.getActualQuantity() >= orderItem.getQuantity()
-            ) {
+            if (toStock != null && toStock.getQuantity() >= orderItem.getQuantity() && toStock.getActualQuantity() >= orderItem.getQuantity()) {
                 toStock.setActualQuantity(toStock.getActualQuantity() - orderItem.getQuantity());
                 toStock.setQuantity(toStock.getQuantity() - orderItem.getQuantity());
                 stockRepository.save(toStock);
