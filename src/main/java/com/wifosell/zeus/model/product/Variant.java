@@ -3,6 +3,7 @@ package com.wifosell.zeus.model.product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.pricetrack.PriceTrack;
 import com.wifosell.zeus.model.stock.Stock;
 import com.wifosell.zeus.model.user.User;
 import lombok.*;
@@ -51,6 +52,9 @@ public class Variant extends BasicEntity {
     @OneToMany(mappedBy = "variant")
     @IndexedEmbedded(structure = ObjectStructure.NESTED)
     private List<Stock> stocks = new ArrayList<>();
+
+    @OneToOne(mappedBy = "variant")
+    private PriceTrack priceTrack;
 
     public Integer getStockWarehouse(Long warehouseId) {
         for (var _stock : stocks) {

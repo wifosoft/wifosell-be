@@ -10,5 +10,7 @@ public interface EcomSyncProductService {
 
     EcomSyncUpdateStockResponse updateEcomStock(Long userId, Warehouse warehouse, Variant variant);
 
+    void updateEcomProduct(Long userId, Long productId);
+
     void hookUpdateSendoProduct(Long ecomId, Long productId);
 }

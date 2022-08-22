@@ -16,10 +16,8 @@ import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
-import com.wifosell.zeus.repository.ecom_sync.LazadaProductAndSysProductRepository;
-import com.wifosell.zeus.service.LazadaProductService;
+import com.wifosell.zeus.service.EcomSyncProductService;
 import com.wifosell.zeus.service.ProductService;
-import com.wifosell.zeus.service.SendoProductService;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
 import com.wifosell.zeus.utils.paging.PageInfo;
@@ -69,11 +67,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private EntityManager entityManager;
     @Autowired
-    private LazadaProductAndSysProductRepository lazadaProductAndSysProductRepository;
-    @Autowired
-    private LazadaProductService lazadaProductService;
-    @Autowired
-    private SendoProductService sendoProductService;
+    private EcomSyncProductService ecomSyncProductService;
 
     @Override
     public Page<Product> getProducts(
@@ -191,19 +185,7 @@ public class ProductServiceImpl implements ProductService {
         }
         product = this.updateProductByRequest(product, request, gm);
 
-        try {
-            lazadaProductService.updateLinkedLazadaProducts(userId, productId);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            logger.info("[-] Exception when use updateProduct Sync to Lazada");
-        }
-
-        try {
-            sendoProductService.updateProductToSendo(userId, productId);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            logger.info("[-] Exception when use updateProduct Sync to Sendo");
-        }
+        ecomSyncProductService.updateEcomProduct(userId, productId);
 
         return product;
     }
