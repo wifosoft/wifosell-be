@@ -267,7 +267,7 @@ public class EcomServiceImpl implements EcomService {
                 logger.info("Lazada category null {}", e.getPrimary_category());
                 continue;
             }
-            Optional<LazadaCategoryAndSysCategory> lazadaCategoryAndSysCategory = lazadaCategoryAndSysCategoryRepository.findByLazadaCategory(lazadaCategory.getId());
+            Optional<LazadaCategoryAndSysCategory> lazadaCategoryAndSysCategory = lazadaCategoryAndSysCategoryRepository.findFirstByLazadaCategory(lazadaCategory.getId());
             Category sysCategory = null;
             if (lazadaCategoryAndSysCategory.isPresent()) {
                 sysCategory = lazadaCategoryAndSysCategory.get().getSysCategory();

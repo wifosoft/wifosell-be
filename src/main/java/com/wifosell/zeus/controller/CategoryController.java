@@ -1,8 +1,12 @@
 package com.wifosell.zeus.controller;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
+import com.wifosell.zeus.payload.request.category.SysCategoryLinkEcomCategoryRequest;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.payload.response.category.GetCategoriesResponse;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -131,4 +136,21 @@ public class CategoryController {
                 .map(CategoryResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(response));
     }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/linkCategory")
+    public ResponseEntity<GApiResponse> getLinkCategory(@CurrentUser UserPrincipal userPrincipal){
+        var resp  = categoryService.getAllLinkCategoryEcomCategory(userPrincipal.getId());
+        return ResponseEntity.ok(GApiResponse.success(resp));
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/linkCategory")
+    public ResponseEntity<GApiResponse<Boolean>> linkCategory(@CurrentUser UserPrincipal userPrincipal, @RequestBody @Valid SysCategoryLinkEcomCategoryRequest request) {
+        categoryService.linkCategoryEcomCategory(userPrincipal.getId(), request);
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
 }

@@ -149,4 +149,6 @@ public class ShopController {
         shopService.givePermissionManageShop(userId, shopId);
         return ResponseEntity.ok(GApiResponse.success(true));
     }
+
+
 }

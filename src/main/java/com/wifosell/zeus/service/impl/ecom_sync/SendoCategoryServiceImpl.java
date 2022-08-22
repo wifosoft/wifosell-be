@@ -1,11 +1,17 @@
 package com.wifosell.zeus.service.impl.ecom_sync;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.SendoCategory;
 import com.wifosell.zeus.model.ecom_sync.SendoCategoryAndSysCategory;
+import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryAndSysCategoryRepository;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryRepository;
 import com.wifosell.zeus.service.CategoryService;
@@ -13,10 +19,12 @@ import com.wifosell.zeus.service.SendoCategoryService;
 import com.wifosell.zeus.specs.SendoCategoryAndSysCategorySpecs;
 import com.wifosell.zeus.specs.SendoCategorySpecs;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +36,9 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
     private final SendoCategoryRepository sendoCategoryRepository;
     private final SendoCategoryAndSysCategoryRepository sendoCategoryAndSysCategoryRepository;
     private final CategoryService categoryService;
+
+    @Autowired
+    EcomAccountRepository ecomAccountRepository;
 
     @Override
     public List<SendoCategory> getLeafCategories() {
@@ -98,5 +109,16 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
     @Override
     public Optional<SendoCategoryAndSysCategory> findLink(Long userId, Long sysCategoryId) {
         return sendoCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(userId, sysCategoryId);
+    }
+
+    public List<SendoCategory> getUnlinkSendoCategory(Long userId) {
+        List<SendoCategory> unlinkCates = new ArrayList<>();
+        User gm = userRepository.findById(userId).orElseThrow(() -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_FOUND))).getGeneralManager();
+
+//
+//
+//        List<EcomAccount> listEcomAccountSendo = ecomAccountRepository.findAllByGeneralManagerAndEcomName()
+//        List<SendoProduct> sendoProductList = sendoCategoryRepository.findBy
+        return unlinkCates;
     }
 }

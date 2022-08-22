@@ -24,7 +24,6 @@ public interface EcomAccountRepository extends SoftRepository<EcomAccount, Long>
     List<EcomAccount> findAllByGeneralManagerAndEcomName(Long gmId, EcomAccount.EcomName ecomName);
 
 
-
     @Query("select e from EcomAccount e where e.ecomName = ?1")
     List<EcomAccount> findAllByEcomName(EcomAccount.EcomName ecomName);
 

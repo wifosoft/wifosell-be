@@ -2,6 +2,8 @@ package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
+import com.wifosell.zeus.payload.request.category.SysCategoryLinkEcomCategoryRequest;
+import com.wifosell.zeus.payload.response.category.SysCategoryLinkEcomCategoryResponse;
 
 import java.util.List;
 
@@ -23,4 +25,9 @@ public interface CategoryService {
     List<Category> activateCategories(Long userId, List<Long> categoryIds);
 
     List<Category> deactivateCategories(Long userId, List<Long> categoryIds);
+
+    SysCategoryLinkEcomCategoryResponse getAllLinkCategoryEcomCategory(Long userId);
+
+    void linkCategoryEcomCategory(Long userId, SysCategoryLinkEcomCategoryRequest linkEcomCategoryRequest);
+
 }
