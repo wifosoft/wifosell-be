@@ -8,13 +8,11 @@ import com.wifosell.zeus.model.warehouse.Warehouse;
 import com.wifosell.zeus.payload.request.ecom_sync.EcomSyncUpdateStockRequest;
 import com.wifosell.zeus.payload.response.ecom_sync.EcomSyncUpdateStockResponse;
 import com.wifosell.zeus.repository.SaleChannelShopRepository;
-import com.wifosell.zeus.repository.StockRepository;
-import com.wifosell.zeus.repository.VariantRepository;
 import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
 import com.wifosell.zeus.service.*;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,20 +20,21 @@ import java.util.List;
 
 @Service("EcomSyncProductService")
 @Transactional
-@RequiredArgsConstructor
 public class EcomSyncProductServiceImpl implements EcomSyncProductService {
     private static final Logger logger = LoggerFactory.getLogger(EcomSyncProductServiceImpl.class);
 
-    private final StockService stockService;
-    private final VariantService variantService;
-    private final VariantRepository variantRepository;
-    private final LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
-    private final LazadaProductService lazadaProductService;
-    private final SendoProductService sendoProductService;
-    private final EcomService ecomService;
-    private final SaleChannelShopRepository saleChannelShopRepository;
-    private final StockRepository stockRepository;
-
+    @Autowired
+    private StockService stockService;
+    @Autowired
+    private VariantService variantService;
+    @Autowired
+    private LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
+    @Autowired
+    private LazadaProductService lazadaProductService;
+    @Autowired
+    private SendoProductService sendoProductService;
+    @Autowired
+    private SaleChannelShopRepository saleChannelShopRepository;
 
     @Override
     public void hookUpdateSendoProduct(Long ecomId, Long productId) {

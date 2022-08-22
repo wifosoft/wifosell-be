@@ -81,7 +81,7 @@ public class PriceTrackController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/{priceTrackId}/delete")
+    @GetMapping("/{priceTrackId}/delete")
     public ResponseEntity<GApiResponse<Boolean>> deletePriceTrack(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "priceTrackId") Long priceTrackId
