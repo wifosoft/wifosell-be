@@ -160,7 +160,10 @@ public class OrderServiceImpl implements OrderService {
     private boolean processListOrderItem(User user, List<OrderItem> listOrderItem, Warehouse warehouse) {
         for (OrderItem orderItem : listOrderItem) {
             Stock toStock = stockRepository.getStockByWarehouseIdAndVariantId(warehouse.getId(), orderItem.getVariant().getId());
-            if (toStock != null) {
+            if (toStock != null &&
+                    toStock.getQuantity() >= orderItem.getQuantity() &&
+                    toStock.getActualQuantity() >= orderItem.getQuantity()
+            ) {
                 toStock.setActualQuantity(toStock.getActualQuantity() - orderItem.getQuantity());
                 toStock.setQuantity(toStock.getQuantity() - orderItem.getQuantity());
                 stockRepository.save(toStock);
@@ -182,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Warehouse warehouse = saleChannelShop.getWarehouse();
         Shop shop = saleChannelShop.getShop();
-        SaleChannel saleChannel = saleChannelShop.getSaleChannel() ;
+        SaleChannel saleChannel = saleChannelShop.getSaleChannel();
 
         order.setSaleChannelShop(saleChannelShop);
         order.setShop(shop);
@@ -373,9 +376,9 @@ public class OrderServiceImpl implements OrderService {
         });
         //order, shop
 
-        Optional.of(request.getSswId()).ifPresent(e-> {
-            SaleChannelShop saleChannelShop  = saleChannelShopRepository.getById(e);
-            if(saleChannelShop!=null){
+        Optional.of(request.getSswId()).ifPresent(e -> {
+            SaleChannelShop saleChannelShop = saleChannelShopRepository.getById(e);
+            if (saleChannelShop != null) {
                 order.setSaleChannelShop(saleChannelShop);
 
             }
@@ -470,10 +473,8 @@ public class OrderServiceImpl implements OrderService {
         Optional.ofNullable(request.getIsActive()).ifPresent(order::setIsActive);
 
 
-
         return orderRepository.save(order);
     }
-
 
 
     private OrderModel updateOrderByRequest(OrderModel order, UpdateOrderRequest request) {
