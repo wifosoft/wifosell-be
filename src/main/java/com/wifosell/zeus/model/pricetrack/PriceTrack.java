@@ -22,6 +22,7 @@ public class PriceTrack extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @OneToOne
     private Variant variant;
 
