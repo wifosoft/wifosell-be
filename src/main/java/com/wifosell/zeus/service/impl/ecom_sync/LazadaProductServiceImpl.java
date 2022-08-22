@@ -734,19 +734,16 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                             userId, ecomId, variantId);
                     return false;
                 }
+
+                // Fetch to create LazadaProduct and LazadaVariants
+                User user = userRepository.getUserById(userId);
+                fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
+                
             } catch (JsonProcessingException | ApiException e) {
                 e.printStackTrace();
                 logger.error("pushLazadaVariantQuantity fail | create product exception | userId = {}, ecomId = {}, variantId = {}",
                         userId, ecomId, variantId);
                 return false;
-            }
-
-            // Fetch to create LazadaProduct and LazadaVariants
-            try {
-                User user = userRepository.getUserById(userId);
-                fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
-            } catch (ApiException e) {
-                e.printStackTrace();
             }
 
             logger.info("pushLazadaVariantQuantity success | create | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
@@ -774,16 +771,17 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                     logger.error("pushLazadaVariantQuantity fail | response fail | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
                     return false;
                 }
+
+                // Update LazadaVariant' stock
+                LazadaVariant lazadaVariant = variantLink.getLazadaVariant();
+                lazadaVariant.setQuantity(quantity);
+                lazadaVariantRepository.save(lazadaVariant);
+
             } catch (JsonProcessingException | ApiException e) {
                 e.printStackTrace();
                 logger.error("pushLazadaVariantQuantity fail | throw exception | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
                 return false;
             }
-
-            // Update LazadaVariant' stock
-            LazadaVariant lazadaVariant = variantLink.getLazadaVariant();
-            lazadaVariant.setQuantity(quantity);
-            lazadaVariantRepository.save(lazadaVariant);
 
             logger.info("pushLazadaVariantQuantity success | update | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
         }
