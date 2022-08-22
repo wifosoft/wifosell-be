@@ -741,6 +741,14 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 return false;
             }
 
+            // Fetch to create LazadaProduct and LazadaVariants
+            try {
+                User user = userRepository.getUserById(userId);
+                fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+
             logger.info("pushLazadaVariantQuantity success | create | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
         } else {
             itemId = productLink.getLazadaProduct().getItemId();
@@ -772,15 +780,12 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 return false;
             }
 
-            logger.info("pushLazadaVariantQuantity success | update | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
-        }
+            // Update LazadaVariant' stock
+            LazadaVariant lazadaVariant = variantLink.getLazadaVariant();
+            lazadaVariant.setQuantity(quantity);
+            lazadaVariantRepository.save(lazadaVariant);
 
-        // Fetch to update LazadaVariant's stock
-        try {
-            User user = userRepository.getUserById(userId);
-            fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
-        } catch (ApiException e) {
-            e.printStackTrace();
+            logger.info("pushLazadaVariantQuantity success | update | userId = {}, ecomId = {}, variantId = {}", userId, ecomId, variantId);
         }
 
         return true;
