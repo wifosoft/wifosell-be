@@ -24,7 +24,7 @@ import java.util.Map;
 public class PriceTrackController {
     private final PriceTrackService priceTrackService;
 
-    @PostMapping("/test/trigger")
+    @GetMapping("/test/trigger")
     public ResponseEntity<GApiResponse<Boolean>> testTrigger(
             @RequestParam(name = "priceTrackId") Long priceTrackId,
             @RequestParam(name = "newCompetitorPrice") BigDecimal newCompetitorPrice
@@ -33,7 +33,7 @@ public class PriceTrackController {
         return ResponseEntity.ok(GApiResponse.success(true));
     }
 
-    @PostMapping("/test/get_map")
+    @GetMapping("/test/get_map")
     public ResponseEntity<GApiResponse<Map<Long, String>>> testGetMapActiveCompetitorUrls() {
         Map<Long, String> map = priceTrackService.getMapActiveCompetitorUrls();
         return ResponseEntity.ok(GApiResponse.success(map));
