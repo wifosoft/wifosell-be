@@ -14,11 +14,9 @@ public class AddPriceTrackRequest {
     private String competitorUrl;
 
     @NotNull
-    private BigDecimal competitorPrice;
-
-    @NotNull
     private Boolean isAutoChangePrice;
 
+    @NotNull
     private BigDecimal deltaPrice;
 
     private BigDecimal minPrice;

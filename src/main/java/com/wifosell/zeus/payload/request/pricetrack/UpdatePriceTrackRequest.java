@@ -10,8 +10,6 @@ public class UpdatePriceTrackRequest {
 
     private String competitorUrl;
 
-    private BigDecimal competitorPrice;
-
     private Boolean isAutoChangePrice;
 
     private BigDecimal deltaPrice;

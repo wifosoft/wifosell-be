@@ -66,6 +66,9 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             return;
         }
 
+        priceTrack.setCompetitorPrice(newCompetitorPrice);
+        priceTrackRepository.save(priceTrack);
+
         // Check condition then change and sync price
         BigDecimal newPrice = newCompetitorPrice.add(priceTrack.getDeltaPrice());
 
@@ -75,20 +78,20 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             return;
         }
 
-//        if (newPrice.compareTo(priceTrack.getMinPrice()) < 0) {
-//            newPrice = priceTrack.getMinPrice();
-//        }
-//
-//        if (newPrice.compareTo(priceTrack.getMaxPrice()) > 0) {
-//            newPrice = priceTrack.getMaxPrice();
-//        }
+        if (newPrice.compareTo(priceTrack.getMinPrice()) < 0) {
+            newPrice = priceTrack.getMinPrice();
+        }
+
+        if (newPrice.compareTo(priceTrack.getMaxPrice()) > 0) {
+            newPrice = priceTrack.getMaxPrice();
+        }
 
         boolean changePriceFlag = false;
         Variant variant = priceTrack.getVariant();
         BigDecimal oldVariantPrice = variant.getCost();
 
         if (priceTrack.getIsAutoChangePrice()) {
-            if (newPrice.compareTo(priceTrack.getMinPrice()) >= 0 && newPrice.compareTo(priceTrack.getMaxPrice()) <= 0) {
+            if (newPrice.compareTo(variant.getCost()) != 0) {
                 variant.setCost(newPrice);
                 variantRepository.save(variant);
                 ecomSyncProductService.updateEcomProduct(priceTrack.getGeneralManager().getId(), priceTrack.getVariant().getProduct().getId());
@@ -142,7 +145,6 @@ public class PriceTrackServiceImpl implements PriceTrackService {
         Variant variant = variantService.getVariant(userId, request.getVariantId());
         priceTrack.setVariant(variant);
         priceTrack.setCompetitorUrl(request.getCompetitorUrl());
-        priceTrack.setCompetitorPrice(request.getCompetitorPrice());
         priceTrack.setAutoChangePrice(request.getIsAutoChangePrice());
 
         if (request.getIsAutoChangePrice()) {
@@ -179,7 +181,6 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             priceTrack.setVariant(variant);
         });
         Optional.ofNullable(request.getCompetitorUrl()).ifPresent(priceTrack::setCompetitorUrl);
-        Optional.ofNullable(request.getCompetitorPrice()).ifPresent(priceTrack::setCompetitorPrice);
 
         Optional.ofNullable(request.getIsAutoChangePrice()).ifPresent(isAutoChangePrice -> {
             if (isAutoChangePrice && !priceTrack.getIsAutoChangePrice()) {
