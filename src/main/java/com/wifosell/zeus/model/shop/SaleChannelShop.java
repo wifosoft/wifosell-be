@@ -1,7 +1,9 @@
 package com.wifosell.zeus.model.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.Expose;
 import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
+import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
@@ -36,6 +38,12 @@ public class SaleChannelShop {
 
     @OneToMany(mappedBy = "saleChannelShop", cascade = CascadeType.ALL, orphanRemoval = true)
     protected List<LazadaSwwAndEcomAccount> lazadaSwwAndEcomAccount = new ArrayList<>();
+
+    @Expose(serialize = false, deserialize = false)
+    @JsonIgnore
+    @OneToMany(mappedBy = "saleChannelShop" ,cascade = CascadeType.ALL, orphanRemoval = true)
+    protected List<OrderModel> listOrders = new ArrayList<>();
+
 
     public List<Long> getAllLinkedSwwId() {
         if (lazadaSwwAndEcomAccount == null) {
