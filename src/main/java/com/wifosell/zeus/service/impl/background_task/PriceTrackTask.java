@@ -1,14 +1,8 @@
 package com.wifosell.zeus.service.impl.background_task;
 
 import com.google.gson.Gson;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
-import com.wifosell.zeus.model.pricetrack.PriceTrack;
 import com.wifosell.zeus.payload.provider.crawler_competitor.DataCrawlerCompetitorMessage;
-import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
 import com.wifosell.zeus.service.PriceTrackService;
-import com.wifosell.zeus.service.SendoProductService;
-import com.wifosell.zeus.taurus.core.TaurusBus;
-import com.wifosell.zeus.taurus.core.payload.KafkaPublishProductSendoPayload;
 import org.jobrunr.jobs.annotations.Job;
 import org.jobrunr.spring.annotations.Recurring;
 import org.slf4j.Logger;
@@ -17,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Dictionary;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,7 +27,7 @@ public class PriceTrackTask {
         var gson = new Gson();
         Map<Long, String> listPriceTrackMap = priceTrackService.getMapActiveCompetitorUrls();
         try {
-            if (listPriceTrackMap == null){
+            if (listPriceTrackMap == null) {
                 logger.error("priceTaskListService error null map");
             }
             for (Map.Entry<Long, String> item : listPriceTrackMap.entrySet()) {

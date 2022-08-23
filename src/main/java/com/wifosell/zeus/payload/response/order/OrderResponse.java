@@ -1,18 +1,15 @@
 package com.wifosell.zeus.payload.response.order;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
 import com.wifosell.zeus.model.order.OrderStep;
 import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
-import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
-import com.wifosell.zeus.payload.response.warehouse.WarehouseResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,8 +48,8 @@ public class OrderResponse extends BasicEntityResponse {
         this.payment = new PaymentResponse(order.getPayment());
         this.isComplete = order.getIsComplete();
         this.createdBy = order.getCreatedBy() != null ? new UserResponse(order.getCreatedBy()) : null;
-        Optional.ofNullable(order.getSaleChannelShop()).ifPresent(e->{
-            this.sswId =e.getId();
+        Optional.ofNullable(order.getSaleChannelShop()).ifPresent(e -> {
+            this.sswId = e.getId();
         });
     }
 
