@@ -75,22 +75,26 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             return;
         }
 
-        if (newPrice.compareTo(priceTrack.getMinPrice()) < 0) {
-            newPrice = priceTrack.getMinPrice();
-        }
+//        if (newPrice.compareTo(priceTrack.getMinPrice()) < 0) {
+//            newPrice = priceTrack.getMinPrice();
+//        }
+//
+//        if (newPrice.compareTo(priceTrack.getMaxPrice()) > 0) {
+//            newPrice = priceTrack.getMaxPrice();
+//        }
 
-        if (newPrice.compareTo(priceTrack.getMaxPrice()) > 0) {
-            newPrice = priceTrack.getMaxPrice();
-        }
+        boolean changePriceFlag = false;
+        Variant variant = priceTrack.getVariant();
+        BigDecimal oldVariantPrice = variant.getCost();
 
         if (priceTrack.getIsAutoChangePrice()) {
             if (newPrice.compareTo(priceTrack.getMinPrice()) >= 0 && newPrice.compareTo(priceTrack.getMaxPrice()) <= 0) {
-                Variant variant = priceTrack.getVariant();
                 variant.setCost(newPrice);
                 variantRepository.save(variant);
                 ecomSyncProductService.updateEcomProduct(priceTrack.getGeneralManager().getId(), priceTrack.getVariant().getProduct().getId());
                 logger.info("auto change price success | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}, minPrice = {}, maxPrice = {}",
                         priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice, priceTrack.getMinPrice(), priceTrack.getMaxPrice());
+                changePriceFlag = true;
             } else {
                 logger.warn("auto change price not execute | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}, minPrice = {}, maxPrice = {}",
                         priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice, priceTrack.getMinPrice(), priceTrack.getMaxPrice());
@@ -99,11 +103,24 @@ public class PriceTrackServiceImpl implements PriceTrackService {
 
         // Mail
         String email = priceTrack.getGeneralManager().getEmail();
-        mailService.sendEmail(email,
-                "[Wifosell][Cảnh báo] Đối thủ thay đổi giá",
-                String.format("variantId = %d, newCompetitorPrice = %s, newPrice = %s",
-                        priceTrack.getVariant().getId(), newCompetitorPrice, newPrice)
-        );
+        String content = String.format("Đối thủ của biến thể %d thay đổi giá: %s\n", priceTrack.getVariant().getId(), newCompetitorPrice);
+        content += String.format("Link đối thủ: %s\n", priceTrack.getCompetitorUrl());
+
+        if (priceTrack.getIsAutoChangePrice()) {
+            if (changePriceFlag) {
+                content += String.format("Giá của biến thể đã được tự động cập nhật: %s --> %s\n", oldVariantPrice, variant.getCost());
+            } else {
+                content += String.format("Giá của biến thể không đủ điều kiện để tự động cập nhật:\n" +
+                                "- Giá cũ: %s\n" +
+                                "- Giá mới: %s\n" +
+                                "- Giá sàn: %s\n" +
+                                "- Giá trần: %s\n",
+                        oldVariantPrice, variant.getCost(), priceTrack.getMinPrice(), priceTrack.getMaxPrice()
+                );
+            }
+        }
+
+        mailService.sendEmail(email, "[Wifosell][Cảnh báo] Đối thủ thay đổi giá", content);
     }
 
     @Override
