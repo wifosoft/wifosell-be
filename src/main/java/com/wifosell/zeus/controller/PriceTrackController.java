@@ -5,6 +5,7 @@ import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.request.pricetrack.AddPriceTrackRequest;
 import com.wifosell.zeus.payload.request.pricetrack.UpdatePriceTrackRequest;
+import com.wifosell.zeus.payload.response.pricetrack.PriceTrackResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.PriceTrackService;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -41,43 +43,47 @@ public class PriceTrackController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<GApiResponse<List<PriceTrack>>> getPriceTracks(
+    public ResponseEntity<GApiResponse> getPriceTracks(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestParam(name = "isActive", required = false) List<Boolean> isActives
     ) {
         List<PriceTrack> priceTracks = priceTrackService.getPriceTracks(userPrincipal.getId(), isActives);
-        return ResponseEntity.ok(GApiResponse.success(priceTracks));
+        List<PriceTrackResponse>  priceTrackResponse = priceTracks.stream().map(PriceTrackResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(priceTrackResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{priceTrackId}")
-    public ResponseEntity<GApiResponse<PriceTrack>> getPriceTrack(
+    public ResponseEntity<GApiResponse> getPriceTrack(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "priceTrackId") Long priceTrackId
     ) {
         PriceTrack priceTrack = priceTrackService.getPriceTrack(userPrincipal.getId(), priceTrackId);
-        return ResponseEntity.ok(GApiResponse.success(priceTrack));
+        PriceTrackResponse priceTrackResponse = new PriceTrackResponse(priceTrack);
+        return ResponseEntity.ok(GApiResponse.success(priceTrackResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("")
-    public ResponseEntity<GApiResponse<PriceTrack>> addPriceTrack(
+    public ResponseEntity<GApiResponse> addPriceTrack(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid AddPriceTrackRequest request
     ) {
         PriceTrack priceTrack = priceTrackService.addPriceTrack(userPrincipal.getId(), request);
-        return ResponseEntity.ok(GApiResponse.success(priceTrack));
+        PriceTrackResponse priceTrackResponse = new PriceTrackResponse(priceTrack);
+        return ResponseEntity.ok(GApiResponse.success(priceTrackResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{priceTrackId}/update")
-    public ResponseEntity<GApiResponse<PriceTrack>> updatePriceTrack(
+    public ResponseEntity<GApiResponse> updatePriceTrack(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "priceTrackId") Long priceTrackId,
             @RequestBody @Valid UpdatePriceTrackRequest request
     ) {
         PriceTrack priceTrack = priceTrackService.updatePriceTrack(userPrincipal.getId(), priceTrackId, request);
-        return ResponseEntity.ok(GApiResponse.success(priceTrack));
+        PriceTrackResponse priceTrackResponse = new PriceTrackResponse(priceTrack);
+        return ResponseEntity.ok(GApiResponse.success(priceTrackResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -92,21 +98,23 @@ public class PriceTrackController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deactivate")
-    public ResponseEntity<GApiResponse<List<PriceTrack>>> deactivatePriceTracks(
+    public ResponseEntity<GApiResponse> deactivatePriceTracks(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid ListIdRequest request
     ) {
         List<PriceTrack> priceTracks = priceTrackService.deactivatePriceTracks(userPrincipal.getId(), request.getIds());
-        return ResponseEntity.ok(GApiResponse.success(priceTracks));
+        List<PriceTrackResponse>  priceTrackResponse = priceTracks.stream().map(PriceTrackResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(priceTrackResponse));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/activate")
-    public ResponseEntity<GApiResponse<List<PriceTrack>>> activatePriceTracks(
+    public ResponseEntity<GApiResponse> activatePriceTracks(
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid ListIdRequest request
     ) {
         List<PriceTrack> priceTracks = priceTrackService.activatePriceTracks(userPrincipal.getId(), request.getIds());
-        return ResponseEntity.ok(GApiResponse.success(priceTracks));
+        List<PriceTrackResponse>  priceTrackResponse = priceTracks.stream().map(PriceTrackResponse::new).collect(Collectors.toList());
+        return ResponseEntity.ok(GApiResponse.success(priceTrackResponse));
     }
 }

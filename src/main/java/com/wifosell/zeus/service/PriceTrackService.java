@@ -11,7 +11,7 @@ import java.util.Map;
 public interface PriceTrackService {
     Map<Long, String> getMapActiveCompetitorUrls();
 
-    void trigger(Long priceTrackId, BigDecimal newCompetitorPrice);
+    int trigger(Long priceTrackId, BigDecimal newCompetitorPrice);
 
     List<PriceTrack> getPriceTracks(Long userId, List<Boolean> isActives);
 

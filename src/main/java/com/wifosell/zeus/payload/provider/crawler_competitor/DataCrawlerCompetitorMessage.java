@@ -16,6 +16,7 @@ class DataCrawlerCompetitorMessage extends BaseCrawlerCompetitorMessage {
     DataCrawlerCompetitorMessageData data;
 
     @Getter
+    @Setter
     public static class DataCrawlerCompetitorMessageData {
         private Long id;
         private String url;

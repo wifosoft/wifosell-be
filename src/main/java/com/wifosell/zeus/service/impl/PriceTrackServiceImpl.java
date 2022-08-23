@@ -59,11 +59,12 @@ public class PriceTrackServiceImpl implements PriceTrackService {
     }
 
     @Override
-    public void trigger(Long priceTrackId, BigDecimal newCompetitorPrice) {
+    public int trigger(Long priceTrackId, BigDecimal newCompetitorPrice) {
+        int status = 0;
         PriceTrack priceTrack = priceTrackRepository.findById(priceTrackId).orElse(null);
         if (priceTrack == null) {
             logger.error("trigger fail due to priceTrack not exist | priceTrackId = {}", priceTrackId);
-            return;
+            return -1;
         }
 
         priceTrack.setCompetitorPrice(newCompetitorPrice);
@@ -75,7 +76,7 @@ public class PriceTrackServiceImpl implements PriceTrackService {
         if (newPrice.equals(priceTrack.getVariant().getCost())) {
             logger.warn("trigger not execute due to unchanged price | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}",
                     priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice);
-            return;
+            return -2;
         }
 
         if (newPrice.compareTo(priceTrack.getMinPrice()) < 0) {
@@ -101,6 +102,7 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             } else {
                 logger.warn("auto change price not execute | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}, minPrice = {}, maxPrice = {}",
                         priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice, priceTrack.getMinPrice(), priceTrack.getMaxPrice());
+                status = 2;
             }
         }
 
