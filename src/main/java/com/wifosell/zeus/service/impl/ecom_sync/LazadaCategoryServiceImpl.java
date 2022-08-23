@@ -4,7 +4,9 @@ import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.ecom_sync.*;
+import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
+import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
+import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.repository.UserRepository;
@@ -37,6 +39,7 @@ public class LazadaCategoryServiceImpl implements LazadaCategoryService {
 
     @Autowired
     LazadaProductRepository lazadaProductRepository;
+
     @Override
     public List<LazadaCategory> getLeafCategories() {
         return lazadaCategoryRepository.findAll(
@@ -129,7 +132,7 @@ public class LazadaCategoryServiceImpl implements LazadaCategoryService {
         List<LazadaCategory> listLazadaCategories = lazadaCategoryRepository.getLazadaCategoryByListLazadaCateId(aggregateLongSendoProductPrimaryId);
 
         //category tồn tại nhưng chưa được liên kết, not in aggresSEndoLinkeđI
-        unlinkCates = listLazadaCategories.stream().filter( sendoCate ->
+        unlinkCates = listLazadaCategories.stream().filter(sendoCate ->
                 !aggregateLonLazadaLinkedId.contains(sendoCate.getId())).collect(Collectors.toList());
 
         return unlinkCates;

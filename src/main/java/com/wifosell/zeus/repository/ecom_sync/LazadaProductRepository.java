@@ -2,7 +2,6 @@ package com.wifosell.zeus.repository.ecom_sync;
 
 import com.wifosell.framework.repository.SoftRepository;
 import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
-import com.wifosell.zeus.model.ecom_sync.SendoProduct;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;

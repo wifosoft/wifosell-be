@@ -1,13 +1,8 @@
 package com.wifosell.zeus.consumer;
 
 import com.google.gson.Gson;
-import com.oracle.tools.packager.Log;
 import com.wifosell.zeus.payload.provider.crawler_competitor.BaseCrawlerCompetitorMessage;
 import com.wifosell.zeus.payload.provider.crawler_competitor.DataCrawlerCompetitorMessage;
-import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
-import com.wifosell.zeus.payload.provider.shopee.hook.ResponseBaseHookPayload;
-import com.wifosell.zeus.payload.provider.shopee.hook.ResponseSendoOrderCreateHookPayload;
-import com.wifosell.zeus.payload.provider.shopee.hook.ResponseSendoOrderUpdateHookPayload;
 import com.wifosell.zeus.service.PriceTrackService;
 import com.wifosell.zeus.service.SendoOrderService;
 import com.wifosell.zeus.service.SendoProductService;

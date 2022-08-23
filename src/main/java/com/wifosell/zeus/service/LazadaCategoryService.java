@@ -2,7 +2,6 @@ package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
-import com.wifosell.zeus.model.ecom_sync.SendoCategory;
 
 import java.util.List;
 import java.util.Optional;

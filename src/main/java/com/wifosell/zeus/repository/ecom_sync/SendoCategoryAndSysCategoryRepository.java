@@ -2,7 +2,6 @@ package com.wifosell.zeus.repository.ecom_sync;
 
 import com.wifosell.framework.repository.SoftRepository;
 import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
 import com.wifosell.zeus.model.ecom_sync.SendoCategoryAndSysCategory;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,16 +21,12 @@ public interface SendoCategoryAndSysCategoryRepository extends SoftRepository<Se
     void deleteRelationWithSysCategoryIdAndListLazadaId(@Param("sysCateId") Long sysCateId, @Param("listSendoCateId") List<Long> listSendoCateId);
 
 
-
-
-
     @Modifying
     @Query("delete from SendoCategoryAndSysCategory u where u.sysCategory.id= :sysCateId and u.sendoCategory.id <> :sendoCateId")
     void deleteRelationWithSysCategoryIdAndNotEqualEcomId(@Param("sysCateId") Long sysCateId, @Param("sendoCateId") Long sendoCateId);
 
     @Query("select u from SendoCategoryAndSysCategory u where u.sysCategory.id = ?1 and u.sendoCategory.id = ?2")
     Optional<SendoCategoryAndSysCategory> findFirstBySysCategoryAndSendoCategory(Long sysCategoryId, Long sendoCategoryId);
-
 
 
     @Query("select e from SendoCategoryAndSysCategory e where e.sysCategory.id = ?1")

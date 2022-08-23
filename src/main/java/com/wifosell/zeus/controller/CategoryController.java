@@ -1,9 +1,6 @@
 package com.wifosell.zeus.controller;
 
-import com.wifosell.zeus.constant.exception.EAppExceptionCode;
-import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
 import com.wifosell.zeus.payload.request.category.SysCategoryLinkEcomCategoryRequest;
@@ -20,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -49,7 +45,6 @@ public class CategoryController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
-    
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
@@ -73,7 +68,7 @@ public class CategoryController {
         Category category = categoryService.getCategory(userPrincipal.getId(), categoryId);
         SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
 
-        GetCategoryResponse response = new GetCategoryResponse(category,linkItem);
+        GetCategoryResponse response = new GetCategoryResponse(category, linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
@@ -145,8 +140,8 @@ public class CategoryController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/linkCategory")
-    public ResponseEntity<GApiResponse> getLinkCategory(@CurrentUser UserPrincipal userPrincipal){
-        var resp  = categoryService.getAllLinkCategoryEcomCategory(userPrincipal.getId());
+    public ResponseEntity<GApiResponse> getLinkCategory(@CurrentUser UserPrincipal userPrincipal) {
+        var resp = categoryService.getAllLinkCategoryEcomCategory(userPrincipal.getId());
         return ResponseEntity.ok(GApiResponse.success(resp));
     }
 
