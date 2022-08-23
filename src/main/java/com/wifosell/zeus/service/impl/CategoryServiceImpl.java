@@ -125,21 +125,24 @@ public class CategoryServiceImpl implements CategoryService {
             );
             category.setParent(parentCategory);
         });
+        Optional.ofNullable(categoryRequest.getIsActive()).ifPresent(category::setIsActive);
+        category.setGeneralManager(gm);
+        categoryRepository.save(category);
+
         Optional.ofNullable(categoryRequest.getLazadaCategoryId()).ifPresent(e -> {
-            LazadaCategory lazadaCategory = lazadaCategoryRepository.getById(e);
+            LazadaCategory lazadaCategory = lazadaCategoryRepository.getFirstById(e).orElse(null);
             if (lazadaCategory != null) {
                 this.linkSysCategoryLazadaCategory(category, lazadaCategory);
             }
         });
 
         Optional.ofNullable(categoryRequest.getSendoCategoryId()).ifPresent(e -> {
-            SendoCategory sendoCategory = sendoCategoryRepository.getById(e);
+            SendoCategory sendoCategory = sendoCategoryRepository.getFirstById(e).orElse(null);
             if (sendoCategory != null) {
                 this.linkSysCategorySendoCategory(category, sendoCategory);
             }
         });
-        Optional.ofNullable(categoryRequest.getIsActive()).ifPresent(category::setIsActive);
-        category.setGeneralManager(gm);
+
         return categoryRepository.save(category);
     }
 
