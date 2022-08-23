@@ -26,7 +26,10 @@ public interface CategoryService {
 
     List<Category> deactivateCategories(Long userId, List<Long> categoryIds);
 
+    SysCategoryLinkEcomCategoryResponse.LinkItemResponse getSingleLinkCategoryEcomCategory(Long userId, Category cate);
+
     SysCategoryLinkEcomCategoryResponse getAllLinkCategoryEcomCategory(Long userId);
+
 
     void linkCategoryEcomCategory(Long userId, SysCategoryLinkEcomCategoryRequest linkEcomCategoryRequest);
 

@@ -11,6 +11,7 @@ import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.payload.response.category.GetCategoriesResponse;
 import com.wifosell.zeus.payload.response.category.GetCategoryResponse;
+import com.wifosell.zeus.payload.response.category.SysCategoryLinkEcomCategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CategoryService;
@@ -70,7 +71,9 @@ public class CategoryController {
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "categoryId") Long categoryId) {
         Category category = categoryService.getCategory(userPrincipal.getId(), categoryId);
-        GetCategoryResponse response = new GetCategoryResponse(category);
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
+
+        GetCategoryResponse response = new GetCategoryResponse(category,linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
@@ -80,7 +83,8 @@ public class CategoryController {
             @CurrentUser UserPrincipal userPrincipal,
             @RequestBody @Valid CategoryRequest categoryRequest) {
         Category category = categoryService.addCategory(userPrincipal.getId(), categoryRequest);
-        CategoryResponse response = new CategoryResponse(category);
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
+        CategoryResponse response = new CategoryResponse(category, linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
@@ -91,7 +95,8 @@ public class CategoryController {
             @PathVariable(name = "categoryId") Long categoryId,
             @RequestBody @Valid CategoryRequest categoryRequest) {
         Category category = categoryService.updateCategory(userPrincipal.getId(), categoryId, categoryRequest);
-        CategoryResponse response = new CategoryResponse(category);
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
+        CategoryResponse response = new CategoryResponse(category, linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 

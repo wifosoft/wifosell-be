@@ -53,6 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     LazadaCategoryService lazadaCategoryService;
+
     @Override
     public List<Category> getAllRootCategories(Boolean isActive) {
         if (isActive == null)
@@ -124,17 +125,25 @@ public class CategoryServiceImpl implements CategoryService {
             );
             category.setParent(parentCategory);
         });
+        Optional.ofNullable(categoryRequest.getLazadaCategoryId()).ifPresent(e -> {
+            LazadaCategory lazadaCategory = lazadaCategoryRepository.getById(e);
+            if (lazadaCategory != null) {
+                this.linkSysCategoryLazadaCategory(category, lazadaCategory);
+            }
+        });
+
+        Optional.ofNullable(categoryRequest.getSendoCategoryId()).ifPresent(e -> {
+            SendoCategory sendoCategory = sendoCategoryRepository.getById(e);
+            if (sendoCategory != null) {
+                this.linkSysCategorySendoCategory(category, sendoCategory);
+            }
+        });
         Optional.ofNullable(categoryRequest.getIsActive()).ifPresent(category::setIsActive);
         category.setGeneralManager(gm);
         return categoryRepository.save(category);
     }
-    //region Gợi ý thêm các category lazada
-    private List<LazadaCategory> suggestUnlinkLazadaCategory(Long userId){
-        List<LazadaCategory> listUnlinkLazadaCategories = new ArrayList<>();
 
 
-        return listUnlinkLazadaCategories;
-    }
 
     private SendoCategoryAndSysCategory linkSysCategorySendoCategory(Category sysCate, SendoCategory sendoCate) {
         try {
@@ -172,6 +181,31 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public SysCategoryLinkEcomCategoryResponse.LinkItemResponse getSingleLinkCategoryEcomCategory(Long userId, Category cate){
+        SendoCategoryAndSysCategory _sendoCateLink = sendoCategoryAndSysCategoryRepository.findFirstBySysCategory(cate.getId()).orElse(null);
+        LazadaCategoryAndSysCategory _lazadaCateLink = lazadaCategoryAndSysCategoryRepository.findFirstBySysCategory(cate.getId()).orElse(null);
+
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse _linkItemResponse = new SysCategoryLinkEcomCategoryResponse.LinkItemResponse();
+        _linkItemResponse.setSysCategory(cate);
+
+        SendoCategory _sendoCate = null;
+        LazadaCategory _lazadaCate = null;
+
+        if (_sendoCateLink != null) {
+            _sendoCate = _sendoCateLink.getSendoCategory();
+            _linkItemResponse.setSendoCategory(_sendoCate);
+
+        }
+        if (_lazadaCateLink != null) {
+            _lazadaCate = _lazadaCateLink.getLazadaCategory();
+            _linkItemResponse.setLazadaCategory(_lazadaCate);
+        }
+
+        return _linkItemResponse;
+    }
+
+
+    @Override
     public SysCategoryLinkEcomCategoryResponse getAllLinkCategoryEcomCategory(Long userId) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
 
@@ -179,25 +213,7 @@ public class CategoryServiceImpl implements CategoryService {
         SysCategoryLinkEcomCategoryResponse sysCategoryLinkEcomCategoryResponse = new SysCategoryLinkEcomCategoryResponse();
         List<SysCategoryLinkEcomCategoryResponse.LinkItemResponse> linkItemResponseList = new ArrayList<>();
         for (Category cate : categories) {
-            SendoCategoryAndSysCategory _sendoCateLink = sendoCategoryAndSysCategoryRepository.findFirstBySysCategory(cate.getId()).orElse(null);
-            LazadaCategoryAndSysCategory _lazadaCateLink = lazadaCategoryAndSysCategoryRepository.findFirstBySysCategory(cate.getId()).orElse(null);
-
-            SysCategoryLinkEcomCategoryResponse.LinkItemResponse _linkItemResponse = new SysCategoryLinkEcomCategoryResponse.LinkItemResponse();
-            _linkItemResponse.setSysCategory(cate);
-
-            SendoCategory _sendoCate = null;
-            LazadaCategory _lazadaCate = null;
-
-            if (_sendoCateLink != null) {
-                _sendoCate = _sendoCateLink.getSendoCategory();
-                _linkItemResponse.setSendoCategory(_sendoCate);
-
-            }
-            if (_lazadaCateLink != null) {
-                _lazadaCate = _lazadaCateLink.getLazadaCategory();
-                _linkItemResponse.setLazadaCategory(_lazadaCate);
-            }
-
+            var _linkItemResponse = this.getSingleLinkCategoryEcomCategory(userId, cate );
             linkItemResponseList.add(_linkItemResponse);
         }
         //get list cate hash

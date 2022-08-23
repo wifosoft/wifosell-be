@@ -21,4 +21,9 @@ public class CategoryRequest {
     private Long parentCategoryId;
 
     private Boolean isActive;
+
+    private Long lazadaCategoryId;
+
+    private Long sendoCategoryId;
+
 }
