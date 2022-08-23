@@ -24,6 +24,7 @@ public interface LazadaCategoryRepository extends SoftRepository<LazadaCategory,
     Optional<LazadaCategory> getFirstById(Long lazadaCategoryId);
 
 
+
     @Query("select u from LazadaCategory u where u.lazadaCategoryId IN (:listLazadaCateId)")
     List<LazadaCategory> getLazadaCategoryByListLazadaCateId(@Param("listLazadaCateId") List<Long> listLazadaCateId);
 }

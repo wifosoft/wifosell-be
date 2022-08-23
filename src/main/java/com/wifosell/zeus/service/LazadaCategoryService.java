@@ -2,6 +2,7 @@ package com.wifosell.zeus.service;
 
 import com.wifosell.zeus.model.ecom_sync.LazadaCategory;
 import com.wifosell.zeus.model.ecom_sync.LazadaCategoryAndSysCategory;
+import com.wifosell.zeus.model.ecom_sync.SendoCategory;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,4 +19,7 @@ public interface LazadaCategoryService {
     LazadaCategoryAndSysCategory getLink(Long userId, Long sysCategoryId);
 
     Optional<LazadaCategoryAndSysCategory> findLink(Long userId, Long sysCategoryId);
+
+    List<LazadaCategory> getUnlinkLazadaCategory(Long userId);
+
 }

@@ -136,6 +136,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             return;
         }
 
+
         EcomAccount ecomAccount = ecomAccountOpt.get();
         Optional<LazadaSwwAndEcomAccount> swwAndEcomAccountOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(ecomAccountOpt.get().getId());
         if (swwAndEcomAccountOpt.isEmpty()) {
@@ -153,8 +154,10 @@ public class SendoProductServiceImpl implements SendoProductService {
         if (sendoProduct == null) {
             sendoProduct = new SendoProduct(itemPayload, ecomAccountOpt.get());
             sendoProduct.setEcomAccount(ecomAccountOpt.get());
+            sendoProduct.setGeneralManager(gm);
         } else {
             sendoProduct.withDataByProductAPI(itemPayload).setEcomAccount(ecomAccountOpt.get());
+            sendoProduct.setGeneralManager(gm);
         }
         logger.info("[+] Save sendo product {}", sendoProduct.getName());
 
@@ -173,6 +176,7 @@ public class SendoProductServiceImpl implements SendoProductService {
                 } else {
                     sendoVariant = sendoVariant.withDataBySkuAPI(_apiVariant);
                 }
+                sendoVariant.setGeneralManager(gm);
                 sendoVariantRepository.save(sendoVariant);
                 logger.info("[+] Save sendo variant SKU {} - Product Name {} ", sendoVariant.getSkuId(), sendoProduct.getName());
             }
@@ -185,6 +189,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             } else {
                 sendoVariant = sendoVariant.withSingleVariant(itemPayload);
             }
+            sendoVariant.setGeneralManager(gm);
             sendoVariantRepository.save(sendoVariant);
             logger.info("[+] Save single sendo variant SKU {} - Product Name {} ", sendoVariant.getSkuId(), sendoProduct.getName());
         }
@@ -221,6 +226,7 @@ public class SendoProductServiceImpl implements SendoProductService {
             SendoProductAndSysProduct sendoProductAndSysProduct = new SendoProductAndSysProduct();
             sendoProductAndSysProduct.setSendoProduct(sendoProduct);
             sendoProductAndSysProduct.setSysProduct(response);
+            sendoProductAndSysProduct.setGeneralManager(ecomAccount.getGeneralManager());
             sendoProductAndSysProductRepository.save(sendoProductAndSysProduct);
             //liên kết
             SendoCategory sendoCategory = sendoCategoryRepository.findBySendoCategoryId(itemPayload.getCat_4_id()).orElse(null);
@@ -256,6 +262,7 @@ public class SendoProductServiceImpl implements SendoProductService {
                 SendoProductAndSysProduct __sendoProductAndSysProduct = new SendoProductAndSysProduct();
                 __sendoProductAndSysProduct.setSendoProduct(sendoProduct);
                 __sendoProductAndSysProduct.setSysProduct(parentExist);
+                __sendoProductAndSysProduct.setGeneralManager(ecomAccount.getGeneralManager());
                 sendoProductAndSysProductRepository.save(__sendoProductAndSysProduct);
                 parentExist.setCategory(_sysCategory);
                 productRepository.save(parentExist);
@@ -292,6 +299,7 @@ public class SendoProductServiceImpl implements SendoProductService {
                 }
                 sendoVariantAndSysVariant.setSendoVariant(_sendoVar);
                 sendoVariantAndSysVariant.setVariant(_systemVar);
+                sendoVariantAndSysVariant.setGeneralManager(ecomAccount.getGeneralManager());
                 sendoVariantAndSysVarirantRepository.save(sendoVariantAndSysVariant);
                 logger.info("[+] Link sendo product {} vs system product {} [{}]", _sendoVar.getId(), _systemVar.getId(), sendoProduct.getName());
                 Optional<Stock> stock_ = stockRepository.findByVariantAndWarehouse(_systemVar.getId(), warehouse.getId());

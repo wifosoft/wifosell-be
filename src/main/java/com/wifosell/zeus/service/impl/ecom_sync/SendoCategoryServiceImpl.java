@@ -4,7 +4,6 @@ import com.wifosell.zeus.constant.exception.EAppExceptionCode;
 import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.exception.ZeusGlobalException;
 import com.wifosell.zeus.model.category.Category;
-import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.SendoCategory;
 import com.wifosell.zeus.model.ecom_sync.SendoCategoryAndSysCategory;
 import com.wifosell.zeus.model.ecom_sync.SendoProduct;
@@ -14,6 +13,7 @@ import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryAndSysCategoryRepository;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryRepository;
+import com.wifosell.zeus.repository.ecom_sync.SendoProductRepository;
 import com.wifosell.zeus.service.CategoryService;
 import com.wifosell.zeus.service.SendoCategoryService;
 import com.wifosell.zeus.specs.SendoCategoryAndSysCategorySpecs;
@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service("SendoCategoryService")
 @Transactional
@@ -36,6 +37,9 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
     private final SendoCategoryRepository sendoCategoryRepository;
     private final SendoCategoryAndSysCategoryRepository sendoCategoryAndSysCategoryRepository;
     private final CategoryService categoryService;
+
+    @Autowired
+    SendoProductRepository sendoProductRepository;
 
     @Autowired
     EcomAccountRepository ecomAccountRepository;
@@ -111,14 +115,30 @@ public class SendoCategoryServiceImpl implements SendoCategoryService {
         return sendoCategoryAndSysCategoryRepository.findByGeneralManagerIdAndSysCategoryId(userId, sysCategoryId);
     }
 
+    @Override
     public List<SendoCategory> getUnlinkSendoCategory(Long userId) {
         List<SendoCategory> unlinkCates = new ArrayList<>();
         User gm = userRepository.findById(userId).orElseThrow(() -> new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.USER_NOT_FOUND))).getGeneralManager();
 
-//
-//
-//        List<EcomAccount> listEcomAccountSendo = ecomAccountRepository.findAllByGeneralManagerAndEcomName()
-//        List<SendoProduct> sendoProductList = sendoCategoryRepository.findBy
+        List<SendoCategoryAndSysCategory> listLinkedSendoCate = this.getLinks(userId);
+
+
+        List<Long> aggregateLongSendoLinkedId = listLinkedSendoCate.stream()
+                .map(SendoCategoryAndSysCategory::getSendoCategory)
+                .map(SendoCategory::getId)
+                .distinct()
+                .collect(Collectors.toList());
+
+
+        List<SendoProduct> listSendoProduct = sendoProductRepository.getListSendoProductByGm(gm.getId());
+        List<Long> aggregateLongSendoProductPrimaryId = listSendoProduct.stream().map(SendoProduct::getPrimaryCategory).collect(Collectors.toList()); //id product existed
+
+        List<SendoCategory> listSendoCategories = sendoCategoryRepository.getSendoCategoryByListSendoCateId(aggregateLongSendoProductPrimaryId);
+
+        //category tồn tại nhưng chưa được liên kết, not in aggresSEndoLinkeđI
+        unlinkCates  = listSendoCategories.stream().filter( sendoCate ->
+                !aggregateLongSendoLinkedId.contains(sendoCate.getId())).collect(Collectors.toList());
+
         return unlinkCates;
     }
 }
