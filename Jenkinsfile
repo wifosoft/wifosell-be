@@ -86,7 +86,7 @@ pipeline {
           anyOf { 
             branch 'master';
 //             branch 'feature/*';
-//             branch 'develop'
+             branch 'develop'
           } 
         }
         //when { anyOf { branch 'master'; branch 'develop'; branch 'feature/*' } }
