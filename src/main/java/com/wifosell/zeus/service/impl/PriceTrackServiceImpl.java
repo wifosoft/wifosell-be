@@ -75,6 +75,14 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             return;
         }
 
+        if (newPrice.compareTo(priceTrack.getMinPrice()) < 0) {
+            newPrice = priceTrack.getMinPrice();
+        }
+
+        if (newPrice.compareTo(priceTrack.getMaxPrice()) > 0) {
+            newPrice = priceTrack.getMaxPrice();
+        }
+
         if (priceTrack.getIsAutoChangePrice()) {
             if (newPrice.compareTo(priceTrack.getMinPrice()) >= 0 && newPrice.compareTo(priceTrack.getMaxPrice()) <= 0) {
                 Variant variant = priceTrack.getVariant();
@@ -90,16 +98,12 @@ public class PriceTrackServiceImpl implements PriceTrackService {
         }
 
         // Mail
-        // TODO
         String email = priceTrack.getGeneralManager().getEmail();
         mailService.sendEmail(email,
-                "[Wifosell] Price tracking",
+                "[Wifosell][Cảnh báo] Đối thủ thay đổi giá",
                 String.format("variantId = %d, newCompetitorPrice = %s, newPrice = %s",
                         priceTrack.getVariant().getId(), newCompetitorPrice, newPrice)
         );
-
-        logger.info("trigger success | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}",
-                priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice);
     }
 
     @Override

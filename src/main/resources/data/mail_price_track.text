@@ -1,0 +1,18 @@
+Thông tin sản phẩm của bạn:
+- Tên: %s
+- ID: %d
+- Biến thể: %s
+- Giá gốc: %s
+- Giá bán cũ: %s
+---------------------------------------------
+Thông tin sản phẩm của đối thủ:
+- URL: %s
+- Giá bán: %s
+---------------------------------------------
+Cấu hình thay đổi giá:
+- Tự động: %s
+- Giá sàn: %s
+- Giá trần: %s
+- Giá chênh lệch: %s
+---------------------------------------------
+Kết luận:
