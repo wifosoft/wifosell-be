@@ -410,16 +410,17 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         }
 
         // Fetch products to create links
+        // Disable fetch
         int fetchSuccess = 0;
 
-        for (int i = 0; i < itemIds.size(); ++i) {
-            try {
-                boolean success = fetchLazadaProductItem(user, ecomAccount, itemIds.get(i), warehouse, syncProducts.get(i));
-                if (success) fetchSuccess++;
-            } catch (ApiException e) {
-                e.printStackTrace();
-            }
-        }
+//        for (int i = 0; i < itemIds.size(); ++i) {
+//            try {
+//                boolean success = fetchLazadaProductItem(user, ecomAccount, itemIds.get(i), warehouse, syncProducts.get(i));
+//                if (success) fetchSuccess++;
+//            } catch (ApiException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         logger.info("pushLazadaProducts success | ecomId = {}, pushTotal = {}, pushSuccess = {}, createTotal = {}, createSuccess = {}, updateTotal = {}, updateSuccess = {}, fetchSuccess = {}",
                 ecomAccount.getId(), sysProducts.size(), itemIds.size(), createTotal, createSuccess, updateTotal, updateSuccess, fetchSuccess);
@@ -736,8 +737,9 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 }
 
                 // Fetch to create LazadaProduct and LazadaVariants
-                User user = userRepository.getUserById(userId);
-                fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
+                // Disable fetch
+//                User user = userRepository.getUserById(userId);
+//                fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
 
             } catch (JsonProcessingException | ApiException e) {
                 e.printStackTrace();
@@ -773,9 +775,10 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 }
 
                 // Update LazadaVariant' stock
-                LazadaVariant lazadaVariant = variantLink.getLazadaVariant();
-                lazadaVariant.setQuantity(quantity);
-                lazadaVariantRepository.save(lazadaVariant);
+                // Disable fetch
+//                LazadaVariant lazadaVariant = variantLink.getLazadaVariant();
+//                lazadaVariant.setQuantity(quantity);
+//                lazadaVariantRepository.save(lazadaVariant);
 
             } catch (JsonProcessingException | ApiException e) {
                 e.printStackTrace();
