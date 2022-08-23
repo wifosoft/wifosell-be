@@ -8,11 +8,13 @@ import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
 import com.wifosell.zeus.payload.response.product.VariantResponse;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+@Getter
 public class PriceTrackResponse extends BasicEntityResponse {
 
 
