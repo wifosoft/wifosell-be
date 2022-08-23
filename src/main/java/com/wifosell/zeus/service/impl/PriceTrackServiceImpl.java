@@ -99,6 +99,7 @@ public class PriceTrackServiceImpl implements PriceTrackService {
                 logger.info("auto change price success | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}, minPrice = {}, maxPrice = {}",
                         priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice, priceTrack.getMinPrice(), priceTrack.getMaxPrice());
                 changePriceFlag = true;
+                status =1;
             } else {
                 logger.warn("auto change price not execute | priceTrackId = {}, newCompetitorPrice = {}, variantId = {}, newPrice = {}, minPrice = {}, maxPrice = {}",
                         priceTrackId, newCompetitorPrice, priceTrack.getVariant().getId(), newPrice, priceTrack.getMinPrice(), priceTrack.getMaxPrice());
@@ -126,6 +127,7 @@ public class PriceTrackServiceImpl implements PriceTrackService {
         }
 
         mailService.sendEmail(email, "[Wifosell][Cảnh báo] Đối thủ thay đổi giá", content);
+        return status;
     }
 
     @Override
