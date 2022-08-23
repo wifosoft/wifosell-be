@@ -1,5 +1,6 @@
 package com.wifosell.zeus.service;
 
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
 import com.wifosell.zeus.model.ecom_sync.LazadaProduct;
 import com.wifosell.zeus.model.ecom_sync.LazadaVariant;
 import com.wifosell.zeus.payload.provider.lazada.report.FetchLazadaProductsReport;
@@ -22,4 +23,6 @@ public interface LazadaProductService {
     Page<LazadaVariant> getLazadaVariants(Long userId, Long ecomId, Integer offset, Integer limit, String sortBy, String orderBy);
 
     LazadaVariant getLazadaVariant(Long userId, Long id);
+
+    void autoFetchLazadaProducts(EcomAccount ecomAccount);
 }

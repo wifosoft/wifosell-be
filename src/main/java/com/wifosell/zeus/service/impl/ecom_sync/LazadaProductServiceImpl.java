@@ -738,7 +738,7 @@ public class LazadaProductServiceImpl implements LazadaProductService {
                 // Fetch to create LazadaProduct and LazadaVariants
                 User user = userRepository.getUserById(userId);
                 fetchLazadaProductItem(user, ecomAccount, itemId, warehouse, variant.getProduct());
-                
+
             } catch (JsonProcessingException | ApiException e) {
                 e.printStackTrace();
                 logger.error("pushLazadaVariantQuantity fail | create product exception | userId = {}, ecomId = {}, variantId = {}",
@@ -819,5 +819,89 @@ public class LazadaProductServiceImpl implements LazadaProductService {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return lazadaVariantRepository.getOne(
                 LazadaVariantSpecs.hasGeneralManagerId(gmId).and(LazadaVariantSpecs.hasId(id)));
+    }
+
+    @Override
+    public void autoFetchLazadaProducts(EcomAccount ecomAccount) {
+        int offset = 0;
+        int limit = 50;
+        AtomicInteger fetchTotal = new AtomicInteger();
+        AtomicInteger fetchSuccess = new AtomicInteger();
+
+        while (true) {
+            LazadaGetProductsResponse res;
+            try {
+                res = LazadaProductAPI.getProducts(ecomAccount.getAccessToken(), offset, limit);
+            } catch (ApiException ignore) {
+                logger.error("autoGetProducts fail | exception | ecomId = {}", ecomAccount.getId());
+                return;
+            }
+
+            if (res == null) {
+                logger.error("autoGetProducts fail | response = null | ecomId = {}", ecomAccount.getId());
+                return;
+            }
+
+            if (res.getData().getProducts() != null) {
+                res.getData().getProducts().forEach(product -> {
+                    try {
+                        boolean success = autoFetchLazadaProductItem(ecomAccount, product.getItemId());
+                        if (success) fetchSuccess.getAndIncrement();
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    } finally {
+                        fetchTotal.getAndIncrement();
+                    }
+                });
+                offset += res.getData().getProducts().size();
+            }
+
+            if (fetchTotal.get() >= res.getData().getTotalProducts())
+                break;
+        }
+
+        logger.info("autoGetProducts success | ecomId = {}, fetchTotal = {}, fetchSuccess = {}",
+                ecomAccount.getId(), fetchTotal, fetchSuccess);
+    }
+
+    private boolean autoFetchLazadaProductItem(EcomAccount ecomAccount, Long itemId) throws ApiException {
+        LazadaGetProductItemResponse res = LazadaProductAPI.getProductItem(ecomAccount.getAccessToken(), itemId);
+
+        if (res == null) {
+            logger.error("autoGetProductItem fail | ecomId = {}, productId = {}", ecomAccount.getId(), itemId);
+            return false;
+        }
+
+        LazadaGetProductItemResponse.Data data = res.getData();
+
+        // Create/Update LazadaProduct
+        LazadaCategory lazadaCategory = lazadaCategoryRepository.findByLazadaCategoryId(data.getPrimaryCategoryId())
+                .orElse(null);
+
+        if (lazadaCategory == null) {
+            logger.error("autoGetProductItem fail | Lazada category not found | ecomId = {}, itemId = {}, lazadaCategoryId = {}",
+                    ecomAccount.getId(), itemId, data.getPrimaryCategoryId());
+            return false;
+        }
+
+        LazadaProduct lazadaProduct = lazadaProductRepository.findByItemId(data.getItemId()).orElse(new LazadaProduct());
+        lazadaProduct.injectData(data);
+        lazadaProduct.setEcomAccount(ecomAccount);
+        lazadaProduct.setGeneralManager(ecomAccount.getGeneralManager());
+        lazadaProductRepository.save(lazadaProduct);
+
+        // Create/Update LazadaVariants
+        data.getSkus().forEach(sku -> {
+            LazadaVariant lazadaVariant = lazadaVariantRepository.findBySkuId(sku.getSkuId()).orElse(new LazadaVariant());
+            lazadaVariant.injectData(sku);
+            lazadaVariant.setLazadaProduct(lazadaProduct);
+            lazadaVariant.setEcomAccount(ecomAccount);
+            lazadaVariant.setGeneralManager(ecomAccount.getGeneralManager());
+            lazadaVariantRepository.save(lazadaVariant);
+        });
+
+        logger.info("autoGetProductItem success | ecomId = {}, itemId = {}, name = {}, skuCount = {}",
+                ecomAccount.getId(), lazadaProduct.getItemId(), lazadaProduct.getName(), lazadaProduct.getSkuCount());
+        return true;
     }
 }
