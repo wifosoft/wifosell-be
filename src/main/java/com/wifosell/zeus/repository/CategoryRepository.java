@@ -19,7 +19,7 @@ public interface CategoryRepository extends PGMSoftRepository<Category, Long> {
     }
 
 
-    @Query("select u from Category u where u.generalManager = ?1")
+    @Query("select u from Category u where u.generalManager.id = ?1")
     List<Category> getAllCategoryByUserId(Long userId);
 
     Optional<Category> getFirstById(Long cateId);

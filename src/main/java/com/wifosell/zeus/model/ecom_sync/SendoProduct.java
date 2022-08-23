@@ -1,10 +1,12 @@
 package com.wifosell.zeus.model.ecom_sync;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,6 +62,13 @@ public class SendoProduct extends BasicEntity {
     private EcomAccount ecomAccount;
 
 
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
+    private User generalManager;
+
+
+
     public SendoProduct() {
     }
 
@@ -70,6 +79,7 @@ public class SendoProduct extends BasicEntity {
     public SendoProduct(ResponseSendoProductItemPayload e, EcomAccount ecomAccount) {
         this.withDataByProductAPI(e);
         this.setEcomAccount(ecomAccount);
+        this.setGeneralManager(ecomAccount.getGeneralManager());
     }
 
     public SendoProduct withDataByProductAPI(ResponseSendoProductItemPayload e) {

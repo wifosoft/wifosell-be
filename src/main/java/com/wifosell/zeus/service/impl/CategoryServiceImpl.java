@@ -19,6 +19,8 @@ import com.wifosell.zeus.repository.ecom_sync.LazadaCategoryRepository;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryAndSysCategoryRepository;
 import com.wifosell.zeus.repository.ecom_sync.SendoCategoryRepository;
 import com.wifosell.zeus.service.CategoryService;
+import com.wifosell.zeus.service.LazadaCategoryService;
+import com.wifosell.zeus.service.SendoCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
+    SendoCategoryService sendoCategoryService;
+
+    @Autowired
+    LazadaCategoryService lazadaCategoryService;
     @Override
     public List<Category> getAllRootCategories(Boolean isActive) {
         if (isActive == null)
@@ -131,7 +138,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private SendoCategoryAndSysCategory linkSysCategorySendoCategory(Category sysCate, SendoCategory sendoCate) {
         try {
-            //sendoCategoryAndSysCategoryRepository.deleteRelationWithSysCategoryIdAndNotEqualEcomId(sysCate.getId(), sendoCate.getId());
+            sendoCategoryAndSysCategoryRepository.deleteRelationWithSysCategoryIdAndNotEqualEcomId(sysCate.getId(), sendoCate.getId());
             SendoCategoryAndSysCategory sendoCategoryAndSysCategory = sendoCategoryAndSysCategoryRepository.findFirstBySendoCategoryId(sendoCate.getId()).orElse(null);
             if (sendoCategoryAndSysCategory == null) {
                 sendoCategoryAndSysCategory = SendoCategoryAndSysCategory.builder()
@@ -147,7 +154,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private LazadaCategoryAndSysCategory linkSysCategoryLazadaCategory(Category sysCate, LazadaCategory lazadaCate) {
         try {
-            //lazadaCategoryAndSysCategoryRepository.deleteRelationWithSysCategoryIdAndNotEqualEcomId(sysCate.getId(), lazadaCate.getId());
+            lazadaCategoryAndSysCategoryRepository.deleteRelationWithSysCategoryIdAndNotEqualEcomId(sysCate.getId(), lazadaCate.getId());
             LazadaCategoryAndSysCategory sendoCategoryAndSysCategory = lazadaCategoryAndSysCategoryRepository.findFirstByLazadaCategory(lazadaCate.getId()).orElse(null);
             if (sendoCategoryAndSysCategory == null) {
                 sendoCategoryAndSysCategory = LazadaCategoryAndSysCategory.builder()
@@ -176,25 +183,34 @@ public class CategoryServiceImpl implements CategoryService {
             LazadaCategoryAndSysCategory _lazadaCateLink = lazadaCategoryAndSysCategoryRepository.findFirstBySysCategory(cate.getId()).orElse(null);
 
             SysCategoryLinkEcomCategoryResponse.LinkItemResponse _linkItemResponse = new SysCategoryLinkEcomCategoryResponse.LinkItemResponse();
-            _linkItemResponse.setSysCategoryId(cate.getId());
+            _linkItemResponse.setSysCategory(cate);
 
             SendoCategory _sendoCate = null;
             LazadaCategory _lazadaCate = null;
 
             if (_sendoCateLink != null) {
                 _sendoCate = _sendoCateLink.getSendoCategory();
-                _linkItemResponse.setSendoCategoryId(_sendoCate.getId());
+                _linkItemResponse.setSendoCategory(_sendoCate);
 
             }
             if (_lazadaCateLink != null) {
                 _lazadaCate = _lazadaCateLink.getLazadaCategory();
-                _linkItemResponse.setSendoCategoryId(_lazadaCate.getId());
+                _linkItemResponse.setLazadaCategory(_lazadaCate);
             }
 
             linkItemResponseList.add(_linkItemResponse);
         }
+        //get list cate hash
 
+
+        List<SendoCategory> unlinkedSendoCategories = sendoCategoryService.getUnlinkSendoCategory(userId);
+        List<LazadaCategory> unlinkedLazadaCategories = lazadaCategoryService.getUnlinkLazadaCategory(userId);
+
+        // prepare response
+        sysCategoryLinkEcomCategoryResponse.setUnLinkedSendoCategories(unlinkedSendoCategories);
+        sysCategoryLinkEcomCategoryResponse.setUnLinkedLazadaCategories(unlinkedLazadaCategories);
         sysCategoryLinkEcomCategoryResponse.setLinkCategories(linkItemResponseList);
+
         return sysCategoryLinkEcomCategoryResponse;
     }
 

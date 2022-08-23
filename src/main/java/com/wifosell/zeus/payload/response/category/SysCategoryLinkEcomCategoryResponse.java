@@ -18,21 +18,22 @@ import java.util.List;
 @Setter
 public class SysCategoryLinkEcomCategoryResponse {
     List<LinkItemResponse> linkCategories;
-
+    List<SendoCategory> unLinkedSendoCategories;
+    List<LazadaCategory> unLinkedLazadaCategories;
     @Getter
     @Setter
     public static class LinkItemResponse {
-        private Long sysCategoryId;
-        private Long sendoCategoryId;
-        private Long lazadaCategoryId;
+        private Category sysCategory;
+        private SendoCategory sendoCategory;
+        private LazadaCategory lazadaCategory;
 
         public LinkItemResponse() {
 
         }
-        public LinkItemResponse(Long sysCategoryId, Long sendoCategoryId, Long lazadaCategoryId) {
-            this.sysCategoryId = sysCategoryId;
-            this.sendoCategoryId = sendoCategoryId;
-            this.lazadaCategoryId = lazadaCategoryId;
+        public LinkItemResponse(Category sysCategoryId, SendoCategory sendoCategoryId, LazadaCategory lazadaCategoryId) {
+            this.sysCategory = sysCategoryId;
+            this.sendoCategory = sendoCategoryId;
+            this.lazadaCategory = lazadaCategoryId;
         }
     }
 

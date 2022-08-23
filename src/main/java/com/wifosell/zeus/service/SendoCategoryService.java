@@ -18,4 +18,6 @@ public interface SendoCategoryService {
     SendoCategoryAndSysCategory getLink(Long userId, Long sysCategoryId);
 
     Optional<SendoCategoryAndSysCategory> findLink(Long userId, Long sysCategoryId);
+
+    List<SendoCategory> getUnlinkSendoCategory(Long userId);
 }

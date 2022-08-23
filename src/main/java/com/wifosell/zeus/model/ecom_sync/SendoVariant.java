@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.wifosell.zeus.model.audit.BasicEntity;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.provider.shopee.ResponseSendoProductItemPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -79,6 +80,12 @@ public class SendoVariant extends BasicEntity {
     @JsonIgnore
     @Expose(serialize = false)
     private EcomAccount ecomAccount;
+
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "general_manager_id", referencedColumnName = "id")
+    private User generalManager;
 
 
     public SendoVariant() {
