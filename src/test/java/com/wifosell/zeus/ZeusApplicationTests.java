@@ -1,13 +1,18 @@
 package com.wifosell.zeus;
 
+import com.wifosell.zeus.service.SendoProductService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
 @SpringBootTest
 class ZeusApplicationTests {
+
+    @Autowired
+    SendoProductService sendoProductService;
 
     @Test
     void testSum() {
@@ -17,6 +22,7 @@ class ZeusApplicationTests {
                 () -> assertEquals(2 + 2, 4)
         );
     }
+
     @Test
     void testSubtract() {
         String someString = "Just a testSubtract";
@@ -26,5 +32,10 @@ class ZeusApplicationTests {
         );
     }
 
+    @Test
+    public void testUpdateProduct() {
+
+
+    }
 
 }

@@ -2,11 +2,14 @@ package com.wifosell.zeus.model.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
 import com.wifosell.zeus.model.shop.Shop;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,6 +29,7 @@ public class OrderModel extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -38,21 +42,73 @@ public class OrderModel extends BasicEntity {
     private SaleChannel saleChannel;
 
     @ManyToOne
+    @JoinColumn(name = "warehouse_id")
+    private Warehouse warehouse;
+
+    @ManyToOne
+    @JoinColumn(name = "sswId")
+    @JsonProperty("sswId")
+    private SaleChannelShop saleChannelShop;
+
+    @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
     private BigDecimal subtotal;
 
+    private BigDecimal shippingFee;
+
+    private BigDecimal total;
+
+    @Column(name= "shipping_detail" ,columnDefinition = "text")
+    private String shipDetail;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String reserved;
+
+    @Column(name = "order_source", nullable = false, columnDefinition = "int default 0")
+    private int orderSource;
+
+    @Enumerated(EnumType.STRING)
+    private STATUS status;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
+    private List<OrderStep> steps = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    private Payment payment;
+
+    @Column(name = "is_complete")
+    private boolean isComplete;
+
+    @Column(name = "is_canceled")
+    private boolean isCanceled;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User createdBy;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private User generalManager;
 
-    @JsonIgnore
-    public BigDecimal calcSubTotal() {
-        BigDecimal subtotal = new BigDecimal(0);
-        for (OrderItem orderItem : this.getOrderItems()) {
-            subtotal = subtotal.add(orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
-        }
-        return subtotal;
+    public boolean getIsComplete() {
+        return this.isComplete;
+    }
+
+    public boolean getIsCanceled() {
+        return this.isCanceled;
+    }
+
+    public enum STATUS {
+        CREATED,
+        CONFIRMED,
+        PACKED,
+        SHIPPING,
+        SHIPPED,
+        COMPLETE,
+        CANCELED
     }
 }

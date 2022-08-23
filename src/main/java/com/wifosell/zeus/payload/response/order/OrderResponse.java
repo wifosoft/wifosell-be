@@ -1,32 +1,38 @@
 package com.wifosell.zeus.payload.response.order;
 
-import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.customer.Customer;
-import com.wifosell.zeus.model.option.OptionModel;
-import com.wifosell.zeus.model.option.OptionValue;
 import com.wifosell.zeus.model.order.OrderItem;
 import com.wifosell.zeus.model.order.OrderModel;
-import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductImage;
-import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.order.OrderStep;
+import com.wifosell.zeus.model.order.Payment;
 import com.wifosell.zeus.model.sale_channel.SaleChannel;
 import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.response.BasicEntityResponse;
-import com.wifosell.zeus.payload.response.category.CategoryResponse;
+import com.wifosell.zeus.payload.response.product.VariantResponse;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
 public class OrderResponse extends BasicEntityResponse {
-    private final List<OrderItemResponse> orderItems;
-    private final ShopResponse shop;
-    private final SaleChannelResponse saleChannel;
-    private final CustomerResponse customer;
-    private final BigDecimal subtotal;
+    private List<OrderItemResponse> orderItems;
+    private ShopResponse shop;
+    private SaleChannelResponse saleChannel;
+    private CustomerResponse customer;
+    private BigDecimal subtotal;
+    private BigDecimal shippingFee;
+    private BigDecimal total;
+    private OrderModel.STATUS status;
+    private List<OrderStepResponse> steps;
+    private PaymentResponse payment;
+    private boolean isComplete;
+    private UserResponse createdBy;
+    private Long sswId;
 
     public OrderResponse(OrderModel order) {
         super(order);
@@ -35,111 +41,37 @@ public class OrderResponse extends BasicEntityResponse {
         this.saleChannel = new SaleChannelResponse(order.getSaleChannel());
         this.customer = new CustomerResponse(order.getCustomer());
         this.subtotal = order.getSubtotal();
+        this.shippingFee = order.getShippingFee();
+        this.total = order.getTotal();
+        this.status = order.getStatus();
+        this.steps = order.getSteps().stream().map(OrderStepResponse::new).collect(Collectors.toList());
+        this.payment = new PaymentResponse(order.getPayment());
+        this.isComplete = order.getIsComplete();
+        this.createdBy = order.getCreatedBy() != null ? new UserResponse(order.getCreatedBy()) : null;
+        Optional.ofNullable(order.getSaleChannelShop()).ifPresent(e -> {
+            this.sswId = e.getId();
+        });
+    }
+
+    public boolean getIsComplete() {
+        return isComplete;
     }
 
     @Getter
     private static class OrderItemResponse extends BasicEntityResponse {
+        private final BigDecimal originalPrice;
         private final BigDecimal price;
         private final Integer quantity;
+        private final BigDecimal subtotal;
         private final VariantResponse variant;
 
         public OrderItemResponse(OrderItem orderItem) {
             super(orderItem);
+            this.originalPrice = orderItem.getOriginalPrice();
             this.price = orderItem.getPrice();
             this.quantity = orderItem.getQuantity();
+            this.subtotal = orderItem.getSubtotal();
             this.variant = new VariantResponse(orderItem.getVariant());
-        }
-
-        @Getter
-        private static class VariantResponse extends BasicEntityResponse {
-            private final String cost;
-            private final String sku;
-            private final String barcode;
-            private final List<OptionValueResponse> options;
-            private final ProductResponse product;
-
-            public VariantResponse(Variant variant) {
-                super(variant);
-                this.cost = variant.getCost().toString();
-                this.sku = variant.getSku();
-                this.barcode = variant.getBarcode();
-                this.options = variant.getVariantValues().stream()
-                        .map(VariantValue::getOptionValue)
-                        .map(OptionValueResponse::new).collect(Collectors.toList());
-                this.product = new ProductResponse(variant.getProduct());
-            }
-
-            @Getter
-            private static class OptionValueResponse extends BasicEntityResponse {
-                private final String value;
-
-                public OptionValueResponse(OptionValue optionValue) {
-                    super(optionValue);
-                    this.value = optionValue.getValue();
-                }
-            }
-
-            @Getter
-            private static class ProductResponse extends BasicEntityResponse {
-                private final String name;
-                private final String description;
-                private final Integer weight;
-                private final String dimension;
-                private final Integer state;
-                private final Integer status;
-                private final CategoryResponse category;
-                private final List<String> images;
-                private final List<AttributeResponse> attributes;
-                private final List<OptionResponse> options;
-
-                public ProductResponse(Product product) {
-                    super(product);
-                    this.name = product.getName();
-                    this.description = product.getDescription();
-                    this.weight = product.getWeight();
-                    this.dimension = product.getDimension();
-                    this.state = product.getState();
-                    this.status = product.getStatus();
-                    this.category = new CategoryResponse(product.getCategory());
-                    this.images = product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());
-                    this.attributes = product.getAttributes().stream().map(AttributeResponse::new).collect(Collectors.toList());
-                    this.options = product.getOptions().stream().map(OptionResponse::new).collect(Collectors.toList());
-                }
-
-                @Getter
-                private static class AttributeResponse extends BasicEntityResponse {
-                    private final String name;
-                    private final String value;
-
-                    public AttributeResponse(Attribute attribute) {
-                        super(attribute);
-                        this.name = attribute.getName();
-                        this.value = attribute.getValue();
-                    }
-                }
-
-                @Getter
-                private static class OptionResponse extends BasicEntityResponse {
-                    private final String name;
-                    private final List<OptionValueResponse> values;
-
-                    OptionResponse(OptionModel option) {
-                        super(option);
-                        this.name = option.getName();
-                        this.values = option.getOptionValues().stream().map(OptionValueResponse::new).collect(Collectors.toList());
-                    }
-
-                    @Getter
-                    private static class OptionValueResponse extends BasicEntityResponse {
-                        private final String value;
-
-                        public OptionValueResponse(OptionValue optionValue) {
-                            super(optionValue);
-                            this.value = optionValue.getValue();
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -167,25 +99,31 @@ public class OrderResponse extends BasicEntityResponse {
         }
     }
 
+
     @Getter
+    @Setter
     private static class CustomerResponse extends BasicEntityResponse {
-        private final String fullName;
-        private final String dob;
-        private final Integer sex;
-        private final String phone;
-        private final String email;
-        private final String cin;
-        private final String nation;
-        private final String city;
-        private final String district;
-        private final String ward;
-        private final String addressDetail;
+        private String fullName;
+        private String dob;
+        private Integer sex;
+        private String phone;
+        private String email;
+        private String cin;
+        private String nation;
+        private String city;
+        private String district;
+        private String ward;
+        private String addressDetail;
 
         public CustomerResponse(Customer customer) {
             super(customer);
             this.fullName = customer.getFullName();
-            this.dob = customer.getDob().toString();
-            this.sex = customer.getSex().ordinal();
+            Optional.ofNullable(customer.getDob()).ifPresent(e -> {
+                this.dob = e.toString();
+            });
+            Optional.ofNullable(customer.getSex()).ifPresent(e -> {
+                this.sex = customer.getSex().ordinal();
+            });
             this.phone = customer.getPhone();
             this.email = customer.getEmail();
             this.cin = customer.getCin();
@@ -194,6 +132,50 @@ public class OrderResponse extends BasicEntityResponse {
             this.district = customer.getDistrict();
             this.ward = customer.getWard();
             this.addressDetail = customer.getAddressDetail();
+        }
+    }
+
+    @Getter
+    private static class OrderStepResponse extends BasicEntityResponse {
+        private final OrderModel.STATUS status;
+        private final String note;
+        private final User updatedBy;
+
+        public OrderStepResponse(OrderStep step) {
+            super(step);
+            this.status = step.getStatus();
+            this.note = step.getNote();
+            this.updatedBy = step.getUpdatedBy();
+        }
+    }
+
+    @Getter
+    private static class PaymentResponse extends BasicEntityResponse {
+        private final Payment.METHOD method;
+        private final Payment.STATUS status;
+        private final String info;
+
+        public PaymentResponse(Payment payment) {
+            super(payment);
+            this.method = payment.getMethod();
+            this.status = payment.getStatus();
+            this.info = payment.getInfo();
+        }
+    }
+
+    @Getter
+    private static class UserResponse extends BasicEntityResponse {
+        private final String firstName;
+        private final String lastName;
+        private final String username;
+        private final String avatar;
+
+        public UserResponse(User user) {
+            super(user);
+            this.firstName = user.getFirstName();
+            this.lastName = user.getLastName();
+            this.username = user.getUsername();
+            this.avatar = user.getAvatar();
         }
     }
 }

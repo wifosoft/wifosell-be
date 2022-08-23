@@ -1,69 +1,155 @@
 package com.wifosell.zeus.service.impl;
 
+import com.wifosell.zeus.constant.exception.EAppExceptionCode;
+import com.wifosell.zeus.exception.AppException;
 import com.wifosell.zeus.model.attribute.Attribute;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.model.option.OptionModel;
 import com.wifosell.zeus.model.option.OptionValue;
-import com.wifosell.zeus.model.product.Product;
-import com.wifosell.zeus.model.product.ProductImage;
-import com.wifosell.zeus.model.product.Variant;
-import com.wifosell.zeus.model.product.VariantValue;
+import com.wifosell.zeus.model.product.*;
+import com.wifosell.zeus.model.stock.Stock_;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.user.User_;
+import com.wifosell.zeus.model.warehouse.Warehouse_;
+import com.wifosell.zeus.payload.GApiErrorBody;
 import com.wifosell.zeus.payload.request.product.AddProductRequest;
 import com.wifosell.zeus.payload.request.product.IProductRequest;
 import com.wifosell.zeus.payload.request.product.UpdateProductRequest;
 import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.service.EcomSyncProductService;
 import com.wifosell.zeus.service.ProductService;
-import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.specs.ProductSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.hibernate.search.engine.search.query.SearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.math.RoundingMode;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
-@Service("Product")
-@RequiredArgsConstructor
+@Service("ProductService")
 public class ProductServiceImpl implements ProductService {
-    private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    private final AttributeRepository attributeRepository;
-    private final OptionRepository optionRepository;
-    private final OptionValueRepository optionValueRepository;
-    private final VariantRepository variantRepository;
-    private final VariantValueRepository variantValueRepository;
-    private final UserRepository userRepository;
-    private final ShopRepository shopRepository;
-    private final ProductImageRepository productImageRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private AttributeRepository attributeRepository;
+    @Autowired
+    private OptionRepository optionRepository;
+    @Autowired
+    private OptionValueRepository optionValueRepository;
+    @Autowired
+    private VariantRepository variantRepository;
+    @Autowired
+    private VariantValueRepository variantValueRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProductImageRepository productImageRepository;
+    @Autowired
+    private StockRepository stockRepository;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private EcomSyncProductService ecomSyncProductService;
 
     @Override
     public Page<Product> getProducts(
             Long userId,
+            List<Long> warehouseIds,
+            Integer minQuantity,
+            Integer maxQuantity,
             List<Boolean> isActives,
-            int offset,
-            int limit,
+            Integer offset,
+            Integer limit,
             String sortBy,
             String orderBy
     ) {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return productRepository.findAll(
                 ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.hasStocks(warehouseIds, minQuantity, maxQuantity))
                         .and(ProductSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
+    }
+
+    @Override
+    public List<Product> getProducts(Long userId, List<Long> warehouseIds, List<Boolean> isActives) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return productRepository.findAll(
+                ProductSpecs.hasGeneralManager(gmId)
+                        .and(ProductSpecs.hasStocks(warehouseIds, null, null))
+                        .and(ProductSpecs.inIsActives(isActives)));
+    }
+
+    @Override
+    public PageInfo<Product> searchProducts(
+            Long userId,
+            String keyword,
+            List<Long> warehouseIds,
+            Integer minQuantity,
+            Integer maxQuantity,
+            List<Boolean> isActives,
+            Integer offset,
+            Integer limit
+    ) {
+        SearchSession searchSession = Search.session(entityManager);
+
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (limit == null || limit > 100) {
+            limit = 100;
+        }
+
+        SearchResult<Product> result = searchSession.search(Product.class).where(f -> f.bool(b -> {
+            b.must(f.matchAll());
+            if (gmId != null) {
+                b.must(f.match().field(Product_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                b.must(f.match().fields(Product_.VARIANTS + "." + Variant_.SKU, Product_.NAME).matching(keyword));
+            }
+            if (warehouseIds != null || minQuantity != null || maxQuantity != null) {
+                b.must(f.nested().objectField(Product_.VARIANTS + "." + Variant_.STOCKS).nest(f.bool(c -> {
+                    c.must(f.matchAll());
+                    if (warehouseIds != null) {
+                        c.must(f.terms().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.WAREHOUSE + "." + Warehouse_.ID).matchingAny(warehouseIds));
+                    }
+                    if (minQuantity != null) {
+                        c.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atLeast(minQuantity));
+                    }
+                    if (maxQuantity != null) {
+                        c.must(f.range().field(Product_.VARIANTS + "." + Variant_.STOCKS + "." + Stock_.QUANTITY).atMost(maxQuantity));
+                    }
+                })));
+            }
+            if (isActives == null || isActives.isEmpty()) {
+                b.must(f.match().field(Product_.IS_ACTIVE).matching(true));
+            } else {
+                b.must(f.terms().field(Product_.IS_ACTIVE).matchingAny(isActives));
+            }
+        })).fetch(offset * limit, limit);
+
+        return new PageInfo<>(result.hits(), offset, limit, result.total().hitCount());
     }
 
     @Override
@@ -91,9 +177,35 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProduct(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
         User gm = userRepository.getUserById(userId).getGeneralManager();
-        Product product = getProduct(userId, productId);
-        return this.updateProductByRequest(product, request, gm);
+        Product product;
+        if (productId == -1) {
+            product = new Product();
+        } else {
+            product = getProduct(userId, productId);
+        }
+        product = this.updateProductByRequest(product, request, gm);
+
+        ecomSyncProductService.updateEcomProduct(userId, productId);
+
+        return product;
     }
+
+
+    @Override
+    public Product updateProductNoPostEcommerce(@NonNull Long userId, @NonNull Long productId, @Valid UpdateProductRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Product product;
+        if (productId == -1) {
+            product = new Product();
+        } else {
+            product = getProduct(userId, productId);
+        }
+        product = this.updateProductByRequest(product, request, gm);
+
+        // Update product on Lazada & Sendo
+        return product;
+    }
+
 
     @Override
     public Product activateProduct(Long userId, @NonNull Long productId) {
@@ -119,92 +231,289 @@ public class ProductServiceImpl implements ProductService {
         return productIds.stream().map(id -> this.deactivateProduct(userId, id)).collect(Collectors.toList());
     }
 
-    private Product updateProductByRequest(Product product, IProductRequest request, User gm) {
+    public Product updateProductByRequest(Product product, IProductRequest request, User gm) {
         Optional.ofNullable(request.getName()).ifPresent(product::setName);
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
         Optional.ofNullable(request.getCategoryId()).ifPresent(categoryId -> {
             Category category = categoryRepository.getById(categoryId);
             product.setCategory(category);
         });
-        Optional.ofNullable(request.getWeight()).ifPresent(product::setWeight);
-        Optional.ofNullable(request.getDimension()).ifPresent(product::setDimension);
+        Optional.of(request.getWeight().setScale(0, RoundingMode.CEILING)).ifPresent(product::setWeight);
+        Optional.ofNullable(request.getWidth()).ifPresent(product::setWidth);
+        Optional.ofNullable(request.getLength()).ifPresent(product::setLength);
+        Optional.ofNullable(request.getHeight()).ifPresent(product::setHeight);
         Optional.ofNullable(request.getState()).ifPresent(product::setState);
         Optional.ofNullable(request.getStatus()).ifPresent(product::setStatus);
 
         // Images
-        Optional.ofNullable(request.getImages()).ifPresent(urls -> {
-            productImageRepository.deleteAllByProductId(product.getId());
-            product.getImages().clear();
-
-            List<ProductImage> images = new ArrayList<>();
-            for (String url : urls) {
-                ProductImage image = ProductImage.builder()
-                        .url(url)
-                        .product(product).build();
-                images.add(image);
+        Optional.ofNullable(request.getImages()).ifPresent(imageRequests -> {
+            if (this.haveDuplicatedIds(imageRequests.stream().map(IProductRequest.ImageRequest::getId).collect(Collectors.toList()))) {
+                throw new AppException(GApiErrorBody.makeErrorBody(
+                        EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR,
+                        "Image id must be unique.",
+                        imageRequests
+                ));
             }
-            product.getImages().addAll(images);
 
-            productImageRepository.saveAll(images);
+            List<ProductImage> images = product.getImages().stream()
+                    .filter(image -> !image.isDeleted())
+                    .collect(Collectors.toList());
+
+            images.forEach(image -> {
+                IProductRequest.ImageRequest existingImageRequest = null;
+
+                for (IProductRequest.ImageRequest imageRequest : imageRequests) {
+                    if (image.getId().equals(imageRequest.getId())) {
+                        image.setUrl(imageRequest.getUrl());
+                        productImageRepository.save(image);
+                        existingImageRequest = imageRequest;
+                        break;
+                    }
+                }
+
+                if (existingImageRequest == null) {
+                    image.setDeleted(true);
+                    productImageRepository.save(image);
+                } else {
+                    imageRequests.remove(existingImageRequest);
+                }
+            });
+
+            for (IProductRequest.ImageRequest imageRequest : imageRequests) {
+                ProductImage image = ProductImage.builder()
+                        .url(imageRequest.getUrl())
+                        .product(product)
+                        .build();
+                productImageRepository.save(image);
+                product.getImages().add(image);
+            }
+
             productRepository.save(product);
         });
 
         // Attributes
         Optional.ofNullable(request.getAttributes()).ifPresent(attributeRequests -> {
-            attributeRepository.deleteAllByProductId(product.getId());
-            product.getAttributes().clear();
+            if (this.haveDuplicatedIds(attributeRequests.stream().map(IProductRequest.AttributeRequest::getId).collect(Collectors.toList()))) {
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR, "Attribute id must be unique.", attributeRequests));
+            }
 
-            List<Attribute> attributes = new ArrayList<>();
+            List<Attribute> deletedAttributes = new ArrayList<>();
+
+            product.getAttributes().forEach(attribute -> {
+                IProductRequest.AttributeRequest existingAttributeRequest = null;
+                for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
+                    if (attribute.getId().equals(attributeRequest.getId())) {
+                        attribute.setName(attributeRequest.getName());
+                        attribute.setValue(attributeRequest.getValue());
+                        attributeRepository.save(attribute);
+                        existingAttributeRequest = attributeRequest;
+                        break;
+                    }
+                }
+                if (existingAttributeRequest == null) {
+                    deletedAttributes.add(attribute);
+                } else {
+                    attributeRequests.remove(existingAttributeRequest);
+                }
+            });
+
+            deletedAttributes.forEach(attribute -> {
+                product.getAttributes().remove(attribute);
+                attributeRepository.delete(attribute);
+            });
+
             for (IProductRequest.AttributeRequest attributeRequest : attributeRequests) {
                 Attribute attribute = Attribute.builder()
                         .name(attributeRequest.getName())
                         .value(attributeRequest.getValue())
                         .product(product)
                         .build();
-                attributes.add(attribute);
+                attributeRepository.save(attribute);
+                product.getAttributes().add(attribute);
             }
-            product.getAttributes().addAll(attributes);
 
-            attributeRepository.saveAll(attributes);
             productRepository.save(product);
         });
 
-        // Options & Variants
+        // Options
         Optional.ofNullable(request.getOptions()).ifPresent(optionRequests -> {
-            optionRepository.deleteAllByProductId(product.getId());
-            product.getOptions().clear();
-
-            List<OptionModel> optionModels = new ArrayList<>();
-            for (IProductRequest.OptionRequest optionRequest : optionRequests) {
-                OptionModel optionModel = OptionModel.builder()
-                        .name(optionRequest.getName())
-                        .product(product)
-                        .generalManager(gm)
-                        .build();
-                List<OptionValue> optionValues = new ArrayList<>();
-                for (String value : optionRequest.getValues()) {
-                    OptionValue optionValue = OptionValue.builder()
-                            .value(value)
-                            .option(optionModel).build();
-                    optionValues.add(optionValue);
-                }
-                optionModel.setOptionValues(optionValues);
-
-                optionModels.add(optionModel);
-
-                optionValueRepository.saveAll(optionValues);
-                optionRepository.save(optionModel);
+            if (this.haveDuplicatedIds(optionRequests.stream().map(IProductRequest.OptionRequest::getId).collect(Collectors.toList()))) {
+                throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR, "Option id must be unique.", optionRequests));
             }
-            product.getOptions().addAll(optionModels);
 
-            productRepository.save(product);
+            optionRequests.forEach(optionRequest -> {
+                if (this.haveDuplicatedIds(optionRequest.getValues().stream().map(IProductRequest.OptionValueRequest::getId).collect(Collectors.toList()))) {
+                    throw new AppException(GApiErrorBody.makeErrorBody(EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR, "OptionValue id must be unique.", optionRequest.getValues()));
+                }
+            });
+
+            List<OptionModel> options = product.getOptions().stream()
+                    .filter(option -> !option.isDeleted())
+                    .collect(Collectors.toList());
+
+            boolean isOptionIdsUnchanged = options.size() == optionRequests.size();
+            for (OptionModel option : options) {
+                boolean flag = false;
+                for (IProductRequest.OptionRequest optionRequest : optionRequests) {
+                    if (option.getId().equals(optionRequest.getId())) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    isOptionIdsUnchanged = false;
+                    break;
+                }
+            }
+
+            if (isOptionIdsUnchanged) {
+                options.forEach(option -> {
+                    for (IProductRequest.OptionRequest optionRequest : optionRequests) {
+                        if (option.getId().equals(optionRequest.getId())) {
+                            option.setName(optionRequest.getName());
+
+                            List<OptionValue> optionValues = option.getOptionValues().stream()
+                                    .filter(optionValue -> !optionValue.isDeleted())
+                                    .collect(Collectors.toList());
+
+                            optionValues.forEach(optionValue -> {
+                                IProductRequest.OptionValueRequest existingOptionValueRequest = null;
+
+                                for (IProductRequest.OptionValueRequest optionValueRequest : optionRequest.getValues()) {
+                                    if (optionValue.getId().equals(optionValueRequest.getId())) {
+                                        optionValue.setName(optionValueRequest.getName());
+                                        optionValueRepository.save(optionValue);
+                                        existingOptionValueRequest = optionValueRequest;
+                                        break;
+                                    }
+                                }
+
+                                if (existingOptionValueRequest == null) {
+                                    optionValue.getVariantValues().stream()
+                                            .map(VariantValue::getVariant)
+                                            .forEach(variant -> {
+                                                variant.getVariantValues().forEach(variantValue -> {
+                                                    variantValue.setDeleted(true);
+                                                    variantValueRepository.save(variantValue);
+                                                });
+                                                variant.getStocks().forEach(stock -> {
+                                                    stock.setDeleted(true);
+                                                    stockRepository.save(stock);
+                                                });
+                                                variant.setDeleted(true);
+                                                variantRepository.save(variant);
+                                            });
+                                    optionValue.setDeleted(true);
+                                    optionValueRepository.save(optionValue);
+                                } else {
+                                    optionRequest.getValues().remove(existingOptionValueRequest);
+                                }
+                            });
+
+                            for (IProductRequest.OptionValueRequest optionValueRequest : optionRequest.getValues()) {
+                                OptionValue optionValue = OptionValue.builder()
+                                        .name(optionValueRequest.getName())
+                                        .option(option)
+                                        .build();
+                                optionValueRepository.save(optionValue);
+                                option.getOptionValues().add(optionValue);
+                            }
+
+                            optionRepository.save(option);
+                            break;
+                        }
+                    }
+                });
+            } else {
+                product.getOptions().forEach(option -> {
+                    option.getOptionValues().forEach(optionValue -> {
+                        optionValue.setDeleted(true);
+                        optionValueRepository.save(optionValue);
+                    });
+                    option.setDeleted(true);
+                    optionRepository.save(option);
+                });
+
+                product.getVariants().forEach(variant -> {
+                    variant.getVariantValues().forEach(variantValue -> {
+                        variantValue.setDeleted(true);
+                        variantValueRepository.save(variantValue);
+                    });
+                    variant.setDeleted(true);
+                    variantRepository.save(variant);
+                });
+
+                optionRequests.forEach(optionRequest -> {
+                    OptionModel option = OptionModel.builder()
+                            .name(optionRequest.getName())
+                            .product(product)
+                            .generalManager(gm)
+                            .build();
+
+                    optionRequest.getValues().forEach(optionValueRequest -> {
+                        OptionValue optionValue = OptionValue.builder()
+                                .name(optionValueRequest.getName())
+                                .option(option)
+                                .build();
+                        option.getOptionValues().add(optionValue);
+                    });
+
+                    product.getOptions().add(option);
+
+                    optionValueRepository.saveAll(option.getOptionValues());
+                    optionRepository.save(option);
+                    productRepository.save(product);
+                });
+            }
         });
 
-        // Variants
         Optional.ofNullable(request.getVariants()).ifPresent(variantRequests -> {
-            variantRepository.deleteAllByProductId(product.getId());
-            product.getVariants().clear();
-            this.genVariants(product, product.getOptions(), variantRequests);
+            if (this.haveDuplicatedIds(variantRequests.stream().map(IProductRequest.VariantRequest::getId).collect(Collectors.toList()))) {
+                throw new AppException(GApiErrorBody.makeErrorBody(
+                        EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR,
+                        "Variant id must be unique.",
+                        variantRequests)
+                );
+            }
+
+            List<OptionModel> options = product.getOptions().stream()
+                    .filter(option -> !option.isDeleted())
+                    .collect(Collectors.toList());
+
+            int variantNum = 1;
+            for (OptionModel option : options) {
+                variantNum *= option.getOptionValues().stream().filter(optionValue -> !optionValue.isDeleted()).count();
+            }
+            if (variantNum != variantRequests.size()) {
+                throw new AppException(GApiErrorBody.makeErrorBody(
+                        EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR,
+                        String.format("There must be %d variants instead of %d.", variantNum, variantRequests.size()),
+                        variantRequests)
+                );
+            }
+
+            List<Variant> variants = product.getVariants().stream()
+                    .filter(variant -> !variant.isDeleted())
+                    .collect(Collectors.toList());
+
+            boolean isValidVariantRequests = variants.stream()
+                    .allMatch(variant -> variantRequests.stream()
+                            .map(IProductRequest.VariantRequest::getId)
+                            .collect(Collectors.toList())
+                            .contains(variant.getId())
+                    );
+
+            if (!isValidVariantRequests) {
+                throw new AppException(GApiErrorBody.makeErrorBody(
+                        EAppExceptionCode.REQUEST_PAYLOAD_FORMAT_ERROR,
+                        "The variants updated have wrong id. All updated variants must have ids: " +
+                                variants.stream().map(Variant::getId).collect(Collectors.toList()),
+                        variantRequests)
+                );
+            }
+
+            this.genVariants(gm, product, options, variantRequests);
+
             productRepository.save(product);
         });
 
@@ -214,43 +523,87 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
-    private void genVariants(Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests) {
+    private void genVariants(User gm, Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests) {
         List<OptionValue> combination = Arrays.asList(new OptionValue[options.size()]);
         int i = 0, j = 0, k = 0;
-        this.genVariants(product, options, variantRequests, combination, i, j, k);
+        this.genVariants(gm, product, options, variantRequests, combination, i, j, k);
     }
 
-    private int genVariants(Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
+    private int genVariants(User gm, Product product, List<OptionModel> options, List<IProductRequest.VariantRequest> variantRequests, List<OptionValue> combination, int i, int j, int k) {
         if (i == options.size()) {
             IProductRequest.VariantRequest variantRequest = variantRequests.get(j);
-            Variant variant = Variant.builder()
-                    .cost(new BigDecimal(variantRequest.getCost()))
-                    .sku(variantRequest.getSku())
-                    .barcode(variantRequest.getBarcode())
-                    .product(product).build();
 
-            List<VariantValue> variantValues = new ArrayList<>();
-            for (OptionValue optionValue : combination) {
-                VariantValue variantValue = VariantValue.builder()
-                        .optionValue(optionValue)
-                        .variant(variant).build();
-                variantValues.add(variantValue);
+            List<Variant> variants = product.getVariants().stream()
+                    .filter(variant -> !variant.isDeleted())
+                    .collect(Collectors.toList());
+
+            Variant curVariant = null;
+
+            for (Variant variant : variants) {
+                if (variant.getId().equals(variantRequest.getId())) {
+                    variant.setOriginalCost(new BigDecimal(variantRequest.getOriginalCost()));
+                    variant.setCost(new BigDecimal(variantRequest.getCost()));
+                    variant.setSku(variantRequest.getSku());
+                    variant.setBarcode(variantRequest.getBarcode());
+                    Optional.ofNullable(variantRequest.getIsActive()).ifPresent(variant::setIsActive);
+                    variantRepository.save(variant);
+                    curVariant = variant;
+                    break;
+                }
             }
 
-            variant.setVariantValues(variantValues);
-            product.getVariants().add(variant);
+            if (curVariant == null) {
+                Variant variant = Variant.builder()
+                        .originalCost(new BigDecimal(variantRequest.getOriginalCost()))
+                        .cost(new BigDecimal(variantRequest.getCost()))
+                        .sku(variantRequest.getSku())
+                        .barcode(variantRequest.getBarcode())
+                        .product(product)
+                        .generalManager(gm)
+                        .build();
+                Optional.ofNullable(variantRequest.getIsActive()).ifPresent(variant::setIsActive);
 
-            variantValueRepository.saveAll(variantValues);
-            variantRepository.save(variant);
+                for (OptionValue optionValue : combination) {
+                    VariantValue variantValue = VariantValue.builder()
+                            .optionValue(optionValue)
+                            .variant(variant).build();
+                    variant.getVariantValues().add(variantValue);
+                }
+                product.getVariants().add(variant);
+
+                variantValueRepository.saveAll(variant.getVariantValues());
+                variantRepository.save(variant);
+                productRepository.save(product);
+
+                curVariant = variant;
+            }
+
+            curVariant.setIdx(j);
+
             return ++j;
         }
 
-        for (OptionValue optionValue : options.get(i).getOptionValues()) {
+        List<OptionValue> optionValues = options.get(i).getOptionValues().stream()
+                .filter(optionValue -> !optionValue.isDeleted())
+                .collect(Collectors.toList());
+
+        for (OptionValue optionValue : optionValues) {
             combination.set(k, optionValue);
-            j = genVariants(product, options, variantRequests, combination, i + 1, j, k + 1);
+            j = genVariants(gm, product, options, variantRequests, combination, i + 1, j, k + 1);
         }
 
         return j;
+    }
+
+    private boolean haveDuplicatedIds(List<Long> ids) {
+        Set<Long> set = new HashSet<>();
+        for (Long id : ids) {
+            if (set.contains(id))
+                return true;
+            if (id != null)
+                set.add(id);
+        }
+        return false;
     }
 }
 

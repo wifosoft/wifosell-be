@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Lazada",
+    "shortName": "Lazada",
+    "description": "Lazada is a company developing an online shopping and selling marketplace. The Company offers products from a number of categories, including consumer electronics, household goods, toys, fashion, sports equipment and groceries.",
+    "isActive": true
+  },
+  {
+    "name": "Sendo",
+    "shortName": "Sendo",
+    "description": "Sendo is an e-commerce site that offers clothing, homeware, cosmetics, tech accessories, and more.",
+    "isActive": true
+  }
+]

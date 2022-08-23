@@ -11,10 +11,23 @@ public class CategoryResponse extends BasicEntityResponse {
     private final String shortName;
     private final String description;
 
+    SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkedEcomCategory;
+
     public CategoryResponse(@NonNull Category category) {
         super(category);
         this.name = category.getName();
         this.shortName = category.getShortName();
         this.description = category.getDescription();
+
     }
+
+    public CategoryResponse(@NonNull Category category, SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkedItem) {
+        super(category);
+        this.name = category.getName();
+        this.shortName = category.getShortName();
+        this.description = category.getDescription();
+
+        this.linkedEcomCategory = linkedItem;
+    }
+
 }

@@ -6,9 +6,14 @@ import com.wifosell.zeus.model.customer.Customer;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends SoftRepository<Customer, Long> {
+public interface CustomerRepository extends SoftRepository<Customer, Long>{
     @Override
     default EAppExceptionCode getExceptionCodeEntityNotFound() {
         return EAppExceptionCode.CUSTOMER_NOT_FOUND;
     }
+
+    Customer getCustomerByPhone(String phone);
+
+
+    Customer getCustomerByEmail(String email) ;
 }

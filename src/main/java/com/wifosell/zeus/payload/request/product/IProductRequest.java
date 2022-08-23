@@ -3,29 +3,31 @@ package com.wifosell.zeus.payload.request.product;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IProductRequest {
-    @Size(max = 200)
     String getName();
 
-    @Size(max = 100)
     String getDescription();
 
     Long getCategoryId();
 
-    @Positive
-    Integer getWeight();
+    BigDecimal getWeight();
 
-    @Size(max = 50)
-    String getDimension();
+    BigDecimal getLength();
+
+    BigDecimal getWidth();
+
+    BigDecimal getHeight();
 
     Integer getState();
 
     Integer getStatus();
 
-    List<String> getImages();
+    List<ImageRequest> getImages();
 
     List<AttributeRequest> getAttributes();
 
@@ -37,42 +39,72 @@ public interface IProductRequest {
 
     @Getter
     @Setter
-    class AttributeRequest {
+    class ImageRequest {
+
+        public ImageRequest() {
+        }
+
+        public ImageRequest(Long _id, String _url) {
+            this.id = _id;
+            this.url = _url;
+        }
+
+        Long id;
+
         @NotBlank
-        @Size(max = 100)
+        String url;
+    }
+
+
+    @Getter
+    @Setter
+    class AttributeRequest {
+        Long id;
+
+        @NotBlank
         String name;
 
         @NotBlank
-        @Size(max = 100)
         String value;
     }
 
     @Getter
     @Setter
     class OptionRequest {
+        Long id;
+
         @NotBlank
-        @Size(max = 100)
         String name;
 
         @NotEmpty
-        List<String> values;
+        List<OptionValueRequest> values;
+    }
+
+    @Getter
+    @Setter
+    class OptionValueRequest {
+        Long id;
+
+        @NotBlank
+        String name;
     }
 
     @Getter
     @Setter
     class VariantRequest {
-        @PositiveOrZero
-        Long stock;
+        Long id;
 
         @NotBlank
-        @Size(max = 50)
+        String originalCost;
+
+        @NotBlank
         String cost;
 
         @NotBlank
-        @Size(max = 100)
         String sku;
 
-        @Size(max = 100)
         String barcode;
+
+        Boolean isActive;
     }
 }

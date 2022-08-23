@@ -1,69 +1,36 @@
 package com.wifosell.zeus.database.seeder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
-import com.wifosell.zeus.model.customer.Customer;
-import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.repository.CustomerRepository;
-import com.wifosell.zeus.repository.UserRepository;
+import com.wifosell.zeus.database.SeederConst;
+import com.wifosell.zeus.payload.request.customer.CustomerRequest;
+import com.wifosell.zeus.service.CustomerService;
+import com.wifosell.zeus.utils.FileUtils;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class CustomerSeeder extends BaseSeeder implements ISeeder {
-    private CustomerRepository customerRepository;
-    private UserRepository userRepository;
+    private CustomerService customerService;
 
     @Override
     public void prepareJpaRepository() {
-        this.customerRepository = this.factory.getRepository(CustomerRepository.class);
-        this.userRepository = this.factory.getRepository(UserRepository.class);
+        customerService = context.getBean(CustomerService.class);
     }
 
     @Deprecated
     @Override
     public void run() {
-        User gm = userRepository.getUserByName("manager1").getGeneralManager();
-        Customer customer1 = Customer.builder()
-                .fullName("Kieu Cong Hau")
-                .phone("0987654321")
-                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
-                .email("hau@gmail.com")
-                .city("HCM")
-                .ward("1")
-                .district("1")
-                .addressDetail("1 Le Duan")
-                .sex(Customer.Sex.MALE)
-                .generalManager(gm)
-                .build();
-        customerRepository.save(customer1);
-
-        Customer customer2 = Customer.builder()
-                .fullName("Kieu Cong Hau")
-                .phone("0987654321")
-                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
-                .email("hau@gmail.com")
-                .city("HCM")
-                .ward("1")
-                .district("1")
-                .addressDetail("1 Le Duan")
-                .sex(Customer.Sex.MALE)
-                .generalManager(gm)
-                .build();
-        customerRepository.save(customer2);
-
-        Customer customer3 = Customer.builder()
-                .fullName("Kieu Cong Hau")
-                .phone("0987654321")
-                .dob(new Date(100, Calendar.JANUARY, 12, 0, 0, 0))
-                .email("hau@gmail.com")
-                .city("HCM")
-                .ward("1")
-                .district("1")
-                .addressDetail("1 Le Duan")
-                .sex(Customer.Sex.MALE)
-                .generalManager(gm)
-                .build();
-        customerRepository.save(customer3);
+        try {
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/customer.json");
+            CustomerRequest[] requests = new ObjectMapper().readValue(file, CustomerRequest[].class);
+            file.close();
+            for (CustomerRequest request : requests) {
+                customerService.addCustomer(SeederConst.USER_ID, request);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

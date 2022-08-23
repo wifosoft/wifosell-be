@@ -3,10 +3,12 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.category.Category;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.category.CategoryRequest;
+import com.wifosell.zeus.payload.request.category.SysCategoryLinkEcomCategoryRequest;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
 import com.wifosell.zeus.payload.response.category.CategoryResponse;
 import com.wifosell.zeus.payload.response.category.GetCategoriesResponse;
 import com.wifosell.zeus.payload.response.category.GetCategoryResponse;
+import com.wifosell.zeus.payload.response.category.SysCategoryLinkEcomCategoryResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CategoryService;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +45,7 @@ public class CategoryController {
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("")
     public ResponseEntity<GApiResponse<List<GetCategoriesResponse>>> getRootCategories(
@@ -62,7 +66,9 @@ public class CategoryController {
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "categoryId") Long categoryId) {
         Category category = categoryService.getCategory(userPrincipal.getId(), categoryId);
-        GetCategoryResponse response = new GetCategoryResponse(category);
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
+
+        GetCategoryResponse response = new GetCategoryResponse(category, linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
@@ -70,9 +76,10 @@ public class CategoryController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<CategoryResponse>> addCategory(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody CategoryRequest categoryRequest) {
+            @RequestBody @Valid CategoryRequest categoryRequest) {
         Category category = categoryService.addCategory(userPrincipal.getId(), categoryRequest);
-        CategoryResponse response = new CategoryResponse(category);
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
+        CategoryResponse response = new CategoryResponse(category, linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
@@ -81,9 +88,10 @@ public class CategoryController {
     public ResponseEntity<GApiResponse<CategoryResponse>> updateCategory(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "categoryId") Long categoryId,
-            @RequestBody CategoryRequest categoryRequest) {
+            @RequestBody @Valid CategoryRequest categoryRequest) {
         Category category = categoryService.updateCategory(userPrincipal.getId(), categoryId, categoryRequest);
-        CategoryResponse response = new CategoryResponse(category);
+        SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkItem = categoryService.getSingleLinkCategoryEcomCategory(userPrincipal.getId(), category);
+        CategoryResponse response = new CategoryResponse(category, linkItem);
         return ResponseEntity.ok(GApiResponse.success(response));
     }
 
@@ -111,7 +119,7 @@ public class CategoryController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> activateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<Category> categoryList = categoryService.activateCategories(userPrincipal.getId(), request.getIds());
         List<CategoryResponse> response = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());
@@ -122,10 +130,27 @@ public class CategoryController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CategoryResponse>>> deactivateCategories(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request) {
+            @RequestBody @Valid ListIdRequest request) {
         List<Category> categoryList = categoryService.deactivateCategories(userPrincipal.getId(), request.getIds());
         List<CategoryResponse> response = categoryList.stream()
                 .map(CategoryResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(GApiResponse.success(response));
     }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/linkCategory")
+    public ResponseEntity<GApiResponse> getLinkCategory(@CurrentUser UserPrincipal userPrincipal) {
+        var resp = categoryService.getAllLinkCategoryEcomCategory(userPrincipal.getId());
+        return ResponseEntity.ok(GApiResponse.success(resp));
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/linkCategory")
+    public ResponseEntity<GApiResponse<Boolean>> linkCategory(@CurrentUser UserPrincipal userPrincipal, @RequestBody @Valid SysCategoryLinkEcomCategoryRequest request) {
+        categoryService.linkCategoryEcomCategory(userPrincipal.getId(), request);
+        return ResponseEntity.ok(GApiResponse.success(true));
+    }
+
 }

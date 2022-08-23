@@ -38,6 +38,7 @@ public class SaleChannelServiceImpl implements SaleChannelService {
         Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
         return saleChannelRepository.findAll(
                 SaleChannelSpecs.hasGeneralManager(gmId)
+                        .and(SaleChannelSpecs.inShops(shopIds))
                         .and(SaleChannelSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );

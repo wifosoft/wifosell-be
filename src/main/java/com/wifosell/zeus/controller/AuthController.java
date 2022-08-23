@@ -4,7 +4,7 @@ import com.wifosell.zeus.model.user.User;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.LoginRequest;
 import com.wifosell.zeus.payload.request.RegisterRequest;
-import com.wifosell.zeus.payload.response.LoginResponse;
+import com.wifosell.zeus.payload.response.auth.LoginResponse;
 import com.wifosell.zeus.repository.RoleRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.repository.UserRoleRelationRepository;
@@ -64,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<GApiResponse<User>> registerUser(@RequestBody @Valid RegisterRequest registerRequest)  {
+    public ResponseEntity<GApiResponse<User>> registerUser(@RequestBody @Valid RegisterRequest registerRequest) {
         User result = authService.register(registerRequest);
         return ResponseEntity.ok(new GApiResponse<User>(Boolean.TRUE, "User registered successfully", result));
 

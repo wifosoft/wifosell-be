@@ -1,9 +1,12 @@
 package com.wifosell.zeus.model.stock;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Variant;
 import com.wifosell.zeus.model.warehouse.Warehouse;
 import lombok.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 import javax.persistence.*;
 
@@ -13,7 +16,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Stock {
+public class Stock extends BasicEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +25,7 @@ public class Stock {
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "warehouse_id")
+    @IndexedEmbedded
     private Warehouse warehouse;
 
     @ManyToOne
@@ -29,8 +33,10 @@ public class Stock {
     @JoinColumn(name = "variant_id")
     private Variant variant;
 
+    @GenericField
     private Integer actualQuantity; // decrease after the order is paid
 
+    @GenericField
     private Integer quantity;   // decrease after the order is created (<= actualQuantity)
 
     @Override

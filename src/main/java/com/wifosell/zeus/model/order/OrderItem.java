@@ -1,5 +1,6 @@
 package com.wifosell.zeus.model.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wifosell.zeus.model.audit.BasicEntity;
 import com.wifosell.zeus.model.product.Variant;
@@ -24,12 +25,17 @@ public class OrderItem extends BasicEntity {
     @JoinColumn(name = "variant_id")
     private Variant variant;
 
+    private BigDecimal originalPrice;
+
     private BigDecimal price;
 
     private Integer quantity;
 
+    private BigDecimal subtotal;
+
     private String note;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderModel order;
 }

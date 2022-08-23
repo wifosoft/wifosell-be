@@ -15,8 +15,7 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <hibernate.search.version>6.1.5.Final</hibernate.search.version>
     </properties>
     <profiles>
         <profile>
@@ -36,6 +35,7 @@
         </profile>
     </profiles>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -132,10 +132,104 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jobrunr</groupId>
+            <artifactId>jobrunr-spring-boot-starter</artifactId>
+            <version>5.1.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
+        </dependency>
+
+
+        <!-- Used to work with the older excel file format - `.xls` -->
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+
+        <!-- Used to work with the newer excel file format - `.xlsx` -->
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+
+        <!-- Hibernate Search -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-mapper-orm</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-backend-lucene</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>lazop-api-sdk</groupId>-->
+        <!--            <artifactId>lazop-api-sdk</artifactId>-->
+        <!--            <scope>system</scope>-->
+        <!--            <version>1.2.0</version>-->
+        <!--            <systemPath>${basedir}/Library/lazop-api-sdk-1.2.0.jar</systemPath>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.2</version>
         </dependency>
     </dependencies>
 
@@ -144,7 +238,22 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.xlsx</exclude>
+                    <exclude>**/*.p12</exclude>
+                    <exclude>**/*.xlsx</exclude>
+                    <exclude>**/*.json</exclude>
+                </excludes>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.p12</include>
+                    <include>**/*.json</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+
         </resources>
         <plugins>
             <plugin>
@@ -159,6 +268,13 @@
                                     <artifactId>lombok</artifactId>
                                 </exclude>
                             </excludes>
+
+                            <nonFilteredFileExtensions>
+
+                                <nonFilteredFileExtension>pem</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>pfx</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>p12</nonFilteredFileExtension>
+                            </nonFilteredFileExtensions>
                         </configuration>
                     </execution>
                 </executions>
@@ -175,6 +291,8 @@
                                 <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
                             </compilerArguments>
                         </configuration>
+
+
                     </execution>
                 </executions>
             </plugin>

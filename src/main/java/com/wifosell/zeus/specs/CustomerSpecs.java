@@ -20,23 +20,15 @@ public class CustomerSpecs {
         return (root, query, criteriaBuilder) -> {
             if (generalManagerId == null)
                 return criteriaBuilder.and();
-            return root.get(Customer_.GENERAL_MANAGER).get(User_.ID).in(generalManagerId);
+            return criteriaBuilder.equal(root.get(Customer_.GENERAL_MANAGER).get(User_.ID), generalManagerId);
         };
     }
 
     public static Specification<Customer> inIsActives(List<Boolean> isActives) {
         return ((root, query, criteriaBuilder) -> {
             if (isActives == null || isActives.isEmpty())
-                return criteriaBuilder.and();
+                return criteriaBuilder.equal(root.get(Customer_.IS_ACTIVE), true);
             return root.get(Customer_.IS_ACTIVE).in(isActives);
-        });
-    }
-
-    public static Specification<Customer> hasIsActive(Boolean isActive) {
-        return ((root, query, criteriaBuilder) -> {
-            if (isActive == null)
-                return criteriaBuilder.and();
-            return criteriaBuilder.equal(root.get(Customer_.IS_ACTIVE), isActive);
         });
     }
 }

@@ -1,0 +1,147 @@
+{
+  "id": 0,
+  "name": "Đầm họa tiết nữ GUMAC DC05088 phối bèo",
+  "sku": "DC05088-NEW-4API",
+  "price": 650000,
+  "weight": 620,
+  "stock_availability": true,
+  "description": "-Mã Sản Phẩm: DC05088\n-Tên Sản Phẩm: Đầm họa tiết phối bèo\n-Giá Bán: 650,000vnđ\n-Màu Sắc: TRẮNG\n-Số Đo Vải: 34CM\n-Số Đo Ngực: 88CM\n-Số Đo Eo: 68CM\n-Số Đo Dài Đầm : 104CM\n-Chất liệu Vải: SATIN -Thông số\nSize S\n-DẦM CÓ 2 LỚP\n-KHÔNG TÚI.\n* DẠNG A NHẸ, CỔ TRÒN, TÂY LỠ, PHỐI BÈO TẠO KIỂU, ĐẦM RÃ EO, CỔ TRƯỚC CÓ XEM 1 ĐOẠN 7CM CÓ KHUYÊN NÚT CÓ THỂ THÁO MỞ, ĐÂY KÉO PHỤ NỮ *",
+  "cat_4_id": 19,
+  "tags": null,
+  "relateds": null,
+  "seo_keyword": null,
+  "seo_title": null,
+  "seo_description": null,
+  "product_image": null,
+  "brand_id": 0,
+  "video_links": null,
+  "height": 5,
+  "length": 30,
+  "width": 40,
+  "unit_id": 1,
+  "stock_quantity": 185,
+  "avatar": {
+    "picture_url": "https://lzd-img-global.slatic.net/g/p/bad63714b07977ae220ca428227778a0.jpg_720x720q80.jpg_.webp"
+  },
+  "pictures": [
+    {
+      "picture_url": "https://lzd-img-global.slatic.net/g/p/bad63714b07977ae220ca428227778a0.jpg_720x720q80.jpg_.webp"
+    },
+    {
+      "picture_url": "https://lzd-img-global.slatic.net/g/p/d994fe68f43944e82a114a50dfc5e26c.jpg_720x720q80.jpg_.webp"
+    },
+    {
+      "picture_url": "https://lzd-img-global.slatic.net/g/p/481a55369e6e5c3aecc32072cbe2419d.jpg_720x720q80.jpg_.webp"
+    },
+    {
+      "picture_url": "https://lzd-img-global.slatic.net/g/p/eaee76a41d0f64063fa2c61d31ceb636.jpg_720x720q80.jpg_.webp"
+    },
+    {
+      "picture_url": "https://lzd-img-global.slatic.net/g/p/9fcf56fe7dcc2caf47068c5aa7160442.jpg_720x720q80.jpg_.webp"
+    }
+  ],
+  "certificate_file": null,
+  "attributes": [
+    {
+      "attribute_id": 401216901,
+      "attribute_name": "Nhóm màu",
+      "attribute_code": "401216901",
+      "attribute_is_custom": true,
+      "attribute_is_required": false,
+      "attribute_is_checkout": true,
+      "attribute_values": [
+        {
+          "id": 174301,
+          "value": "Trắng",
+          "attribute_img": null,
+          "is_selected": true,
+          "is_custom": true
+        }
+      ]
+    },
+    {
+      "attribute_id": 401216902,
+      "attribute_name": "Xuất xứ",
+      "attribute_code": "401216902",
+      "attribute_is_custom": true,
+      "attribute_is_required": false,
+      "attribute_is_checkout": true,
+      "attribute_values": [
+        {
+          "id": 184301,
+          "value": "Việt Nam",
+          "attribute_img": null,
+          "is_selected": true,
+          "is_custom": true
+        },
+        {
+          "id": 184302,
+          "value": "Trung Quốc",
+          "attribute_img": null,
+          "is_selected": true,
+          "is_custom": true
+        }
+      ]
+    }
+  ],
+  "promotion_from_date": null,
+  "promotion_to_date": null,
+  "extended_shipping_package": {
+    "is_using_instant": false,
+    "is_using_in_day": false,
+    "is_self_shipping": false,
+    "is_using_standard": true,
+    "is_using_eco": false
+  },
+  "variants": [
+    {
+      "variant_attributes": [
+        {
+          "attribute_id": 401216901,
+          "attribute_code": "401216901",
+          "option_id": 174301
+        },
+        {
+          "attribute_id": 401216902,
+          "attribute_code": "401216902",
+          "option_id": 184301
+        }
+      ],
+      "variant_sku": "DC05088-trang-xs1",
+      "variant_price": 650000,
+      "variant_promotion_start_date": null,
+      "variant_promotion_end_date": null,
+      "variant_special_price": 0,
+      "variant_quantity": 185
+    },
+    {
+      "variant_attributes": [
+        {
+          "attribute_id": 401216901,
+          "attribute_code": "401216901",
+          "option_id": 174301
+        },
+        {
+          "attribute_id": 401216902,
+          "attribute_code": "401216902",
+          "option_id": 184302
+        }
+      ],
+      "variant_sku": "DC05088-trang-xs2",
+      "variant_price": 650000,
+      "variant_promotion_start_date": null,
+      "variant_promotion_end_date": null,
+      "variant_special_price": 0,
+      "variant_quantity": 185
+    }
+  ],
+  "special_price": 0,
+  "voucher": {
+    "product_type": 1,
+    "start_date": null,
+    "end_date": null,
+    "is_check_date": false
+  },
+  "is_promotion": false,
+  "is_config_variant": true
+}

@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -15,8 +14,8 @@ public class VoucherRequest {
     private Long type;
     private String value;
 
-    private Date validFrom;
-    private Date validTo;
+    private Long validFrom;
+    private Long validTo;
 
     private boolean isActivated;
     private String rule;

@@ -1,18 +1,25 @@
 package com.wifosell.zeus.service.impl;
 
 import com.wifosell.zeus.model.customer.Customer;
+import com.wifosell.zeus.model.customer.Customer_;
 import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.user.User_;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.repository.CustomerRepository;
 import com.wifosell.zeus.repository.UserRepository;
 import com.wifosell.zeus.service.CustomerService;
 import com.wifosell.zeus.specs.CustomerSpecs;
 import com.wifosell.zeus.utils.ZeusUtils;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.engine.search.query.SearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
@@ -20,11 +27,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
-@Service("Customer")
+@Service("CustomerService")
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     @Override
     public Page<Customer> getCustomers(
@@ -41,6 +49,36 @@ public class CustomerServiceImpl implements CustomerService {
                         .and(CustomerSpecs.inIsActives(isActives)),
                 ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
         );
+    }
+
+    @Override
+    public PageInfo<Customer> searchCustomers(Long userId, String keyword, List<Boolean> isActives, Integer offset, Integer limit) {
+        SearchSession searchSession = Search.session(entityManager);
+
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (limit == null || limit > 100) {
+            limit = 100;
+        }
+
+        SearchResult<Customer> result = searchSession.search(Customer.class).where(f -> f.bool(b -> {
+            b.must(f.matchAll());
+            if (gmId != null) {
+                b.must(f.match().field(Customer_.GENERAL_MANAGER + "." + User_.ID).matching(gmId));
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                b.must(f.match().fields(Customer_.FULL_NAME, Customer_.PHONE, Customer_.EMAIL).matching(keyword));
+            }
+            if (isActives == null || isActives.isEmpty()) {
+                b.must(f.match().field(Customer_.IS_ACTIVE).matching(true));
+            } else {
+                b.must(f.terms().field(Customer_.IS_ACTIVE).matchingAny(isActives));
+            }
+        })).fetch(offset * limit, limit);
+
+        return new PageInfo<>(result.hits(), offset, limit, result.total().hitCount());
     }
 
     @Override

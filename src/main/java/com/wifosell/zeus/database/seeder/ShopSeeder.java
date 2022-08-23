@@ -1,82 +1,35 @@
 package com.wifosell.zeus.database.seeder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wifosell.zeus.database.BaseSeeder;
 import com.wifosell.zeus.database.ISeeder;
-import com.wifosell.zeus.model.shop.Shop;
-import com.wifosell.zeus.model.shop.UserShopRelation;
-import com.wifosell.zeus.model.user.User;
-import com.wifosell.zeus.repository.ShopRepository;
-import com.wifosell.zeus.repository.UserRepository;
-import com.wifosell.zeus.repository.UserShopRelationRepository;
+import com.wifosell.zeus.database.SeederConst;
+import com.wifosell.zeus.payload.request.shop.AddShopRequest;
+import com.wifosell.zeus.service.Shop2Service;
+import com.wifosell.zeus.utils.FileUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
 
-public class ShopSeeder extends BaseSeeder implements ISeeder{
-    UserRepository userRepository;
-
-    ShopRepository shopRepository;
-
-
-    UserShopRelationRepository userShopRelationRepository;
+public class ShopSeeder extends BaseSeeder implements ISeeder {
+    private Shop2Service shopService;
 
     @Override
     public void prepareJpaRepository() {
-        userRepository = factory.getRepository(UserRepository.class);
-        shopRepository = factory.getRepository(ShopRepository.class);
-        userShopRelationRepository = factory.getRepository(UserShopRelationRepository.class);
+        shopService = context.getBean(Shop2Service.class);
     }
 
     @Override
     public void run() {
-        User manager1 =userRepository.getUserByName("manager1");
-        User manager2 =userRepository.getUserByName("manager2");
-
-        Shop shop1 = Shop.builder().name("Quản lý 1 - Cửa hàng 1")
-                .shortName("CH1-QL1")
-                .address("Đông Hưng Thái Bình")
-                .phone("0982245445")
-                .businessLine("Mỹ phẩm")
-                .generalManager(manager1).build();
-
-        Shop shop2 = Shop.builder()
-                .name("Quản lý 1 - Cửa hàng 2 ")
-                .shortName("CH2-QL1")
-                .address("Quận 5, Hồ Chí Minh")
-                .phone("123123")
-                .businessLine("Mỹ phẩm")
-                .generalManager(manager1).build();
-
-        Shop shop3 = Shop.builder().name("Quản lý 2 - Cửa hàng 1")
-                .shortName("QL2-CH1")
-                .address("Đông Hưng Thái Bình")
-                .phone("0982245445")
-                .businessLine("Siêu thị")
-                .generalManager(manager2).build();
-
-        Shop shop4 = Shop.builder().name("Quản lý 2 - Cửa hàng 2")
-                .shortName("QL2-CH2")
-                .address("Bình chánh Hồ Chí Minh")
-                .phone("01285544888")
-                .businessLine("Điện tử")
-                .generalManager(manager2).build();
-
-
-        List<Shop> shops = new ArrayList<>();
-        shops.add(shop1);
-        shops.add(shop2);
-        shops.add(shop3);
-        shops.add(shop4);
-        shopRepository.saveAll(shops);
-
-        //add permission to shop
-
-        List<UserShopRelation> listUserShopRelation = new ArrayList<>();
-        listUserShopRelation.add(UserShopRelation.builder().shop(shop1).user(manager1).build());
-        listUserShopRelation.add(UserShopRelation.builder().shop(shop2).user(manager1).build());
-        listUserShopRelation.add(UserShopRelation.builder().shop(shop3).user(manager2).build());
-        listUserShopRelation.add(UserShopRelation.builder().shop(shop4).user(manager2).build());
-        userShopRelationRepository.saveAll(listUserShopRelation);
-
+        try {
+            InputStream file = (new FileUtils()).getFileAsIOStream("data/shop.json");
+            AddShopRequest[] requests = new ObjectMapper().readValue(file, AddShopRequest[].class);
+            file.close();
+            for (AddShopRequest request : requests) {
+                shopService.addShop(SeederConst.USER_ID, request);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

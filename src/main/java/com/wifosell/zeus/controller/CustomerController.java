@@ -3,17 +3,20 @@ package com.wifosell.zeus.controller;
 import com.wifosell.zeus.model.customer.Customer;
 import com.wifosell.zeus.payload.GApiResponse;
 import com.wifosell.zeus.payload.request.common.ListIdRequest;
+import com.wifosell.zeus.payload.request.common.SearchRequest;
 import com.wifosell.zeus.payload.request.customer.CustomerRequest;
 import com.wifosell.zeus.payload.response.customer.CustomerResponse;
 import com.wifosell.zeus.security.CurrentUser;
 import com.wifosell.zeus.security.UserPrincipal;
 import com.wifosell.zeus.service.CustomerService;
+import com.wifosell.zeus.utils.paging.PageInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +58,20 @@ public class CustomerController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @PostMapping("/search")
+    public ResponseEntity<GApiResponse<PageInfo<CustomerResponse>>> searchCustomers(
+            @CurrentUser UserPrincipal userPrincipal,
+            @RequestBody @Valid SearchRequest request,
+            @RequestParam(name = "isActive", required = false) List<Boolean> isActives,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        PageInfo<Customer> customers = customerService.searchCustomers(userPrincipal.getId(), request.getKeyword(), isActives, offset, limit);
+        PageInfo<CustomerResponse> responses = customers.map(CustomerResponse::new);
+        return ResponseEntity.ok(GApiResponse.success(responses));
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{customerId}")
     public ResponseEntity<GApiResponse<CustomerResponse>> getCustomer(
             @CurrentUser UserPrincipal userPrincipal,
@@ -69,7 +86,7 @@ public class CustomerController {
     @PostMapping("")
     public ResponseEntity<GApiResponse<CustomerResponse>> addCustomer(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody CustomerRequest request
+            @RequestBody @Valid CustomerRequest request
     ) {
         Customer customer = customerService.addCustomer(userPrincipal.getId(), request);
         CustomerResponse response = new CustomerResponse(customer);
@@ -81,7 +98,7 @@ public class CustomerController {
     public ResponseEntity<GApiResponse<CustomerResponse>> updateCustomer(
             @CurrentUser UserPrincipal userPrincipal,
             @PathVariable(name = "customerId") Long customerId,
-            @RequestBody CustomerRequest request
+            @RequestBody @Valid CustomerRequest request
     ) {
         Customer customer = customerService.updateCustomer(userPrincipal.getId(), customerId, request);
         CustomerResponse response = new CustomerResponse(customer);
@@ -114,7 +131,7 @@ public class CustomerController {
     @PostMapping("/activate")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> activateCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Customer> customers = customerService.activateCustomers(userPrincipal.getId(), request.getIds());
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());
@@ -125,7 +142,7 @@ public class CustomerController {
     @PostMapping("/deactivate")
     public ResponseEntity<GApiResponse<List<CustomerResponse>>> deactivateCustomers(
             @CurrentUser UserPrincipal userPrincipal,
-            @RequestBody ListIdRequest request
+            @RequestBody @Valid ListIdRequest request
     ) {
         List<Customer> customers = customerService.deactivateCustomers(userPrincipal.getId(), request.getIds());
         List<CustomerResponse> responses = customers.stream().map(CustomerResponse::new).collect(Collectors.toList());

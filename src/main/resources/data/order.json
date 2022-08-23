@@ -1,0 +1,230 @@
+[
+  {
+    "orderItems": [
+      {
+        "variantId": 1,
+        "quantity": 2
+      },
+      {
+        "variantId": 2,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 1,
+        "quantity": 1
+      },
+      {
+        "variantId": 10,
+        "quantity": 2
+      },
+      {
+        "variantId": 11,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 5,
+        "quantity": 1
+      },
+      {
+        "variantId": 9,
+        "quantity": 3
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 22,
+        "quantity": 1
+      },
+      {
+        "variantId": 25,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 19,
+        "quantity": 2
+      },
+      {
+        "variantId": 20,
+        "quantity": 3
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 26,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 32,
+        "quantity": 1
+      },
+      {
+        "variantId": 2,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 50,
+        "quantity": 1
+      },
+      {
+        "variantId": 56,
+        "quantity": 1
+      },
+      {
+        "variantId": 28,
+        "quantity": 1
+      },
+      {
+        "variantId": 62,
+        "quantity": 1
+      },
+      {
+        "variantId": 69,
+        "quantity": 2
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  },
+  {
+    "orderItems": [
+      {
+        "variantId": 61,
+        "quantity": 2
+      },
+      {
+        "variantId": 32,
+        "quantity": 1
+      }
+    ],
+    "shopId": 1,
+    "saleChannelId": 1,
+    "customerId": 1,
+    "sswId" : 1,
+    "payment": {
+      "method": "COD",
+      "status": "PAID",
+      "info": ""
+    },
+    "shippingFee": 0,
+    "status": "COMPLETE",
+    "isActive": true
+  }
+]

@@ -14,10 +14,21 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${cors.allowedOrigins}")
     private String[] allowedOrigins;
 
+//    @Autowired
+//    private HttpHttpsInterceptor httpHttpsInterceptor;
+
     @Value("${cors.maxAgeSecs}")
     private long maxAgeSecs;
 
+    //
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//
+//        registry.addInterceptor(httpHttpsInterceptor);
+//
+//    }
     public void addCorsMappings(@NonNull CorsRegistry registry) {
+
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")

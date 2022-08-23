@@ -1,0 +1,314 @@
+package com.wifosell.zeus.service.impl;
+
+import com.wifosell.zeus.model.ecom_sync.EcomAccount;
+import com.wifosell.zeus.model.ecom_sync.LazadaSwwAndEcomAccount;
+import com.wifosell.zeus.model.sale_channel.SaleChannel;
+import com.wifosell.zeus.model.shop.SaleChannelShop;
+import com.wifosell.zeus.model.shop.Shop;
+import com.wifosell.zeus.model.user.User;
+import com.wifosell.zeus.model.warehouse.Warehouse;
+import com.wifosell.zeus.payload.request.shop.AddShopRequest;
+import com.wifosell.zeus.payload.request.shop.IShopRequest;
+import com.wifosell.zeus.payload.request.shop.UpdateShopRequest;
+import com.wifosell.zeus.repository.*;
+import com.wifosell.zeus.repository.ecom_sync.EcomAccountRepository;
+import com.wifosell.zeus.repository.ecom_sync.LazadaSwwAndEcomAccountRepository;
+import com.wifosell.zeus.service.Shop2Service;
+import com.wifosell.zeus.specs.SaleChannelSpecs;
+import com.wifosell.zeus.specs.ShopSpecs;
+import com.wifosell.zeus.specs.WarehouseSpecs;
+import com.wifosell.zeus.utils.ZeusUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service("Shop2Service")
+@RequiredArgsConstructor
+public class Shop2ServiceImpl implements Shop2Service {
+    private final UserRepository userRepository;
+    private final ShopRepository shopRepository;
+    private final SaleChannelRepository saleChannelRepository;
+    private final SaleChannelShopRepository saleChannelShopRepository;
+    private final WarehouseRepository warehouseRepository;
+    private final EcomAccountRepository ecomAccountRepository;
+
+    private final LazadaSwwAndEcomAccountRepository lazadaSwwAndEcomAccountRepository;
+
+    @Override
+    public Page<Shop> getShops(Long userId, List<Boolean> isActives, Integer offset, Integer limit, String sortBy, String orderBy) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return shopRepository.findAll(
+                ShopSpecs.hasGeneralManager(gmId)
+                        .and(ShopSpecs.inIsActives(isActives)),
+                ZeusUtils.getDefaultPageable(offset, limit, sortBy, orderBy)
+        );
+    }
+
+    @Override
+    public Shop getShop(Long userId, Long shopId) {
+        Long gmId = userId == null ? null : userRepository.getUserById(userId).getGeneralManager().getId();
+        return shopRepository.getOne(
+                ShopSpecs.hasGeneralManager(gmId)
+                        .and(ShopSpecs.hasId(shopId))
+        );
+    }
+
+    @Override
+    public Shop addShop(Long userId, AddShopRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Shop shop = new Shop();
+        return this.updateShopByRequest(gm, shop, request);
+    }
+
+    @Override
+    public Shop updateShop(Long userId, Long shopId, UpdateShopRequest request) {
+        User gm = userRepository.getUserById(userId).getGeneralManager();
+        Shop shop = this.getShop(userId, shopId);
+        return this.updateShopByRequest(gm, shop, request);
+    }
+
+    @Override
+    public Shop activateShop(Long userId, Long shopId) {
+        Shop shop = this.getShop(userId, shopId);
+        shop.setIsActive(true);
+        return shopRepository.save(shop);
+    }
+
+    @Override
+    public Shop deactivateShop(Long userId, Long shopId) {
+        Shop shop = this.getShop(userId, shopId);
+        shop.setIsActive(false);
+        return shopRepository.save(shop);
+    }
+
+    @Override
+    public List<Shop> activateShops(Long userId, List<Long> shopIds) {
+        return shopIds.stream().map(id -> this.activateShop(userId, id)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Shop> deactivateShops(Long userId, List<Long> shopIds) {
+        return shopIds.stream().map(id -> this.deactivateShop(userId, id)).collect(Collectors.toList());
+    }
+
+    public Shop updateShopByRequest(User gm, Shop shop, IShopRequest request) {
+        // Create or update Shop
+        Optional.ofNullable(request.getName()).ifPresent(shop::setName);
+        Optional.ofNullable(request.getShortName()).ifPresent(shop::setShortName);
+        Optional.ofNullable(request.getAddress()).ifPresent(shop::setAddress);
+        Optional.ofNullable(request.getPhone()).ifPresent(shop::setPhone);
+        Optional.ofNullable(request.getDescription()).ifPresent(shop::setDescription);
+        Optional.ofNullable(request.getBusinessLine()).ifPresent(shop::setBusinessLine);
+        Optional.ofNullable(request.getIsActive()).ifPresent(shop::setIsActive);
+        shop.setGeneralManager(gm);
+        shopRepository.save(shop);
+
+
+        //lấy toàn bộ sale channlel của shop
+        Long shopId = shop.getId();
+        String shopIdStr = shopId.toString();
+        List<SaleChannelShop> listSsw = shop.getSaleChannelShops();
+        List<IShopRequest.Relation> listRelationRequest = request.getRelations();
+
+        List<String> aggregateShopSaleWarehouseIds = new ArrayList<>();
+        List<Long> aggregateEcomIds = new ArrayList<>();
+        for (var relation : listRelationRequest) {
+            String _hashIdx = shopIdStr + "_" + relation.getHashSWId();
+            if (!aggregateShopSaleWarehouseIds.contains(_hashIdx)) {
+                aggregateShopSaleWarehouseIds.add(_hashIdx);
+            }
+            if (!aggregateEcomIds.contains(relation.getEcomId())) {
+                aggregateEcomIds.add(relation.getEcomId());
+            }
+        }
+
+
+        for (SaleChannelShop ssw : listSsw) {
+            //Khi này sẽ kiểm tra ssw này có tồn tại trong request truyền lên hay không. Nếu hết toàn bộ các item relation truyền lên không có hash_id thoả thì xoá relation này đi thôi
+            if (aggregateShopSaleWarehouseIds.contains(ssw.getHashMergeId())) {
+                //tồn tại sale channel shop ở relation thì không xoá, xử lý ecom id thôi
+                List<LazadaSwwAndEcomAccount> listLazadaSwwEcomAccount = ssw.getLazadaSwwAndEcomAccount();
+                for (LazadaSwwAndEcomAccount __linkSww : listLazadaSwwEcomAccount) {
+                    if (!aggregateEcomIds.contains(__linkSww.getEcomAccount().getId())) {
+                        //không tồn tại ecom account cho liên kết này thì xoá đi thoi
+                        lazadaSwwAndEcomAccountRepository.deleteById(__linkSww.getId());
+                    }
+                }
+                aggregateShopSaleWarehouseIds.remove(ssw.getHashMergeId());
+
+            } else {
+                //xoá đi, nó không tồn tại sale channel shop đâu, tự xoá kia chứ
+                saleChannelShopRepository.deleteById(ssw.getId());
+            }
+        }
+        //tạo mới ssw mà còn tồn trông list array
+        for (String _sswCreate : aggregateShopSaleWarehouseIds) {
+            String[] isSplited = _sswCreate.split("_"); //shop schannel warehouse
+            Warehouse __warehouse = warehouseRepository.getOne(
+                    WarehouseSpecs.hasGeneralManager(gm.getId())
+                            .and(WarehouseSpecs.hasId(Long.valueOf(isSplited[2])))
+            );
+            SaleChannel __saleChannel = saleChannelRepository.getOne(
+                    SaleChannelSpecs.hasGeneralManager(gm.getId())
+                            .and(SaleChannelSpecs.hasId(Long.valueOf(isSplited[1])))
+            );
+
+            SaleChannelShop __ssw = new SaleChannelShop();
+            __ssw.setShop(shop);
+            __ssw.setWarehouse(__warehouse);
+            __ssw.setSaleChannel(__saleChannel);
+            saleChannelShopRepository.save(__ssw);
+        }
+        //Giờ đến phần liên kết ecom nè
+
+
+        //Loop toàn bộ relation có ecom id rồi cập nhật lại liên két
+        for (var relation : listRelationRequest) {
+            if (relation.getEcomId() == null) {
+                continue;
+            }
+
+            Warehouse __warehouse = warehouseRepository.getOne(
+                    WarehouseSpecs.hasGeneralManager(gm.getId())
+                            .and(WarehouseSpecs.hasId(relation.getWarehouseId()))
+            );
+            SaleChannel __saleChannel = saleChannelRepository.getOne(
+                    SaleChannelSpecs.hasGeneralManager(gm.getId())
+                            .and(SaleChannelSpecs.hasId(relation.getSaleChannelId()))
+            );
+
+
+            Optional<SaleChannelShop> saleChannelShopOpt = saleChannelShopRepository.findRecordBySSWId(shop.getId(), relation.getSaleChannelId(), relation.getWarehouseId());
+            SaleChannelShop _saleChannelShop;
+            if (saleChannelShopOpt.isEmpty()) {
+                //không xảy ra đâu
+
+                SaleChannelShop __ssw = new SaleChannelShop();
+                __ssw.setShop(shop);
+                __ssw.setWarehouse(__warehouse);
+                __ssw.setSaleChannel(__saleChannel);
+                _saleChannelShop = saleChannelShopRepository.save(__ssw);
+            } else {
+                _saleChannelShop = saleChannelShopOpt.get();
+            }
+            LazadaSwwAndEcomAccount lazadaSwwAndEcomAccount;
+            Optional<LazadaSwwAndEcomAccount> _lazadaSwwAndEcomAccountOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(relation.getEcomId());
+            if (_lazadaSwwAndEcomAccountOpt.isPresent()) {
+                lazadaSwwAndEcomAccount = _lazadaSwwAndEcomAccountOpt.get();
+            } else {
+                EcomAccount ecomAccount = ecomAccountRepository.getEcomAccountById(relation.getEcomId());
+                if (ecomAccount == null) {
+                    continue;
+                    //throw new ZeusGlobalException(HttpStatus.OK, "Không tìm được tài khoản ecom");
+                }
+                lazadaSwwAndEcomAccount = new LazadaSwwAndEcomAccount();
+                lazadaSwwAndEcomAccount.setEcomAccount(ecomAccount);
+            }
+            lazadaSwwAndEcomAccount.setSaleChannelShop(_saleChannelShop);
+            lazadaSwwAndEcomAccountRepository.save(lazadaSwwAndEcomAccount);
+            //nếu tồn tại ecomID
+        }
+//
+//
+//        // Link with Sale Channels & Warehouses
+//        Optional.ofNullable(request.getRelations()).ifPresent(requestRelations -> {
+//            List<Long> requestSaleChannelIds = requestRelations.stream()
+//                    .map(IShopRequest.Relation::getSaleChannelId)
+//                    .collect(Collectors.toList());
+//
+//
+//            List<Long> requestEcomIds = requestRelations.stream()
+//                    .map(IShopRequest.Relation::getEcomId)
+//                    .collect(Collectors.toList());
+//
+//
+//            List<Long> curSaleChannelIds = shop.getSaleChannelShops().stream()
+//                    .map(SaleChannelShop::getSaleChannel)
+//                    .map(SaleChannel::getId)
+//                    .collect(Collectors.toList());
+//
+//
+//            // Remove relations
+//            curSaleChannelIds.forEach(curSaleChannelId -> {
+//                if (!requestSaleChannelIds.contains(curSaleChannelId)) {
+//                    saleChannelShopRepository.deleteByShopIdAndSaleChannelId(shop.getId(), curSaleChannelId);
+//
+//                    Optional<SaleChannelShop> relationOptional = shop.getSaleChannelShops().stream()
+//                            .filter(relation -> relation.getSaleChannel().getId().equals(curSaleChannelId))
+//                            .findFirst();
+//                    relationOptional.ifPresent(relation -> shop.getSaleChannelShops().remove(relation));
+//
+//                }
+//            });
+//
+//            // Add new relations
+//            requestRelations.forEach(requestRelation -> {
+//                Warehouse warehouse = warehouseRepository.getOne(
+//                        WarehouseSpecs.hasGeneralManager(gm.getId())
+//                                .and(WarehouseSpecs.hasId(requestRelation.getWarehouseId()))
+//                );
+//                SaleChannelShop relation;
+//                if (curSaleChannelIds.contains(requestRelation.getSaleChannelId())) {
+//                    relation = saleChannelShopRepository.getByShopIdAndSaleChannelId(
+//                            shop.getId(), requestRelation.getSaleChannelId());
+//                    if (relation != null) {
+//                        relation.setWarehouse(warehouse);
+//                        saleChannelShopRepository.save(relation);
+//                    }
+//
+//                } else {
+//                    SaleChannel saleChannel = saleChannelRepository.getOne(
+//                            SaleChannelSpecs.hasGeneralManager(gm.getId())
+//                                    .and(SaleChannelSpecs.hasId(requestRelation.getSaleChannelId()))
+//                    );
+//                    relation = SaleChannelShop.builder()
+//                            .shop(shop)
+//                            .saleChannel(saleChannel)
+//                            .warehouse(warehouse)
+//                            .build();
+//                    saleChannelShopRepository.save(relation);
+//                    shop.getSaleChannelShops().add(relation);
+//                }
+//
+//                // filter ecomid not found
+//
+//                //SaleChannelShop with ecom account
+//
+//                if (requestRelation.getEcomId() != null) {
+//                    Optional<EcomAccount> ecomAccount = ecomAccountRepository.findById(requestRelation.getEcomId());
+//
+//                    if (ecomAccount.isPresent()) {
+//
+//                        Optional<LazadaSwwAndEcomAccount> relationSwwEAOpt = lazadaSwwAndEcomAccountRepository.findByEcomAccountId(requestRelation.getEcomId());
+//                        LazadaSwwAndEcomAccount linkSwwEaRelation;
+//
+//                        if (relationSwwEAOpt.isEmpty()) {
+//                            linkSwwEaRelation = LazadaSwwAndEcomAccount.builder()
+//                                    .ecomAccount(ecomAccount.get())
+//                                    .saleChannelShop(relation).build();
+//                        } else {
+//                            linkSwwEaRelation = relationSwwEAOpt.get();
+//                            linkSwwEaRelation.setSaleChannelShop(relation);
+//                        }
+//                        lazadaSwwAndEcomAccountRepository.save(linkSwwEaRelation);
+//                        if (relation.getLazadaSwwAndEcomAccount() == null) {
+//                            relation.setLazadaSwwAndEcomAccount(new ArrayList<>());
+//                        }
+//                        relation.getLazadaSwwAndEcomAccount().add(linkSwwEaRelation);
+//                    }
+//                }
+//            });
+//        });
+        // shopRepository.save(shop);
+
+        List<SaleChannelShop> listSSWShop = saleChannelShopRepository.findListSSWByShopId(shopId);
+        shop.setSaleChannelShops(listSSWShop);
+
+        return shop;
+    }
+}
