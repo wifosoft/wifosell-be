@@ -26,6 +26,7 @@ public class PriceTrack extends BasicEntity {
     @OneToOne
     private Variant variant;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String competitorUrl;
 
     private BigDecimal competitorPrice;

@@ -36,7 +36,8 @@ class CrawlerCompetitorConsumer {
             if (responseModel != null) {
                 switch (responseModel.getPackageName()) {
                     case "wifosell.crawler.competitor.result":
-                        var dataResultCrawler = (new Gson()).fromJson(data, DataCrawlerCompetitorMessage.DataCrawlerCompetitorMessageData.class);
+                        var dataResultCrawlerMessage = (new Gson()).fromJson(data, DataCrawlerCompetitorMessage.class);
+                        var dataResultCrawler = dataResultCrawlerMessage.getData();
                         if (dataResultCrawler.getId() == null) {
                             LOG.info("[-] ID is null...");
                             return;

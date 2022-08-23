@@ -126,7 +126,13 @@ public class PriceTrackServiceImpl implements PriceTrackService {
             }
         }
 
-        mailService.sendEmail(email, "[Wifosell][Cảnh báo] Đối thủ thay đổi giá", content);
+        try {
+            mailService.sendEmail(email, "[Wifosell][Cảnh báo] Đối thủ thay đổi giá", content);
+        }catch (Exception exception){
+            exception.printStackTrace();
+            logger.info("Khong gui duoc email {}" , email);
+            status = 3;
+        }
         return status;
     }
 
