@@ -14,8 +14,8 @@ public class GetCategoryResponse extends CategoryResponse {
     }
 
     public GetCategoryResponse(@NonNull Category category, SysCategoryLinkEcomCategoryResponse.LinkItemResponse linkedItem) {
-        super(category);
-        this.parent = category.getParent() != null ? new CategoryResponse(category.getParent(), linkedItem) : null;
+        super(category, linkedItem);
+        this.parent = category.getParent() != null ? new CategoryResponse(category.getParent()) : null;
 
     }
 

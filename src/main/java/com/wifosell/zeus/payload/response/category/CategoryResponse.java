@@ -31,6 +31,4 @@ public class CategoryResponse extends BasicEntityResponse {
         this.linkedEcomCategory = linkedItem;
     }
 
-    
-
 }
