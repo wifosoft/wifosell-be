@@ -105,8 +105,8 @@ public class EcomAccountSeeder extends BaseSeeder implements ISeeder {
 
     @Override
     public void run() {
-        this.Seed1();
-        this.Seed2();
-        this.Seed3();
+//        this.Seed1();
+//        this.Seed2();
+//        this.Seed3();
     }
 }
