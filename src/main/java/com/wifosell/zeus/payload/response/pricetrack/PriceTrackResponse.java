@@ -34,6 +34,7 @@ public class PriceTrackResponse extends BasicEntityResponse {
         this.deltaPrice = priceTrack.getDeltaPrice();
         this.minPrice = priceTrack.getMinPrice();
         this.maxPrice = priceTrack.getMaxPrice();
+        this.isAutoChangePrice = priceTrack.getIsAutoChangePrice();
 
         Optional.ofNullable(priceTrack.getVariant()).ifPresent(e -> {
             this.variantResponse = new VariantResponse(priceTrack.getVariant());
